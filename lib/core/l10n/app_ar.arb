@@ -1,0 +1,138 @@
+{
+  "@@locale": "ar",
+  "tagline": "مشوارك.. سوا.",
+  "getStarted": "يلا نبدأ",
+  "login": "تسجيل الدخول",
+  "howTravel": "بتتحرك إزاي؟",
+  "canDrive": "معايا عربية",
+  "needRide": "محتاج توصيلة",
+  "freqTitle": "كل يوم ولا مشوار واحد؟",
+  "fRegular": "كل يوم",
+  "fOnce": "مشوار واحد بس",
+  "fTag": "الأوفر",
+  "extraTrip": "عايز مشوار زيادة؟ احجز كرسي",
+  "subNote": "ضمن اشتراكك · من غير رسوم حجز",
+  "whereGo": "بتروح فين كل يوم؟",
+  "dirBoth": "رايح جاي",
+  "dirGoing": "رايح بس",
+  "dirRet": "راجع بس",
+  "findCommute": "دوّرلي على مشواري",
+  "foundGroup": "لقينالك مجموعة مشوارك!",
+  "join": "انضم للمجموعة",
+  "confirmed": "توصيلتك متأكدة",
+  "covered": "متغطّي",
+  "cantCome": "مش هقدر آجي بكرة",
+  "arrivedBtn": "وصلت البوابة الرئيسية",
+  "pickedUp": "ركب",
+  "noShow": "مجاش",
+  "planTitle": "ابدأ أول شهر مجانًا",
+  "postReq": "انشر مشوارك",
+  "offerBtn": "اعرض مشوار",
+  "reqsOnRoute": "طلبات على خطك",
+  "browseBtn": "دوّر على ركاب",
+  "browseTitle": "طلبات قريبة منك",
+  "tripsLeftA": "المشاوير الباقية النهارده",
+  "tabToday": "النهارده",
+  "tabWeek": "الأسبوع",
+  "tabWallet": "المحفظة",
+  "tabTrust": "الأمان",
+  "sos": "استغاثة",
+  "langBtn": "English",
+  "langAria": "Switch to English",
+  "back": "رجوع",
+  "continueBtn": "كمّل",
+  "taglineOther": "Go together. Every day.",
+  "splashSub": "مشوارك اليومي متنظّم مع ناس رايحة نفس سكتك. من غير ما تدوّر كل يوم الصبح.",
+  "switchAnytime": "تقدر تغيّر في أي وقت.",
+  "canDriveSub": "عندي كراسي فاضية وعايز أشارك التكلفة",
+  "needRideSub": "بدوّر على حد رايح نفس مكاني",
+  "freqSub": "تقدر تعمل التاني في أي وقت بعدين.",
+  "fRegRider": "مجموعة ثابتة لمشوارك اليومي. أول شهر مجاني.",
+  "fOnceRider": "احجز كرسي فاضي أو انشر مشوارك. من غير اشتراك.",
+  "fRegDriver": "شارك مشوارك اليومي مع مجموعة ثابتة. مجاني دايمًا.",
+  "fOnceDriver": "اعرض كراسيك الفاضية في مشوار إنت رايحه أصلًا.",
+  "toDriver": "حوّل لوضع السواق",
+  "toRider": "حوّل لوضع الراكب",
+  "emptySeatsTitle": "كراسي فاضية النهارده",
+  "offerTitle": "اعرض مشوار",
+  "matchPct": "توافق 92%",
+  "backupTitle": "أحمد مش هيقدر يسوق يوم التلات",
+  "backupBody": "محمد هيسوق بداله. مشوارك متغطّي، ومش محتاج تعمل حاجة.",
+  "gotIt": "تمام",
+  "pickupIn": "التجمع بعد 12 دقيقة",
+  "verifiedMember": "عضو موثّق · 4.9 ★",
+  "phoneTitle": "رقم موبايلك إيه؟",
+  "phoneSub": "هنبعتلك كود في رسالة عشان نتأكد إنه رقمك.",
+  "phoneLabel": "رقم الموبايل",
+  "phoneHint": "رقم موبايل مصري: 11 رقم بيبدأ بـ 01",
+  "sendCode": "ابعتلي الكود",
+  "otpTitle": "اكتب الكود",
+  "otpWrong": "الكود ده مش مظبوط. جرّب تاني.",
+  "otpResend": "ابعت كود جديد",
+  "otpDevHint": "كود التجربة: 123456",
+  "changeNumber": "غيّر الرقم",
+  "networkError": "مقدرناش نبعت الكود دلوقتي. اتأكد من النت وجرّب تاني.",
+  "retry": "جرّب تاني",
+  "profileTitle": "نتعرّف عليك",
+  "profileSub": "عشان مجموعتك تعرف هتركب مع مين.",
+  "firstName": "الاسم الأول",
+  "lastName": "اسم العيلة",
+  "genderLabel": "النوع",
+  "male": "راجل",
+  "female": "ست",
+  "genderNote": "بنستخدمه بس لاختيار «ستات بس»، ومحدش بيشوفه.",
+  "settingsTitle": "الإعدادات",
+  "languageLabel": "اللغة",
+  "roleLabel": "بتتحرك إزاي",
+  "comingSoonTitle": "الشاشة دي جاية قريب",
+  "comingSoonBody": "بنجهّزها دلوقتي. اختيارك اتحفظ.",
+  "openSettings": "الإعدادات",
+  "galleryTitle": "معرض التصميم",
+  "galleryColors": "الألوان",
+  "galleryType": "الخطوط",
+  "galleryShape": "الأشكال والمسافات",
+  "galleryButtons": "الأزرار",
+  "galleryCards": "الكروت",
+  "gallerySelection": "الاختيار",
+  "galleryFeedback": "التنبيهات",
+  "galleryPeople": "الناس",
+  "galleryNav": "التنقّل",
+  "galleryDecrease": "قلّل",
+  "galleryIncrease": "زوّد",
+  "otpSub": "بعتناه على {phone}",
+  "@otpSub": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "otpResendIn": "تقدر تطلب كود جديد بعد {seconds} ثانية",
+  "@otpResendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "stepperValue": "{value} ج",
+  "@stepperValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "navMain": "القائمة الرئيسية",
+  "stepOf": "خطوة {current} من {total}",
+  "@stepOf": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
+}

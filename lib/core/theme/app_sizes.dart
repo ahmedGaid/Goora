@@ -1,0 +1,30 @@
+abstract final class AppSizes {
+  static const minTouch = 44.0;
+  static const primaryButtonHeight = 54.0;
+  static const ghostButtonHeight = 48.0;
+  static const dashedButtonHeight = 48.0;
+  static const stepperButton = 48.0;
+  static const iconTile = 44.0;
+  static const iconTileLarge = 64.0;
+  static const radio = 22.0;
+  static const radioRing = 7.0;
+  static const radioRingOff = 2.0;
+  static const radioCardBorder = 2.0;
+  static const hairline = 1.0;
+  static const progressHeight = 5.0;
+  static const progressDot = 14.0;
+  static const progressActive = 28.0;
+  static const timelineDot = 14.0;
+  static const navIcon = 22.0;
+  static const icon = 22.0;
+  static const iconSmall = 18.0;
+  static const iconTiny = 16.0;
+  static const avatarSizes = [40.0, 44.0, 48.0, 52.0];
+  static const logoMark = 52.0;
+  static const logoStroke = 7.0;
+  static const logoDot = 5.0;
+  static const contentMaxWidth = 310.0;
+  static const langPillHeight = 36.0;
+  static const radioIcon = 34.0;
+  static const backButton = 44.0;
+}
