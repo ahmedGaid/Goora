@@ -1,0 +1,2087 @@
+{
+ "limits": {
+  "pickup": 1000,
+  "detour": 10,
+  "time": 20,
+  "dest": 1500
+ },
+ "cases": [
+  {
+   "name": "rider on the corridor: best group, ranked alternatives, hard-limit exclusions",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": false,
+    "company": null,
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "g1",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "g2",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.075,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0472,
+       30.98
+      ]
+     ],
+     "going": "07:40",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "g3",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0463,
+       30.98
+      ]
+     ],
+     "going": "07:15",
+     "ret": "17:20",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "night",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "10:00",
+     "ret": "19:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "far_pickup",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.051,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "long_detour",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 12,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "far_dest",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.086,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "weekend",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "fri",
+      "sat"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "full",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 0,
+     "freeSeatsReturn": 0,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": "g1",
+    "mainScore": 79,
+    "mainReasons": [
+     "destination",
+     "departure",
+     "pickup",
+     "ret"
+    ],
+    "returnMatch": null,
+    "alternatives": [
+     [
+      "g2",
+      60
+     ],
+     [
+      "g3",
+      53
+     ]
+    ]
+   }
+  },
+  {
+   "name": "departure exactly 20 min passes; 21 min fails",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": false,
+    "company": null,
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "at20",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:50",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "at21",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:51",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": "at20",
+    "mainScore": 64,
+    "mainReasons": [
+     "destination",
+     "pickup",
+     "ret",
+     "days"
+    ],
+    "returnMatch": null,
+    "alternatives": []
+   }
+  },
+  {
+   "name": "going and return matched independently",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": false,
+    "company": null,
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "morning_only",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "19:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "evening_only",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "09:00",
+     "ret": "17:05",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": "morning_only",
+    "mainScore": 69,
+    "mainReasons": [
+     "destination",
+     "departure",
+     "pickup",
+     "days"
+    ],
+    "returnMatch": "evening_only",
+    "alternatives": []
+   }
+  },
+  {
+   "name": "one leg with no group means no match",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": false,
+    "company": null,
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "morning_only",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "19:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": null,
+    "mainScore": null,
+    "mainReasons": [],
+    "returnMatch": null,
+    "alternatives": []
+   }
+  },
+  {
+   "name": "women-only group excludes men",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": false,
+    "company": null,
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "women",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": true,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": null,
+    "mainScore": null,
+    "mainReasons": [],
+    "returnMatch": null,
+    "alternatives": []
+   }
+  },
+  {
+   "name": "women-only group accepts women",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": true,
+    "company": null,
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "women",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": true,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": "women",
+    "mainScore": 79,
+    "mainReasons": [
+     "destination",
+     "departure",
+     "pickup",
+     "ret"
+    ],
+    "returnMatch": null,
+    "alternatives": []
+   }
+  },
+  {
+   "name": "seeker women-only preference needs an all-women group",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": true,
+    "company": null,
+    "compound": null,
+    "womenOnly": true,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "mixed",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "allwomen",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "mona",
+       "firstName": "mona",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "hana",
+       "firstName": "hana",
+       "initials": "HA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": "allwomen",
+    "mainScore": 78,
+    "mainReasons": [
+     "destination",
+     "departure",
+     "pickup",
+     "ret"
+    ],
+    "returnMatch": null,
+    "alternatives": []
+   }
+  },
+  {
+   "name": "same company scores community points",
+   "seeker": {
+    "role": "rider",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going",
+     "ret"
+    ],
+    "isWoman": false,
+    "company": "acme",
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "acme",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": "acme",
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "other",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ahmed",
+       "firstName": "ahmed",
+       "initials": "AH",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.9,
+       "reliability": 97,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "mohamed",
+       "firstName": "mohamed",
+       "initials": "MO",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 96,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 5.0,
+       "reliability": 98,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": "acme",
+    "mainScore": 88,
+    "mainReasons": [
+     "destination",
+     "companyReturn",
+     "departure",
+     "pickup"
+    ],
+    "returnMatch": null,
+    "alternatives": [
+     [
+      "other",
+      79
+     ]
+    ]
+   }
+  },
+  {
+   "name": "driver going-only needs riders on the going leg",
+   "seeker": {
+    "role": "driver",
+    "home": [
+     30.04,
+     30.98
+    ],
+    "work": [
+     30.071,
+     31.017
+    ],
+    "departure": "07:30",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "legs": [
+     "going"
+    ],
+    "isWoman": false,
+    "company": null,
+    "compound": null,
+    "womenOnly": false,
+    "sameCompanyOnly": false,
+    "sameCompoundOnly": false
+   },
+   "groups": [
+    {
+     "id": "ret_riders",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ali",
+       "firstName": "ali",
+       "initials": "AL",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "ret"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    },
+    {
+     "id": "going_riders",
+     "origin": "sheikhZayed",
+     "destination": "smartVillage",
+     "destinationPoint": [
+      30.0719,
+      31.017
+     ],
+     "pickupPoints": [
+      [
+       30.0427,
+       30.98
+      ]
+     ],
+     "going": "07:25",
+     "ret": "17:00",
+     "days": [
+      "sun",
+      "mon",
+      "tue",
+      "wed",
+      "thu"
+     ],
+     "members": [
+      {
+       "id": "ali",
+       "firstName": "ali",
+       "initials": "AL",
+       "role": "driver",
+       "isWoman": false,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "going",
+        "ret"
+       ]
+      },
+      {
+       "id": "sara",
+       "firstName": "sara",
+       "initials": "SA",
+       "role": "rider",
+       "isWoman": true,
+       "company": null,
+       "compound": null,
+       "rating": 4.8,
+       "reliability": 95,
+       "legs": [
+        "going"
+       ]
+      }
+     ],
+     "price": 40,
+     "freeSeatsGoing": 2,
+     "freeSeatsReturn": 2,
+     "detourMinutes": 6,
+     "womenOnly": false,
+     "sameCompanyOnly": null,
+     "sameCompoundOnly": null
+    }
+   ],
+   "expect": {
+    "main": "going_riders",
+    "mainScore": 78,
+    "mainReasons": [
+     "destination",
+     "departure",
+     "pickup",
+     "ret"
+    ],
+    "returnMatch": null,
+    "alternatives": []
+   }
+  }
+ ]
+}

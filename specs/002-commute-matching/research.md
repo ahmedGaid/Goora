@@ -28,7 +28,8 @@ with same compound.
 - Needed legs: rider → both; driver → per "Which trips do you drive?".
 - Going leg passes with departure ≤ 20 min; return leg passes with return ≤ 20 min, each with the
   other constraints. Main group = best group passing every needed leg. If none passes all legs,
-  each leg takes its best passing group (main = going group). No leg passes → no match.
+  each leg takes its best passing group (main = going group). If any needed leg has no
+  passing group → no match (waitlist): a half-covered commute is not offered.
 
 ## R4 Pricing (§6.2 + founder decisions)
 
