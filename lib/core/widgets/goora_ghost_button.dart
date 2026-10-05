@@ -4,6 +4,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 
 class GooraGhostButton extends StatelessWidget {
@@ -31,7 +32,7 @@ class GooraGhostButton extends StatelessWidget {
           backgroundColor: AppColors.surface,
           foregroundColor: danger ? AppColors.dangerText : AppColors.primary,
           disabledForegroundColor: AppColors.textMuted,
-          textStyle: AppTypography.buttonSecondary,
+          textStyle: AppTypography.buttonSecondary.withLocaleFont(context),
           padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.cardPad),
           side: BorderSide(color: danger ? AppColors.dangerBorder : AppColors.borderStrong),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.button)),

@@ -10,6 +10,7 @@ import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../../core/widgets/goora_text_field.dart';
@@ -163,7 +164,7 @@ class _LinkButton extends StatelessWidget {
       onPressed: onPressed,
       style: TextButton.styleFrom(
         foregroundColor: AppColors.greenText,
-        textStyle: AppTypography.bodyStrong,
+        textStyle: AppTypography.bodyStrong.withLocaleFont(context),
         minimumSize: const Size(AppSizes.minTouch, AppSizes.minTouch),
       ),
       child: Text(label),

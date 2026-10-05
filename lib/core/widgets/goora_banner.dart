@@ -4,6 +4,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 
 enum GooraBannerKind { warning, info }
@@ -43,7 +44,8 @@ class GooraBanner extends StatelessWidget {
     return Semantics(
       container: true,
       liveRegion: true,
-      child: DecoratedBox(
+      child: Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(AppRadii.banner),
@@ -67,7 +69,7 @@ class GooraBanner extends StatelessWidget {
                     onPressed: onAction,
                     style: TextButton.styleFrom(
                       foregroundColor: titleColor,
-                      textStyle: AppTypography.bodyStrong,
+                      textStyle: AppTypography.bodyStrong.withLocaleFont(context),
                       minimumSize: const Size(AppSizes.minTouch, AppSizes.minTouch),
                       padding: EdgeInsetsDirectional.zero,
                     ),

@@ -26,7 +26,8 @@ class GooraPill extends StatelessWidget {
       selected: selected,
       button: true,
       child: Material(
-        color: selected ? AppColors.green : AppColors.surface,
+        // greenText, not green: white on green is 3.2:1 (founder decision 2026-10-05).
+        color: selected ? AppColors.greenText : AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: radius,
           side: selected ? BorderSide.none : const BorderSide(color: AppColors.borderStrong),

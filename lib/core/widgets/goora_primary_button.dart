@@ -4,6 +4,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
 import '../theme/app_sizes.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_theme.dart';
 import '../theme/app_typography.dart';
 import 'goora_icons.dart';
 
@@ -46,7 +47,7 @@ class GooraPrimaryButton extends StatelessWidget {
           foregroundColor: fg,
           disabledBackgroundColor: AppColors.disabled,
           disabledForegroundColor: AppColors.white,
-          textStyle: AppTypography.button,
+          textStyle: AppTypography.button.withLocaleFont(context),
           padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.heroPad),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadii.button),

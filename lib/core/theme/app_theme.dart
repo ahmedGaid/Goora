@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
+extension LocaleFont on TextStyle {
+  /// Button styles replace the theme text style wholesale, dropping the
+  /// locale font; this puts the current locale's family back.
+  TextStyle withLocaleFont(BuildContext context) =>
+      copyWith(fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily);
+}
+
 abstract final class AppTheme {
   static ThemeData light(Locale locale) {
     final family = AppTypography.familyFor(locale.languageCode);

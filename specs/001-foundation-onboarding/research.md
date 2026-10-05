@@ -85,6 +85,13 @@ Sizes not in §3 come from the prototype markup, which the brief names as the so
 Current step: 28 × 5 `green`; completed steps: 14 × 5 `green`; future: 14 × 5 `borderStrong`;
 gap 6.
 
+## R9b Contrast fixes (founder decision 2026-10-05)
+
+Selected pill fill `greenText` (white text 6.55:1, was `green` 3.21:1); inactive bottom-nav
+`textSecondary` (6.21:1, was `textMuted` 3.07:1). `test/unit/contrast_test.dart` computes WCAG
+ratios for every text/background token pair; Flutter's `textContrastGuideline` is not used because
+it samples rendered pixels and under-reads thin strokes of real fonts.
+
 ## R10 Enforcing "no hard-coded values"
 
 - **Decision**: `test/architecture/no_hardcoded_values_test.dart` scans `lib/features/**` and

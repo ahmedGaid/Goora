@@ -12,7 +12,8 @@ class GooraNavItem {
   final String label;
 }
 
-/// 4-tab bottom bar: white, 1 px top border, active greenText, inactive textMuted.
+/// 4-tab bottom bar: white, 1 px top border, active greenText, inactive
+/// textSecondary (textMuted is 3.1:1; founder decision 2026-10-05).
 class GooraBottomNav extends StatelessWidget {
   const GooraBottomNav({
     super.key,
@@ -63,7 +64,7 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? AppColors.greenText : AppColors.textMuted;
+    final color = active ? AppColors.greenText : AppColors.textSecondary;
     return Semantics(
       selected: active,
       button: true,

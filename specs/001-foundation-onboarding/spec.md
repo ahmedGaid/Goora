@@ -42,6 +42,10 @@ colors in feature code; touch targets at least 44 px."
   green; the current step is the wide bar; future steps are grey.
 - Q: §3.4 values missing from the token tables (radius 18 / 14, padding 18, font 13.5 / 13 / 14)? →
   A: Add them as named tokens.
+- Q: Two §3.4 colors fail the 4.5:1 contrast rule (selected pill white on green 3.21:1; inactive
+  tab textMuted on white 3.07:1). → A: Selected pill fill uses `greenText` (6.55:1); inactive tab
+  icon + label use `textSecondary` (6.21:1). Contrast is verified by computing WCAG ratios for
+  every token pair (pixel-sampling checks misread real fonts).
 
 ## User Scenarios & Testing *(mandatory)*
 
