@@ -103,7 +103,7 @@ void main() {
               Wrap(spacing: AppSpacing.sm, children: [
                 GooraPill(label: l.dirBoth, selected: true, onTap: () {}),
                 GooraPill(label: l.dirGoing, selected: false, onTap: () {}),
-                GooraChip(label: l.matchPct),
+                GooraChip(label: l.matchPercent(92)),
               ]),
               const SizedBox(height: AppSpacing.gap),
               GooraRadioCard(icon: GooraIcons.calendar, title: l.fRegular, chipLabel: l.fTag, subtitle: l.fRegRider, selected: true, onTap: () {}),

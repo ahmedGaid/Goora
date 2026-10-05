@@ -179,9 +179,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offerTitle => 'Offer a trip';
 
   @override
-  String get matchPct => '92% match';
-
-  @override
   String get backupTitle => 'Ahmed can\'t drive on Tuesday';
 
   @override
@@ -334,5 +331,272 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String stepOf(int current, int total) {
     return 'Step $current of $total';
+  }
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get work => 'Work / study';
+
+  @override
+  String get areaSheikhZayed => 'Sheikh Zayed';
+
+  @override
+  String get areaOctober => '6th of October';
+
+  @override
+  String get areaSmartVillage => 'Smart Village';
+
+  @override
+  String get pickHome => 'Where\'s home?';
+
+  @override
+  String get pickWork => 'Where\'s work?';
+
+  @override
+  String get choosePlace => 'Choose a place';
+
+  @override
+  String get whenTravel => 'When do you travel?';
+
+  @override
+  String get departure => 'Departure';
+
+  @override
+  String get returnT => 'Return';
+
+  @override
+  String get workingDays => 'Working days';
+
+  @override
+  String get daySun => 'Sun';
+
+  @override
+  String get dayMon => 'Mon';
+
+  @override
+  String get dayTue => 'Tue';
+
+  @override
+  String get dayWed => 'Wed';
+
+  @override
+  String get dayThu => 'Thu';
+
+  @override
+  String get dayFri => 'Fri';
+
+  @override
+  String get daySat => 'Sat';
+
+  @override
+  String get sunThu => 'Sun – Thu';
+
+  @override
+  String get seatsQ => 'Empty seats in your car';
+
+  @override
+  String get fewerSeats => 'One seat fewer';
+
+  @override
+  String get moreSeats => 'One more seat';
+
+  @override
+  String get whichTrips => 'Which trips do you drive?';
+
+  @override
+  String get otherTripNote =>
+      'Riders get the other trip from another driver in the group.';
+
+  @override
+  String get contribTitle => 'Your contribution per rider';
+
+  @override
+  String get lowerContribution => 'Lower contribution';
+
+  @override
+  String get raiseContribution => 'Raise contribution';
+
+  @override
+  String get suggestedPrice => 'Suggested price';
+
+  @override
+  String get contribNote =>
+      'Based on distance, fuel and tolls. Riders see it before joining, and it stays fixed for the month.';
+
+  @override
+  String get recoverDay => 'You recover per day';
+
+  @override
+  String get earlier => '5 minutes earlier';
+
+  @override
+  String get later => '5 minutes later';
+
+  @override
+  String get sameAreaHint => 'Choose a work place more than 1.5 km from home.';
+
+  @override
+  String get returnHint => 'Return must be after departure.';
+
+  @override
+  String get noDaysHint => 'Pick at least one day.';
+
+  @override
+  String get mapAria => 'Route map';
+
+  @override
+  String get foundSub => 'People going your way, at your time.';
+
+  @override
+  String get statDrivers => 'drivers';
+
+  @override
+  String get statRiders => 'riders';
+
+  @override
+  String get statFixed => 'fixed';
+
+  @override
+  String get egpTrip => 'EGP/trip';
+
+  @override
+  String get whyGroup => 'Why this group';
+
+  @override
+  String get otherMatches => 'Other matches';
+
+  @override
+  String get seeOthers => 'See other options';
+
+  @override
+  String get hideOthers => 'Hide other options';
+
+  @override
+  String get reasonSameDeparture => 'Same departure time';
+
+  @override
+  String get reasonCompanyReturn => 'Same company · similar return time';
+
+  @override
+  String get reasonCompany => 'Same company';
+
+  @override
+  String get reasonCompound => 'Same compound';
+
+  @override
+  String get reasonReturn => 'Similar return time';
+
+  @override
+  String get verifiedRider => 'Verified rider';
+
+  @override
+  String get verifiedRiderWoman => 'Verified rider (woman)';
+
+  @override
+  String egpAmount(int amount) {
+    return '$amount EGP';
+  }
+
+  @override
+  String aboveSuggested(int amount) {
+    return '$amount EGP above suggested';
+  }
+
+  @override
+  String belowSuggested(int amount) {
+    return '$amount EGP below suggested';
+  }
+
+  @override
+  String suggestedShort(int amount) {
+    return 'Suggested $amount';
+  }
+
+  @override
+  String timeAm(String time) {
+    return '$time AM';
+  }
+
+  @override
+  String timePm(String time) {
+    return '$time PM';
+  }
+
+  @override
+  String matchPercent(int percent) {
+    return '$percent% match';
+  }
+
+  @override
+  String membersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '1 member',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String perWeek(int count) {
+    return '$count/wk';
+  }
+
+  @override
+  String feeLine(int price) {
+    return '$price EGP to the driver · no per-trip fees';
+  }
+
+  @override
+  String reasonDestination(String area) {
+    return 'Same destination: $area';
+  }
+
+  @override
+  String reasonDeparture(int minutes) {
+    return '$minutes-minute departure difference';
+  }
+
+  @override
+  String reasonPickup(int meters) {
+    return 'Pickup $meters m from home';
+  }
+
+  @override
+  String reasonDays(int count) {
+    return '$count shared working days';
+  }
+
+  @override
+  String reasonRating(String rating) {
+    return 'Members rated $rating ★';
+  }
+
+  @override
+  String otherMeta(String time, int meters) {
+    return '$time · $meters m';
+  }
+
+  @override
+  String returnLeg(String time) {
+    return 'Return with the $time group';
+  }
+
+  @override
+  String noMatch(int position, String from, String to) {
+    return 'You\'re #$position on the $from → $to list — we\'ll notify you as soon as we have a match';
+  }
+
+  @override
+  String routeLine(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String timeDays(String time, String days) {
+    return '$time · $days';
   }
 }

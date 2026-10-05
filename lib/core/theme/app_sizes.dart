@@ -27,4 +27,6 @@ abstract final class AppSizes {
   static const langPillHeight = 36.0;
   static const radioIcon = 34.0;
   static const backButton = 44.0;
+  static const routeMapHeight = 140.0;
+  static const routeStroke = 4.0;
 }

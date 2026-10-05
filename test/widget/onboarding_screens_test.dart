@@ -8,7 +8,6 @@ import 'package:goora/core/widgets/goora_radio_card.dart';
 import 'package:goora/features/onboarding/data/fake_auth_repository.dart';
 import 'package:goora/features/onboarding/data/providers.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
-import 'package:goora/features/onboarding/domain/onboarding_flow.dart';
 import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/frequency_screen.dart';
@@ -178,18 +177,19 @@ void main() {
         });
       }
 
-      for (final d in Destination.values) {
-        testWidgets('placeholder ${d.name}', (tester) async {
-          await pumpScreen(tester, PlaceholderScreen(destination: d), locale: locale, session: _session());
+      for (final kind in PlaceholderKind.values) {
+        testWidgets('placeholder ${kind.name}', (tester) async {
+          await pumpScreen(tester, PlaceholderScreen(kind: kind), locale: locale, session: _session());
           _expectDirection(tester, locale);
           expect(find.text(l10n.comingSoonTitle), findsOneWidget);
-          final title = switch (d) {
-            Destination.commuteSetup => l10n.whereGo,
-            Destination.emptySeatsToday => l10n.emptySeatsTitle,
-            Destination.offerTrip => l10n.offerTitle,
+          final title = switch (kind) {
+            PlaceholderKind.emptySeats => l10n.emptySeatsTitle,
+            PlaceholderKind.offerTrip => l10n.offerTitle,
+            PlaceholderKind.postTrip => l10n.postReq,
+            PlaceholderKind.plan => l10n.planTitle,
+            PlaceholderKind.today => l10n.tabToday,
           };
-          expect(find.text(title), findsOneWidget);
-          expect(find.byType(GooraProgressDots), d == Destination.commuteSetup ? findsOneWidget : findsNothing);
+          expect(find.text(title), findsWidgets);
           await _expectAccessible(tester);
         });
       }
@@ -222,7 +222,7 @@ void main() {
           const ProfileScreen(),
           const RoleScreen(),
           const FrequencyScreen(),
-          const PlaceholderScreen(destination: Destination.commuteSetup),
+          const PlaceholderScreen(kind: PlaceholderKind.emptySeats),
           const SettingsScreen(),
         ]) {
           await pumpScreen(tester, screen, locale: locale, session: _session(role: Role.driver), textScale: 1.3);

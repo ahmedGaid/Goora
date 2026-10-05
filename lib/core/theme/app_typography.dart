@@ -10,6 +10,9 @@ abstract final class AppTypography {
   static String familyFor(String languageCode) =>
       languageCode == 'ar' ? arabicFamily : englishFamily;
 
+  /// Cairo has no arrows (← →) or ★; Plus Jakarta Sans fills them in, offline.
+  static List<String>? fallbackFor(String languageCode) => languageCode == 'ar' ? const [englishFamily] : null;
+
   static String otherFamilyFor(String languageCode) =>
       languageCode == 'ar' ? englishFamily : arabicFamily;
 
@@ -51,5 +54,6 @@ abstract final class AppTypography {
   static const cardTitle = TextStyle(fontSize: 17, fontWeight: FontWeight.w700, height: _heading);
   static const cardSub = TextStyle(fontSize: 13.5, fontWeight: FontWeight.w400, height: _body);
   static const langPill = TextStyle(fontSize: 13, fontWeight: FontWeight.w700, height: _heading);
+  static const stat = TextStyle(fontSize: 18, fontWeight: FontWeight.w800, height: _heading);
   static const avatarInitials = TextStyle(fontWeight: FontWeight.w700, height: 1);
 }

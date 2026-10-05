@@ -428,12 +428,6 @@ abstract class AppLocalizations {
   /// **'اعرض مشوار'**
   String get offerTitle;
 
-  /// No description provided for @matchPct.
-  ///
-  /// In ar, this message translates to:
-  /// **'توافق 92%'**
-  String get matchPct;
-
   /// No description provided for @backupTitle.
   ///
   /// In ar, this message translates to:
@@ -721,6 +715,444 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'خطوة {current} من {total}'**
   String stepOf(int current, int total);
+
+  /// No description provided for @home.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيت'**
+  String get home;
+
+  /// No description provided for @work.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشغل / الجامعة'**
+  String get work;
+
+  /// No description provided for @areaSheikhZayed.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشيخ زايد'**
+  String get areaSheikhZayed;
+
+  /// No description provided for @areaOctober.
+  ///
+  /// In ar, this message translates to:
+  /// **'6 أكتوبر'**
+  String get areaOctober;
+
+  /// No description provided for @areaSmartVillage.
+  ///
+  /// In ar, this message translates to:
+  /// **'القرية الذكية'**
+  String get areaSmartVillage;
+
+  /// No description provided for @pickHome.
+  ///
+  /// In ar, this message translates to:
+  /// **'البيت فين؟'**
+  String get pickHome;
+
+  /// No description provided for @pickWork.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشغل فين؟'**
+  String get pickWork;
+
+  /// No description provided for @choosePlace.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار المكان'**
+  String get choosePlace;
+
+  /// No description provided for @whenTravel.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتتحرك إمتى؟'**
+  String get whenTravel;
+
+  /// No description provided for @departure.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذهاب'**
+  String get departure;
+
+  /// No description provided for @returnT.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجوع'**
+  String get returnT;
+
+  /// No description provided for @workingDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيام الشغل'**
+  String get workingDays;
+
+  /// No description provided for @daySun.
+  ///
+  /// In ar, this message translates to:
+  /// **'حد'**
+  String get daySun;
+
+  /// No description provided for @dayMon.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتنين'**
+  String get dayMon;
+
+  /// No description provided for @dayTue.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلات'**
+  String get dayTue;
+
+  /// No description provided for @dayWed.
+  ///
+  /// In ar, this message translates to:
+  /// **'أربع'**
+  String get dayWed;
+
+  /// No description provided for @dayThu.
+  ///
+  /// In ar, this message translates to:
+  /// **'خميس'**
+  String get dayThu;
+
+  /// No description provided for @dayFri.
+  ///
+  /// In ar, this message translates to:
+  /// **'جمعة'**
+  String get dayFri;
+
+  /// No description provided for @daySat.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبت'**
+  String get daySat;
+
+  /// No description provided for @sunThu.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحد – الخميس'**
+  String get sunThu;
+
+  /// No description provided for @seatsQ.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكراسي الفاضية في عربيتك'**
+  String get seatsQ;
+
+  /// No description provided for @fewerSeats.
+  ///
+  /// In ar, this message translates to:
+  /// **'كرسي أقل'**
+  String get fewerSeats;
+
+  /// No description provided for @moreSeats.
+  ///
+  /// In ar, this message translates to:
+  /// **'كرسي زيادة'**
+  String get moreSeats;
+
+  /// No description provided for @whichTrips.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتسوق في أنهي مشوار؟'**
+  String get whichTrips;
+
+  /// No description provided for @otherTripNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الركاب بياخدوا المشوار التاني مع سواق تاني في المجموعة.'**
+  String get otherTripNote;
+
+  /// No description provided for @contribTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساهمة كل راكب'**
+  String get contribTitle;
+
+  /// No description provided for @lowerContribution.
+  ///
+  /// In ar, this message translates to:
+  /// **'قلّل المساهمة'**
+  String get lowerContribution;
+
+  /// No description provided for @raiseContribution.
+  ///
+  /// In ar, this message translates to:
+  /// **'زوّد المساهمة'**
+  String get raiseContribution;
+
+  /// No description provided for @suggestedPrice.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر المقترح'**
+  String get suggestedPrice;
+
+  /// No description provided for @contribNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'محسوبة على المسافة والبنزين والكارتة. الراكب بيشوفها قبل ما ينضم، وبتفضل ثابتة طول الشهر.'**
+  String get contribNote;
+
+  /// No description provided for @recoverDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتسترد في اليوم'**
+  String get recoverDay;
+
+  /// No description provided for @earlier.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبدري 5 دقايق'**
+  String get earlier;
+
+  /// No description provided for @later.
+  ///
+  /// In ar, this message translates to:
+  /// **'أتأخر 5 دقايق'**
+  String get later;
+
+  /// No description provided for @sameAreaHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار مكان شغل أبعد من 1.5 كم عن البيت.'**
+  String get sameAreaHint;
+
+  /// No description provided for @returnHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ميعاد الرجوع لازم يكون بعد الذهاب.'**
+  String get returnHint;
+
+  /// No description provided for @noDaysHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار يوم واحد على الأقل.'**
+  String get noDaysHint;
+
+  /// No description provided for @mapAria.
+  ///
+  /// In ar, this message translates to:
+  /// **'خريطة المشوار'**
+  String get mapAria;
+
+  /// No description provided for @foundSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناس رايحة نفس سكتك، في نفس ميعادك.'**
+  String get foundSub;
+
+  /// No description provided for @statDrivers.
+  ///
+  /// In ar, this message translates to:
+  /// **'سواقين'**
+  String get statDrivers;
+
+  /// No description provided for @statRiders.
+  ///
+  /// In ar, this message translates to:
+  /// **'ركاب'**
+  String get statRiders;
+
+  /// No description provided for @statFixed.
+  ///
+  /// In ar, this message translates to:
+  /// **'ثابت'**
+  String get statFixed;
+
+  /// No description provided for @egpTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'ج/مشوار'**
+  String get egpTrip;
+
+  /// No description provided for @whyGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'ليه المجموعة دي'**
+  String get whyGroup;
+
+  /// No description provided for @otherMatches.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترشيحات تانية'**
+  String get otherMatches;
+
+  /// No description provided for @seeOthers.
+  ///
+  /// In ar, this message translates to:
+  /// **'شوف اختيارات تانية'**
+  String get seeOthers;
+
+  /// No description provided for @hideOthers.
+  ///
+  /// In ar, this message translates to:
+  /// **'اخفي الاختيارات التانية'**
+  String get hideOthers;
+
+  /// No description provided for @reasonSameDeparture.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس ميعاد الخروج'**
+  String get reasonSameDeparture;
+
+  /// No description provided for @reasonCompanyReturn.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس الشركة · ميعاد رجوع قريب'**
+  String get reasonCompanyReturn;
+
+  /// No description provided for @reasonCompany.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس الشركة'**
+  String get reasonCompany;
+
+  /// No description provided for @reasonCompound.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس الكمبوند'**
+  String get reasonCompound;
+
+  /// No description provided for @reasonReturn.
+  ///
+  /// In ar, this message translates to:
+  /// **'ميعاد رجوع قريب'**
+  String get reasonReturn;
+
+  /// No description provided for @verifiedRider.
+  ///
+  /// In ar, this message translates to:
+  /// **'راكب موثّق'**
+  String get verifiedRider;
+
+  /// No description provided for @verifiedRiderWoman.
+  ///
+  /// In ar, this message translates to:
+  /// **'راكبة موثّقة'**
+  String get verifiedRiderWoman;
+
+  /// No description provided for @egpAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} ج'**
+  String egpAmount(int amount);
+
+  /// No description provided for @aboveSuggested.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} ج أعلى من المقترح'**
+  String aboveSuggested(int amount);
+
+  /// No description provided for @belowSuggested.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} ج أقل من المقترح'**
+  String belowSuggested(int amount);
+
+  /// No description provided for @suggestedShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'المقترح {amount}'**
+  String suggestedShort(int amount);
+
+  /// No description provided for @timeAm.
+  ///
+  /// In ar, this message translates to:
+  /// **'{time} ص'**
+  String timeAm(String time);
+
+  /// No description provided for @timePm.
+  ///
+  /// In ar, this message translates to:
+  /// **'{time} م'**
+  String timePm(String time);
+
+  /// No description provided for @matchPercent.
+  ///
+  /// In ar, this message translates to:
+  /// **'توافق {percent}%'**
+  String matchPercent(int percent);
+
+  /// No description provided for @membersCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{عضو واحد} =2{عضوين} few{{count} أعضاء} other{{count} عضو}}'**
+  String membersCount(int count);
+
+  /// No description provided for @perWeek.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count}/أسبوع'**
+  String perWeek(int count);
+
+  /// No description provided for @feeLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج للسواق · من غير رسوم على المشوار'**
+  String feeLine(int price);
+
+  /// No description provided for @reasonDestination.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس المكان: {area}'**
+  String reasonDestination(String area);
+
+  /// No description provided for @reasonDeparture.
+  ///
+  /// In ar, this message translates to:
+  /// **'فرق {minutes} دقايق في ميعاد الخروج'**
+  String reasonDeparture(int minutes);
+
+  /// No description provided for @reasonPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'نقطة التجمع على بعد {meters} متر'**
+  String reasonPickup(int meters);
+
+  /// No description provided for @reasonDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} أيام شغل مشتركة'**
+  String reasonDays(int count);
+
+  /// No description provided for @reasonRating.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأعضاء متقيّمين {rating} ★'**
+  String reasonRating(String rating);
+
+  /// No description provided for @otherMeta.
+  ///
+  /// In ar, this message translates to:
+  /// **'{time} · {meters} م'**
+  String otherMeta(String time, int meters);
+
+  /// No description provided for @returnLeg.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجوع مع مجموعة {time}'**
+  String returnLeg(String time);
+
+  /// No description provided for @noMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت رقم {position} على قايمة {from} ← {to} — هنبلّغك أول ما نلاقيلك مجموعة'**
+  String noMatch(int position, String from, String to);
+
+  /// No description provided for @routeLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{from} ← {to}'**
+  String routeLine(String from, String to);
+
+  /// No description provided for @timeDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'{time} · {days}'**
+  String timeDays(String time, String days);
 }
 
 class _AppLocalizationsDelegate

@@ -9,27 +9,38 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_ghost_button.dart';
 import '../../../core/widgets/goora_icons.dart';
-import '../../onboarding/domain/onboarding_flow.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 
-/// Stand-in for screens built in later features (002, 005).
-class PlaceholderScreen extends StatelessWidget {
-  const PlaceholderScreen({super.key, required this.destination});
+/// Screens owned by later features.
+enum PlaceholderKind {
+  emptySeats(Routes.frequency), // 005-A
+  offerTrip(Routes.frequency), // 005-C
+  postTrip(Routes.noMatch), // 005-B
+  plan(Routes.match), // 004
+  today(Routes.match); // 003
 
-  final Destination destination;
+  const PlaceholderKind(this.backRoute);
+  final String backRoute;
+}
+
+class PlaceholderScreen extends StatelessWidget {
+  const PlaceholderScreen({super.key, required this.kind});
+
+  final PlaceholderKind kind;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final title = switch (destination) {
-      Destination.commuteSetup => l10n.whereGo,
-      Destination.emptySeatsToday => l10n.emptySeatsTitle,
-      Destination.offerTrip => l10n.offerTitle,
+    final title = switch (kind) {
+      PlaceholderKind.emptySeats => l10n.emptySeatsTitle,
+      PlaceholderKind.offerTrip => l10n.offerTitle,
+      PlaceholderKind.postTrip => l10n.postReq,
+      PlaceholderKind.plan => l10n.planTitle,
+      PlaceholderKind.today => l10n.tabToday,
     };
     return OnboardingScaffold(
       title: title,
-      progressIndex: OnboardingFlow.progressIndex(destination: destination),
-      onBack: () => context.go(Routes.frequency),
+      onBack: () => context.go(kind.backRoute),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

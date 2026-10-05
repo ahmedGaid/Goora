@@ -6,8 +6,10 @@ import 'app_typography.dart';
 extension LocaleFont on TextStyle {
   /// Button styles replace the theme text style wholesale, dropping the
   /// locale font; this puts the current locale's family back.
-  TextStyle withLocaleFont(BuildContext context) =>
-      copyWith(fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily);
+  TextStyle withLocaleFont(BuildContext context) {
+    final body = Theme.of(context).textTheme.bodyMedium;
+    return copyWith(fontFamily: body?.fontFamily, fontFamilyFallback: body?.fontFamilyFallback);
+  }
 }
 
 abstract final class AppTheme {
@@ -28,6 +30,7 @@ abstract final class AppTheme {
     return base.copyWith(
       textTheme: base.textTheme.apply(
         fontFamily: family,
+        fontFamilyFallback: AppTypography.fallbackFor(locale.languageCode),
         bodyColor: AppColors.textPrimary,
         displayColor: AppColors.textPrimary,
       ),

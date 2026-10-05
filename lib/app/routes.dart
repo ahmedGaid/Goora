@@ -10,6 +10,11 @@ abstract final class Routes {
   static const commuteSetup = '/commute-setup';
   static const emptySeats = '/empty-seats';
   static const offerTrip = '/offer-trip';
+  static const match = '/match';
+  static const noMatch = '/no-match';
+  static const postTrip = '/post-trip';
+  static const plan = '/plan';
+  static const today = '/today';
   static const settings = '/settings';
   static const gallery = '/debug/gallery';
 

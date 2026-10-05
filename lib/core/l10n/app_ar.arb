@@ -55,7 +55,6 @@
   "toRider": "حوّل لوضع الراكب",
   "emptySeatsTitle": "كراسي فاضية النهارده",
   "offerTitle": "اعرض مشوار",
-  "matchPct": "توافق 92%",
   "backupTitle": "أحمد مش هيقدر يسوق يوم التلات",
   "backupBody": "محمد هيسوق بداله. مشوارك متغطّي، ومش محتاج تعمل حاجة.",
   "gotIt": "تمام",
@@ -132,6 +131,234 @@
       },
       "total": {
         "type": "int"
+      }
+    }
+  },
+  "home": "البيت",
+  "work": "الشغل / الجامعة",
+  "areaSheikhZayed": "الشيخ زايد",
+  "areaOctober": "6 أكتوبر",
+  "areaSmartVillage": "القرية الذكية",
+  "pickHome": "البيت فين؟",
+  "pickWork": "الشغل فين؟",
+  "choosePlace": "اختار المكان",
+  "whenTravel": "بتتحرك إمتى؟",
+  "departure": "الذهاب",
+  "returnT": "الرجوع",
+  "workingDays": "أيام الشغل",
+  "daySun": "حد",
+  "dayMon": "اتنين",
+  "dayTue": "تلات",
+  "dayWed": "أربع",
+  "dayThu": "خميس",
+  "dayFri": "جمعة",
+  "daySat": "سبت",
+  "sunThu": "الحد – الخميس",
+  "seatsQ": "الكراسي الفاضية في عربيتك",
+  "fewerSeats": "كرسي أقل",
+  "moreSeats": "كرسي زيادة",
+  "whichTrips": "هتسوق في أنهي مشوار؟",
+  "otherTripNote": "الركاب بياخدوا المشوار التاني مع سواق تاني في المجموعة.",
+  "contribTitle": "مساهمة كل راكب",
+  "lowerContribution": "قلّل المساهمة",
+  "raiseContribution": "زوّد المساهمة",
+  "suggestedPrice": "السعر المقترح",
+  "contribNote": "محسوبة على المسافة والبنزين والكارتة. الراكب بيشوفها قبل ما ينضم، وبتفضل ثابتة طول الشهر.",
+  "recoverDay": "بتسترد في اليوم",
+  "earlier": "أبدري 5 دقايق",
+  "later": "أتأخر 5 دقايق",
+  "sameAreaHint": "اختار مكان شغل أبعد من 1.5 كم عن البيت.",
+  "returnHint": "ميعاد الرجوع لازم يكون بعد الذهاب.",
+  "noDaysHint": "اختار يوم واحد على الأقل.",
+  "mapAria": "خريطة المشوار",
+  "foundSub": "ناس رايحة نفس سكتك، في نفس ميعادك.",
+  "statDrivers": "سواقين",
+  "statRiders": "ركاب",
+  "statFixed": "ثابت",
+  "egpTrip": "ج/مشوار",
+  "whyGroup": "ليه المجموعة دي",
+  "otherMatches": "ترشيحات تانية",
+  "seeOthers": "شوف اختيارات تانية",
+  "hideOthers": "اخفي الاختيارات التانية",
+  "reasonSameDeparture": "نفس ميعاد الخروج",
+  "reasonCompanyReturn": "نفس الشركة · ميعاد رجوع قريب",
+  "reasonCompany": "نفس الشركة",
+  "reasonCompound": "نفس الكمبوند",
+  "reasonReturn": "ميعاد رجوع قريب",
+  "verifiedRider": "راكب موثّق",
+  "verifiedRiderWoman": "راكبة موثّقة",
+  "egpAmount": "{amount} ج",
+  "@egpAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "aboveSuggested": "{amount} ج أعلى من المقترح",
+  "@aboveSuggested": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "belowSuggested": "{amount} ج أقل من المقترح",
+  "@belowSuggested": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "suggestedShort": "المقترح {amount}",
+  "@suggestedShort": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAm": "{time} ص",
+  "@timeAm": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "timePm": "{time} م",
+  "@timePm": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "matchPercent": "توافق {percent}%",
+  "@matchPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "membersCount": "{count, plural, =1{عضو واحد} =2{عضوين} few{{count} أعضاء} other{{count} عضو}}",
+  "@membersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perWeek": "{count}/أسبوع",
+  "@perWeek": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "feeLine": "{price} ج للسواق · من غير رسوم على المشوار",
+  "@feeLine": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonDestination": "نفس المكان: {area}",
+  "@reasonDestination": {
+    "placeholders": {
+      "area": {
+        "type": "String"
+      }
+    }
+  },
+  "reasonDeparture": "فرق {minutes} دقايق في ميعاد الخروج",
+  "@reasonDeparture": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonPickup": "نقطة التجمع على بعد {meters} متر",
+  "@reasonPickup": {
+    "placeholders": {
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonDays": "{count} أيام شغل مشتركة",
+  "@reasonDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reasonRating": "الأعضاء متقيّمين {rating} ★",
+  "@reasonRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "otherMeta": "{time} · {meters} م",
+  "@otherMeta": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "meters": {
+        "type": "int"
+      }
+    }
+  },
+  "returnLeg": "الرجوع مع مجموعة {time}",
+  "@returnLeg": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "noMatch": "إنت رقم {position} على قايمة {from} ← {to} — هنبلّغك أول ما نلاقيلك مجموعة",
+  "@noMatch": {
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "routeLine": "{from} ← {to}",
+  "@routeLine": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "timeDays": "{time} · {days}",
+  "@timeDays": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "days": {
+        "type": "String"
       }
     }
   }

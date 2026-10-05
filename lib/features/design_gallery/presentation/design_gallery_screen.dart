@@ -19,6 +19,7 @@ import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../../core/widgets/goora_progress_dots.dart';
 import '../../../core/widgets/goora_radio_card.dart';
+import '../../../core/widgets/goora_route_map.dart';
 import '../../../core/widgets/goora_stepper.dart';
 import '../../../core/widgets/goora_timeline_row.dart';
 
@@ -245,7 +246,7 @@ class _DesignGalleryScreenState extends State<DesignGalleryScreen> {
           const SizedBox(height: AppSpacing.gap),
           Wrap(
             spacing: AppSpacing.sm,
-            children: [GooraChip(label: l10n.matchPct), GooraChip(label: l10n.verifiedMember, icon: GooraIcons.check)],
+            children: [GooraChip(label: l10n.matchPercent(92)), GooraChip(label: l10n.verifiedMember, icon: GooraIcons.check)],
           ),
           const SizedBox(height: AppSpacing.gap),
           GooraRadioCard(
@@ -312,6 +313,12 @@ class _DesignGalleryScreenState extends State<DesignGalleryScreen> {
           GooraTimelineRow(kind: GooraTimelineKind.transit, title: l10n.covered),
           const SizedBox(height: AppSpacing.sm),
           GooraTimelineRow(kind: GooraTimelineKind.arrival, title: l10n.confirmed),
+          const SizedBox(height: AppSpacing.gap),
+          GooraRouteMap(
+            fromLabel: l10n.areaSheikhZayed,
+            toLabel: l10n.areaSmartVillage,
+            semanticLabel: l10n.mapAria,
+          ),
           _Section(l10n.galleryNav),
           Text(l10n.navMain, style: tokenStyle),
         ],

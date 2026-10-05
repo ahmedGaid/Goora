@@ -1,5 +1,6 @@
 # Independent reference implementation of brief §6.3 + founder decisions.
-import json, math
+# Regenerate: python test/fixtures/gen_matching_vectors.py
+import json, math, os
 R=6371000.0
 def dist(a,b):
     la1,lo1,la2,lo2=map(math.radians,(a[0],a[1],b[0],b[1]))
@@ -85,5 +86,5 @@ case('same company scores community points', seeker(company='acme'), [
 case('driver going-only needs riders on the going leg', seeker(role='driver',legs=['going']), [
   grp('ret_riders',members=[mem('ali','driver'),mem('sara','rider',True,legs=('ret',))]),
   grp('going_riders',members=[mem('ali','driver'),mem('sara','rider',True,legs=('going',))])])
-json.dump(dict(limits=L,cases=cases),open(r'C:/AhmedGaid/Goora/test/fixtures/matching_vectors.json','w',newline='\n'),indent=1)
+json.dump(dict(limits=L,cases=cases),open(os.path.join(os.path.dirname(os.path.abspath(__file__)),'matching_vectors.json'),'w',newline='\n'),indent=1)
 for c in cases: print(c['name'][:55].ljust(56), c['expect'])

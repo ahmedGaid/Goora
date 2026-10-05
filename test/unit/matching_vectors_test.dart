@@ -15,7 +15,7 @@ void main() {
   final fixture = jsonDecode(File('test/fixtures/matching_vectors.json').readAsStringSync()) as Map<String, dynamic>;
 
   for (final c in (fixture['cases'] as List).cast<Map<String, dynamic>>()) {
-    test(c['name'], () {
+    test(c['name'] as String, () {
       final result = MatchingService.match(
         seekerFromJson(c['seeker'] as Map<String, dynamic>),
         [for (final g in (c['groups'] as List).cast<Map<String, dynamic>>()) groupFromJson(g)],

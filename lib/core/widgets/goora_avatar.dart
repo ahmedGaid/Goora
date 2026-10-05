@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
+import 'goora_icons.dart';
 
 enum GooraAvatarSize {
   s40(40),
@@ -24,7 +25,25 @@ class GooraAvatar extends StatelessWidget {
     this.paletteIndex = 0,
     this.highlight = false,
     this.ring = false,
-  });
+  }) : anonymous = false,
+       semanticLabel = null;
+
+  /// No name or photo: used for riders shown to drivers (constitution IV).
+  const GooraAvatar.anonymous({
+    super.key,
+    required String this.semanticLabel,
+    this.size = GooraAvatarSize.s44,
+    this.ring = false,
+  })  : initials = '',
+        image = null,
+        paletteIndex = 0,
+        highlight = false,
+        anonymous = true;
+
+  final bool anonymous;
+
+  /// Spoken label for the anonymous avatar ("Verified rider").
+  final String? semanticLabel;
 
   final String initials;
   final GooraAvatarSize size;
@@ -39,11 +58,13 @@ class GooraAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = highlight
+    final bg = anonymous
+        ? AppColors.textSecondary
+        : highlight
         ? AppColors.primary
         : AppColors.avatarPalette[paletteIndex % AppColors.avatarPalette.length];
     final d = size.value;
-    return Container(
+    final avatar = Container(
       width: d,
       height: d,
       decoration: BoxDecoration(
@@ -53,13 +74,18 @@ class GooraAvatar extends StatelessWidget {
         image: image == null ? null : DecorationImage(image: image!, fit: BoxFit.cover),
       ),
       alignment: AlignmentDirectional.center,
-      child: image != null
+      child: anonymous
+          ? Icon(GooraIcons.person, size: d * 0.5, color: AppColors.white)
+          : image != null
           ? null
           : Text(
               initials,
               style: AppTypography.avatarInitials.copyWith(color: AppColors.white, fontSize: d * 0.36),
             ),
     );
+    return semanticLabel == null
+        ? avatar
+        : Semantics(label: semanticLabel, excludeSemantics: true, child: avatar);
   }
 }
 

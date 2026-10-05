@@ -30,6 +30,19 @@ flutter test --update-goldens test/golden     # only after an intended visual ch
 
 Goldens are rendered on Windows; other platforms may need regenerating.
 
+## Server (Supabase, not deployed yet)
+
+`supabase/` holds the schema (`migrations/`, PostGIS + row-level security) and the `match` Edge
+Function. The matching rules exist twice on purpose — `lib/features/commute/domain/matching_service.dart`
+(app) and `supabase/functions/_shared/matching.ts` (server) — and both must pass the same vectors:
+
+```bash
+node --test "supabase/functions/_shared/*.test.ts"   # Node 24+, no install needed
+python test/fixtures/gen_matching_vectors.py         # only when the rules change
+```
+
+Deploying needs the founder's Supabase project keys (in `.env`, never committed).
+
 ## Code generation
 
 Riverpod providers and l10n are generated and committed. After changing a `@riverpod` provider or

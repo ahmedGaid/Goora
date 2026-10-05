@@ -36,6 +36,10 @@ void main() {
     ('dangerText / surface', AppColors.dangerText, AppColors.surface),
     ('dangerText / background', AppColors.dangerText, AppColors.background),
     ('white / danger (SOS)', AppColors.white, AppColors.danger),
+    ('primary / mintSurface (recovery line)', AppColors.primary, AppColors.mintSurface),
+    ('textBody / mapLand (map labels)', AppColors.textBody, AppColors.mapLand),
+    ('textBody / background (fee line)', AppColors.textBody, AppColors.background),
+    ('white / textSecondary (anonymous avatar)', AppColors.white, AppColors.textSecondary),
   ];
 
   for (final (name, fg, bg) in pairs) {

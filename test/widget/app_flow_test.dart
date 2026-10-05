@@ -118,7 +118,7 @@ void main() {
   });
 
   testWidgets('settings from a placeholder: switching role changes frequency sublines', (tester) async {
-    await pumpGooraApp(tester, prefs: _signedIn(role: Role.rider, frequency: Frequency.everyDay));
+    await pumpGooraApp(tester, prefs: _signedIn(role: Role.rider, frequency: Frequency.once));
     await tester.tap(find.byKey(const Key('open-settings')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('switch-role')));

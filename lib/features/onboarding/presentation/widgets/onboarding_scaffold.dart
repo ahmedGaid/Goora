@@ -21,6 +21,7 @@ class OnboardingScaffold extends StatelessWidget {
     this.onBack,
     this.progressIndex,
     this.bottom,
+    this.header,
   });
 
   final String title;
@@ -29,6 +30,9 @@ class OnboardingScaffold extends StatelessWidget {
   final VoidCallback? onBack;
   final int? progressIndex;
   final Widget? bottom;
+
+  /// Shown above the title (e.g. a match chip).
+  final Widget? header;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +87,10 @@ class OnboardingScaffold extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        if (header != null) ...[
+                          Align(alignment: AlignmentDirectional.centerStart, child: header),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
                         Text(title, style: AppTypography.h1.copyWith(color: AppColors.textPrimary)),
                         if (subtitle != null) ...[
                           const SizedBox(height: AppSpacing.sm),

@@ -47,7 +47,7 @@ abstract final class PricingService {
   /// share of the whole trip cost (riders' total ≤ trip cost).
   static PriceRange range(int tripCost, int riders) {
     final s = suggested(tripCost, riders);
-    final unit = 100 * step;
+    const unit = 100 * step;
     final min = ((s * (100 - rangePercent) + unit - 1) ~/ unit) * step;
     final upper = (s * (100 + rangePercent) ~/ unit) * step;
     final cap = (tripCost ~/ (riders * step)) * step;

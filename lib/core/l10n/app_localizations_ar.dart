@@ -175,9 +175,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get offerTitle => 'اعرض مشوار';
 
   @override
-  String get matchPct => 'توافق 92%';
-
-  @override
   String get backupTitle => 'أحمد مش هيقدر يسوق يوم التلات';
 
   @override
@@ -329,5 +326,274 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String stepOf(int current, int total) {
     return 'خطوة $current من $total';
+  }
+
+  @override
+  String get home => 'البيت';
+
+  @override
+  String get work => 'الشغل / الجامعة';
+
+  @override
+  String get areaSheikhZayed => 'الشيخ زايد';
+
+  @override
+  String get areaOctober => '6 أكتوبر';
+
+  @override
+  String get areaSmartVillage => 'القرية الذكية';
+
+  @override
+  String get pickHome => 'البيت فين؟';
+
+  @override
+  String get pickWork => 'الشغل فين؟';
+
+  @override
+  String get choosePlace => 'اختار المكان';
+
+  @override
+  String get whenTravel => 'بتتحرك إمتى؟';
+
+  @override
+  String get departure => 'الذهاب';
+
+  @override
+  String get returnT => 'الرجوع';
+
+  @override
+  String get workingDays => 'أيام الشغل';
+
+  @override
+  String get daySun => 'حد';
+
+  @override
+  String get dayMon => 'اتنين';
+
+  @override
+  String get dayTue => 'تلات';
+
+  @override
+  String get dayWed => 'أربع';
+
+  @override
+  String get dayThu => 'خميس';
+
+  @override
+  String get dayFri => 'جمعة';
+
+  @override
+  String get daySat => 'سبت';
+
+  @override
+  String get sunThu => 'الحد – الخميس';
+
+  @override
+  String get seatsQ => 'الكراسي الفاضية في عربيتك';
+
+  @override
+  String get fewerSeats => 'كرسي أقل';
+
+  @override
+  String get moreSeats => 'كرسي زيادة';
+
+  @override
+  String get whichTrips => 'هتسوق في أنهي مشوار؟';
+
+  @override
+  String get otherTripNote =>
+      'الركاب بياخدوا المشوار التاني مع سواق تاني في المجموعة.';
+
+  @override
+  String get contribTitle => 'مساهمة كل راكب';
+
+  @override
+  String get lowerContribution => 'قلّل المساهمة';
+
+  @override
+  String get raiseContribution => 'زوّد المساهمة';
+
+  @override
+  String get suggestedPrice => 'السعر المقترح';
+
+  @override
+  String get contribNote =>
+      'محسوبة على المسافة والبنزين والكارتة. الراكب بيشوفها قبل ما ينضم، وبتفضل ثابتة طول الشهر.';
+
+  @override
+  String get recoverDay => 'بتسترد في اليوم';
+
+  @override
+  String get earlier => 'أبدري 5 دقايق';
+
+  @override
+  String get later => 'أتأخر 5 دقايق';
+
+  @override
+  String get sameAreaHint => 'اختار مكان شغل أبعد من 1.5 كم عن البيت.';
+
+  @override
+  String get returnHint => 'ميعاد الرجوع لازم يكون بعد الذهاب.';
+
+  @override
+  String get noDaysHint => 'اختار يوم واحد على الأقل.';
+
+  @override
+  String get mapAria => 'خريطة المشوار';
+
+  @override
+  String get foundSub => 'ناس رايحة نفس سكتك، في نفس ميعادك.';
+
+  @override
+  String get statDrivers => 'سواقين';
+
+  @override
+  String get statRiders => 'ركاب';
+
+  @override
+  String get statFixed => 'ثابت';
+
+  @override
+  String get egpTrip => 'ج/مشوار';
+
+  @override
+  String get whyGroup => 'ليه المجموعة دي';
+
+  @override
+  String get otherMatches => 'ترشيحات تانية';
+
+  @override
+  String get seeOthers => 'شوف اختيارات تانية';
+
+  @override
+  String get hideOthers => 'اخفي الاختيارات التانية';
+
+  @override
+  String get reasonSameDeparture => 'نفس ميعاد الخروج';
+
+  @override
+  String get reasonCompanyReturn => 'نفس الشركة · ميعاد رجوع قريب';
+
+  @override
+  String get reasonCompany => 'نفس الشركة';
+
+  @override
+  String get reasonCompound => 'نفس الكمبوند';
+
+  @override
+  String get reasonReturn => 'ميعاد رجوع قريب';
+
+  @override
+  String get verifiedRider => 'راكب موثّق';
+
+  @override
+  String get verifiedRiderWoman => 'راكبة موثّقة';
+
+  @override
+  String egpAmount(int amount) {
+    return '$amount ج';
+  }
+
+  @override
+  String aboveSuggested(int amount) {
+    return '$amount ج أعلى من المقترح';
+  }
+
+  @override
+  String belowSuggested(int amount) {
+    return '$amount ج أقل من المقترح';
+  }
+
+  @override
+  String suggestedShort(int amount) {
+    return 'المقترح $amount';
+  }
+
+  @override
+  String timeAm(String time) {
+    return '$time ص';
+  }
+
+  @override
+  String timePm(String time) {
+    return '$time م';
+  }
+
+  @override
+  String matchPercent(int percent) {
+    return 'توافق $percent%';
+  }
+
+  @override
+  String membersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عضو',
+      few: '$count أعضاء',
+      two: 'عضوين',
+      one: 'عضو واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String perWeek(int count) {
+    return '$count/أسبوع';
+  }
+
+  @override
+  String feeLine(int price) {
+    return '$price ج للسواق · من غير رسوم على المشوار';
+  }
+
+  @override
+  String reasonDestination(String area) {
+    return 'نفس المكان: $area';
+  }
+
+  @override
+  String reasonDeparture(int minutes) {
+    return 'فرق $minutes دقايق في ميعاد الخروج';
+  }
+
+  @override
+  String reasonPickup(int meters) {
+    return 'نقطة التجمع على بعد $meters متر';
+  }
+
+  @override
+  String reasonDays(int count) {
+    return '$count أيام شغل مشتركة';
+  }
+
+  @override
+  String reasonRating(String rating) {
+    return 'الأعضاء متقيّمين $rating ★';
+  }
+
+  @override
+  String otherMeta(String time, int meters) {
+    return '$time · $meters م';
+  }
+
+  @override
+  String returnLeg(String time) {
+    return 'الرجوع مع مجموعة $time';
+  }
+
+  @override
+  String noMatch(int position, String from, String to) {
+    return 'إنت رقم $position على قايمة $from ← $to — هنبلّغك أول ما نلاقيلك مجموعة';
+  }
+
+  @override
+  String routeLine(String from, String to) {
+    return '$from ← $to';
+  }
+
+  @override
+  String timeDays(String time, String days) {
+    return '$time · $days';
   }
 }
