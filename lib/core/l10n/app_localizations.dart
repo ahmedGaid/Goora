@@ -2181,12 +2181,6 @@ abstract class AppLocalizations {
   /// **'امسح بيانات التجربة'**
   String get demoReset;
 
-  /// No description provided for @demoResetDone.
-  ///
-  /// In ar, this message translates to:
-  /// **'تم مسح بيانات التجربة.'**
-  String get demoResetDone;
-
   /// No description provided for @noRidesSoon.
   ///
   /// In ar, this message translates to:

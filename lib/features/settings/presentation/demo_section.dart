@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/routes.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/storage/preferences.dart';
 import '../../../core/theme/app_colors.dart';
@@ -11,6 +13,8 @@ import '../../../core/time/now_provider.dart';
 import '../../../core/time/wall_time.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_ghost_button.dart';
+import '../../commute/data/fake_commute_repository.dart';
+import '../../commute/data/providers.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
@@ -21,6 +25,8 @@ import '../../daily/data/providers.dart';
 import '../../daily/domain/schedule.dart';
 import '../../daily/presentation/labels.dart';
 import '../../daily/presentation/today/today_controller.dart';
+import '../../onboarding/data/providers.dart';
+import '../../onboarding/presentation/session_controller.dart';
 
 /// Debug builds only (research R11): move the demo clock to the moments the
 /// rules care about, or reset the fake daily data. Release builds never
@@ -117,17 +123,21 @@ class DemoSection extends ConsumerWidget {
     ref.invalidate(dailyCommuteRepositoryProvider);
   }
 
+  /// Everything the demo built up: daily schedule/attendance, trust data,
+  /// the saved commute (profile, group membership, waitlist) and the signed-
+  /// in person — a real start-over, not just the daily-commute slice.
   Future<void> _reset(BuildContext context, WidgetRef ref) async {
     final repo = ref.read(dailyCommuteRepositoryProvider);
     if (repo is FakeDailyCommuteRepository) await repo.reset();
     final prefs = ref.read(sharedPreferencesProvider);
-    for (final key in FakeTrustRepository.allKeys) {
+    for (final key in [...FakeTrustRepository.allKeys, ...FakeCommuteRepository.allKeys]) {
       await prefs.remove(key);
     }
+    await ref.read(profileRepositoryProvider).clear();
+    await ref.read(sessionControllerProvider.notifier).signOut();
     ref.invalidate(dailyCommuteRepositoryProvider);
-    // The only demo action with no visible trace on this screen otherwise.
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).demoResetDone)));
-    }
+    ref.invalidate(commuteRepositoryProvider);
+    // Signed out now — go back to the very start, not just show a message.
+    if (context.mounted) context.go(Routes.welcome);
   }
 }

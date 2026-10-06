@@ -19,6 +19,8 @@ final class FakeCommuteRepository implements CommuteRepository {
   static bool hasMembership(SharedPreferences prefs) => prefs.containsKey(membershipKey);
   static const _waitlistKey = 'commute.waitlist';
 
+  static const allKeys = [_profileKey, membershipKey, _waitlistKey];
+
   final SharedPreferences _prefs;
   final List<CommuteGroup> _groups;
 

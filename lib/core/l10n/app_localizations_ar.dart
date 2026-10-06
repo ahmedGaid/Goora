@@ -1281,9 +1281,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get demoReset => 'امسح بيانات التجربة';
 
   @override
-  String get demoResetDone => 'تم مسح بيانات التجربة.';
-
-  @override
   String get noRidesSoon => 'مفيش مشاوير الأيام الجاية.';
 
   @override

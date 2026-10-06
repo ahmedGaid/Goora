@@ -1263,9 +1263,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get demoReset => 'Reset demo data';
 
   @override
-  String get demoResetDone => 'Demo data reset.';
-
-  @override
   String get noRidesSoon => 'No rides in the coming days.';
 
   @override

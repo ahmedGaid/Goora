@@ -346,7 +346,6 @@
   "demo905": "After 9 PM · 9:05 PM",
   "demoRealTime": "Real time",
   "demoReset": "Reset demo data",
-  "demoResetDone": "Demo data reset.",
   "noRidesSoon": "No rides in the coming days.",
   "loadingToday": "Getting your commute…",
   "todayError": "We couldn't load your commute right now.",

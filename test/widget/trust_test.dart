@@ -9,6 +9,7 @@ import 'package:goora/features/commute/data/fake_commute_repository.dart';
 import 'package:goora/features/daily/data/fake_trust_repository.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
+import 'package:goora/features/onboarding/presentation/welcome_screen.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -168,9 +169,16 @@ void main() {
     await tester.ensureVisible(find.byKey(const Key('demo-reset')));
     await tester.tap(find.byKey(const Key('demo-reset')));
     await tester.pumpAndSettle();
-    expect(find.text(l10nFor(en).demoResetDone), findsOneWidget);
+    // A real start-over: back to Welcome, signed out.
+    expect(find.byType(WelcomeScreen), findsOneWidget);
+    expect(c.read(sessionControllerProvider).signedIn, isFalse);
     final prefs = c.read(sharedPreferencesProvider);
-    for (final key in FakeTrustRepository.allKeys) {
+    for (final key in [
+      ...FakeTrustRepository.allKeys,
+      ...FakeCommuteRepository.allKeys,
+      'profile',
+      'fake_auth.session',
+    ]) {
       expect(prefs.containsKey(key), isFalse, reason: key);
     }
   });
