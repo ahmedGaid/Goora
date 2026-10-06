@@ -3,7 +3,7 @@
 ```bash
 flutter analyze
 flutter test                                   # incl. pricing, matching, shared vectors, ar/en screens
-node --test supabase/functions/_shared/        # same vectors against the TypeScript matcher
+node --test "supabase/functions/_shared/*.test.ts"        # same vectors against the TypeScript matcher
 ```
 
 Manual (`flutter run`, fake data, code 123456):

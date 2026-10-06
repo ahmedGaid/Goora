@@ -83,6 +83,8 @@ export interface GroupMatch {
   legs: Leg[];
   score: number;
   reasons: Reason[];
+  /** Metres from the seeker's home to the nearest pickup (003 backup detour). */
+  pickupMeters: number;
 }
 
 export interface MatchResult {
@@ -175,7 +177,7 @@ export function evaluate(s: Seeker, g: Group, limits: Limits = DEFAULT_LIMITS): 
   // Array.prototype.sort is stable: equal points keep the order above.
   const reasons = ranked.filter(([p]) => p > 0).sort((a, b) => b[0] - a[0]).slice(0, 4).map(([, r]) => r);
 
-  return { groupId: g.id, legs, score: Math.round(total), reasons };
+  return { groupId: g.id, legs, score: Math.round(total), reasons, pickupMeters: pickupM };
 }
 
 export function matchGroups(s: Seeker, groups: Group[], limits: Limits = DEFAULT_LIMITS): MatchResult {

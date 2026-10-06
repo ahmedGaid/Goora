@@ -196,6 +196,12 @@ cancel this month." + the fixed rule "3 no-shows in a month removes you from the
   end, sos) and `evening-cutoff/index.ts` (pg_cron daily 21:00 Africa/Cairo: release freed seats
   to the waitlist, re-run backup for uncovered legs, send no-cover notices). Thin adapters; not
   executed locally.
+- Build addendum (T064–T065): three more tables the actions need — `passenger_outcomes` (driver
+  marks), `reliability_events` (FR-036 input), `cutoff_runs` (job idempotency). Service-role-only
+  SQL functions `backup_input(ride)` (candidates in the `backup.ts` shape, like 002's
+  `match_input`) and `nearest_stop(group, user)` (returns a stop id; the home point stays in the
+  database). A trigger stamps `absences.made_at` and the free/late kind on direct inserts, and
+  limits trusted contacts to 3. DB access shared by both functions is in `_shared/daily_store.ts`.
 
 ## R13 New core widgets
 

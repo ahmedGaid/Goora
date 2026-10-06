@@ -1,4 +1,4 @@
-// Run: node --test supabase/functions/_shared/
+// Run: node --test "supabase/functions/_shared/*.test.ts"
 // Same vectors as test/unit/matching_vectors_test.dart.
 import { readFileSync } from "node:fs";
 import { deepStrictEqual } from "node:assert";

@@ -15,7 +15,7 @@ flutter gen-l10n
 ```bash
 flutter analyze                            # zero issues
 flutter test                               # unit + widget (ar/en) + goldens + vectors
-node --test supabase/functions/_shared/    # TS rules on the same vectors
+node --test "supabase/functions/_shared/*.test.ts"    # TS rules on the same vectors
 ```
 
 ## Manual run (fake data, debug build)

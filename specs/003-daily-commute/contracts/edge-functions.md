@@ -9,11 +9,11 @@ possible (service role only for waitlist release and notices), runs `_shared/*.t
 | action | params | caller must be | result |
 |---|---|---|---|
 | `cancel` | date, legs[] | passenger of those rides | `{ charges: [{rideId, amount, reason}] }` |
-| `undo` | date | same person | `{ ok }` or `{ refused: "seatTaken" \| "afterCutoff" }` |
+| `undo` | date | same person | `{ ok }` or `{ refused: "seatTaken" \| "tooLate" }` (tooLate = at or after pickup; founder decision 2026-10-06) |
 | `notNextWeek` | — | group member | `{ charges: [...] }` |
 | `confirm` / `unconfirm` | rideId | ride driver | `{ ok }` + notices |
 | `delay` | rideId, minutes (5/10/15) | ride driver | `{ newTimes }` + notices |
-| `cantDrive` | date, legs[] | planned driver | `{ cover: {memberId, step} \| null }` + notices |
+| `cantDrive` | date, legs[] | planned driver | `{ cover: {memberId, step} \| null, legs: {going?, ret?} }` (cover = first leg asked) + notices |
 | `arrive` | rideId, stopId | ride driver | `{ noShowAvailableAt }` + notices |
 | `mark` | rideId, personId, outcome | ride driver | `{ ok }` or `{ refused: "tooEarly", secondsLeft }` |
 | `start` / `end` | rideId | ride driver | `{ ok }` |
@@ -28,6 +28,12 @@ boarded (to the driver).
 2. For tomorrow's legs whose planned driver is absent and uncovered: re-run `backup.ts`;
    still none → `noCover` notices to every passenger (FR-020).
 3. Idempotent per (date, step): re-running the same evening changes nothing.
+
+Build notes (T065): before steps 1–2 the job settles today (`settle`: driver no-show per FR-010,
+marks left without "End trip" per R11) and plans the next 7 days of rides (`plan`). pg_cron fires
+at 18:00 and 19:00 UTC and the function runs only at 21:xx Cairo time, which covers Egypt's summer
+time without a second job. Refusals are HTTP 409 `{ refused }`; `mark` before the driver arrived
+returns `{ refused: "tooEarly", secondsLeft: null }`.
 
 ## Shared vectors
 

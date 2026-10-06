@@ -1,0 +1,2261 @@
+{
+ "cases": [
+  {
+   "name": "same group before a nearby group",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "nour",
+      "firstName": "nour",
+      "initials": "NO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "sameGroup",
+     "seeker": {
+      "home": [
+       30.0467,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": "mohamed",
+    "step": "sameGroup"
+   }
+  },
+  {
+   "name": "nearby group before the same company",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "hany",
+      "firstName": "hany",
+      "initials": "HA",
+      "role": "driver",
+      "isWoman": false,
+      "company": "acme",
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "sameCompany",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "nour",
+      "firstName": "nour",
+      "initials": "NO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0477,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": "nour",
+    "step": "nearbyGroup"
+   }
+  },
+  {
+   "name": "same company before the community",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "tarek",
+      "firstName": "tarek",
+      "initials": "TA",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "sameCommunity",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "hany",
+      "firstName": "hany",
+      "initials": "HA",
+      "role": "driver",
+      "isWoman": false,
+      "company": "acme",
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "sameCompany",
+     "seeker": {
+      "home": [
+       30.0487,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": "hany",
+    "step": "sameCompany"
+   }
+  },
+  {
+   "name": "within a step: least detour \u2192 highest rating \u2192 lowest id",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "zeina",
+      "firstName": "zeina",
+      "initials": "ZE",
+      "role": "driver",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 5.0,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0447,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "omar",
+      "firstName": "omar",
+      "initials": "OM",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.7,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "nabil",
+      "firstName": "nabil",
+      "initials": "NA",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "adel",
+      "firstName": "adel",
+      "initials": "AD",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": "adel",
+    "step": "nearbyGroup"
+   }
+  },
+  {
+   "name": "a women-only passenger rejects a male cover",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "womenOnly",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "nour",
+      "firstName": "nour",
+      "initials": "NO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "mona",
+      "firstName": "mona",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "sameCommunity",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": "mona",
+    "step": "sameCommunity"
+   }
+  },
+  {
+   "name": "an off-duty driver covering does not need a seat for themselves",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "sameGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 2,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": "mohamed",
+    "step": "sameGroup"
+   }
+  },
+  {
+   "name": "not enough free seats for every passenger",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "nour",
+      "firstName": "nour",
+      "initials": "NO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 2,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": null,
+    "step": null
+   }
+  },
+  {
+   "name": "unavailable, wrong day, too late or too far: no cover",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "a1",
+      "firstName": "a1",
+      "initials": "A1",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": false
+    },
+    {
+     "member": {
+      "id": "a2",
+      "firstName": "a2",
+      "initials": "A2",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "a3",
+      "firstName": "a3",
+      "initials": "A3",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:50",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    },
+    {
+     "member": {
+      "id": "a4",
+      "firstName": "a4",
+      "initials": "A4",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0527,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": null,
+    "step": null
+   }
+  },
+  {
+   "name": "departure exactly 20 min away still covers",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "a3",
+      "firstName": "a3",
+      "initials": "A3",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     "step": "nearbyGroup",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:45",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": "a3",
+    "step": "nearbyGroup"
+   }
+  },
+  {
+   "name": "a cover who wants same company only, in a mixed group: no",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [
+    {
+     "member": {
+      "id": "hany",
+      "firstName": "hany",
+      "initials": "HA",
+      "role": "driver",
+      "isWoman": false,
+      "company": "acme",
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "sameCompany",
+      "days": null
+     },
+     "step": "sameCompany",
+     "seeker": {
+      "home": [
+       30.0427,
+       30.98
+      ],
+      "work": [
+       30.071,
+       31.017
+      ],
+      "departure": "07:30",
+      "ret": "17:00",
+      "days": [
+       "sun",
+       "mon",
+       "tue",
+       "wed",
+       "thu"
+      ]
+     },
+     "freeSeats": 3,
+     "available": true
+    }
+   ],
+   "expect": {
+    "cover": null,
+    "step": null
+   }
+  },
+  {
+   "name": "no candidates \u2192 none",
+   "ride": {
+    "groupId": "g1",
+    "date": "2026-10-06",
+    "leg": "going",
+    "planned": "ahmed",
+    "passengers": [
+     {
+      "memberId": "mohamed",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "sara",
+      "stopId": "main-gate"
+     },
+     {
+      "memberId": "youssef",
+      "stopId": "main-gate"
+     }
+    ]
+   },
+   "group": {
+    "id": "g1",
+    "origin": "sheikhZayed",
+    "destination": "smartVillage",
+    "destinationPoint": [
+     30.0719,
+     31.017
+    ],
+    "pickupPoints": [
+     [
+      30.0427,
+      30.98
+     ]
+    ],
+    "going": "07:25",
+    "ret": "17:00",
+    "days": [
+     "sun",
+     "mon",
+     "tue",
+     "wed",
+     "thu"
+    ],
+    "members": [
+     {
+      "id": "ahmed",
+      "firstName": "ahmed",
+      "initials": "AH",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.9,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "mohamed",
+      "firstName": "mohamed",
+      "initials": "MO",
+      "role": "driver",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "sara",
+      "firstName": "sara",
+      "initials": "SA",
+      "role": "rider",
+      "isWoman": true,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     },
+     {
+      "id": "youssef",
+      "firstName": "youssef",
+      "initials": "YO",
+      "role": "rider",
+      "isWoman": false,
+      "company": null,
+      "compound": null,
+      "rating": 4.8,
+      "reliability": 95,
+      "legs": [
+       "going",
+       "ret"
+      ],
+      "privacy": "verifiedUsers",
+      "days": null
+     }
+    ],
+    "price": 40,
+    "freeSeatsGoing": 1,
+    "freeSeatsReturn": 1,
+    "detourMinutes": 6,
+    "womenOnly": false,
+    "sameCompanyOnly": null,
+    "sameCompoundOnly": null,
+    "rotationStart": "2026-10-04"
+   },
+   "candidates": [],
+   "expect": {
+    "cover": null,
+    "step": null
+   }
+  }
+ ]
+}

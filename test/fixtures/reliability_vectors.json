@@ -1,0 +1,212 @@
+{
+ "cases": [
+  {
+   "name": "12.5 of 13 kept \u2192 96 %",
+   "today": "2026-10-06",
+   "events": [
+    {
+     "date": "2026-09-14",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-15",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-16",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-17",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-18",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-19",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-20",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-21",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-22",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-23",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-24",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-25",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-28",
+     "kind": "lateCancel"
+    }
+   ],
+   "expect": {
+    "percent": 96,
+    "monthLateCancels": 0,
+    "monthNoShows": 0
+   }
+  },
+  {
+   "name": "no booked trips \u2192 100 %",
+   "today": "2026-10-06",
+   "events": [],
+   "expect": {
+    "percent": 100,
+    "monthLateCancels": 0,
+    "monthNoShows": 0
+   }
+  },
+  {
+   "name": "window: 30 days back included, 31 days back and today excluded",
+   "today": "2026-10-06",
+   "events": [
+    {
+     "date": "2026-09-06",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-05",
+     "kind": "noShow"
+    },
+    {
+     "date": "2026-10-06",
+     "kind": "noShow"
+    }
+   ],
+   "expect": {
+    "percent": 100,
+    "monthLateCancels": 0,
+    "monthNoShows": 1
+   }
+  },
+  {
+   "name": "x.5 rounds up: 3.5 of 4 \u2192 88 %",
+   "today": "2026-10-06",
+   "events": [
+    {
+     "date": "2026-10-01",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-10-02",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-10-04",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-10-05",
+     "kind": "lateCancel"
+    }
+   ],
+   "expect": {
+    "percent": 88,
+    "monthLateCancels": 1,
+    "monthNoShows": 0
+   }
+  },
+  {
+   "name": "a no-show misses a whole trip: 3 of 4 \u2192 75 %",
+   "today": "2026-10-06",
+   "events": [
+    {
+     "date": "2026-09-29",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-30",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-10-01",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-10-05",
+     "kind": "noShow"
+    }
+   ],
+   "expect": {
+    "percent": 75,
+    "monthLateCancels": 0,
+    "monthNoShows": 1
+   }
+  },
+  {
+   "name": "month counts: this calendar month only; late \"can't drive\" counts as late",
+   "today": "2026-10-06",
+   "events": [
+    {
+     "date": "2026-10-01",
+     "kind": "lateCancel"
+    },
+    {
+     "date": "2026-10-02",
+     "kind": "lateCantDrive"
+    },
+    {
+     "date": "2026-10-03",
+     "kind": "noShow"
+    },
+    {
+     "date": "2026-10-04",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-10-05",
+     "kind": "noShow"
+    },
+    {
+     "date": "2026-09-20",
+     "kind": "noShow"
+    }
+   ],
+   "expect": {
+    "percent": 33,
+    "monthLateCancels": 2,
+    "monthNoShows": 2
+   }
+  },
+  {
+   "name": "the 1st: month counts reset, the % does not",
+   "today": "2026-10-01",
+   "events": [
+    {
+     "date": "2026-09-28",
+     "kind": "noShow"
+    },
+    {
+     "date": "2026-09-29",
+     "kind": "kept"
+    },
+    {
+     "date": "2026-09-30",
+     "kind": "lateCancel"
+    }
+   ],
+   "expect": {
+    "percent": 50,
+    "monthLateCancels": 0,
+    "monthNoShows": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,350 @@
+{
+ "cases": [
+  {
+   "name": "8:59:59 PM the evening before is free",
+   "fn": "cancel",
+   "input": {
+    "rideDate": "2026-10-06",
+    "madeAt": "2026-10-05T20:59:59",
+    "share": 40,
+    "legs": [
+     "going"
+    ]
+   },
+   "expect": {
+    "cutoff": "2026-10-05T21:00:00",
+    "late": false,
+    "kind": "freeCancel",
+    "charges": [
+     0
+    ],
+    "total": 0
+   }
+  },
+  {
+   "name": "9:00 PM the evening before is late: half the share (20 EGP)",
+   "fn": "cancel",
+   "input": {
+    "rideDate": "2026-10-06",
+    "madeAt": "2026-10-05T21:00:00",
+    "share": 40,
+    "legs": [
+     "going"
+    ]
+   },
+   "expect": {
+    "cutoff": "2026-10-05T21:00:00",
+    "late": true,
+    "kind": "lateCancel",
+    "charges": [
+     20
+    ],
+    "total": 20
+   }
+  },
+  {
+   "name": "both legs late = 40 EGP",
+   "fn": "cancel",
+   "input": {
+    "rideDate": "2026-10-06",
+    "madeAt": "2026-10-06T06:30:00",
+    "share": 40,
+    "legs": [
+     "going",
+     "ret"
+    ]
+   },
+   "expect": {
+    "cutoff": "2026-10-05T21:00:00",
+    "late": true,
+    "kind": "lateCancel",
+    "charges": [
+     20,
+     20
+    ],
+    "total": 40
+   }
+  },
+  {
+   "name": "both legs free days ahead",
+   "fn": "cancel",
+   "input": {
+    "rideDate": "2026-10-06",
+    "madeAt": "2026-10-02T09:00:00",
+    "share": 40,
+    "legs": [
+     "going",
+     "ret"
+    ]
+   },
+   "expect": {
+    "cutoff": "2026-10-05T21:00:00",
+    "late": false,
+    "kind": "freeCancel",
+    "charges": [
+     0,
+     0
+    ],
+    "total": 0
+   }
+  },
+  {
+   "name": "a Sunday ride: cut-off is Saturday 9 PM (not a working day)",
+   "fn": "cancel",
+   "input": {
+    "rideDate": "2026-10-11",
+    "madeAt": "2026-10-10T21:30:00",
+    "share": 40,
+    "legs": [
+     "ret"
+    ]
+   },
+   "expect": {
+    "cutoff": "2026-10-10T21:00:00",
+    "late": true,
+    "kind": "lateCancel",
+    "charges": [
+     20
+    ],
+    "total": 20
+   }
+  },
+  {
+   "name": "cut-off across a month end",
+   "fn": "cancel",
+   "input": {
+    "rideDate": "2026-11-01",
+    "madeAt": "2026-10-31T20:00:00",
+    "share": 60,
+    "legs": [
+     "going"
+    ]
+   },
+   "expect": {
+    "cutoff": "2026-10-31T21:00:00",
+    "late": false,
+    "kind": "freeCancel",
+    "charges": [
+     0
+    ],
+    "total": 0
+   }
+  },
+  {
+   "name": "cancel one second before pickup",
+   "fn": "canCancel",
+   "input": {
+    "pickup": "2026-10-06T07:25:00",
+    "madeAt": "2026-10-06T07:24:59"
+   },
+   "expect": true
+  },
+  {
+   "name": "no cancel at pickup time",
+   "fn": "canCancel",
+   "input": {
+    "pickup": "2026-10-06T07:25:00",
+    "madeAt": "2026-10-06T07:25:00"
+   },
+   "expect": false
+  },
+  {
+   "name": "undo a free cancel after 9 PM with a waitlist: seat taken",
+   "fn": "undo",
+   "input": {
+    "absence": {
+     "date": "2026-10-06",
+     "kind": "freeCancel"
+    },
+    "now": "2026-10-05T21:00:00",
+    "pickup": "2026-10-06T07:25:00",
+    "waitlistWaiting": true
+   },
+   "expect": "refusedSeatTaken"
+  },
+  {
+   "name": "undo a free cancel after 9 PM, nobody waiting",
+   "fn": "undo",
+   "input": {
+    "absence": {
+     "date": "2026-10-06",
+     "kind": "freeCancel"
+    },
+    "now": "2026-10-05T22:00:00",
+    "pickup": "2026-10-06T07:25:00",
+    "waitlistWaiting": false
+   },
+   "expect": "ok"
+  },
+  {
+   "name": "undo a free cancel before 9 PM with a waitlist",
+   "fn": "undo",
+   "input": {
+    "absence": {
+     "date": "2026-10-06",
+     "kind": "freeCancel"
+    },
+    "now": "2026-10-05T20:59:59",
+    "pickup": "2026-10-06T07:25:00",
+    "waitlistWaiting": true
+   },
+   "expect": "ok"
+  },
+  {
+   "name": "undo a late cancel until pickup",
+   "fn": "undo",
+   "input": {
+    "absence": {
+     "date": "2026-10-06",
+     "kind": "lateCancel"
+    },
+    "now": "2026-10-06T07:24:59",
+    "pickup": "2026-10-06T07:25:00",
+    "waitlistWaiting": true
+   },
+   "expect": "ok"
+  },
+  {
+   "name": "no undo at pickup",
+   "fn": "undo",
+   "input": {
+    "absence": {
+     "date": "2026-10-06",
+     "kind": "lateCancel"
+    },
+    "now": "2026-10-06T07:25:00",
+    "pickup": "2026-10-06T07:25:00",
+    "waitlistWaiting": false
+   },
+   "expect": "refusedTooLate"
+  },
+  {
+   "name": "no-show at 4:59 after arrival: refused",
+   "fn": "noShow",
+   "input": {
+    "arrivedAt": "2026-10-06T07:25:00",
+    "now": "2026-10-06T07:29:59"
+   },
+   "expect": {
+    "availableAt": "2026-10-06T07:30:00",
+    "allowed": false
+   }
+  },
+  {
+   "name": "no-show at 5:00 after arrival: allowed",
+   "fn": "noShow",
+   "input": {
+    "arrivedAt": "2026-10-06T07:25:00",
+    "now": "2026-10-06T07:30:00"
+   },
+   "expect": {
+    "availableAt": "2026-10-06T07:30:00",
+    "allowed": true
+   }
+  },
+  {
+   "name": "no-show wait across midnight",
+   "fn": "noShow",
+   "input": {
+    "arrivedAt": "2026-10-06T23:57:30",
+    "now": "2026-10-07T00:02:30"
+   },
+   "expect": {
+    "availableAt": "2026-10-07T00:02:30",
+    "allowed": true
+   }
+  },
+  {
+   "name": "0 no-shows this month: ok",
+   "fn": "standing",
+   "input": {
+    "count": 0
+   },
+   "expect": "ok"
+  },
+  {
+   "name": "1 no-shows this month: ok",
+   "fn": "standing",
+   "input": {
+    "count": 1
+   },
+   "expect": "ok"
+  },
+  {
+   "name": "2 no-shows this month: warning",
+   "fn": "standing",
+   "input": {
+    "count": 2
+   },
+   "expect": "warning"
+  },
+  {
+   "name": "3 no-shows this month: removal",
+   "fn": "standing",
+   "input": {
+    "count": 3
+   },
+   "expect": "removal"
+  },
+  {
+   "name": "4 no-shows this month: removal",
+   "fn": "standing",
+   "input": {
+    "count": 4
+   },
+   "expect": "removal"
+  },
+  {
+   "name": "driver not checked in at first pickup + 4:59: not yet",
+   "fn": "driverNoShow",
+   "input": {
+    "firstPickup": "2026-10-06T07:15:00",
+    "now": "2026-10-06T07:19:59",
+    "checkedIn": false,
+    "cancelled": false
+   },
+   "expect": false
+  },
+  {
+   "name": "driver not checked in at first pickup + 5:00: no-show",
+   "fn": "driverNoShow",
+   "input": {
+    "firstPickup": "2026-10-06T07:15:00",
+    "now": "2026-10-06T07:20:00",
+    "checkedIn": false,
+    "cancelled": false
+   },
+   "expect": true
+  },
+  {
+   "name": "driver checked in: never a no-show",
+   "fn": "driverNoShow",
+   "input": {
+    "firstPickup": "2026-10-06T07:15:00",
+    "now": "2026-10-06T08:00:00",
+    "checkedIn": true,
+    "cancelled": false
+   },
+   "expect": false
+  },
+  {
+   "name": "driver who cancelled: never a no-show",
+   "fn": "driverNoShow",
+   "input": {
+    "firstPickup": "2026-10-06T07:15:00",
+    "now": "2026-10-06T08:00:00",
+    "checkedIn": false,
+    "cancelled": true
+   },
+   "expect": false
+  },
+  {
+   "name": "a no-show pays the full share",
+   "fn": "noShowCharge",
+   "input": {
+    "share": 40
+   },
+   "expect": 40
+  }
+ ]
+}

@@ -166,11 +166,11 @@ moves the marker; Share and SOS paths.
 
 ## Phase 10: Server (ready, not deployed)
 
-- [ ] T061 [P] `test/fixtures/{attendance,reliability,rotation,backup}_vectors.json` hand-computed per `contracts/edge-functions.md` minimum cases + `test/unit/daily_vectors_test.dart` running them against the Dart rules
-- [ ] T062 [P] `supabase/functions/_shared/attendance.ts`, `reliability.ts`, `rotation.ts`, `backup.ts` mirroring T028/T049/T010/T041 (erasable TS, `.ts` imports, wall-time inputs)
-- [ ] T063 `supabase/functions/_shared/{attendance,reliability,rotation,backup}.test.ts` loading the same vectors (`node --test`)
-- [ ] T064 `supabase/migrations/20261006000000_daily_commute.sql`: tables per R12, RLS on every table (own group's rides only, own absences/contacts/alerts, drivers write check-ins for their rides, no home point exposure) (FR-032). _Written, not executed._
-- [ ] T065 `supabase/functions/commute-day/index.ts` and `supabase/functions/evening-cutoff/index.ts` (pg_cron 21:00 Africa/Cairo, idempotent) as thin adapters per contract (FR-033). _Written, not executed._
+- [X] T061 [P] `test/fixtures/{attendance,reliability,rotation,backup}_vectors.json` hand-computed per `contracts/edge-functions.md` minimum cases + `test/unit/daily_vectors_test.dart` running them against the Dart rules
+- [X] T062 [P] `supabase/functions/_shared/attendance.ts`, `reliability.ts`, `rotation.ts`, `backup.ts` mirroring T028/T049/T010/T041 (erasable TS, `.ts` imports, wall-time inputs)
+- [X] T063 `supabase/functions/_shared/{attendance,reliability,rotation,backup}.test.ts` loading the same vectors (`node --test`)
+- [X] T064 `supabase/migrations/20261006000000_daily_commute.sql`: tables per R12, RLS on every table (own group's rides only, own absences/contacts/alerts, drivers write check-ins for their rides, no home point exposure) (FR-032). _Written, not executed._
+- [X] T065 `supabase/functions/commute-day/index.ts` and `supabase/functions/evening-cutoff/index.ts` (pg_cron 21:00 Africa/Cairo, idempotent) as thin adapters per contract (FR-033). _Written, not executed._
 
 ---
 
@@ -179,7 +179,7 @@ moves the marker; Share and SOS paths.
 - [ ] T066 [P] Add new text/background pairs (hero on dark, status chips, banners, progress bar) to `test/unit/contrast_test.dart`; 1.3× text scale + tap-target + label guidelines on Today, Week, Trust, sheets
 - [ ] T067 [P] Confirm `test/architecture/no_hardcoded_values_test.dart` covers `lib/features/daily` and `lib/core/time`
 - [ ] T068 List every drafted key (R14 + any added during build) in `specs/003-daily-commute/research.md` R14 for founder review
-- [ ] T069 Gates: `flutter analyze` (0 issues), `flutter test`, `node --test supabase/functions/_shared/`; run quickstart.md manual steps on a device/emulator; README: 003 section (demo section, new packages)
+- [ ] T069 Gates: `flutter analyze` (0 issues), `flutter test`, `node --test "supabase/functions/_shared/*.test.ts"`; run quickstart.md manual steps on a device/emulator; README: 003 section (demo section, new packages)
 
 ---
 
