@@ -980,6 +980,12 @@ abstract class AppLocalizations {
   /// **'ترشيحات تانية'**
   String get otherMatches;
 
+  /// No description provided for @chooseThisGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار المجموعة دي'**
+  String get chooseThisGroup;
+
   /// No description provided for @seeOthers.
   ///
   /// In ar, this message translates to:

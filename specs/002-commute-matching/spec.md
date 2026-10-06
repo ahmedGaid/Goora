@@ -98,7 +98,11 @@ verify the shown percentage, stats and reasons come from the matching rules.
    and "Join this group".
 2. **Given** the result screen, **When** the person taps "See other options", **Then** alternative
    groups appear with avatar, name, a short detail line and their match %; the toggle then reads
-   "Hide other options".
+   "Hide other options". **When** the person taps one of those alternatives, **Then** it replaces
+   the shown group (card, stats, fee line, "Why this group" reasons and the "Join this group"
+   target all switch to it), and the group it replaced now appears in the alternatives list in its
+   place — switching is local to the screen and does not join anything by itself. *(amended
+   2026-10-06, founder decision — alternatives were view-only at ship.)*
 3. **Given** the person needs both ways and no single group fits both, **Then** going and return are
    matched independently and the result shows the group for each leg.
 4. **Given** the viewer is a driver, **Then** riders in the group appear only as "Verified rider" /
@@ -181,6 +185,8 @@ post-a-trip action.
   factors (e.g. "Same destination: Smart Village", "5-minute departure difference", "Pickup 600 m
   from home", "Same company · similar return time").
 - **FR-013**: Other options MUST list the next-best passing groups, best first, with their score.
+  Tapping one MUST swap it into the shown result in place of the group it replaces (added
+  2026-10-06).
 - **FR-014**: The matching rules MUST be implemented once as pure logic used by the app and
   mirrored by the server matching function, with the same tests passing on both.
 - **FR-015**: Riders MUST appear to drivers only as "Verified rider" or "Verified rider (woman)"

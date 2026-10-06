@@ -32,10 +32,11 @@ class MatchResultScreen extends ConsumerStatefulWidget {
 class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
   bool _showOthers = false;
   bool _joining = false;
+  int _selected = 0;
 
-  Future<void> _join(MatchOutcome outcome) async {
+  Future<void> _join(GroupMatch main, MatchOutcome outcome) async {
     setState(() => _joining = true);
-    await ref.read(commuteRepositoryProvider).join(outcome.result.main!.group.id);
+    await ref.read(commuteRepositoryProvider).join(main.group.id);
     if (mounted) context.go(outcome.viewerIsDriver ? Routes.today : Routes.plan);
   }
 
@@ -43,14 +44,18 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final outcome = ref.watch(lastMatchProvider);
-    final main = outcome?.result.main;
-    if (outcome == null || main == null) {
+    if (outcome == null || outcome.result.main == null) {
       // Opened without a fresh match (e.g. after a restart): go back to setup.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) context.go(Routes.commuteSetup);
       });
       return const Scaffold(body: SizedBox.shrink());
     }
+    // Best first; tapping an alternative swaps it into the shown slot.
+    final candidates = [outcome.result.main!, ...outcome.result.alternatives];
+    final selected = _selected.clamp(0, candidates.length - 1);
+    final main = candidates[selected];
+    final others = [for (final (i, m) in candidates.indexed) if (i != selected) (i, m)];
     final g = main.group;
     final viewerIsDriver = outcome.viewerIsDriver;
     final me = ref.watch(sessionControllerProvider).profile;
@@ -169,14 +174,18 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
                 ),
               ),
             ),
-            if (_showOthers) _Others(matches: outcome.result.alternatives),
+            if (_showOthers)
+              _Others(
+                matches: others,
+                onChoose: (i) => setState(() => _selected = i),
+              ),
           ],
         ],
       ),
       bottom: GooraPrimaryButton(
         key: const Key('join-group'),
         label: l10n.join,
-        onPressed: _joining ? null : () => _join(outcome),
+        onPressed: _joining ? null : () => _join(main, outcome),
       ),
     );
   }
@@ -202,9 +211,11 @@ class _Stat extends StatelessWidget {
 }
 
 class _Others extends StatelessWidget {
-  const _Others({required this.matches});
+  const _Others({required this.matches, required this.onChoose});
 
-  final List<GroupMatch> matches;
+  /// (original candidate index, match) — the index is passed back to [onChoose].
+  final List<(int, GroupMatch)> matches;
+  final ValueChanged<int> onChoose;
 
   @override
   Widget build(BuildContext context) {
@@ -214,25 +225,39 @@ class _Others extends StatelessWidget {
       padding: const EdgeInsetsDirectional.all(AppSpacing.cardPad),
       rows: [
         Text(l10n.otherMatches, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
-        for (final (i, m) in matches.indexed)
-          Row(
-            children: [
-              GooraAvatar(initials: m.group.drivers.first.initials, paletteIndex: i + 1),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        for (final (candidateIndex, m) in matches)
+          Semantics(
+            button: true,
+            label: l10n.chooseThisGroup,
+            child: InkWell(
+              key: Key('other-match-$candidateIndex'),
+              onTap: () => onChoose(candidateIndex),
+              borderRadius: BorderRadius.circular(AppRadii.card),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: AppSizes.minTouch),
+                child: Row(
                   children: [
-                    Text(m.group.drivers.first.firstName, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
-                    Text(
-                      l10n.otherMeta(l10n.time(m.group.going), (m.pickupMeters / 50).round() * 50),
-                      style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+                    GooraAvatar(initials: m.group.drivers.first.initials, paletteIndex: candidateIndex + 1),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(m.group.drivers.first.firstName, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+                          Text(
+                            l10n.otherMeta(l10n.time(m.group.going), (m.pickupMeters / 50).round() * 50),
+                            style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
                     ),
+                    GooraChip(label: l10n.matchPercent(m.score)),
+                    const SizedBox(width: AppSpacing.sm),
+                    const Icon(GooraIcons.chevron, size: AppSizes.iconSmall, color: AppColors.textSecondary),
                   ],
                 ),
               ),
-              GooraChip(label: l10n.matchPercent(m.score)),
-            ],
+            ),
           ),
       ],
     );

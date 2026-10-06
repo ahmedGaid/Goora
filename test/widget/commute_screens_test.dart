@@ -223,6 +223,31 @@ void main() {
         await _accessible(tester);
       });
 
+      testWidgets('tapping an alternative swaps it into the shown result', (tester) async {
+        final outcome = _outcome(driver: false);
+        final main = outcome.result.main!;
+        final firstAlt = outcome.result.alternatives.first;
+        await pumpScreen(
+          tester,
+          const MatchResultScreen(),
+          locale: locale,
+          session: _session(Role.rider),
+          overrides: [lastMatchProvider.overrideWith(() => _Seeded(outcome))],
+        );
+        await _scrollTo(tester, find.byKey(const Key('toggle-others')));
+        await tester.tap(find.byKey(const Key('toggle-others')));
+        await tester.pumpAndSettle();
+        // Candidate index 0 is main; alternatives start at 1.
+        await _scrollTo(tester, find.byKey(const Key('other-match-1')));
+        await tester.tap(find.byKey(const Key('other-match-1')));
+        await tester.pumpAndSettle();
+        expect(find.text(l.matchPercent(firstAlt.score)), findsOneWidget);
+        expect(find.text(l.feeLine(firstAlt.group.price)), findsOneWidget);
+        // The replaced main now shows up among the alternatives instead; the list stays open.
+        await _scrollTo(tester, find.byKey(const Key('other-match-0')));
+        expect(find.text(l.matchPercent(main.score)), findsWidgets);
+      });
+
       testWidgets('split legs show the return group line', (tester) async {
         final morningOnly = CorridorSeed.groups.first;
         final evening = CorridorSeed.groups[1];

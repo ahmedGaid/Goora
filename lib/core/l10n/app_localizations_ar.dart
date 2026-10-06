@@ -463,6 +463,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otherMatches => 'ترشيحات تانية';
 
   @override
+  String get chooseThisGroup => 'اختار المجموعة دي';
+
+  @override
   String get seeOthers => 'شوف اختيارات تانية';
 
   @override

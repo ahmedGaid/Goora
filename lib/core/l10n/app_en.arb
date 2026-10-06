@@ -147,6 +147,7 @@
   "egpTrip": "EGP/trip",
   "whyGroup": "Why this group",
   "otherMatches": "Other matches",
+  "chooseThisGroup": "Choose this group",
   "seeOthers": "See other options",
   "hideOthers": "Hide other options",
   "reasonSameDeparture": "Same departure time",

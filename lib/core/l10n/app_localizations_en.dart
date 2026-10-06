@@ -468,6 +468,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otherMatches => 'Other matches';
 
   @override
+  String get chooseThisGroup => 'Choose this group';
+
+  @override
   String get seeOthers => 'See other options';
 
   @override
