@@ -267,6 +267,53 @@ class AppLocalizationsAr extends AppLocalizations {
   String get actFreeCancelZero => 'إلغاء مجاني';
 
   @override
+  String get actTripIncome => 'دخل الرحلة';
+
+  @override
+  String actFeeReceivedFrom(String name) {
+    return 'رسوم $name';
+  }
+
+  @override
+  String get actWithdrawal => 'سحب';
+
+  @override
+  String get recoveredTitle => 'اتجمّع الأسبوع ده';
+
+  @override
+  String get payoutNote => 'بيتصرف كل خميس · من غير أي رسوم عليك';
+
+  @override
+  String get withdraw => 'اسحب على InstaPay';
+
+  @override
+  String get withdrawSheetTitle => 'اسحب على InstaPay';
+
+  @override
+  String get withdrawConfirm => 'أكّد السحب';
+
+  @override
+  String get withdrawFailTitle => 'السحب ملحقش يتم';
+
+  @override
+  String get withdrawFailBody => 'مفيش حاجة تحرّكت — جرّب تاني.';
+
+  @override
+  String get driverBreakdownTitle => 'تكلفة رحلتك';
+
+  @override
+  String get driverBreakdownCost => 'تكلفة الرحلة';
+
+  @override
+  String get driverBreakdownReceived => 'بتستلم من الركاب';
+
+  @override
+  String get driverBreakdownGap => 'بتدفعه من جيبك';
+
+  @override
+  String get driverBreakdownFree => 'جورة مجانية للسواقين';
+
+  @override
   String get postReq => 'انشر مشوارك';
 
   @override
@@ -1433,9 +1480,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get driverNeedsDocs =>
       'عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.';
-
-  @override
-  String get walletSoon => 'المحفظة جاية قريب';
 
   @override
   String get demoSection => 'تجربة (للمطورين)';

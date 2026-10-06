@@ -15,6 +15,7 @@ import '../domain/plan.dart';
 import '../domain/wallet.dart';
 import '../domain/wallet_repository.dart';
 import '../domain/wallet_rules.dart';
+import 'wallet_seed.dart';
 
 /// Wallet/plan on fake data over shared_preferences (contracts/repositories.md).
 /// Balances and this feature's own activity (top-up, withdrawal, fee
@@ -90,6 +91,7 @@ final class FakeWalletRepository implements WalletRepository {
 
   @override
   Future<Wallet> getWallet(String ownerId) async {
+    await _ensureDriverSeeded(ownerId);
     final own = _readActivity(ownerId);
     final merged = [...own, ...await _dailyActivity(ownerId)]..sort((a, b) => b.date.compareTo(a.date));
     return Wallet(
@@ -98,6 +100,18 @@ final class FakeWalletRepository implements WalletRepository {
       balance: _prefs.getInt(_balanceKey(ownerId)) ?? 0,
       activity: merged,
     );
+  }
+
+  /// US3/quickstart Scenario 3: a driver's first-ever wallet read seeds
+  /// trip income + a rider fee (research R3 spirit — demo data without
+  /// replaying 003's flows live), once, so it persists across reads and
+  /// survives a withdrawal leaving the rows in place.
+  Future<void> _ensureDriverSeeded(String ownerId) async {
+    if (_role() != MemberRole.driver) return;
+    if (_prefs.containsKey(_activityKey(ownerId))) return;
+    final seed = WalletSeed.driverActivity(_now().date);
+    await _writeActivity(ownerId, seed);
+    await _prefs.setInt(_balanceKey(ownerId), seed.fold(0, (sum, e) => sum + e.amount));
   }
 
   Future<List<ActivityEntry>> _dailyActivity(String ownerId) async {

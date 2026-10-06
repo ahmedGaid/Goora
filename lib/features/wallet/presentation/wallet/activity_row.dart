@@ -30,7 +30,7 @@ class ActivityRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.activityLabel(entry.kind), style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+              Text(l10n.activityLabel(entry), style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: AppSpacing.xxs),
               Text(l10n.shortDate(entry.date), style: AppTypography.caption.copyWith(color: AppColors.textSecondary)),
             ],

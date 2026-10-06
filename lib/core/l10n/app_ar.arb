@@ -110,6 +110,28 @@
   "actTripDeduction": "تكلفة رحلة",
   "actLateCancelCharge": "إلغاء متأخر",
   "actFreeCancelZero": "إلغاء مجاني",
+  "actTripIncome": "دخل الرحلة",
+  "actFeeReceivedFrom": "رسوم {name}",
+  "@actFeeReceivedFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actWithdrawal": "سحب",
+  "recoveredTitle": "اتجمّع الأسبوع ده",
+  "payoutNote": "بيتصرف كل خميس · من غير أي رسوم عليك",
+  "withdraw": "اسحب على InstaPay",
+  "withdrawSheetTitle": "اسحب على InstaPay",
+  "withdrawConfirm": "أكّد السحب",
+  "withdrawFailTitle": "السحب ملحقش يتم",
+  "withdrawFailBody": "مفيش حاجة تحرّكت — جرّب تاني.",
+  "driverBreakdownTitle": "تكلفة رحلتك",
+  "driverBreakdownCost": "تكلفة الرحلة",
+  "driverBreakdownReceived": "بتستلم من الركاب",
+  "driverBreakdownGap": "بتدفعه من جيبك",
+  "driverBreakdownFree": "جورة مجانية للسواقين",
   "postReq": "انشر مشوارك",
   "offerBtn": "اعرض مشوار",
   "reqsOnRoute": "طلبات على خطك",
@@ -1018,7 +1040,6 @@
   "needWorkEmail": "وثّق إيميل الشغل الأول",
   "needCompound": "ضيف اسم الكمبوند الأول",
   "driverNeedsDocs": "عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.",
-  "walletSoon": "المحفظة جاية قريب",
   "demoSection": "تجربة (للمطورين)",
   "demoNow": "الوقت دلوقتي: {time}",
   "@demoNow": {

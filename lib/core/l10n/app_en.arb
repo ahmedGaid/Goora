@@ -96,6 +96,28 @@
   "actTripDeduction": "Trip cost",
   "actLateCancelCharge": "Late cancel",
   "actFreeCancelZero": "Free cancellation",
+  "actTripIncome": "Trip income",
+  "actFeeReceivedFrom": "{name}'s fee",
+  "@actFeeReceivedFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actWithdrawal": "Withdrawal",
+  "recoveredTitle": "Recovered this week",
+  "payoutNote": "Paid out every Thursday · no fees taken from you",
+  "withdraw": "Withdraw to InstaPay",
+  "withdrawSheetTitle": "Withdraw to InstaPay",
+  "withdrawConfirm": "Confirm withdrawal",
+  "withdrawFailTitle": "Withdrawal didn't go through",
+  "withdrawFailBody": "Nothing moved — try again.",
+  "driverBreakdownTitle": "Your trip cost",
+  "driverBreakdownCost": "Trip cost",
+  "driverBreakdownReceived": "You receive from riders",
+  "driverBreakdownGap": "What you pay yourself",
+  "driverBreakdownFree": "Goora is free for drivers",
   "postReq": "Post your trip",
   "offerBtn": "Offer a trip",
   "reqsOnRoute": "Requests on your route",
@@ -408,7 +430,6 @@
   "needWorkEmail": "Verify your work email first",
   "needCompound": "Add your compound first",
   "driverNeedsDocs": "To drive, your license and vehicle need to be verified.",
-  "walletSoon": "Wallet is coming soon",
   "demoSection": "Demo (developers)",
   "demoNow": "Time now: {time}",
   "demoRideDay": "Ride day · 7:15 AM",

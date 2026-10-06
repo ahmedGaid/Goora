@@ -165,25 +165,25 @@ late-cancel charge, free cancellation already present) and confirm every row and
 **Independent test**: open Wallet as the seeded driver (trip income + one rider fee already
 present) and confirm the weekly balance, payout line and activity rows.
 
-- [ ] T034 [US3] `lib/features/wallet/presentation/wallet/wallet_controller.dart`: extend with
+- [X] T034 [US3] `lib/features/wallet/presentation/wallet/wallet_controller.dart`: extend with
   driver view-model — "Recovered this week" total, merged activity (trip income + fee received),
   "Your trip cost" breakdown (trip cost / received from riders / gap the driver covers / "Goora is
   free for drivers")
-- [ ] T035 [US3] `lib/features/wallet/presentation/wallet/driver_wallet.dart`: "Recovered this
+- [X] T035 [US3] `lib/features/wallet/presentation/wallet/driver_wallet.dart`: "Recovered this
   week" + "Paid out every Thursday · no fees taken from you"; Withdraw to InstaPay; activity list
   (trip income, fee-received rows labelled by rider/trip); trip-cost breakdown with no deduction
   line
-- [ ] T036 [US3] `lib/features/wallet/presentation/wallet/withdraw_sheet.dart`: `withdraw` call;
+- [X] T036 [US3] `lib/features/wallet/presentation/wallet/withdraw_sheet.dart`: `withdraw` call;
   failure shows inline retry, balance/activity unchanged (FR-010)
-- [ ] T037 [US3] `lib/features/wallet/presentation/wallet/wallet_tab.dart`: wire the driver branch
+- [X] T037 [US3] `lib/features/wallet/presentation/wallet/wallet_tab.dart`: wire the driver branch
   (role switch now complete for both roles)
-- [ ] T038 [US3] `lib/features/wallet/presentation/labels.dart`: extend with driver activity-kind
+- [X] T038 [US3] `lib/features/wallet/presentation/labels.dart`: extend with driver activity-kind
   labels (trip income, fee received, withdrawal)
-- [ ] T039 [P] [US3] `test/widget/driver_wallet_test.dart` (ar + en): AC1 recovered total + payout
+- [X] T039 [P] [US3] `test/widget/driver_wallet_test.dart` (ar + en): AC1 recovered total + payout
   line; AC2 withdraw success → balance resets, new "Withdrawal" row; AC3 trip-cost breakdown shows
   the gap when riders' total is less than full cost, and "Goora is free for drivers" with no
   deduction when it isn't; AC4 a rider's late-cancel/no-show fee appears labelled by rider/trip
-- [ ] T040 [P] [US3] `test/widget/withdraw_sheet_test.dart` (ar + en): success and forced-failure
+- [X] T040 [P] [US3] `test/widget/withdraw_sheet_test.dart` (ar + en): success and forced-failure
   paths
 
 **Checkpoint P2**: US1–US3 complete; `flutter analyze` + `flutter test` green. Commit.

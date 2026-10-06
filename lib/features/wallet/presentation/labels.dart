@@ -29,15 +29,15 @@ extension WalletLabels on AppLocalizations {
     return until == null ? planActiveLine(plan.price) : planFreeUntil(shortDate(until), plan.price);
   }
 
-  /// FR-007: rider activity-row labels. Driver-only kinds throw until US3.
-  String activityLabel(ActivityKind kind) => switch (kind) {
+  /// FR-007/FR-011: rider and driver activity-row labels. `feeReceived` is
+  /// labelled by the rider whose charge reached the driver (AC4).
+  String activityLabel(ActivityEntry entry) => switch (entry.kind) {
         ActivityKind.topUp => actTopUp,
         ActivityKind.tripDeduction => actTripDeduction,
         ActivityKind.lateCancelCharge => actLateCancelCharge,
         ActivityKind.freeCancelZero => actFreeCancelZero,
-        ActivityKind.tripIncome ||
-        ActivityKind.feeReceived ||
-        ActivityKind.withdrawal =>
-          throw UnimplementedError('driver activity labels land in US3 (T038)'),
+        ActivityKind.tripIncome => actTripIncome,
+        ActivityKind.feeReceived => actFeeReceivedFrom(entry.otherPersonId ?? ''),
+        ActivityKind.withdrawal => actWithdrawal,
       };
 }

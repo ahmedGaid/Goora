@@ -572,6 +572,96 @@ abstract class AppLocalizations {
   /// **'إلغاء مجاني'**
   String get actFreeCancelZero;
 
+  /// No description provided for @actTripIncome.
+  ///
+  /// In ar, this message translates to:
+  /// **'دخل الرحلة'**
+  String get actTripIncome;
+
+  /// No description provided for @actFeeReceivedFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم {name}'**
+  String actFeeReceivedFrom(String name);
+
+  /// No description provided for @actWithdrawal.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب'**
+  String get actWithdrawal;
+
+  /// No description provided for @recoveredTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجمّع الأسبوع ده'**
+  String get recoveredTitle;
+
+  /// No description provided for @payoutNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيتصرف كل خميس · من غير أي رسوم عليك'**
+  String get payoutNote;
+
+  /// No description provided for @withdraw.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب على InstaPay'**
+  String get withdraw;
+
+  /// No description provided for @withdrawSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب على InstaPay'**
+  String get withdrawSheetTitle;
+
+  /// No description provided for @withdrawConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد السحب'**
+  String get withdrawConfirm;
+
+  /// No description provided for @withdrawFailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'السحب ملحقش يتم'**
+  String get withdrawFailTitle;
+
+  /// No description provided for @withdrawFailBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة تحرّكت — جرّب تاني.'**
+  String get withdrawFailBody;
+
+  /// No description provided for @driverBreakdownTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة رحلتك'**
+  String get driverBreakdownTitle;
+
+  /// No description provided for @driverBreakdownCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة الرحلة'**
+  String get driverBreakdownCost;
+
+  /// No description provided for @driverBreakdownReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتستلم من الركاب'**
+  String get driverBreakdownReceived;
+
+  /// No description provided for @driverBreakdownGap.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتدفعه من جيبك'**
+  String get driverBreakdownGap;
+
+  /// No description provided for @driverBreakdownFree.
+  ///
+  /// In ar, this message translates to:
+  /// **'جورة مجانية للسواقين'**
+  String get driverBreakdownFree;
+
   /// No description provided for @postReq.
   ///
   /// In ar, this message translates to:
@@ -2450,12 +2540,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.'**
   String get driverNeedsDocs;
-
-  /// No description provided for @walletSoon.
-  ///
-  /// In ar, this message translates to:
-  /// **'المحفظة جاية قريب'**
-  String get walletSoon;
 
   /// No description provided for @demoSection.
   ///

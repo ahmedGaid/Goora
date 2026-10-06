@@ -268,6 +268,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actFreeCancelZero => 'Free cancellation';
 
   @override
+  String get actTripIncome => 'Trip income';
+
+  @override
+  String actFeeReceivedFrom(String name) {
+    return '$name\'s fee';
+  }
+
+  @override
+  String get actWithdrawal => 'Withdrawal';
+
+  @override
+  String get recoveredTitle => 'Recovered this week';
+
+  @override
+  String get payoutNote => 'Paid out every Thursday · no fees taken from you';
+
+  @override
+  String get withdraw => 'Withdraw to InstaPay';
+
+  @override
+  String get withdrawSheetTitle => 'Withdraw to InstaPay';
+
+  @override
+  String get withdrawConfirm => 'Confirm withdrawal';
+
+  @override
+  String get withdrawFailTitle => 'Withdrawal didn\'t go through';
+
+  @override
+  String get withdrawFailBody => 'Nothing moved — try again.';
+
+  @override
+  String get driverBreakdownTitle => 'Your trip cost';
+
+  @override
+  String get driverBreakdownCost => 'Trip cost';
+
+  @override
+  String get driverBreakdownReceived => 'You receive from riders';
+
+  @override
+  String get driverBreakdownGap => 'What you pay yourself';
+
+  @override
+  String get driverBreakdownFree => 'Goora is free for drivers';
+
+  @override
   String get postReq => 'Post your trip';
 
   @override
@@ -1416,9 +1463,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get driverNeedsDocs =>
       'To drive, your license and vehicle need to be verified.';
-
-  @override
-  String get walletSoon => 'Wallet is coming soon';
 
   @override
   String get demoSection => 'Demo (developers)';
