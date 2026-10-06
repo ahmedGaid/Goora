@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -77,6 +78,7 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   final Profile? Function() _person;
   final Now _now;
   final List<CommuteGroup> _groups;
+  static final _random = Random.secure();
 
   /// People waiting for a seat on the corridor; a free cancellation's seat
   /// goes to them at the cut-off.
@@ -220,6 +222,7 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
     final driverId = assignment.actual;
     final id = Ride.idFor(g.id, date, leg);
     final state = _rideState()[id] ?? const {};
+    final shareToken = state['shareToken'] as String? ?? await _mintShareToken(id);
     final delay = state['delay'] as int? ?? 0;
     final baseStops = leg == Leg.going ? g.goingStops : [g.workStop];
     final travelling = [
@@ -261,8 +264,18 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
       arrivedStopIds: {for (final c in _checkIns()) if (c.rideId == id) c.stopId},
       startedAt: _time(state['startedAt']),
       endedAt: _time(state['endedAt']),
+      shareToken: shareToken,
       seats: seats,
     );
+  }
+
+  /// A random 16-hex trip-link token, stored with the ride on first read so
+  /// the link stays stable and can't be guessed from group, date or leg
+  /// (FR-031, research R10).
+  Future<String> _mintShareToken(String rideId) async {
+    final token = [for (var i = 0; i < 8; i++) _random.nextInt(256).toRadixString(16).padLeft(2, '0')].join();
+    await _updateRide(rideId, (s) => s['shareToken'] = token);
+    return token;
   }
 
   static WallTime? _time(Object? s) => s == null ? null : WallTime.fromJson(s as String);

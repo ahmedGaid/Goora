@@ -360,4 +360,23 @@ void main() {
       expect(await s.repo.events(thu, thu), isEmpty, reason: 'joined after the 7:20 pickup');
     });
   });
+
+  group('share token (FR-031, R10)', () {
+    test('random 16 hex, stored with the ride, stable across reads, distinct per ride', () async {
+      final s = await _make(Role.rider, start: at(mon, 12, 0));
+      final going = (await s.repo.ride(tue, Leg.going))!.shareToken!;
+      final ret = (await s.repo.ride(tue, Leg.ret))!.shareToken!;
+      expect(going, matches(RegExp(r'^[0-9a-f]{16}$')));
+      expect((await s.repo.ride(tue, Leg.going))!.shareToken, going);
+      expect(ret, isNot(going));
+      expect(s.prefs.getString(FakeDailyCommuteRepository.rideStateKey), contains(going));
+    });
+
+    test('not derived from group, date and leg: a fresh install mints a new token', () async {
+      final a = await _make(Role.rider, start: at(mon, 12, 0));
+      final first = (await a.repo.ride(tue, Leg.going))!.shareToken;
+      final b = await _make(Role.rider, start: at(mon, 12, 0));
+      expect((await b.repo.ride(tue, Leg.going))!.shareToken, isNot(first));
+    });
+  });
 }

@@ -50,7 +50,7 @@ class RiderToday extends StatelessWidget {
         if (day != null) ...[
           LegsCard(view: view, day: day),
           const SizedBox(height: AppSpacing.gap),
-          _MapCard(view: view, next: next),
+          TripMapCard(view: view, next: next),
           const SizedBox(height: AppSpacing.gap),
           if (next?.driver != null) ...[
             DriverCard(view: view, driver: next!.driver!),
@@ -167,9 +167,10 @@ class LegsCard extends StatelessWidget {
 
 /// Route card. Before pickup: the pickup countdown. During an active trip
 /// (driver arrived at my stop → arrival, US7/AC1): the live driver marker
-/// and the arrival countdown.
-class _MapCard extends StatelessWidget {
-  const _MapCard({required this.view, required this.next});
+/// and the arrival countdown. Also on driver Today for legs they ride off
+/// duty (FR-028).
+class TripMapCard extends StatelessWidget {
+  const TripMapCard({super.key, required this.view, required this.next});
 
   final TodayView view;
   final LegPlan? next;

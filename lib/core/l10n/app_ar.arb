@@ -1047,5 +1047,6 @@
     }
   },
   "mapLiveAria": "خريطة المشوار · السواق في الطريق",
-  "demoDriverArrives": "السواق وصل محطتي"
+  "demoDriverArrives": "السواق وصل محطتي",
+  "shareNoTrip": "مفيش مشوار تشاركه دلوقتي."
 }

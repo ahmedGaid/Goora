@@ -284,6 +284,7 @@ Arabic in `lib/core/l10n/app_ar.arb`, English in `app_en.arb`:
 | arrivalInMin | الوصول بعد {minutes} دقيقة (plural forms as `pickupInMin`) | Arriving in {minutes} min |
 | mapLiveAria | خريطة المشوار · السواق في الطريق | Route map · your driver is on the way |
 | demoDriverArrives (debug only) | السواق وصل محطتي | Driver arrives at my stop |
+| shareNoTrip (convergence T079) | مفيش مشوار تشاركه دلوقتي. | No trip to share right now. |
 
 The SOS sheet's "Add a trusted contact" button reuses `trustedAdd`; "We sent them your trip link"
 is `sosAlertSent` from the table above.

@@ -9,8 +9,10 @@ import 'package:goora/core/storage/preferences.dart';
 import 'package:goora/core/widgets/goora_route_map.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/fake_trust_repository.dart';
 import 'package:goora/features/daily/data/providers.dart';
+import 'package:goora/features/daily/domain/absence.dart';
 import 'package:goora/features/daily/domain/location_source.dart';
 import 'package:goora/features/daily/domain/ride.dart';
 import 'package:goora/features/daily/domain/trust.dart';
@@ -47,6 +49,7 @@ Future<ProviderContainer> _pump(
   WidgetTester tester,
   TestClock clock,
   String locale, {
+  Role role = Role.rider,
   RecordingDialer? dialer,
   RecordingSharer? sharer,
   LocationSource? location,
@@ -54,7 +57,7 @@ Future<ProviderContainer> _pump(
 }) async {
   final c = await pumpGooraApp(
     tester,
-    prefs: {...memberPrefs(role: Role.rider, locale: locale), ...extra},
+    prefs: {...memberPrefs(role: role, locale: locale), ...extra},
     overrides: [
       ...dailyOverrides(clock, dialer: dialer, sharer: sharer),
       if (location != null) locationSourceProvider.overrideWithValue(location),
@@ -65,10 +68,25 @@ Future<ProviderContainer> _pump(
   return c;
 }
 
+/// I'm away on every leg of the look-ahead: Today has no trip to share.
+Map<String, Object> _awayThreeWeeks() => {
+      FakeDailyCommuteRepository.absencesKey: jsonEncode([
+        for (var d = 0; d <= TodayController.lookAheadDays; d++)
+          for (final leg in Leg.values)
+            Absence(
+              personId: 'me',
+              date: rideTuesday.addDays(d),
+              leg: leg,
+              madeAt: at(rideTuesday.addDays(-2), 12, 0),
+              kind: AbsenceKind.freeCancel,
+            ).toJson(),
+      ]),
+    };
+
 /// The driver checks in at my stop (Central St, 7:25): the trip is active.
-Future<void> _driverArrives(WidgetTester tester, ProviderContainer c) async {
+Future<void> _driverArrives(WidgetTester tester, ProviderContainer c, {String stopId = 'central-st'}) async {
   final repo = c.read(dailyCommuteRepositoryProvider);
-  await tester.runAsync(() => repo.arrivedAt(_going, 'central-st', at(rideTuesday, 7, 25)));
+  await tester.runAsync(() => repo.arrivedAt(_going, stopId, at(rideTuesday, 7, 25)));
   c.invalidate(todayControllerProvider);
   await tester.pumpAndSettle();
 }
@@ -131,6 +149,15 @@ void main() {
       }
     });
 
+    testWidgets('[$code] Share trip with no trip ahead says so instead of doing nothing (FR-029)', (tester) async {
+      final sharer = RecordingSharer();
+      await _pump(tester, TestClock(at(rideTuesday, 6, 0)), code, sharer: sharer, extra: _awayThreeWeeks());
+      await tester.tap(find.byKey(const Key('share-trip')));
+      await tester.pump();
+      expect(find.text(l.shareNoTrip), findsOneWidget);
+      expect(sharer.shared, isEmpty);
+    });
+
     testWidgets('[$code] SOS → Call 122 in two taps; alert reaches trusted contacts (US7/AC3, SC-006)',
         (tester) async {
       final dialer = RecordingDialer();
@@ -170,6 +197,26 @@ void main() {
       expect(find.text(l.trustedTitle), findsWidgets);
     });
   }
+
+  testWidgets('off-duty driver riding today: map card, then live marker + arrival countdown (US7/AC1, FR-028)',
+      (tester) async {
+    final location = FakeLocationSource();
+    final c = await _pump(tester, TestClock(at(rideTuesday, 7, 0)), 'en', role: Role.driver, location: location);
+    final l = l10nFor(en);
+    expect(find.byKey(const Key('riding-map')), findsOneWidget);
+    expect(find.byKey(const Key('pickup-countdown')), findsOneWidget);
+    expect(find.byKey(const Key('live-map')), findsNothing);
+
+    final myStop = c.read(todayControllerProvider).requireValue.upcomingRides.first.stop.id;
+    await _driverArrives(tester, c, stopId: myStop);
+    expect(location.watched, [_going]);
+    expect(find.descendant(of: find.byKey(const Key('riding-map')), matching: find.byKey(const Key('live-map'))),
+        findsOneWidget);
+    expect(find.text(l.arrivalInMin(65)), findsOneWidget, reason: '7:00 → 8:05');
+    location.emit(_going, 0.4);
+    await tester.pump();
+    expect(_marker(tester), 0.4);
+  });
 
   testWidgets('demo "Driver arrives at my stop" starts the live trip on one device', (tester) async {
     final location = FakeLocationSource();

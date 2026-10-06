@@ -1356,4 +1356,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoDriverArrives => 'Driver arrives at my stop';
+
+  @override
+  String get shareNoTrip => 'No trip to share right now.';
 }

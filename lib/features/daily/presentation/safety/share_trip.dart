@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/env.dart';
@@ -10,13 +10,18 @@ import '../labels.dart';
 import '../today/today_controller.dart';
 
 /// Shares the next trip: areas, driver first name, car, expected arrival and
-/// a trip link. Never a home location (FR-031). The token is stable per
-/// ride and names no group, date or person.
+/// a trip link. Never a home location (FR-031). The token is random,
+/// stored with the ride, and names no group, date or person. With no
+/// current trip it says there is nothing to share.
 Future<void> shareTrip(BuildContext context, WidgetRef ref, TodayView v) async {
   final l10n = AppLocalizations.of(context);
   final g = v.group;
   final leg = v.currentTrip;
-  if (g == null || leg == null || leg.ride == null) return;
+  if (g == null || leg == null || leg.ride?.shareToken == null) {
+    // Nothing to share yet: say so instead of a dead button (FR-029).
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.shareNoTrip)));
+    return;
+  }
   final driver = leg.driver;
   final vehicle = driver?.vehicle;
   final going = leg.leg == Leg.going;
@@ -26,20 +31,7 @@ Future<void> shareTrip(BuildContext context, WidgetRef ref, TodayView v) async {
     l10n.area(going ? g.origin : g.destination),
     l10n.area(going ? g.destination : g.origin),
     l10n.time(leg.end.time),
-    '${Env.shareBaseUrl}/t/${leg.ride!.shareToken ?? _token(leg.ride!.id)}',
+    '${Env.shareBaseUrl}/t/${leg.ride!.shareToken}',
   );
   await ref.read(tripSharerProvider).share(text);
-}
-
-/// 16 hex characters derived from the ride id (FNV-1a), so the link names
-/// no group, date or person.
-String _token(String rideId) {
-  var h = 0xcbf29ce484222325;
-  for (final c in rideId.codeUnits) {
-    h = (h ^ c) * 0x100000001b3;
-  }
-  // Two 32-bit halves: a 64-bit int is signed, so `toUnsigned(64)` would
-  // keep a minus sign in the link.
-  String half(int v) => (v & 0xffffffff).toRadixString(16).padLeft(8, '0');
-  return half(h >> 32) + half(h);
 }

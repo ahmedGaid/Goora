@@ -366,5 +366,6 @@
   "removeContact": "Remove {name}",
   "arrivalInMin": "Arriving in {minutes} min",
   "mapLiveAria": "Route map · your driver is on the way",
-  "demoDriverArrives": "Driver arrives at my stop"
+  "demoDriverArrives": "Driver arrives at my stop",
+  "shareNoTrip": "No trip to share right now."
 }

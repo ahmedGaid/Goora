@@ -2306,6 +2306,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'السواق وصل محطتي'**
   String get demoDriverArrives;
+
+  /// No description provided for @shareNoTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش مشوار تشاركه دلوقتي.'**
+  String get shareNoTrip;
 }
 
 class _AppLocalizationsDelegate

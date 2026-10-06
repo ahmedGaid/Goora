@@ -234,6 +234,6 @@ Setup (T001–T003) → Foundational (T004–T022)
 
 ## Phase 14: Convergence
 
-- [ ] T077 Give every fake ride a random 16-hex `shareToken` stored with the ride (no hash of the ride id), and share that token, so a trip link cannot be guessed from group, date and leg per FR-031, plan: research R10 (partial)
-- [ ] T078 Show the rider map card on driver Today for legs the driver rides off duty, with the live marker and arrival countdown once their driver checks in, per FR-028, US7/AC1 (partial)
-- [ ] T079 Give "Share trip" designed feedback when there is no current trip to share instead of doing nothing, per FR-029, Constitution VII (partial)
+- [x] T077 Give every fake ride a random 16-hex `shareToken` stored with the ride (no hash of the ride id), and share that token, so a trip link cannot be guessed from group, date and leg per FR-031, plan: research R10 (partial)
+- [x] T078 Show the rider map card on driver Today for legs the driver rides off duty, with the live marker and arrival countdown once their driver checks in, per FR-028, US7/AC1 (partial)
+- [x] T079 Give "Share trip" designed feedback when there is no current trip to share instead of doing nothing, per FR-029, Constitution VII (partial)

@@ -1386,4 +1386,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoDriverArrives => 'السواق وصل محطتي';
+
+  @override
+  String get shareNoTrip => 'مفيش مشوار تشاركه دلوقتي.';
 }

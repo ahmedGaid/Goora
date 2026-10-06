@@ -19,6 +19,7 @@ import '../labels.dart';
 import 'cant_come_sheet.dart';
 import 'delay_sheet.dart';
 import 'pickup_check_in.dart';
+import 'rider_today.dart';
 import 'today_controller.dart';
 import 'today_widgets.dart';
 
@@ -36,6 +37,8 @@ class DriverToday extends StatelessWidget {
         ? drive.driving.where((l) => !l.overAt(view.now)).firstOrNull
         : null;
     final riding = view.display != null && view.display!.date != drive?.date ? view.display : null;
+    // A leg I ride off duty today: the same live map and countdown riders get.
+    final rideToday = view.upcomingRides.where((l) => l.date == view.now.date).firstOrNull;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -73,6 +76,10 @@ class DriverToday extends StatelessWidget {
         if (riding != null && riding.riding.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.gap),
           _RidingCard(view: view, day: riding),
+        ],
+        if (rideToday != null) ...[
+          const SizedBox(height: AppSpacing.gap),
+          TripMapCard(key: const Key('riding-map'), view: view, next: rideToday),
         ],
         const SizedBox(height: AppSpacing.gap),
         SectionTitle(l10n.reqsOnRoute),
