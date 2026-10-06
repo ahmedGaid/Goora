@@ -357,7 +357,7 @@
   "demoBackup": "Driver can't drive next Tuesday",
   "demoNoCover": "Driver can't drive — no cover",
   "weekRiderLine": "Going: {going} · Return: {ret}",
-  "weekDriveLine": "{direction} · {count, plural, =0{no riders} =1{1 rider} other{{count} riders}}",
+  "weekDriveLine": "{direction} · {count, plural, =0{no passengers} =1{1 passenger} other{{count} passengers}}",
   "weekEmpty": "No commute days this week.",
   "verificationTitle": "Verification",
   "percentValue": "{percent}%",

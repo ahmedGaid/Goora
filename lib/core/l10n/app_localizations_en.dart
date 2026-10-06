@@ -1308,9 +1308,9 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count riders',
-      one: '1 rider',
-      zero: 'no riders',
+      other: '$count passengers',
+      one: '1 passenger',
+      zero: 'no passengers',
     );
     return '$direction · $_temp0';
   }
