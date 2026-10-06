@@ -6,17 +6,16 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/presentation/labels.dart';
 import '../../data/providers.dart';
-import '../../domain/schedule.dart';
 import '../labels.dart';
 import '../today/today_controller.dart';
 
 /// Shares the next trip: areas, driver first name, car, expected arrival and
-/// a trip link. Never a home location (FR-031). The live link page arrives
-/// with US7; the token is stable per ride until then.
+/// a trip link. Never a home location (FR-031). The token is stable per
+/// ride and names no group, date or person.
 Future<void> shareTrip(BuildContext context, WidgetRef ref, TodayView v) async {
   final l10n = AppLocalizations.of(context);
   final g = v.group;
-  final leg = v.display?.legs.where((l) => l.duty != Duty.off && !l.overAt(v.now)).firstOrNull;
+  final leg = v.currentTrip;
   if (g == null || leg == null || leg.ride == null) return;
   final driver = leg.driver;
   final vehicle = driver?.vehicle;
@@ -39,5 +38,8 @@ String _token(String rideId) {
   for (final c in rideId.codeUnits) {
     h = (h ^ c) * 0x100000001b3;
   }
-  return h.toUnsigned(64).toRadixString(16).padLeft(16, '0');
+  // Two 32-bit halves: a 64-bit int is signed, so `toUnsigned(64)` would
+  // keep a minus sign in the link.
+  String half(int v) => (v & 0xffffffff).toRadixString(16).padLeft(8, '0');
+  return half(h >> 32) + half(h);
 }

@@ -157,10 +157,10 @@ views; privacy choice changes matching results.
 **Goal**: safety one tap away; simulated live position. **Independent test**: simulated trip
 moves the marker; Share and SOS paths.
 
-- [ ] T057 [US7] `lib/features/daily/data/simulated_location_source.dart`: 5 s ticks from driver arrival to arrival, progress = elapsed ÷ trip minutes (R8); wire the live marker + countdown into the rider map card during an active trip
-- [ ] T058 [US7] `lib/features/daily/presentation/safety/share_trip.dart`: message (route areas, driver first name, car, expected arrival, `Env.shareBaseUrl/t/<token>`) via `TripSharer`; never a home location (FR-031)
-- [ ] T059 [US7] `lib/features/daily/presentation/safety/sos_sheet.dart`: one confirm step → "Call 122" (`PhoneDialer.dial('122')`) + "Alert my trusted contacts" (records `SosAlert`, "We sent them your trip link"); no contacts → Call 122 + "Add a trusted contact" → Trust tab; works with no active trip (FR-029/030)
-- [ ] T060 [P] [US7] `test/widget/safety_test.dart` (ar + en): marker progress advances with a fake location stream; share text contains route + driver + link and no home area point; SOS → Call 122 in 2 taps (SC-006) dials "122"; alert recorded with contacts; no-contacts path
+- [X] T057 [US7] `lib/features/daily/data/simulated_location_source.dart`: 5 s ticks from driver arrival to arrival, progress = elapsed ÷ trip minutes (R8); wire the live marker + countdown into the rider map card during an active trip
+- [X] T058 [US7] `lib/features/daily/presentation/safety/share_trip.dart`: message (route areas, driver first name, car, expected arrival, `Env.shareBaseUrl/t/<token>`) via `TripSharer`; never a home location (FR-031)
+- [X] T059 [US7] `lib/features/daily/presentation/safety/sos_sheet.dart`: one confirm step → "Call 122" (`PhoneDialer.dial('122')`) + "Alert my trusted contacts" (records `SosAlert`, "We sent them your trip link"); no contacts → Call 122 + "Add a trusted contact" → Trust tab; works with no active trip (FR-029/030)
+- [X] T060 [P] [US7] `test/widget/safety_test.dart` (ar + en): marker progress advances with a fake location stream; share text contains route + driver + link and no home area point; SOS → Call 122 in 2 taps (SC-006) dials "122"; alert recorded with contacts; no-contacts path
 
 ---
 

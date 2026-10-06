@@ -1037,5 +1037,14 @@
         "type": "String"
       }
     }
-  }
+  },
+  "arrivalInMin": "الوصول بعد {minutes, plural, =1{دقيقة} =2{دقيقتين} few{{minutes} دقايق} other{{minutes} دقيقة}}",
+  "@arrivalInMin": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "mapLiveAria": "خريطة المشوار · السواق في الطريق"
 }

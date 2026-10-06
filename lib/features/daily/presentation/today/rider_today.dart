@@ -21,6 +21,7 @@ import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/domain/group.dart';
 import '../../../commute/presentation/labels.dart';
 import '../../data/providers.dart';
+import '../../domain/location_source.dart';
 import '../../domain/ride.dart';
 import '../../domain/schedule.dart';
 import '../labels.dart';
@@ -164,6 +165,9 @@ class LegsCard extends StatelessWidget {
   }
 }
 
+/// Route card. Before pickup: the pickup countdown. During an active trip
+/// (driver arrived at my stop → arrival, US7/AC1): the live driver marker
+/// and the arrival countdown.
 class _MapCard extends StatelessWidget {
   const _MapCard({required this.view, required this.next});
 
@@ -174,17 +178,22 @@ class _MapCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final g = view.group!;
-    final going = next?.leg != Leg.ret;
-    final countdownFor = next != null && next!.date == view.now.date ? next!.pickup : null;
+    final leg = next;
+    final going = leg?.leg != Leg.ret;
+    final ride = leg?.ride;
+    final live = leg != null && ride != null && ride.driverId != null && ride.arrivedStopIds.contains(leg.stop.id);
+    final countdownFor = leg != null && leg.date == view.now.date ? (live ? leg.end : leg.pickup) : null;
+    Widget map(double? progress) => GooraRouteMap(
+          fromLabel: l10n.area(going ? g.origin : g.destination),
+          toLabel: l10n.area(going ? g.destination : g.origin),
+          semanticLabel: live ? l10n.mapLiveAria : l10n.mapAria,
+          driverProgress: progress,
+        );
     return GooraCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          GooraRouteMap(
-            fromLabel: l10n.area(going ? g.origin : g.destination),
-            toLabel: l10n.area(going ? g.destination : g.origin),
-            semanticLabel: l10n.mapAria,
-          ),
+          if (live) _LiveMap(rideId: ride.id, builder: map) else map(null),
           if (countdownFor != null)
             NowTicker(
               builder: (context, now) {
@@ -198,8 +207,8 @@ class _MapCard extends StatelessWidget {
                       const SizedBox(width: AppSpacing.xs),
                       Expanded(
                         child: Text(
-                          key: const Key('pickup-countdown'),
-                          l10n.pickupInMin(minutes),
+                          key: Key(live ? 'arrival-countdown' : 'pickup-countdown'),
+                          live ? l10n.arrivalInMin(minutes) : l10n.pickupInMin(minutes),
                           style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
                         ),
                       ),
@@ -212,6 +221,37 @@ class _MapCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Subscribes once per ride to [locationSourceProvider] and redraws only
+/// the map with each position.
+class _LiveMap extends ConsumerStatefulWidget {
+  const _LiveMap({required this.rideId, required this.builder});
+
+  final String rideId;
+  final Widget Function(double? progress) builder;
+
+  @override
+  ConsumerState<_LiveMap> createState() => _LiveMapState();
+}
+
+class _LiveMapState extends ConsumerState<_LiveMap> {
+  late Stream<TripPosition> _positions = ref.read(locationSourceProvider).watch(widget.rideId);
+
+  @override
+  void didUpdateWidget(_LiveMap old) {
+    super.didUpdateWidget(old);
+    if (old.rideId != widget.rideId) _positions = ref.read(locationSourceProvider).watch(widget.rideId);
+  }
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<TripPosition>(
+        stream: _positions,
+        builder: (context, snap) => KeyedSubtree(
+          key: const Key('live-map'),
+          child: widget.builder(snap.data?.progress ?? 0),
+        ),
+      );
 }
 
 /// Avatar, name, verified badge, car and colour, rating, and "Call driver"

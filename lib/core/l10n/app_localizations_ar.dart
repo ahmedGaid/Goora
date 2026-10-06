@@ -1367,4 +1367,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String removeContact(String name) {
     return 'شيل $name';
   }
+
+  @override
+  String arrivalInMin(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes دقيقة',
+      few: '$minutes دقايق',
+      two: 'دقيقتين',
+      one: 'دقيقة',
+    );
+    return 'الوصول بعد $_temp0';
+  }
+
+  @override
+  String get mapLiveAria => 'خريطة المشوار · السواق في الطريق';
 }

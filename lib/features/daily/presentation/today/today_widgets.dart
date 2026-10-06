@@ -232,7 +232,7 @@ class SafetyRow extends ConsumerWidget {
             label: l10n.sos,
             icon: GooraIcons.sos,
             danger: true,
-            onPressed: () => showSosSheet(context),
+            onPressed: () => showSosSheet(context, rideId: view.currentTrip?.ride?.id),
           ),
         ),
       ],

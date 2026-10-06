@@ -363,5 +363,7 @@
   "percentValue": "{percent}%",
   "trustedCount": "{count, plural, =0{None yet} =1{1 contact} other{{count} contacts}}",
   "contactName": "Name",
-  "removeContact": "Remove {name}"
+  "removeContact": "Remove {name}",
+  "arrivalInMin": "Arriving in {minutes} min",
+  "mapLiveAria": "Route map · your driver is on the way"
 }

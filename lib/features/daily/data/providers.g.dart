@@ -180,3 +180,49 @@ final class TripSharerProvider
 }
 
 String _$tripSharerHash() => r'7c0d3778dd122d91dec435e2647d60cf82dbdfee';
+
+/// Simulated until maps and the server exist (research R8).
+
+@ProviderFor(locationSource)
+final locationSourceProvider = LocationSourceProvider._();
+
+/// Simulated until maps and the server exist (research R8).
+
+final class LocationSourceProvider
+    extends $FunctionalProvider<LocationSource, LocationSource, LocationSource>
+    with $Provider<LocationSource> {
+  /// Simulated until maps and the server exist (research R8).
+  LocationSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'locationSourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$locationSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<LocationSource> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  LocationSource create(Ref ref) {
+    return locationSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(LocationSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<LocationSource>(value),
+    );
+  }
+}
+
+String _$locationSourceHash() => r'08b683df31a03ed43e46012497fb4b115a7768b2';

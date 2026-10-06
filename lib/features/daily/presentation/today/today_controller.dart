@@ -128,6 +128,10 @@ final class TodayView {
   bool get removed => group == null;
   bool get isDriver => me?.role == MemberRole.driver;
 
+  /// The trip Share and SOS refer to: my next leg on [display] that is not
+  /// over, riding or driving.
+  LegPlan? get currentTrip => display?.legs.where((l) => l.duty != Duty.off && !l.overAt(now)).firstOrNull;
+
   /// Riding legs of [display] that are still ahead.
   Iterable<LegPlan> get upcomingRides => display?.riding.where((l) => !l.overAt(now)) ?? const [];
 }

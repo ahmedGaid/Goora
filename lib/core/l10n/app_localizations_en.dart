@@ -1345,4 +1345,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String removeContact(String name) {
     return 'Remove $name';
   }
+
+  @override
+  String arrivalInMin(int minutes) {
+    return 'Arriving in $minutes min';
+  }
+
+  @override
+  String get mapLiveAria => 'Route map · your driver is on the way';
 }

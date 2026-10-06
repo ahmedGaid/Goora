@@ -61,6 +61,21 @@ final class Ride {
   static String idFor(String groupId, CalendarDate date, Leg leg) =>
       '$groupId:${date.toIso()}:${leg == Leg.going ? 'going' : 'return'}';
 
+  /// Inverse of [idFor]: the ride's date and leg; null for a malformed id.
+  static (CalendarDate, Leg)? parseId(String id) {
+    final parts = id.split(':');
+    if (parts.length < 3) return null;
+    final leg = switch (parts.last) { 'going' => Leg.going, 'return' => Leg.ret, _ => null };
+    if (leg == null) return null;
+    try {
+      return (CalendarDate.parse(parts[parts.length - 2]), leg);
+    } on FormatException {
+      return null;
+    } on RangeError {
+      return null;
+    }
+  }
+
   RideStatus get status {
     if (driverId == null) return RideStatus.cancelled;
     if (endedAt != null) return RideStatus.arrived;

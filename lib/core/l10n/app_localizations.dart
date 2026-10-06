@@ -2288,6 +2288,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'شيل {name}'**
   String removeContact(String name);
+
+  /// No description provided for @arrivalInMin.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصول بعد {minutes, plural, =1{دقيقة} =2{دقيقتين} few{{minutes} دقايق} other{{minutes} دقيقة}}'**
+  String arrivalInMin(int minutes);
+
+  /// No description provided for @mapLiveAria.
+  ///
+  /// In ar, this message translates to:
+  /// **'خريطة المشوار · السواق في الطريق'**
+  String get mapLiveAria;
 }
 
 class _AppLocalizationsDelegate

@@ -33,7 +33,7 @@ final class TrustControllerProvider
   TrustController create() => TrustController();
 }
 
-String _$trustControllerHash() => r'15a69af2bf8b8f89bb54cf284f5dc920f7c75fef';
+String _$trustControllerHash() => r'4ad36e3025fb65493dc62e06f0addef89fe4820c';
 
 abstract class _$TrustController extends $AsyncNotifier<TrustView> {
   FutureOr<TrustView> build();
