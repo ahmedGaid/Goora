@@ -30,7 +30,10 @@ flutter run
    same tab, same state.
 2. **Cancel (US2)**: Settings → Demo → time 8:55 PM → Today → I can't come tomorrow → sheet says
    free → confirm → info banner; "Undo, I'm coming" works. Repeat at 9:05 PM → sheet shows 40 EGP
-   (both legs) before confirming; undo is refused calmly.
+   (both legs) before confirming; after confirming, "Undo, I'm coming" still works until pickup —
+   a late cancel's seat isn't given to the waitlist, so the charge is simply removed (founder
+   decision 2026-10-06). Undo is refused only for a free cancel whose seat the waitlist has
+   already taken.
 3. **Driver (US3)**: sign up as driver → join → Today shows "Tomorrow · …" hero; contribution =
    passengers × 40 × trips. Confirm / Undo. Demo time ride-day 7:15 → "I've arrived at Main Gate" →
    5:00 countdown; "No-show" disabled until it ends, then "No-show · full share charged".
