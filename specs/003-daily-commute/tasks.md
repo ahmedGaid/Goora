@@ -179,8 +179,12 @@ moves the marker; Share and SOS paths.
 - [X] T066 [P] Add new text/background pairs (hero on dark, status chips, banners, progress bar) to `test/unit/contrast_test.dart`; 1.3× text scale + tap-target + label guidelines on Today, Week, Trust, sheets
 - [X] T067 [P] Confirm `test/architecture/no_hardcoded_values_test.dart` covers `lib/features/daily` and `lib/core/time`
 - [X] T068 List every drafted key (R14 + any added during build) in `specs/003-daily-commute/research.md` R14 for founder review
-- [ ] T069 Gates: `flutter analyze` (0 issues), `flutter test`, `node --test "supabase/functions/_shared/*.test.ts"`; run quickstart.md manual steps on a device/emulator; README: 003 section (demo section, new packages)
-  - Done 2026-10-06: analyze 0, flutter test, node tests, README 003 section. **Open:** the quickstart manual steps on a device/emulator (none attached to the build machine).
+- [X] T069 Gates: `flutter analyze` (0 issues), `flutter test`, `node --test "supabase/functions/_shared/*.test.ts"`; run quickstart.md manual steps on a device/emulator; README: 003 section (demo section, new packages)
+  - Done 2026-10-06: analyze 0, flutter test, node tests, README 003 section.
+  - Done 2026-10-08: quickstart.md manual walkthrough on Samsung SM_G998U, all 7 scenarios
+    (US1-US7), AI-driven via adb. One doc fix found+merged (US2 undo line, `2041d71`); no app
+    bugs. SOS "Add contact" routing and the live driver-marker tick verified by source read
+    (`sos_sheet.dart`, `simulated_location_source.dart`) after the device was disconnected.
 
 ---
 
