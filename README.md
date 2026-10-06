@@ -41,7 +41,28 @@ node --test "supabase/functions/_shared/*.test.ts"   # Node 24+, no install need
 python test/fixtures/gen_matching_vectors.py         # only when the rules change
 ```
 
+Feature 003 adds the daily-commute rules the same way — attendance, reliability, rotation and
+backup each exist in Dart (`lib/features/daily/domain/`) and TypeScript
+(`supabase/functions/_shared/`), checked against shared vectors:
+
+```bash
+python test/fixtures/gen_daily_vectors.py            # only when a rule changes
+```
+
+`migrations/20261006000000_daily_commute.sql` adds rides, absences, check-ins, charges, notices,
+trusted contacts and SOS alerts (RLS on every table; home points never leave the database).
+`commute-day` runs every member action and `evening-cutoff` is the 9 PM job (pg_cron). Before the
+job can run, add two Vault secrets: `project_url` and `service_role_key`.
+
 Deploying needs the founder's Supabase project keys (in `.env`, never committed).
+
+## Daily commute demo (debug builds)
+
+After joining a group the app opens on **Today**. Settings → **Demo** moves a demo clock to the
+moments the rules care about (ride day 7:15 AM, 8:55 PM / 9:05 PM the evening before), makes the
+driver arrive at your stop (live trip), simulates a driver who can't drive (with or without a
+backup), and resets the fake data. Release builds always use real time. New packages in 003:
+`url_launcher` (Call driver, Call 122) and `share_plus` (Share trip).
 
 ## Code generation
 

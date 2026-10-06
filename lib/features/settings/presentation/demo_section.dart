@@ -20,6 +20,7 @@ import '../../daily/data/fake_trust_repository.dart';
 import '../../daily/data/providers.dart';
 import '../../daily/domain/schedule.dart';
 import '../../daily/presentation/labels.dart';
+import '../../daily/presentation/today/today_controller.dart';
 
 /// Debug builds only (research R11): move the demo clock to the moments the
 /// rules care about, or reset the fake daily data. Release builds never
@@ -50,6 +51,7 @@ class DemoSection extends ConsumerWidget {
             ('demo-855', l10n.demo855, () => _eveningBefore(ref, const Clock.hm(20, 55))),
             ('demo-905', l10n.demo905, () => _eveningBefore(ref, const Clock.hm(21, 5))),
             ('demo-real', l10n.demoRealTime, () => _setClock(ref, null)),
+            ('demo-driver-arrives', l10n.demoDriverArrives, () => _driverArrives(ref)),
             ('demo-backup', l10n.demoBackup, () => _driverOut(ref, cover: true)),
             ('demo-no-cover', l10n.demoNoCover, () => _driverOut(ref, cover: false)),
             ('demo-reset', l10n.demoReset, () => _reset(ref)),
@@ -94,6 +96,18 @@ class DemoSection extends ConsumerWidget {
       if (duties.contains(wanted)) return d.date;
     }
     return null;
+  }
+
+  /// My next trip's driver checks in at my stop at my pickup time, so the
+  /// live trip (marker + arrival countdown, US7) can be seen on one device.
+  Future<void> _driverArrives(WidgetRef ref) async {
+    final view = await ref.read(todayControllerProvider.future);
+    final leg = view.upcomingRides.firstOrNull;
+    final ride = leg?.ride;
+    if (leg == null || ride == null || ride.driverId == null) return;
+    await _setClock(ref, leg.pickup);
+    await ref.read(dailyCommuteRepositoryProvider).arrivedAt(ride.id, leg.stop.id, leg.pickup);
+    ref.invalidate(todayControllerProvider);
   }
 
   /// Next Tuesday's driver can't drive, with or without a cover.

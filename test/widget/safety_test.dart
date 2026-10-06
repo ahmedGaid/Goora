@@ -171,6 +171,22 @@ void main() {
     });
   }
 
+  testWidgets('demo "Driver arrives at my stop" starts the live trip on one device', (tester) async {
+    final location = FakeLocationSource();
+    await _pump(tester, TestClock(at(rideTuesday, 7, 0)), 'en', location: location);
+    await tester.tap(find.byKey(const Key('open-settings')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('demo-driver-arrives')));
+    await tester.tap(find.byKey(const Key('demo-driver-arrives')));
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(location.watched, [_going]);
+    expect(find.byKey(const Key('live-map')), findsOneWidget);
+    // The test clock is fixed at 7:00 (the demo clock only moves real runs): 7:00 → 8:05.
+    expect(find.text(l10nFor(en).arrivalInMin(65)), findsOneWidget);
+  });
+
   testWidgets('simulated source: 5 s ticks from driver arrival to arrival, progress = elapsed ÷ trip time (R8)',
       (tester) async {
     final clock = TestClock(at(rideTuesday, 7, 35));

@@ -1353,4 +1353,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mapLiveAria => 'Route map · your driver is on the way';
+
+  @override
+  String get demoDriverArrives => 'Driver arrives at my stop';
 }

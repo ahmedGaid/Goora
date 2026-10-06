@@ -1383,4 +1383,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mapLiveAria => 'خريطة المشوار · السواق في الطريق';
+
+  @override
+  String get demoDriverArrives => 'السواق وصل محطتي';
 }

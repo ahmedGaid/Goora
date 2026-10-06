@@ -274,3 +274,16 @@ checked in), `carColour`, `demoNowValue`, `noCoverEmptySeat`, `offNoCoverBody`, 
 `demoBackup`, `demoNoCover`, `weekRiderLine` (also the Week header times), `weekDriveLine`,
 `weekEmpty`, `verificationTitle`, `percentValue`, `trustedCount`, `contactName`, `removeContact`.
 "Post your trip" on the no-cover card reuses `postReq`.
+
+### R14 addendum — drafted during the P3 build (founder review)
+
+Arabic in `lib/core/l10n/app_ar.arb`, English in `app_en.arb`:
+
+| key | ar | en |
+|---|---|---|
+| arrivalInMin | الوصول بعد {minutes} دقيقة (plural forms as `pickupInMin`) | Arriving in {minutes} min |
+| mapLiveAria | خريطة المشوار · السواق في الطريق | Route map · your driver is on the way |
+| demoDriverArrives (debug only) | السواق وصل محطتي | Driver arrives at my stop |
+
+The SOS sheet's "Add a trusted contact" button reuses `trustedAdd`; "We sent them your trip link"
+is `sosAlertSent` from the table above.

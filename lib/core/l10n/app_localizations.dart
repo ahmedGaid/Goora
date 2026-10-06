@@ -2300,6 +2300,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'خريطة المشوار · السواق في الطريق'**
   String get mapLiveAria;
+
+  /// No description provided for @demoDriverArrives.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق وصل محطتي'**
+  String get demoDriverArrives;
 }
 
 class _AppLocalizationsDelegate

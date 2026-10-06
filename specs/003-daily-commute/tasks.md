@@ -176,10 +176,11 @@ moves the marker; Share and SOS paths.
 
 ## Phase 11: Polish
 
-- [ ] T066 [P] Add new text/background pairs (hero on dark, status chips, banners, progress bar) to `test/unit/contrast_test.dart`; 1.3× text scale + tap-target + label guidelines on Today, Week, Trust, sheets
-- [ ] T067 [P] Confirm `test/architecture/no_hardcoded_values_test.dart` covers `lib/features/daily` and `lib/core/time`
-- [ ] T068 List every drafted key (R14 + any added during build) in `specs/003-daily-commute/research.md` R14 for founder review
+- [X] T066 [P] Add new text/background pairs (hero on dark, status chips, banners, progress bar) to `test/unit/contrast_test.dart`; 1.3× text scale + tap-target + label guidelines on Today, Week, Trust, sheets
+- [X] T067 [P] Confirm `test/architecture/no_hardcoded_values_test.dart` covers `lib/features/daily` and `lib/core/time`
+- [X] T068 List every drafted key (R14 + any added during build) in `specs/003-daily-commute/research.md` R14 for founder review
 - [ ] T069 Gates: `flutter analyze` (0 issues), `flutter test`, `node --test "supabase/functions/_shared/*.test.ts"`; run quickstart.md manual steps on a device/emulator; README: 003 section (demo section, new packages)
+  - Done 2026-10-06: analyze 0, flutter test, node tests, README 003 section. **Open:** the quickstart manual steps on a device/emulator (none attached to the build machine).
 
 ---
 

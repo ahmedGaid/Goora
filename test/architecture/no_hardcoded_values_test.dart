@@ -16,7 +16,8 @@ void main() {
     'hard-coded Text string': RegExp(r'''\bText\(\s*['"]'''),
   };
 
-  final roots = ['lib/app', 'lib/features', 'lib/core/widgets'];
+  // lib/features includes lib/features/daily (003).
+  final roots = ['lib/app', 'lib/features', 'lib/core/widgets', 'lib/core/time'];
   final files = [
     for (final root in roots)
       ...Directory(root)

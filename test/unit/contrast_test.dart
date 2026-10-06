@@ -40,10 +40,29 @@ void main() {
     ('textBody / mapLand (map labels)', AppColors.textBody, AppColors.mapLand),
     ('textBody / background (fee line)', AppColors.textBody, AppColors.background),
     ('white / textSecondary (anonymous avatar)', AppColors.white, AppColors.textSecondary),
+    // 003: hero on dark, status chips, banners, progress, cards.
+    ('mint / primary (hero icons)', AppColors.mint, AppColors.primary),
+    ('textPrimary / surface (cards)', AppColors.textPrimary, AppColors.surface),
+    ('dangerText / dangerBg (no-show chip)', AppColors.dangerText, AppColors.dangerBg),
+    ('textSecondary / divider (off chip)', AppColors.textSecondary, AppColors.divider),
+    ('greenText / background (live countdown pin, SOS sent)', AppColors.greenText, AppColors.background),
+  ];
+
+  // Non-text parts that carry meaning (WCAG 1.4.11): ≥ 3:1 against what is next to them.
+  // Not listed: the progress fill (green / border ≈ 2.6:1). GooraProgressBar
+  // requires `valueLabel`, so the same value is always shown as text
+  // (greenText / surface, above) and read out as the semantics value.
+  final graphics = <(String, Color, Color)>[
+    ('forest / mapLand (live driver marker)', AppColors.forest, AppColors.mapLand),
+    ('primary / mapLand (route line)', AppColors.primary, AppColors.mapLand),
   ];
 
   for (final (name, fg, bg) in pairs) {
     test('$name ≥ 4.5:1', () => expect(contrast(fg, bg), greaterThanOrEqualTo(4.5)));
+  }
+
+  for (final (name, fg, bg) in graphics) {
+    test('$name ≥ 3:1', () => expect(contrast(fg, bg), greaterThanOrEqualTo(3)));
   }
 
   test('the two §3.4 pairings replaced on 2026-10-05 really fail', () {

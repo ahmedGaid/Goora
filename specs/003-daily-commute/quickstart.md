@@ -39,8 +39,11 @@ flutter run
    options; "Take the day off" is free.
 5. **Trust (US6)**: reliability 96 % with caption; privacy pills (Women only hidden for men, Same
    company disabled without a work email); Switch to driver mode → setup in driver mode.
-6. **Safety (US7)**: during a demo trip the marker moves; Share opens the share sheet (no home
-   location in the text); SOS → Call 122 opens the dialler with 122.
+6. **Safety (US7)**: as a rider, Settings → Demo → "Driver arrives at my stop" → back to Today:
+   the map shows the driver marker moving every 5 s and "Arriving in N min". Share opens the share
+   sheet (areas, driver, car, arrival, `…/t/<16 hex>` link — no home location). SOS → Call 122
+   opens the dialler with 122; with a trusted contact, "Alert my trusted contacts" → "We sent them
+   your trip link"; with none, "Add contact" opens the Trust tab.
 
 Expected numbers are the brief's: 9 PM, half share 20, full share 40, 5 minutes, 2 → warning,
 3 → removal, reliability 96 % on the seed.
