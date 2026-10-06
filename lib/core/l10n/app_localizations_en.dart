@@ -169,6 +169,105 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get planChange => 'Change';
+
+  @override
+  String planFreeUntil(String date, int price) {
+    return 'Free until $date · then $price EGP/month';
+  }
+
+  @override
+  String planActiveLine(int price) {
+    return 'Active · $price EGP/month';
+  }
+
+  @override
+  String get planCompanyActive => 'Free · paid by your company';
+
+  @override
+  String get planDueTitle => 'Plan due';
+
+  @override
+  String get planDueBody =>
+      'Top up your wallet or switch to Through my company to keep your seat confirmed.';
+
+  @override
+  String get howPayTitle => 'How paying works';
+
+  @override
+  String get howPayRule1 =>
+      'Your subscription covers matching, backup drivers and trust tools.';
+
+  @override
+  String get howPayRule2 =>
+      'Fuel & tolls go straight to your driver — Goora takes no cut.';
+
+  @override
+  String get howPayRule3 =>
+      'Late cancellations and no-shows are charged from your wallet.';
+
+  @override
+  String get topUpSheetTitle => 'Top up your wallet';
+
+  @override
+  String get topUpMethodInstaPay => 'InstaPay';
+
+  @override
+  String get topUpMethodVodafone => 'Vodafone Cash';
+
+  @override
+  String get topUpMethodCard => 'Card';
+
+  @override
+  String get topUpConfirm => 'Confirm top-up';
+
+  @override
+  String get topUpFailTitle => 'Top-up didn\'t go through';
+
+  @override
+  String get topUpFailBody => 'Nothing was charged — try again.';
+
+  @override
+  String get changePlanTitle => 'Change your plan';
+
+  @override
+  String get changePlanNote =>
+      'Takes effect on your next billing date — nothing changes for your current period.';
+
+  @override
+  String get changePlanConfirm => 'Confirm change';
+
+  @override
+  String get breakdownTitle => 'What you pay per trip';
+
+  @override
+  String get breakdownFuel => 'Fuel & tolls';
+
+  @override
+  String get breakdownFees => 'Goora fees: in your plan';
+
+  @override
+  String get breakdownTotal => 'Total';
+
+  @override
+  String get activityTitle => 'Activity';
+
+  @override
+  String get activityEmpty => 'No activity yet';
+
+  @override
+  String get actTopUp => 'Top-up';
+
+  @override
+  String get actTripDeduction => 'Trip cost';
+
+  @override
+  String get actLateCancelCharge => 'Late cancel';
+
+  @override
+  String get actFreeCancelZero => 'Free cancellation';
+
+  @override
   String get postReq => 'Post your trip';
 
   @override

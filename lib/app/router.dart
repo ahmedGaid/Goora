@@ -13,7 +13,6 @@ import '../features/daily/data/providers.dart';
 import '../features/daily/presentation/shell/app_shell.dart';
 import '../features/daily/presentation/today/today_screen.dart';
 import '../features/daily/presentation/trust/trust_screen.dart';
-import '../features/daily/presentation/wallet/wallet_tab.dart';
 import '../features/daily/presentation/week/week_screen.dart';
 import '../features/design_gallery/presentation/design_gallery_screen.dart';
 import '../features/onboarding/domain/choices.dart';
@@ -32,6 +31,7 @@ import '../features/wallet/data/providers.dart';
 import '../features/wallet/domain/plan.dart';
 import '../features/wallet/domain/wallet_rules.dart';
 import '../features/wallet/presentation/plan/plan_screen.dart';
+import '../features/wallet/presentation/wallet/wallet_tab.dart';
 import 'routes.dart';
 
 part 'router.g.dart';

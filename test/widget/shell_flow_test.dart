@@ -87,12 +87,13 @@ void main() {
     expect(find.text(a.scheduleTitle), findsOneWidget);
     await tester.tap(find.text(a.tabWallet));
     await tester.pumpAndSettle();
-    expect(find.text(a.walletSoon), findsOneWidget);
+    // 004: the Wallet tab is a real rider screen now, not the placeholder.
+    expect(find.text(a.balanceLabel), findsOneWidget);
 
     await c.read(localeControllerProvider.notifier).set(LocaleController.english);
     await tester.pumpAndSettle();
     expect(selectedTab(tester), 2);
-    expect(find.text(e.walletSoon), findsOneWidget);
+    expect(find.text(e.balanceLabel), findsOneWidget);
     expect(find.text(e.tabWallet), findsWidgets);
   });
 }

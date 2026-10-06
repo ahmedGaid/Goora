@@ -125,33 +125,33 @@ choose Monthly, confirm the free-trial starts with no charge.
 activity list. **Independent test**: open Wallet as the seeded rider (top-up, trip deduction,
 late-cancel charge, free cancellation already present) and confirm every row and the balance.
 
-- [ ] T025 [US2] `lib/features/wallet/presentation/wallet/wallet_controller.dart`: rider wallet
+- [X] T025 [US2] `lib/features/wallet/presentation/wallet/wallet_controller.dart`: rider wallet
   view-model — plan status line ("Free until {date} · then 129 EGP/month" or the due state per
   FR-014), balance, `tripsCovered`, merged activity (T013), "What you pay per trip" breakdown
   (fuel & tolls share as a number, "Goora fees: in your plan" fixed label)
-- [ ] T026 [US2] `lib/features/wallet/presentation/wallet/rider_wallet.dart`: plan card ("Change"
+- [X] T026 [US2] `lib/features/wallet/presentation/wallet/rider_wallet.dart`: plan card ("Change"
   link) including the due-plan prompt state (FR-014); `goora_balance_card` with Top up (InstaPay /
   Vodafone Cash / Card pills, 200/400/800 EGP); "How paying works" rules list; activity list
   (zero-amount row for a free cancellation, never omitted); per-trip breakdown
-- [ ] T027 [US2] `lib/features/wallet/presentation/wallet/top_up_sheet.dart`: method + amount →
+- [X] T027 [US2] `lib/features/wallet/presentation/wallet/top_up_sheet.dart`: method + amount →
   `WalletRepository.topUp`; failure shows an inline, blame-free error with retry, balance/activity
   unchanged (FR-006)
-- [ ] T028 [US2] `lib/features/wallet/presentation/wallet/change_plan_sheet.dart`: switch
+- [X] T028 [US2] `lib/features/wallet/presentation/wallet/change_plan_sheet.dart`: switch
   Monthly/Yearly/Company via `changePlan`; current period's card is unaffected until the next
   billing date (FR-004, no pro-rating)
-- [ ] T029 [US2] `lib/features/wallet/presentation/wallet/wallet_tab.dart`: role-switch entry
+- [X] T029 [US2] `lib/features/wallet/presentation/wallet/wallet_tab.dart`: role-switch entry
   point (rider branch wired now, driver branch stubbed until US3); delete the superseded
   `lib/features/daily/presentation/wallet/wallet_tab.dart` placeholder
-- [ ] T030 [US2] `lib/features/wallet/presentation/labels.dart`: extend with rider activity-kind
+- [X] T030 [US2] `lib/features/wallet/presentation/labels.dart`: extend with rider activity-kind
   labels (top-up, trip deduction, late-cancel charge, free-cancel zero)
-- [ ] T031 [P] [US2] `test/widget/rider_wallet_test.dart` (ar + en): AC1 plan card text incl. due
+- [X] T031 [P] [US2] `test/widget/rider_wallet_test.dart` (ar + en): AC1 plan card text incl. due
   state; AC2 balance card + "Covers about N trips" + pills + amounts; AC3 top-up success → balance
   +amount, new row at top; AC4 late-cancel half-charge row vs. zero-amount free-cancel row,
   distinct; AC5 breakdown ends "Goora fees: in your plan", never a number; top-up failure leaves
   balance/activity unchanged with inline retry (SC-005)
-- [ ] T032 [P] [US2] `test/widget/top_up_sheet_test.dart` (ar + en): method/amount selection,
+- [X] T032 [P] [US2] `test/widget/top_up_sheet_test.dart` (ar + en): method/amount selection,
   success and forced-failure paths
-- [ ] T033 [P] [US2] `test/widget/change_plan_sheet_test.dart` (ar + en): switching plan leaves
+- [X] T033 [P] [US2] `test/widget/change_plan_sheet_test.dart` (ar + en): switching plan leaves
   the current plan card unchanged until the next billing date
 
 **Checkpoint P1b**: US1 + US2 complete — rider side fully functional. `flutter analyze` +

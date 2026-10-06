@@ -392,6 +392,186 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}}'**
   String coversTrips(int count);
 
+  /// No description provided for @planChange.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير'**
+  String get planChange;
+
+  /// No description provided for @planFreeUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجاني لحد {date} · بعدها {price} جنيه/الشهر'**
+  String planFreeUntil(String date, int price);
+
+  /// No description provided for @planActiveLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفعّلة · {price} جنيه/الشهر'**
+  String planActiveLine(int price);
+
+  /// No description provided for @planCompanyActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجانية · شركتك بتدفعها'**
+  String get planCompanyActive;
+
+  /// No description provided for @planDueTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطتك محتاجة تجديد'**
+  String get planDueTitle;
+
+  /// No description provided for @planDueBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن محفظتك أو حوّل لخطة الشركة علشان مكانك يفضل متأكد.'**
+  String get planDueBody;
+
+  /// No description provided for @howPayTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي الدفع بيشتغل'**
+  String get howPayTitle;
+
+  /// No description provided for @howPayRule1.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكك بيغطي ترشيح الجروب والسواق البديل وأدوات الأمان.'**
+  String get howPayRule1;
+
+  /// No description provided for @howPayRule2.
+  ///
+  /// In ar, this message translates to:
+  /// **'البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.'**
+  String get howPayRule2;
+
+  /// No description provided for @howPayRule3.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإلغاء المتأخر والغياب من غير اعتذار بتدفعهم من محفظتك.'**
+  String get howPayRule3;
+
+  /// No description provided for @topUpSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن محفظتك'**
+  String get topUpSheetTitle;
+
+  /// No description provided for @topUpMethodInstaPay.
+  ///
+  /// In ar, this message translates to:
+  /// **'InstaPay'**
+  String get topUpMethodInstaPay;
+
+  /// No description provided for @topUpMethodVodafone.
+  ///
+  /// In ar, this message translates to:
+  /// **'فودافون كاش'**
+  String get topUpMethodVodafone;
+
+  /// No description provided for @topUpMethodCard.
+  ///
+  /// In ar, this message translates to:
+  /// **'كارت'**
+  String get topUpMethodCard;
+
+  /// No description provided for @topUpConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد الشحن'**
+  String get topUpConfirm;
+
+  /// No description provided for @topUpFailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشحن ملحقش يتم'**
+  String get topUpFailTitle;
+
+  /// No description provided for @topUpFailBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة اتحصلت — جرّب تاني.'**
+  String get topUpFailBody;
+
+  /// No description provided for @changePlanTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'غيّر خطتك'**
+  String get changePlanTitle;
+
+  /// No description provided for @changePlanNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطة الجديدة تتفعل من تاريخ الفوترة الجاي — مفيش تغيير في الفترة الحالية.'**
+  String get changePlanNote;
+
+  /// No description provided for @changePlanConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد التغيير'**
+  String get changePlanConfirm;
+
+  /// No description provided for @breakdownTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتدفع كام في الرحلة'**
+  String get breakdownTitle;
+
+  /// No description provided for @breakdownFuel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البنزين والرسوم'**
+  String get breakdownFuel;
+
+  /// No description provided for @breakdownFees.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم جورة: ضمن اشتراكك'**
+  String get breakdownFees;
+
+  /// No description provided for @breakdownTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجمالي'**
+  String get breakdownTotal;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحركة'**
+  String get activityTitle;
+
+  /// No description provided for @activityEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مفيش حركة'**
+  String get activityEmpty;
+
+  /// No description provided for @actTopUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'شحن'**
+  String get actTopUp;
+
+  /// No description provided for @actTripDeduction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة رحلة'**
+  String get actTripDeduction;
+
+  /// No description provided for @actLateCancelCharge.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء متأخر'**
+  String get actLateCancelCharge;
+
+  /// No description provided for @actFreeCancelZero.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء مجاني'**
+  String get actFreeCancelZero;
+
   /// No description provided for @postReq.
   ///
   /// In ar, this message translates to:

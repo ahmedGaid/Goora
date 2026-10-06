@@ -49,6 +49,53 @@
   "balanceLabel": "Wallet balance",
   "topUp": "Top up",
   "coversTrips": "{count, plural, =0{Covers no trips yet} =1{Covers about 1 trip} other{Covers about {count} trips}}",
+  "planChange": "Change",
+  "planFreeUntil": "Free until {date} · then {price} EGP/month",
+  "@planFreeUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "planActiveLine": "Active · {price} EGP/month",
+  "@planActiveLine": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "planCompanyActive": "Free · paid by your company",
+  "planDueTitle": "Plan due",
+  "planDueBody": "Top up your wallet or switch to Through my company to keep your seat confirmed.",
+  "howPayTitle": "How paying works",
+  "howPayRule1": "Your subscription covers matching, backup drivers and trust tools.",
+  "howPayRule2": "Fuel & tolls go straight to your driver — Goora takes no cut.",
+  "howPayRule3": "Late cancellations and no-shows are charged from your wallet.",
+  "topUpSheetTitle": "Top up your wallet",
+  "topUpMethodInstaPay": "InstaPay",
+  "topUpMethodVodafone": "Vodafone Cash",
+  "topUpMethodCard": "Card",
+  "topUpConfirm": "Confirm top-up",
+  "topUpFailTitle": "Top-up didn't go through",
+  "topUpFailBody": "Nothing was charged — try again.",
+  "changePlanTitle": "Change your plan",
+  "changePlanNote": "Takes effect on your next billing date — nothing changes for your current period.",
+  "changePlanConfirm": "Confirm change",
+  "breakdownTitle": "What you pay per trip",
+  "breakdownFuel": "Fuel & tolls",
+  "breakdownFees": "Goora fees: in your plan",
+  "breakdownTotal": "Total",
+  "activityTitle": "Activity",
+  "activityEmpty": "No activity yet",
+  "actTopUp": "Top-up",
+  "actTripDeduction": "Trip cost",
+  "actLateCancelCharge": "Late cancel",
+  "actFreeCancelZero": "Free cancellation",
   "postReq": "Post your trip",
   "offerBtn": "Offer a trip",
   "reqsOnRoute": "Requests on your route",

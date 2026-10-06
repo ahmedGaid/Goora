@@ -63,6 +63,53 @@
       }
     }
   },
+  "planChange": "تغيير",
+  "planFreeUntil": "مجاني لحد {date} · بعدها {price} جنيه/الشهر",
+  "@planFreeUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "planActiveLine": "مفعّلة · {price} جنيه/الشهر",
+  "@planActiveLine": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "planCompanyActive": "مجانية · شركتك بتدفعها",
+  "planDueTitle": "خطتك محتاجة تجديد",
+  "planDueBody": "اشحن محفظتك أو حوّل لخطة الشركة علشان مكانك يفضل متأكد.",
+  "howPayTitle": "إزاي الدفع بيشتغل",
+  "howPayRule1": "اشتراكك بيغطي ترشيح الجروب والسواق البديل وأدوات الأمان.",
+  "howPayRule2": "البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.",
+  "howPayRule3": "الإلغاء المتأخر والغياب من غير اعتذار بتدفعهم من محفظتك.",
+  "topUpSheetTitle": "اشحن محفظتك",
+  "topUpMethodInstaPay": "InstaPay",
+  "topUpMethodVodafone": "فودافون كاش",
+  "topUpMethodCard": "كارت",
+  "topUpConfirm": "أكّد الشحن",
+  "topUpFailTitle": "الشحن ملحقش يتم",
+  "topUpFailBody": "مفيش حاجة اتحصلت — جرّب تاني.",
+  "changePlanTitle": "غيّر خطتك",
+  "changePlanNote": "الخطة الجديدة تتفعل من تاريخ الفوترة الجاي — مفيش تغيير في الفترة الحالية.",
+  "changePlanConfirm": "أكّد التغيير",
+  "breakdownTitle": "بتدفع كام في الرحلة",
+  "breakdownFuel": "البنزين والرسوم",
+  "breakdownFees": "رسوم جورة: ضمن اشتراكك",
+  "breakdownTotal": "الإجمالي",
+  "activityTitle": "الحركة",
+  "activityEmpty": "لسه مفيش حركة",
+  "actTopUp": "شحن",
+  "actTripDeduction": "تكلفة رحلة",
+  "actLateCancelCharge": "إلغاء متأخر",
+  "actFreeCancelZero": "إلغاء مجاني",
   "postReq": "انشر مشوارك",
   "offerBtn": "اعرض مشوار",
   "reqsOnRoute": "طلبات على خطك",

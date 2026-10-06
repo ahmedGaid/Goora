@@ -168,6 +168,105 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get planChange => 'تغيير';
+
+  @override
+  String planFreeUntil(String date, int price) {
+    return 'مجاني لحد $date · بعدها $price جنيه/الشهر';
+  }
+
+  @override
+  String planActiveLine(int price) {
+    return 'مفعّلة · $price جنيه/الشهر';
+  }
+
+  @override
+  String get planCompanyActive => 'مجانية · شركتك بتدفعها';
+
+  @override
+  String get planDueTitle => 'خطتك محتاجة تجديد';
+
+  @override
+  String get planDueBody =>
+      'اشحن محفظتك أو حوّل لخطة الشركة علشان مكانك يفضل متأكد.';
+
+  @override
+  String get howPayTitle => 'إزاي الدفع بيشتغل';
+
+  @override
+  String get howPayRule1 =>
+      'اشتراكك بيغطي ترشيح الجروب والسواق البديل وأدوات الأمان.';
+
+  @override
+  String get howPayRule2 =>
+      'البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.';
+
+  @override
+  String get howPayRule3 =>
+      'الإلغاء المتأخر والغياب من غير اعتذار بتدفعهم من محفظتك.';
+
+  @override
+  String get topUpSheetTitle => 'اشحن محفظتك';
+
+  @override
+  String get topUpMethodInstaPay => 'InstaPay';
+
+  @override
+  String get topUpMethodVodafone => 'فودافون كاش';
+
+  @override
+  String get topUpMethodCard => 'كارت';
+
+  @override
+  String get topUpConfirm => 'أكّد الشحن';
+
+  @override
+  String get topUpFailTitle => 'الشحن ملحقش يتم';
+
+  @override
+  String get topUpFailBody => 'مفيش حاجة اتحصلت — جرّب تاني.';
+
+  @override
+  String get changePlanTitle => 'غيّر خطتك';
+
+  @override
+  String get changePlanNote =>
+      'الخطة الجديدة تتفعل من تاريخ الفوترة الجاي — مفيش تغيير في الفترة الحالية.';
+
+  @override
+  String get changePlanConfirm => 'أكّد التغيير';
+
+  @override
+  String get breakdownTitle => 'بتدفع كام في الرحلة';
+
+  @override
+  String get breakdownFuel => 'البنزين والرسوم';
+
+  @override
+  String get breakdownFees => 'رسوم جورة: ضمن اشتراكك';
+
+  @override
+  String get breakdownTotal => 'الإجمالي';
+
+  @override
+  String get activityTitle => 'الحركة';
+
+  @override
+  String get activityEmpty => 'لسه مفيش حركة';
+
+  @override
+  String get actTopUp => 'شحن';
+
+  @override
+  String get actTripDeduction => 'تكلفة رحلة';
+
+  @override
+  String get actLateCancelCharge => 'إلغاء متأخر';
+
+  @override
+  String get actFreeCancelZero => 'إلغاء مجاني';
+
+  @override
   String get postReq => 'انشر مشوارك';
 
   @override
