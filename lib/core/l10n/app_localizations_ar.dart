@@ -596,4 +596,693 @@ class AppLocalizationsAr extends AppLocalizations {
   String timeDays(String time, String days) {
     return '$time · $days';
   }
+
+  @override
+  String goodMorning(String name) {
+    return 'صباح الخير يا $name';
+  }
+
+  @override
+  String goodEvening(String name) {
+    return 'مساء الخير يا $name';
+  }
+
+  @override
+  String get todaySub => 'ده مشوارك النهارده.';
+
+  @override
+  String nextRide(String day) {
+    return 'مشوارك الجاي · $day';
+  }
+
+  @override
+  String get relToday => 'النهارده';
+
+  @override
+  String get relTomorrow => 'بكرة';
+
+  @override
+  String relTomorrowDay(String day) {
+    return 'بكرة ($day)';
+  }
+
+  @override
+  String relOn(String day) {
+    return 'يوم $day';
+  }
+
+  @override
+  String get heroToday => 'النهارده';
+
+  @override
+  String get heroTomorrow => 'بكرة';
+
+  @override
+  String get legGoing => 'الذهاب';
+
+  @override
+  String get legReturn => 'الرجوع';
+
+  @override
+  String legRow(String leg, String driver, String time) {
+    return '$leg: $driver · $time';
+  }
+
+  @override
+  String get youWord => 'إنت';
+
+  @override
+  String get noDriverYet => 'لسه مفيش سواق';
+
+  @override
+  String get legsNote =>
+      'الذهاب والرجوع مشوارين منفصلين، وممكن كل واحد يبقى بسواق.';
+
+  @override
+  String goingLeg(String time) {
+    return 'الذهاب مع مجموعة $time';
+  }
+
+  @override
+  String pickupInMin(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes دقيقة',
+      few: '$minutes دقايق',
+      two: 'دقيقتين',
+      one: 'دقيقة',
+    );
+    return 'التجمع بعد $_temp0';
+  }
+
+  @override
+  String get callDriver => 'كلّم السواق';
+
+  @override
+  String callName(String name) {
+    return 'كلّم $name';
+  }
+
+  @override
+  String get verified => 'موثّق';
+
+  @override
+  String get notVerified => 'مش موثّق';
+
+  @override
+  String carLine(String car, String colour, String rating) {
+    return '$car · $colour · $rating ★';
+  }
+
+  @override
+  String get colourWhite => 'أبيض';
+
+  @override
+  String get colourSilver => 'فضي';
+
+  @override
+  String get colourBlack => 'أسود';
+
+  @override
+  String get colourGrey => 'رمادي';
+
+  @override
+  String get colourRed => 'أحمر';
+
+  @override
+  String get colourBlue => 'أزرق';
+
+  @override
+  String get stopMainGate => 'البوابة الرئيسية';
+
+  @override
+  String get stopCentralSt => 'الشارع الرئيسي';
+
+  @override
+  String get stopGasStation => 'بنزينة 26 يوليو';
+
+  @override
+  String get stopSmartVillageGate2 => 'القرية الذكية، بوابة 2';
+
+  @override
+  String tlPickup(String time) {
+    return 'التجمع · $time';
+  }
+
+  @override
+  String get tlOnTheWay => 'في الطريق';
+
+  @override
+  String tlPassengers(int count, String names) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count راكب',
+      few: '$count ركاب',
+      two: 'راكبين',
+      one: 'راكب واحد',
+    );
+    return '$_temp0 · $names';
+  }
+
+  @override
+  String tlArrival(String time) {
+    return 'الوصول · $time';
+  }
+
+  @override
+  String get listSep => '، ';
+
+  @override
+  String get returnTime => 'ميعاد الرجوع';
+
+  @override
+  String get noReturnTrip => 'مفيش رجوع';
+
+  @override
+  String get payPerTrip => 'بتدفع في المشوار';
+
+  @override
+  String get shareTrip => 'شارك المشوار';
+
+  @override
+  String get cantComeNote => 'مجاني قبل 9 بالليل · بعدها تدفع نص مساهمتك';
+
+  @override
+  String offTitle(String when) {
+    return 'إنت مش جاي $when';
+  }
+
+  @override
+  String offLegTitle(String trip, String when) {
+    return 'مش جاي في $trip $when';
+  }
+
+  @override
+  String get tripGoing => 'رحلة الذهاب';
+
+  @override
+  String get tripReturn => 'رحلة الرجوع';
+
+  @override
+  String get offBody =>
+      'اعتذرت قبل 9 بالليل، فمفيش أي رسوم. كرسيك اتعرض على قائمة الانتظار.';
+
+  @override
+  String lateOffBody(int amount) {
+    return 'اعتذرت بعد 9 بالليل — $amount ج للسواق.';
+  }
+
+  @override
+  String get undo => 'لأ، أنا جاي';
+
+  @override
+  String get undoRefused =>
+      'الكرسي اتاخد من قايمة الانتظار، فمش هينفع نرجّعه. ممكن تحجز كرسي فاضي لو محتاج.';
+
+  @override
+  String get undoTooLate => 'عدّى ميعاد التجمع، فمش هينفع نرجّع الإلغاء.';
+
+  @override
+  String get cantComeTitle => 'إيه المشاوير اللي مش هتلحقها؟';
+
+  @override
+  String legAt(String leg, String time) {
+    return '$leg · $time';
+  }
+
+  @override
+  String get freeCancelPreview => 'قبل 9 بالليل: من غير فلوس';
+
+  @override
+  String lateCancelPreview(int amount) {
+    return 'بعد 9 بالليل: هتدفع $amount ج للسواق';
+  }
+
+  @override
+  String get confirmCancel => 'أكّد الإلغاء';
+
+  @override
+  String get pickOneTrip => 'اختار مشوار واحد على الأقل';
+
+  @override
+  String get cancelAfterPickup =>
+      'عدّى ميعاد التجمع. لو مجتش، السواق هيسجّلك غياب.';
+
+  @override
+  String get notNextWeek => 'مش جاي الأسبوع الجاي';
+
+  @override
+  String get notNextWeekConfirm =>
+      'هنعلّم كل أيام الأسبوع الجاي إجازة. الأيام اللي لسه قبل 9 بالليل من غير فلوس.';
+
+  @override
+  String get notNextWeekDone => 'تمام، علّمنا الأسبوع الجاي إجازة.';
+
+  @override
+  String get keepIt => 'لأ، سيبه';
+
+  @override
+  String get headsUp => 'خلي بالك';
+
+  @override
+  String get noShowWarning =>
+      'مجتش مرتين الشهر ده. المرة التالتة هتخرجك من المجموعة.';
+
+  @override
+  String get removedTitle => 'مبقتش في المجموعة';
+
+  @override
+  String get removedNotice =>
+      'خرجناك من المجموعة عشان مجتش 3 مرات الشهر ده. مشوارك متسجّل، ونقدر ندوّرلك على مجموعة جديدة.';
+
+  @override
+  String get findNewGroup => 'دوّرلي على مجموعة جديدة';
+
+  @override
+  String drivingWhen(String when) {
+    return 'إنت اللي هتسوق $when.';
+  }
+
+  @override
+  String get notDrivingSoon => 'مفيش سواقة عليك الأيام الجاية.';
+
+  @override
+  String heroDriver(String when, String direction, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count راكب',
+      few: '$count ركاب',
+      two: 'راكبين',
+      one: 'راكب واحد',
+      zero: 'مفيش ركاب',
+    );
+    return '$when · $direction · $_temp0';
+  }
+
+  @override
+  String pickupN(int n, String stop) {
+    return 'تجمع $n — $stop';
+  }
+
+  @override
+  String returnFrom(String place) {
+    return 'الرجوع من $place';
+  }
+
+  @override
+  String get estContrib => 'المساهمة المتوقعة';
+
+  @override
+  String get confirmDrive => 'أكّد مشوار بكرة';
+
+  @override
+  String get confirmDriveToday => 'أكّد مشوار النهارده';
+
+  @override
+  String confirmDriveDay(String day) {
+    return 'أكّد مشوار يوم $day';
+  }
+
+  @override
+  String get confirmedNote => 'اتأكد. الركاب وصلهم إشعار.';
+
+  @override
+  String get undoConfirm => 'إلغاء التأكيد';
+
+  @override
+  String get reportDelay => 'هتأخر';
+
+  @override
+  String get cantDrive => 'مش هقدر أسوق';
+
+  @override
+  String get cantDriveConfirm => 'متأكد؟ هندوّر على سواق بديل لركابك.';
+
+  @override
+  String get cantDriveYes => 'أيوه، مش هقدر';
+
+  @override
+  String get keepDriving => 'لأ، هسوق';
+
+  @override
+  String cantDriveDone(String when) {
+    return 'قلنا للمجموعة إنك مش هتسوق $when. بندوّر على سواق بديل.';
+  }
+
+  @override
+  String get delayTitle => 'هتتأخر قد إيه؟';
+
+  @override
+  String delayMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes دقيقة',
+      few: '$minutes دقايق',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String delaySent(String time) {
+    return 'بلّغنا الركاب بالميعاد الجديد: $time';
+  }
+
+  @override
+  String get reqPrivacy =>
+      'الطلبات بتظهرلك بس لو لفّتك أقل من 10 دقايق. والسعر ثابت من Goora.';
+
+  @override
+  String get reqsPlaceholder => 'طلبات الركاب اللي على خطك هتظهر هنا.';
+
+  @override
+  String rideWith(String day, String driver) {
+    return 'راكب $day مع $driver';
+  }
+
+  @override
+  String get checkin => 'تسجيل الوصول';
+
+  @override
+  String arrivedAt(String stop) {
+    return 'وصلت $stop';
+  }
+
+  @override
+  String get arrivedNote => 'الركاب هيوصلهم إشعار. هتستنى 5 دقايق بالكتير.';
+
+  @override
+  String stWaiting(String time) {
+    return 'وصله إشعار · مستنيين $time';
+  }
+
+  @override
+  String get stNotArrived => 'لسه موصلتش';
+
+  @override
+  String get stNoShow => 'مجاش · اتحسبت مساهمته كاملة';
+
+  @override
+  String noShowAvailableIn(String time) {
+    return 'متاح بعد $time';
+  }
+
+  @override
+  String get noShowNote => 'لو الراكب مجاش بعد 5 دقايق، بيدفع مساهمته كاملة.';
+
+  @override
+  String ratingStars(String rating) {
+    return '$rating ★';
+  }
+
+  @override
+  String get startTrip => 'يلا نتحرك';
+
+  @override
+  String get endTrip => 'وصلنا';
+
+  @override
+  String get tripOnWay => 'المشوار بدأ. سوق بالراحة.';
+
+  @override
+  String get tripEndedNote => 'المشوار خلص. شكرًا!';
+
+  @override
+  String get refusedNoShowEarly => 'استنى لحد ما الـ 5 دقايق يخلصوا.';
+
+  @override
+  String get refusedTripStarted => 'المشوار بدأ، فمش هينفع تغيّر.';
+
+  @override
+  String get inboxTitle => 'الإشعارات';
+
+  @override
+  String get inboxEmpty => 'مفيش إشعارات لسه';
+
+  @override
+  String get inboxEmptyBody => 'هنبلغك هنا بأي تغيير في مشاويرك.';
+
+  @override
+  String inboxAria(int count) {
+    return 'الإشعارات، $count مش مقروءة';
+  }
+
+  @override
+  String get sentToRiders => 'اتبعت لركابك';
+
+  @override
+  String nDriverConfirmed(String day) {
+    return 'السواق أكّد مشوار $day.';
+  }
+
+  @override
+  String nDriverUnconfirmed(String day) {
+    return 'السواق لغى تأكيد مشوار $day.';
+  }
+
+  @override
+  String nDelay(int minutes, String time) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes دقيقة',
+      few: '$minutes دقايق',
+    );
+    return 'السواق هيتأخر $_temp0. الميعاد الجديد $time.';
+  }
+
+  @override
+  String nDriverArrived(String stop) {
+    return 'السواق وصل $stop. تعالى في خلال 5 دقايق.';
+  }
+
+  @override
+  String nLateCancel(String day, int amount) {
+    return 'إلغاء متأخر يوم $day: $amount ج للسواق.';
+  }
+
+  @override
+  String nNoShow(String day, int amount) {
+    return 'غياب يوم $day: $amount ج للسواق.';
+  }
+
+  @override
+  String nSeatOffered(String day) {
+    return 'كرسيك يوم $day اتعرض على قائمة الانتظار.';
+  }
+
+  @override
+  String backupTitleFor(String driver, String day) {
+    return '$driver مش هيقدر يسوق يوم $day';
+  }
+
+  @override
+  String backupBodyFor(String cover) {
+    return '$cover هيسوق بداله. مشوارك متغطّي، ومش محتاج تعمل حاجة.';
+  }
+
+  @override
+  String noCoverTitle(String when) {
+    return 'مفيش سواق $when';
+  }
+
+  @override
+  String noCoverBody(String driver) {
+    return '$driver مش هيقدر يسوق، وملقيناش بديل. اختار اللي يناسبك:';
+  }
+
+  @override
+  String get noCoverDayOff => 'خد اليوم إجازة — من غير فلوس';
+
+  @override
+  String get sosTitle => 'محتاج مساعدة؟';
+
+  @override
+  String get sosCall => 'اتصل بـ 122';
+
+  @override
+  String get sosAlert => 'بلّغ الناس اللي بثق فيهم';
+
+  @override
+  String get sosAlertSent => 'بعتنالهم لينك المشوار';
+
+  @override
+  String get sosNoContacts => 'ضيف حد بتثق فيه عشان نبلّغه وقت الطوارئ';
+
+  @override
+  String get trustedTitle => 'ناس بثق فيهم';
+
+  @override
+  String get trustedAdd => 'ضيف حد';
+
+  @override
+  String get trustedMax => 'ممكن تضيف لحد 3';
+
+  @override
+  String shareMessage(
+    String driver,
+    String car,
+    String from,
+    String to,
+    String time,
+    String link,
+  ) {
+    return 'أنا في مشواري مع $driver ($car) من $from لـ $to، هوصل حوالي $time. تابعني: $link';
+  }
+
+  @override
+  String get scheduleTitle => 'جدول مشاويرك';
+
+  @override
+  String get rotateNote =>
+      'Goora بيوزّع السواقة بالعدل، ولو حد اعتذر بيسد مكانه تلقائي.';
+
+  @override
+  String drivesName(String name) {
+    return '$name بيسوق';
+  }
+
+  @override
+  String get youDrive => 'إنت بتسوق';
+
+  @override
+  String get youRide => 'إنت راكب';
+
+  @override
+  String get youOff => 'إنت مش جاي';
+
+  @override
+  String get offNote => 'اعتذرت قبل 9 بالليل · من غير رسوم';
+
+  @override
+  String lateOffNote(int amount) {
+    return 'اعتذرت بعد 9 بالليل · $amount ج للسواق';
+  }
+
+  @override
+  String backupName(String name) {
+    return '$name (بديل)';
+  }
+
+  @override
+  String verifiedMemberRating(String rating) {
+    return 'عضو موثّق · $rating ★';
+  }
+
+  @override
+  String get reliability => 'الالتزام';
+
+  @override
+  String relLateCancels(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إلغاء متأخر الشهر ده.',
+      few: '$count إلغاءات متأخرة الشهر ده.',
+      two: 'إلغاءين متأخرين الشهر ده.',
+      one: 'إلغاء متأخر واحد الشهر ده.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String relNoShows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مرة غياب الشهر ده.',
+      few: '$count مرات غياب الشهر ده.',
+      two: 'غيابين الشهر ده.',
+      one: 'غياب واحد الشهر ده.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get relRule => '3 مرات غياب في الشهر بتخرّجك من المجموعة.';
+
+  @override
+  String get whoRide => 'مين يركب معايا';
+
+  @override
+  String get checkPhone => 'رقم الموبايل';
+
+  @override
+  String get checkNationalId => 'البطاقة';
+
+  @override
+  String get checkWorkEmail => 'إيميل الشغل';
+
+  @override
+  String get checkLicense => 'رخصة السواقة';
+
+  @override
+  String get checkVehicle => 'العربية';
+
+  @override
+  String get notNeeded => 'مش مطلوب';
+
+  @override
+  String get privacyVerified => 'الموثّقين بس';
+
+  @override
+  String get privacyCompany => 'نفس الشركة';
+
+  @override
+  String get privacyCompound => 'نفس الكمبوند';
+
+  @override
+  String get privacyWomen => 'سيدات فقط';
+
+  @override
+  String get privacyNote =>
+      'الاختيار ده هيتطبّق على المجموعات الجاية، مش مجموعتك الحالية.';
+
+  @override
+  String get needWorkEmail => 'وثّق إيميل الشغل الأول';
+
+  @override
+  String get needCompound => 'ضيف اسم الكمبوند الأول';
+
+  @override
+  String get driverNeedsDocs =>
+      'عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.';
+
+  @override
+  String get walletSoon => 'المحفظة جاية قريب';
+
+  @override
+  String get demoSection => 'تجربة (للمطورين)';
+
+  @override
+  String demoNow(String time) {
+    return 'الوقت دلوقتي: $time';
+  }
+
+  @override
+  String get demoRideDay => 'يوم مشوار · 7:15 ص';
+
+  @override
+  String get demo855 => 'قبل 9 بالليل · 8:55 م';
+
+  @override
+  String get demo905 => 'بعد 9 بالليل · 9:05 م';
+
+  @override
+  String get demoRealTime => 'الوقت الحقيقي';
+
+  @override
+  String get demoReset => 'امسح بيانات التجربة';
+
+  @override
+  String get noRidesSoon => 'مفيش مشاوير الأيام الجاية.';
+
+  @override
+  String get loadingToday => 'بنجهّز مشوارك…';
+
+  @override
+  String get todayError => 'معرفناش نجيب مشوارك دلوقتي.';
 }

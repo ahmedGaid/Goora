@@ -21,4 +21,15 @@ abstract final class GooraIcons {
   static const IconData settings = LucideIcons.settings;
   static const IconData phone = LucideIcons.phone;
   static const IconData pin = LucideIcons.mapPin;
+  static const IconData verified = LucideIcons.badgeCheck;
+  static const IconData waiting = LucideIcons.clock;
+  static const IconData pickedUp = LucideIcons.userCheck;
+  static const IconData noShow = LucideIcons.userX;
+  static const IconData backup = LucideIcons.repeat;
+  static const IconData dayOff = LucideIcons.calendarX;
+  static const IconData bell = LucideIcons.bell;
+  static const IconData share = LucideIcons.share2;
+  static const IconData sos = LucideIcons.siren;
+  static const IconData delay = LucideIcons.timer;
+  static const IconData info = LucideIcons.info;
 }

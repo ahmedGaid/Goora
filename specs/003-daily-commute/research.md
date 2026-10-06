@@ -34,6 +34,9 @@ applied as written.
 
 ## R3 AttendanceRules (brief §6.5, FR-005 – FR-011) — exact numbers
 
+Build note (P1): `WallTime` carries seconds as well as the minute `Clock`, because the no-show
+boundary is 4:59 vs 5:00 after arrival.
+
 All in `attendance_rules.dart`, constants in one `AttendanceLimits` object:
 `cutoff = Clock.hm(21, 0)`, `noShowWait = 5 min`, `warnAt = 2`, `removeAt = 3`.
 
@@ -54,8 +57,11 @@ All in `attendance_rules.dart`, constants in one `AttendanceLimits` object:
 - **Seat release** (FR-006): a free cancellation marks the seat "offered to the waitlist"; at the
   cut-off the waitlist takes it when anyone is waiting (fake corridor waitlist = 6 → always taken).
   This makes "Undo" possible exactly until 9 PM and gives the spec's "undo refused" edge case a
-  concrete trigger. **Assumption for founder review**: a late (after 9 PM) cancellation cannot be
-  undone.
+  concrete trigger. **Founder decision 2026-10-06**: a late (after 9 PM) cancellation *can* be
+  undone while its seat is still free — the waitlist only takes seats at the cut-off, so a late
+  cancel's seat stays free until pickup; undo removes the charge and the reliability event.
+  `canUndo` refuses only `refusedSeatTaken` (free cancel, at/after cut-off, waitlist waiting) or
+  `refusedTooLate` (at/after the trip's pickup time).
 - "I can't come tomorrow" cancels both legs the person rides by default; the sheet lets them untick
   one leg. "Not coming next week" = one absence per ride day of next week (Sun–Thu after the
   coming Saturday), each charged by `cancelCharge` at the moment of tapping.
@@ -239,3 +245,18 @@ prototype: no "Goora fee" lines; 160 not 180.
 | walletSoon | المحفظة جاية قريب | Wallet is coming soon |
 | verified / notVerified | موثّق / مش موثّق | Verified / Not verified |
 | demoSection | تجربة (للمطورين) | Demo (developers) |
+
+### R14 addendum — drafted during the P1 build (founder review)
+
+Not in the prototype dictionary; Arabic in `lib/core/l10n/app_ar.arb`, English in `app_en.arb`:
+`goodEvening`, `relToday` / `relTomorrow` / `relTomorrowDay` / `relOn`, `heroToday` / `heroTomorrow`,
+`noDriverYet`, `goingLeg`, `callName`, `colour*`, `tlPassengers`, `noReturnTrip`, `offLegTitle`,
+`tripGoing` / `tripReturn`, `lateOffBody` (replaces the single `lateOffBanner` line), `undoTooLate`,
+`cantComeTitle`, `confirmCancel`, `pickOneTrip`, `cancelAfterPickup`, `notNextWeekDone`, `keepIt`,
+`headsUp`, `removedTitle`, `drivingWhen`, `notDrivingSoon`, `heroDriver`, `confirmDriveToday` /
+`confirmDriveDay`, `cantDriveYes`, `keepDriving`, `cantDriveDone`, `reqsPlaceholder`, `stNotArrived`,
+`noShowAvailableIn`, `tripOnWay`, `tripEndedNote`, `refusedNoShowEarly`, `refusedTripStarted`,
+`inboxEmptyBody`, `inboxAria`, `sentToRiders`, `nDriverConfirmed`, `nDriverUnconfirmed`, `nDelay`,
+`nDriverArrived`, `nLateCancel`, `nNoShow`, `nSeatOffered`, `noRidesSoon`, `loadingToday`,
+`todayError`, `demoNow`, `demoRideDay`, `demo855`, `demo905`, `demoRealTime`, `demoReset`.
+`offTitle` / `noCoverTitle` take a `{when}` ("tomorrow (Tue)", "on Sun") instead of a fixed day.

@@ -187,7 +187,6 @@ void main() {
             PlaceholderKind.offerTrip => l10n.offerTitle,
             PlaceholderKind.postTrip => l10n.postReq,
             PlaceholderKind.plan => l10n.planTitle,
-            PlaceholderKind.today => l10n.tabToday,
           };
           expect(find.text(title), findsWidgets);
           await _expectAccessible(tester);

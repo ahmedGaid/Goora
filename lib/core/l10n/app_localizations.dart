@@ -1153,6 +1153,1045 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{time} · {days}'**
   String timeDays(String time, String days);
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الخير يا {name}'**
+  String goodMorning(String name);
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الخير يا {name}'**
+  String goodEvening(String name);
+
+  /// No description provided for @todaySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'ده مشوارك النهارده.'**
+  String get todaySub;
+
+  /// No description provided for @nextRide.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشوارك الجاي · {day}'**
+  String nextRide(String day);
+
+  /// No description provided for @relToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'النهارده'**
+  String get relToday;
+
+  /// No description provided for @relTomorrow.
+  ///
+  /// In ar, this message translates to:
+  /// **'بكرة'**
+  String get relTomorrow;
+
+  /// No description provided for @relTomorrowDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'بكرة ({day})'**
+  String relTomorrowDay(String day);
+
+  /// No description provided for @relOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوم {day}'**
+  String relOn(String day);
+
+  /// No description provided for @heroToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'النهارده'**
+  String get heroToday;
+
+  /// No description provided for @heroTomorrow.
+  ///
+  /// In ar, this message translates to:
+  /// **'بكرة'**
+  String get heroTomorrow;
+
+  /// No description provided for @legGoing.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذهاب'**
+  String get legGoing;
+
+  /// No description provided for @legReturn.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجوع'**
+  String get legReturn;
+
+  /// No description provided for @legRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'{leg}: {driver} · {time}'**
+  String legRow(String leg, String driver, String time);
+
+  /// No description provided for @youWord.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت'**
+  String get youWord;
+
+  /// No description provided for @noDriverYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مفيش سواق'**
+  String get noDriverYet;
+
+  /// No description provided for @legsNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذهاب والرجوع مشوارين منفصلين، وممكن كل واحد يبقى بسواق.'**
+  String get legsNote;
+
+  /// No description provided for @goingLeg.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذهاب مع مجموعة {time}'**
+  String goingLeg(String time);
+
+  /// No description provided for @pickupInMin.
+  ///
+  /// In ar, this message translates to:
+  /// **'التجمع بعد {minutes, plural, =1{دقيقة} =2{دقيقتين} few{{minutes} دقايق} other{{minutes} دقيقة}}'**
+  String pickupInMin(int minutes);
+
+  /// No description provided for @callDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلّم السواق'**
+  String get callDriver;
+
+  /// No description provided for @callName.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلّم {name}'**
+  String callName(String name);
+
+  /// No description provided for @verified.
+  ///
+  /// In ar, this message translates to:
+  /// **'موثّق'**
+  String get verified;
+
+  /// No description provided for @notVerified.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش موثّق'**
+  String get notVerified;
+
+  /// No description provided for @carLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{car} · {colour} · {rating} ★'**
+  String carLine(String car, String colour, String rating);
+
+  /// No description provided for @colourWhite.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبيض'**
+  String get colourWhite;
+
+  /// No description provided for @colourSilver.
+  ///
+  /// In ar, this message translates to:
+  /// **'فضي'**
+  String get colourSilver;
+
+  /// No description provided for @colourBlack.
+  ///
+  /// In ar, this message translates to:
+  /// **'أسود'**
+  String get colourBlack;
+
+  /// No description provided for @colourGrey.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمادي'**
+  String get colourGrey;
+
+  /// No description provided for @colourRed.
+  ///
+  /// In ar, this message translates to:
+  /// **'أحمر'**
+  String get colourRed;
+
+  /// No description provided for @colourBlue.
+  ///
+  /// In ar, this message translates to:
+  /// **'أزرق'**
+  String get colourBlue;
+
+  /// No description provided for @stopMainGate.
+  ///
+  /// In ar, this message translates to:
+  /// **'البوابة الرئيسية'**
+  String get stopMainGate;
+
+  /// No description provided for @stopCentralSt.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشارع الرئيسي'**
+  String get stopCentralSt;
+
+  /// No description provided for @stopGasStation.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنزينة 26 يوليو'**
+  String get stopGasStation;
+
+  /// No description provided for @stopSmartVillageGate2.
+  ///
+  /// In ar, this message translates to:
+  /// **'القرية الذكية، بوابة 2'**
+  String get stopSmartVillageGate2;
+
+  /// No description provided for @tlPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'التجمع · {time}'**
+  String tlPickup(String time);
+
+  /// No description provided for @tlOnTheWay.
+  ///
+  /// In ar, this message translates to:
+  /// **'في الطريق'**
+  String get tlOnTheWay;
+
+  /// No description provided for @tlPassengers.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{راكب واحد} =2{راكبين} few{{count} ركاب} other{{count} راكب}} · {names}'**
+  String tlPassengers(int count, String names);
+
+  /// No description provided for @tlArrival.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوصول · {time}'**
+  String tlArrival(String time);
+
+  /// No description provided for @listSep.
+  ///
+  /// In ar, this message translates to:
+  /// **'، '**
+  String get listSep;
+
+  /// No description provided for @returnTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'ميعاد الرجوع'**
+  String get returnTime;
+
+  /// No description provided for @noReturnTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش رجوع'**
+  String get noReturnTrip;
+
+  /// No description provided for @payPerTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتدفع في المشوار'**
+  String get payPerTrip;
+
+  /// No description provided for @shareTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'شارك المشوار'**
+  String get shareTrip;
+
+  /// No description provided for @cantComeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجاني قبل 9 بالليل · بعدها تدفع نص مساهمتك'**
+  String get cantComeNote;
+
+  /// No description provided for @offTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت مش جاي {when}'**
+  String offTitle(String when);
+
+  /// No description provided for @offLegTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش جاي في {trip} {when}'**
+  String offLegTitle(String trip, String when);
+
+  /// No description provided for @tripGoing.
+  ///
+  /// In ar, this message translates to:
+  /// **'رحلة الذهاب'**
+  String get tripGoing;
+
+  /// No description provided for @tripReturn.
+  ///
+  /// In ar, this message translates to:
+  /// **'رحلة الرجوع'**
+  String get tripReturn;
+
+  /// No description provided for @offBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتذرت قبل 9 بالليل، فمفيش أي رسوم. كرسيك اتعرض على قائمة الانتظار.'**
+  String get offBody;
+
+  /// No description provided for @lateOffBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتذرت بعد 9 بالليل — {amount} ج للسواق.'**
+  String lateOffBody(int amount);
+
+  /// No description provided for @undo.
+  ///
+  /// In ar, this message translates to:
+  /// **'لأ، أنا جاي'**
+  String get undo;
+
+  /// No description provided for @undoRefused.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكرسي اتاخد من قايمة الانتظار، فمش هينفع نرجّعه. ممكن تحجز كرسي فاضي لو محتاج.'**
+  String get undoRefused;
+
+  /// No description provided for @undoTooLate.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدّى ميعاد التجمع، فمش هينفع نرجّع الإلغاء.'**
+  String get undoTooLate;
+
+  /// No description provided for @cantComeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيه المشاوير اللي مش هتلحقها؟'**
+  String get cantComeTitle;
+
+  /// No description provided for @legAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'{leg} · {time}'**
+  String legAt(String leg, String time);
+
+  /// No description provided for @freeCancelPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبل 9 بالليل: من غير فلوس'**
+  String get freeCancelPreview;
+
+  /// No description provided for @lateCancelPreview.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعد 9 بالليل: هتدفع {amount} ج للسواق'**
+  String lateCancelPreview(int amount);
+
+  /// No description provided for @confirmCancel.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد الإلغاء'**
+  String get confirmCancel;
+
+  /// No description provided for @pickOneTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار مشوار واحد على الأقل'**
+  String get pickOneTrip;
+
+  /// No description provided for @cancelAfterPickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدّى ميعاد التجمع. لو مجتش، السواق هيسجّلك غياب.'**
+  String get cancelAfterPickup;
+
+  /// No description provided for @notNextWeek.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش جاي الأسبوع الجاي'**
+  String get notNextWeek;
+
+  /// No description provided for @notNextWeekConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنعلّم كل أيام الأسبوع الجاي إجازة. الأيام اللي لسه قبل 9 بالليل من غير فلوس.'**
+  String get notNextWeekConfirm;
+
+  /// No description provided for @notNextWeekDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمام، علّمنا الأسبوع الجاي إجازة.'**
+  String get notNextWeekDone;
+
+  /// No description provided for @keepIt.
+  ///
+  /// In ar, this message translates to:
+  /// **'لأ، سيبه'**
+  String get keepIt;
+
+  /// No description provided for @headsUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلي بالك'**
+  String get headsUp;
+
+  /// No description provided for @noShowWarning.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجتش مرتين الشهر ده. المرة التالتة هتخرجك من المجموعة.'**
+  String get noShowWarning;
+
+  /// No description provided for @removedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مبقتش في المجموعة'**
+  String get removedTitle;
+
+  /// No description provided for @removedNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'خرجناك من المجموعة عشان مجتش 3 مرات الشهر ده. مشوارك متسجّل، ونقدر ندوّرلك على مجموعة جديدة.'**
+  String get removedNotice;
+
+  /// No description provided for @findNewGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'دوّرلي على مجموعة جديدة'**
+  String get findNewGroup;
+
+  /// No description provided for @drivingWhen.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت اللي هتسوق {when}.'**
+  String drivingWhen(String when);
+
+  /// No description provided for @notDrivingSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش سواقة عليك الأيام الجاية.'**
+  String get notDrivingSoon;
+
+  /// No description provided for @heroDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'{when} · {direction} · {count, plural, =0{مفيش ركاب} =1{راكب واحد} =2{راكبين} few{{count} ركاب} other{{count} راكب}}'**
+  String heroDriver(String when, String direction, int count);
+
+  /// No description provided for @pickupN.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجمع {n} — {stop}'**
+  String pickupN(int n, String stop);
+
+  /// No description provided for @returnFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرجوع من {place}'**
+  String returnFrom(String place);
+
+  /// No description provided for @estContrib.
+  ///
+  /// In ar, this message translates to:
+  /// **'المساهمة المتوقعة'**
+  String get estContrib;
+
+  /// No description provided for @confirmDrive.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد مشوار بكرة'**
+  String get confirmDrive;
+
+  /// No description provided for @confirmDriveToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد مشوار النهارده'**
+  String get confirmDriveToday;
+
+  /// No description provided for @confirmDriveDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد مشوار يوم {day}'**
+  String confirmDriveDay(String day);
+
+  /// No description provided for @confirmedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتأكد. الركاب وصلهم إشعار.'**
+  String get confirmedNote;
+
+  /// No description provided for @undoConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء التأكيد'**
+  String get undoConfirm;
+
+  /// No description provided for @reportDelay.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتأخر'**
+  String get reportDelay;
+
+  /// No description provided for @cantDrive.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش هقدر أسوق'**
+  String get cantDrive;
+
+  /// No description provided for @cantDriveConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأكد؟ هندوّر على سواق بديل لركابك.'**
+  String get cantDriveConfirm;
+
+  /// No description provided for @cantDriveYes.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيوه، مش هقدر'**
+  String get cantDriveYes;
+
+  /// No description provided for @keepDriving.
+  ///
+  /// In ar, this message translates to:
+  /// **'لأ، هسوق'**
+  String get keepDriving;
+
+  /// No description provided for @cantDriveDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'قلنا للمجموعة إنك مش هتسوق {when}. بندوّر على سواق بديل.'**
+  String cantDriveDone(String when);
+
+  /// No description provided for @delayTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتتأخر قد إيه؟'**
+  String get delayTitle;
+
+  /// No description provided for @delayMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{minutes, plural, few{{minutes} دقايق} other{{minutes} دقيقة}}'**
+  String delayMinutes(int minutes);
+
+  /// No description provided for @delaySent.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلّغنا الركاب بالميعاد الجديد: {time}'**
+  String delaySent(String time);
+
+  /// No description provided for @reqPrivacy.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلبات بتظهرلك بس لو لفّتك أقل من 10 دقايق. والسعر ثابت من Goora.'**
+  String get reqPrivacy;
+
+  /// No description provided for @reqsPlaceholder.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات الركاب اللي على خطك هتظهر هنا.'**
+  String get reqsPlaceholder;
+
+  /// No description provided for @rideWith.
+  ///
+  /// In ar, this message translates to:
+  /// **'راكب {day} مع {driver}'**
+  String rideWith(String day, String driver);
+
+  /// No description provided for @checkin.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الوصول'**
+  String get checkin;
+
+  /// No description provided for @arrivedAt.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت {stop}'**
+  String arrivedAt(String stop);
+
+  /// No description provided for @arrivedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الركاب هيوصلهم إشعار. هتستنى 5 دقايق بالكتير.'**
+  String get arrivedNote;
+
+  /// No description provided for @stWaiting.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصله إشعار · مستنيين {time}'**
+  String stWaiting(String time);
+
+  /// No description provided for @stNotArrived.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه موصلتش'**
+  String get stNotArrived;
+
+  /// No description provided for @stNoShow.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجاش · اتحسبت مساهمته كاملة'**
+  String get stNoShow;
+
+  /// No description provided for @noShowAvailableIn.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح بعد {time}'**
+  String noShowAvailableIn(String time);
+
+  /// No description provided for @noShowNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لو الراكب مجاش بعد 5 دقايق، بيدفع مساهمته كاملة.'**
+  String get noShowNote;
+
+  /// No description provided for @ratingStars.
+  ///
+  /// In ar, this message translates to:
+  /// **'{rating} ★'**
+  String ratingStars(String rating);
+
+  /// No description provided for @startTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'يلا نتحرك'**
+  String get startTrip;
+
+  /// No description provided for @endTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلنا'**
+  String get endTrip;
+
+  /// No description provided for @tripOnWay.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشوار بدأ. سوق بالراحة.'**
+  String get tripOnWay;
+
+  /// No description provided for @tripEndedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشوار خلص. شكرًا!'**
+  String get tripEndedNote;
+
+  /// No description provided for @refusedNoShowEarly.
+  ///
+  /// In ar, this message translates to:
+  /// **'استنى لحد ما الـ 5 دقايق يخلصوا.'**
+  String get refusedNoShowEarly;
+
+  /// No description provided for @refusedTripStarted.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشوار بدأ، فمش هينفع تغيّر.'**
+  String get refusedTripStarted;
+
+  /// No description provided for @inboxTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات'**
+  String get inboxTitle;
+
+  /// No description provided for @inboxEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش إشعارات لسه'**
+  String get inboxEmpty;
+
+  /// No description provided for @inboxEmptyBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنبلغك هنا بأي تغيير في مشاويرك.'**
+  String get inboxEmptyBody;
+
+  /// No description provided for @inboxAria.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات، {count} مش مقروءة'**
+  String inboxAria(int count);
+
+  /// No description provided for @sentToRiders.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتبعت لركابك'**
+  String get sentToRiders;
+
+  /// No description provided for @nDriverConfirmed.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق أكّد مشوار {day}.'**
+  String nDriverConfirmed(String day);
+
+  /// No description provided for @nDriverUnconfirmed.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق لغى تأكيد مشوار {day}.'**
+  String nDriverUnconfirmed(String day);
+
+  /// No description provided for @nDelay.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق هيتأخر {minutes, plural, few{{minutes} دقايق} other{{minutes} دقيقة}}. الميعاد الجديد {time}.'**
+  String nDelay(int minutes, String time);
+
+  /// No description provided for @nDriverArrived.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق وصل {stop}. تعالى في خلال 5 دقايق.'**
+  String nDriverArrived(String stop);
+
+  /// No description provided for @nLateCancel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء متأخر يوم {day}: {amount} ج للسواق.'**
+  String nLateCancel(String day, int amount);
+
+  /// No description provided for @nNoShow.
+  ///
+  /// In ar, this message translates to:
+  /// **'غياب يوم {day}: {amount} ج للسواق.'**
+  String nNoShow(String day, int amount);
+
+  /// No description provided for @nSeatOffered.
+  ///
+  /// In ar, this message translates to:
+  /// **'كرسيك يوم {day} اتعرض على قائمة الانتظار.'**
+  String nSeatOffered(String day);
+
+  /// No description provided for @backupTitleFor.
+  ///
+  /// In ar, this message translates to:
+  /// **'{driver} مش هيقدر يسوق يوم {day}'**
+  String backupTitleFor(String driver, String day);
+
+  /// No description provided for @backupBodyFor.
+  ///
+  /// In ar, this message translates to:
+  /// **'{cover} هيسوق بداله. مشوارك متغطّي، ومش محتاج تعمل حاجة.'**
+  String backupBodyFor(String cover);
+
+  /// No description provided for @noCoverTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش سواق {when}'**
+  String noCoverTitle(String when);
+
+  /// No description provided for @noCoverBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'{driver} مش هيقدر يسوق، وملقيناش بديل. اختار اللي يناسبك:'**
+  String noCoverBody(String driver);
+
+  /// No description provided for @noCoverDayOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'خد اليوم إجازة — من غير فلوس'**
+  String get noCoverDayOff;
+
+  /// No description provided for @sosTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'محتاج مساعدة؟'**
+  String get sosTitle;
+
+  /// No description provided for @sosCall.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتصل بـ 122'**
+  String get sosCall;
+
+  /// No description provided for @sosAlert.
+  ///
+  /// In ar, this message translates to:
+  /// **'بلّغ الناس اللي بثق فيهم'**
+  String get sosAlert;
+
+  /// No description provided for @sosAlertSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعتنالهم لينك المشوار'**
+  String get sosAlertSent;
+
+  /// No description provided for @sosNoContacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف حد بتثق فيه عشان نبلّغه وقت الطوارئ'**
+  String get sosNoContacts;
+
+  /// No description provided for @trustedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ناس بثق فيهم'**
+  String get trustedTitle;
+
+  /// No description provided for @trustedAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف حد'**
+  String get trustedAdd;
+
+  /// No description provided for @trustedMax.
+  ///
+  /// In ar, this message translates to:
+  /// **'ممكن تضيف لحد 3'**
+  String get trustedMax;
+
+  /// No description provided for @shareMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنا في مشواري مع {driver} ({car}) من {from} لـ {to}، هوصل حوالي {time}. تابعني: {link}'**
+  String shareMessage(
+    String driver,
+    String car,
+    String from,
+    String to,
+    String time,
+    String link,
+  );
+
+  /// No description provided for @scheduleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جدول مشاويرك'**
+  String get scheduleTitle;
+
+  /// No description provided for @rotateNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'Goora بيوزّع السواقة بالعدل، ولو حد اعتذر بيسد مكانه تلقائي.'**
+  String get rotateNote;
+
+  /// No description provided for @drivesName.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} بيسوق'**
+  String drivesName(String name);
+
+  /// No description provided for @youDrive.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت بتسوق'**
+  String get youDrive;
+
+  /// No description provided for @youRide.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت راكب'**
+  String get youRide;
+
+  /// No description provided for @youOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت مش جاي'**
+  String get youOff;
+
+  /// No description provided for @offNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتذرت قبل 9 بالليل · من غير رسوم'**
+  String get offNote;
+
+  /// No description provided for @lateOffNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتذرت بعد 9 بالليل · {amount} ج للسواق'**
+  String lateOffNote(int amount);
+
+  /// No description provided for @backupName.
+  ///
+  /// In ar, this message translates to:
+  /// **'{name} (بديل)'**
+  String backupName(String name);
+
+  /// No description provided for @verifiedMemberRating.
+  ///
+  /// In ar, this message translates to:
+  /// **'عضو موثّق · {rating} ★'**
+  String verifiedMemberRating(String rating);
+
+  /// No description provided for @reliability.
+  ///
+  /// In ar, this message translates to:
+  /// **'الالتزام'**
+  String get reliability;
+
+  /// No description provided for @relLateCancels.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{إلغاء متأخر واحد الشهر ده.} =2{إلغاءين متأخرين الشهر ده.} few{{count} إلغاءات متأخرة الشهر ده.} other{{count} إلغاء متأخر الشهر ده.}}'**
+  String relLateCancels(int count);
+
+  /// No description provided for @relNoShows.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{غياب واحد الشهر ده.} =2{غيابين الشهر ده.} few{{count} مرات غياب الشهر ده.} other{{count} مرة غياب الشهر ده.}}'**
+  String relNoShows(int count);
+
+  /// No description provided for @relRule.
+  ///
+  /// In ar, this message translates to:
+  /// **'3 مرات غياب في الشهر بتخرّجك من المجموعة.'**
+  String get relRule;
+
+  /// No description provided for @whoRide.
+  ///
+  /// In ar, this message translates to:
+  /// **'مين يركب معايا'**
+  String get whoRide;
+
+  /// No description provided for @checkPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الموبايل'**
+  String get checkPhone;
+
+  /// No description provided for @checkNationalId.
+  ///
+  /// In ar, this message translates to:
+  /// **'البطاقة'**
+  String get checkNationalId;
+
+  /// No description provided for @checkWorkEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيميل الشغل'**
+  String get checkWorkEmail;
+
+  /// No description provided for @checkLicense.
+  ///
+  /// In ar, this message translates to:
+  /// **'رخصة السواقة'**
+  String get checkLicense;
+
+  /// No description provided for @checkVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية'**
+  String get checkVehicle;
+
+  /// No description provided for @notNeeded.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش مطلوب'**
+  String get notNeeded;
+
+  /// No description provided for @privacyVerified.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموثّقين بس'**
+  String get privacyVerified;
+
+  /// No description provided for @privacyCompany.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس الشركة'**
+  String get privacyCompany;
+
+  /// No description provided for @privacyCompound.
+  ///
+  /// In ar, this message translates to:
+  /// **'نفس الكمبوند'**
+  String get privacyCompound;
+
+  /// No description provided for @privacyWomen.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيدات فقط'**
+  String get privacyWomen;
+
+  /// No description provided for @privacyNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاختيار ده هيتطبّق على المجموعات الجاية، مش مجموعتك الحالية.'**
+  String get privacyNote;
+
+  /// No description provided for @needWorkEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'وثّق إيميل الشغل الأول'**
+  String get needWorkEmail;
+
+  /// No description provided for @needCompound.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف اسم الكمبوند الأول'**
+  String get needCompound;
+
+  /// No description provided for @driverNeedsDocs.
+  ///
+  /// In ar, this message translates to:
+  /// **'عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.'**
+  String get driverNeedsDocs;
+
+  /// No description provided for @walletSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحفظة جاية قريب'**
+  String get walletSoon;
+
+  /// No description provided for @demoSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجربة (للمطورين)'**
+  String get demoSection;
+
+  /// No description provided for @demoNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت دلوقتي: {time}'**
+  String demoNow(String time);
+
+  /// No description provided for @demoRideDay.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوم مشوار · 7:15 ص'**
+  String get demoRideDay;
+
+  /// No description provided for @demo855.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبل 9 بالليل · 8:55 م'**
+  String get demo855;
+
+  /// No description provided for @demo905.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعد 9 بالليل · 9:05 م'**
+  String get demo905;
+
+  /// No description provided for @demoRealTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'الوقت الحقيقي'**
+  String get demoRealTime;
+
+  /// No description provided for @demoReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح بيانات التجربة'**
+  String get demoReset;
+
+  /// No description provided for @noRidesSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش مشاوير الأيام الجاية.'**
+  String get noRidesSoon;
+
+  /// No description provided for @loadingToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنجهّز مشوارك…'**
+  String get loadingToday;
+
+  /// No description provided for @todayError.
+  ///
+  /// In ar, this message translates to:
+  /// **'معرفناش نجيب مشوارك دلوقتي.'**
+  String get todayError;
 }
 
 class _AppLocalizationsDelegate

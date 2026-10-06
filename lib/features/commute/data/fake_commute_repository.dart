@@ -12,7 +12,11 @@ final class FakeCommuteRepository implements CommuteRepository {
   FakeCommuteRepository(this._prefs, {List<CommuteGroup>? groups}) : _groups = groups ?? CorridorSeed.groups;
 
   static const _profileKey = 'commute.profile';
-  static const _membershipKey = 'commute.membership';
+  /// Read synchronously at start-up to resume members at Today (research R1).
+  static const membershipKey = 'commute.membership';
+
+  /// Synchronous check for the router's first location.
+  static bool hasMembership(SharedPreferences prefs) => prefs.containsKey(membershipKey);
   static const _waitlistKey = 'commute.waitlist';
 
   final SharedPreferences _prefs;
@@ -45,8 +49,8 @@ final class FakeCommuteRepository implements CommuteRepository {
   }
 
   @override
-  Future<void> join(String groupId) => _prefs.setString(_membershipKey, groupId);
+  Future<void> join(String groupId) => _prefs.setString(membershipKey, groupId);
 
   @override
-  Future<String?> joinedGroupId() async => _prefs.getString(_membershipKey);
+  Future<String?> joinedGroupId() async => _prefs.getString(membershipKey);
 }

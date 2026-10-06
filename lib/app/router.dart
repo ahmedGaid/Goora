@@ -2,9 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../core/storage/preferences.dart';
+import '../features/commute/data/fake_commute_repository.dart';
 import '../features/commute/presentation/commute_setup_screen.dart';
 import '../features/commute/presentation/match_result_screen.dart';
 import '../features/commute/presentation/no_match_screen.dart';
+import '../features/daily/presentation/shell/app_shell.dart';
+import '../features/daily/presentation/today/today_screen.dart';
+import '../features/daily/presentation/trust/trust_screen.dart';
+import '../features/daily/presentation/wallet/wallet_tab.dart';
+import '../features/daily/presentation/week/week_screen.dart';
 import '../features/design_gallery/presentation/design_gallery_screen.dart';
 import '../features/onboarding/domain/phone_number.dart';
 import '../features/onboarding/presentation/frequency_screen.dart';
@@ -26,14 +33,16 @@ const _placeholderPaths = {
   PlaceholderKind.offerTrip: Routes.offerTrip,
   PlaceholderKind.postTrip: Routes.postTrip,
   PlaceholderKind.plan: Routes.plan,
-  PlaceholderKind.today: Routes.today,
 };
 
 /// Built once; the first location is the person's resume step.
 @Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
   return GoRouter(
-    initialLocation: routeForSession(ref.read(sessionControllerProvider)),
+    initialLocation: routeForSession(
+      ref.read(sessionControllerProvider),
+      isMember: FakeCommuteRepository.hasMembership(ref.read(sharedPreferencesProvider)),
+    ),
     routes: [
       GoRoute(path: Routes.welcome, builder: (_, _) => const WelcomeScreen()),
       GoRoute(path: Routes.phone, builder: (_, _) => const PhoneScreen()),
@@ -54,6 +63,15 @@ GoRouter router(Ref ref) {
       GoRoute(path: Routes.noMatch, builder: (_, _) => const NoMatchScreen()),
       for (final kind in PlaceholderKind.values)
         GoRoute(path: _placeholderPaths[kind]!, builder: (_, _) => PlaceholderScreen(kind: kind)),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => AppShell(shell: shell),
+        branches: [
+          StatefulShellBranch(routes: [GoRoute(path: Routes.today, builder: (_, _) => const TodayScreen())]),
+          StatefulShellBranch(routes: [GoRoute(path: Routes.week, builder: (_, _) => const WeekScreen())]),
+          StatefulShellBranch(routes: [GoRoute(path: Routes.wallet, builder: (_, _) => const WalletTab())]),
+          StatefulShellBranch(routes: [GoRoute(path: Routes.trust, builder: (_, _) => const TrustScreen())]),
+        ],
+      ),
       GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen()),
       if (kDebugMode) GoRoute(path: Routes.gallery, builder: (_, _) => const DesignGalleryScreen()),
     ],

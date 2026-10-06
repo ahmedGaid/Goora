@@ -23,9 +23,9 @@ goldens RTL + LTR for new core widgets.
 
 ## Phase 1: Setup
 
-- [ ] T001 Add `url_launcher` and `share_plus` with `flutter pub add` (latest stable; reason in plan Complexity Tracking) and add the `tel` `<queries>` intent to `android/app/src/main/AndroidManifest.xml` (R9)
-- [ ] T002 [P] Add `shareBaseUrl` (`String.fromEnvironment`, placeholder default) to `lib/core/config/env.dart` and `.env.example` (R10)
-- [ ] T003 Add 003 ARB keys to `lib/core/l10n/app_ar.arb` and `lib/core/l10n/app_en.arb`: Today / Week / Trust copy taken from the prototype's ar/en dictionary in `Goora Prototype.html` (brief wins: no Goora-fee lines, 160 not 180) plus the drafted keys in research R14; run `flutter gen-l10n`
+- [X] T001 Add `url_launcher` and `share_plus` with `flutter pub add` (latest stable; reason in plan Complexity Tracking) and add the `tel` `<queries>` intent to `android/app/src/main/AndroidManifest.xml` (R9)
+- [X] T002 [P] Add `shareBaseUrl` (`String.fromEnvironment`, placeholder default) to `lib/core/config/env.dart` and `.env.example` (R10)
+- [X] T003 Add 003 ARB keys to `lib/core/l10n/app_ar.arb` and `lib/core/l10n/app_en.arb`: Today / Week / Trust copy taken from the prototype's ar/en dictionary in `Goora Prototype.html` (brief wins: no Goora-fee lines, 160 not 180) plus the drafted keys in research R14; run `flutter gen-l10n`
 
 ---
 
@@ -33,34 +33,34 @@ goldens RTL + LTR for new core widgets.
 
 **Time core**
 
-- [ ] T004 [P] `lib/core/time/calendar_date.dart` (CalendarDate: weekday → `Day`, addDays, monthKey, compare, daysBetween) and `lib/core/time/wall_time.dart` (WallTime = CalendarDate + Clock; compare, plusMinutes, minutesUntil) per R2
-- [ ] T005 [P] `lib/core/time/now_provider.dart`: Riverpod `nowProvider` returning `WallTime Function()` from local time; debug-only override read from `debug.demoNow` (R11)
-- [ ] T006 [P] `test/unit/calendar_test.dart`: weekday → Day for a known week, month rollover, year rollover, monthKey, WallTime ordering across midnight
+- [X] T004 [P] `lib/core/time/calendar_date.dart` (CalendarDate: weekday → `Day`, addDays, monthKey, compare, daysBetween) and `lib/core/time/wall_time.dart` (WallTime = CalendarDate + Clock; compare, plusMinutes, minutesUntil) per R2
+- [X] T005 [P] `lib/core/time/now_provider.dart`: Riverpod `nowProvider` returning `WallTime Function()` from local time; debug-only override read from `debug.demoNow` (R11)
+- [X] T006 [P] `test/unit/calendar_test.dart`: weekday → Day for a known week, month rollover, year rollover, monthKey, WallTime ordering across midnight
 
 **Domain model**
 
-- [ ] T007 Extend `lib/features/commute/domain/group.dart`: `Stop`, `Vehicle` (+ colour enum), `Member.seats/vehicle/phone/privacy/days` (all optional), `CommuteGroup.stops/arrival/arrivalName/rotationStart` with defaults so every 002 constructor and test still compiles unchanged (data-model "Additions")
-- [ ] T008 [P] `lib/features/daily/domain/privacy.dart`: `PrivacyPreference` enum, `PersonFacts`, `PrivacyRules.accepts` / `available` (R7)
-- [ ] T009 [P] `lib/features/daily/domain/` value types: `ride.dart` (Ride, RideStatus), `schedule.dart` (Duty, LegAssignment, ScheduleDay), `absence.dart` (Absence, AbsenceKind, UndoResult), `check_in.dart` (StopCheckIn, Outcome, PassengerOutcome), `charge.dart` (Charge, ChargeReason), `notice.dart` (Notice, NoticeKind, NoCoverOption), `trust.dart` (VerificationItem, TrustProfile, TrustedContact, SosAlert, Reliability, ReliabilityEvent) — JSON for each stored type; ride id `<groupId>:<yyyy-mm-dd>:<going|return>`
-- [ ] T010 `lib/features/daily/domain/rotation_planner.dart`: per-leg greedy fair rotation over 4-week periods from `rotationStart`, ties → longest since last drive → lowest id; `unavailable` set; planned vs actual assignments (R5)
-- [ ] T011 [P] `test/unit/rotation_planner_test.dart`: 2 drivers and 3 drivers × 4 weeks → max − min ≤ 1 per leg per period (SC-005); going-only / return-only drivers only get their leg; a driver's chosen days respected; an unavailable day reassigns without changing period counts; deterministic output
-- [ ] T012 [P] `test/unit/privacy_test.dart`: every pref × (woman/man, same/different/no company, same/different/no compound) for `accepts`; `available` rules (womenOnly women only, sameCompany needs verified work email, sameCompound needs a compound)
-- [ ] T013 Interfaces per `contracts/repositories.md`: `lib/features/daily/domain/daily_commute_repository.dart`, `trust_repository.dart`, `phone_dialer.dart`, `trip_sharer.dart`, `location_source.dart`
+- [X] T007 Extend `lib/features/commute/domain/group.dart`: `Stop`, `Vehicle` (+ colour enum), `Member.seats/vehicle/phone/privacy/days` (all optional), `CommuteGroup.stops/arrival/arrivalName/rotationStart` with defaults so every 002 constructor and test still compiles unchanged (data-model "Additions")
+- [X] T008 [P] `lib/features/daily/domain/privacy.dart`: `PrivacyPreference` enum, `PersonFacts`, `PrivacyRules.accepts` / `available` (R7)
+- [X] T009 [P] `lib/features/daily/domain/` value types: `ride.dart` (Ride, RideStatus), `schedule.dart` (Duty, LegAssignment, ScheduleDay), `absence.dart` (Absence, AbsenceKind, UndoResult), `check_in.dart` (StopCheckIn, Outcome, PassengerOutcome), `charge.dart` (Charge, ChargeReason), `notice.dart` (Notice, NoticeKind, NoCoverOption), `trust.dart` (VerificationItem, TrustProfile, TrustedContact, SosAlert, Reliability, ReliabilityEvent) — JSON for each stored type; ride id `<groupId>:<yyyy-mm-dd>:<going|return>`
+- [X] T010 `lib/features/daily/domain/rotation_planner.dart`: per-leg greedy fair rotation over 4-week periods from `rotationStart`, ties → longest since last drive → lowest id; `unavailable` set; planned vs actual assignments (R5)
+- [X] T011 [P] `test/unit/rotation_planner_test.dart`: 2 drivers and 3 drivers × 4 weeks → max − min ≤ 1 per leg per period (SC-005); going-only / return-only drivers only get their leg; a driver's chosen days respected; an unavailable day reassigns without changing period counts; deterministic output
+- [X] T012 [P] `test/unit/privacy_test.dart`: every pref × (woman/man, same/different/no company, same/different/no compound) for `accepts`; `available` rules (womenOnly women only, sameCompany needs verified work email, sameCompound needs a compound)
+- [X] T013 Interfaces per `contracts/repositories.md`: `lib/features/daily/domain/daily_commute_repository.dart`, `trust_repository.dart`, `phone_dialer.dart`, `trip_sharer.dart`, `location_source.dart`
 
 **Fake data and wiring**
 
-- [ ] T014 Extend `lib/features/commute/data/corridor_seed.dart` (stops Main Gate 7:20 / Central St. 7:25, arrival Smart Village Gate 2 8:05, vehicles, seats, fake phones +20 10 0000 000x, rotationStart) keeping every 002 matching number unchanged; create `lib/features/daily/data/daily_seed.dart` (30-day history giving the seeded person 96 % with 1 late cancel this month, network drivers for backup steps 3–4, trust statuses) per R11
-- [ ] T015 `lib/features/daily/data/fake_daily_commute_repository.dart`: `myGroup` (seed group + the person as member with their role/legs from 002 profile + membership), `schedule` (RotationPlanner + stored absences/backups), `ride`, notices stream, storage keys from data-model; action methods stubbed to throw `UnimplementedError` until their story
-- [ ] T016 [P] `lib/features/daily/data/url_phone_dialer.dart`, `share_plus_sharer.dart`, and `lib/features/daily/data/providers.dart` (repositories, dialer, sharer, location source; all overridable)
-- [ ] T017 Rerun `flutter analyze` and the 002 suite (`flutter test test/unit test/widget test/golden`) — must stay green after T007/T014
+- [X] T014 Extend `lib/features/commute/data/corridor_seed.dart` (stops Main Gate 7:20 / Central St. 7:25, arrival Smart Village Gate 2 8:05, vehicles, seats, fake phones +20 10 0000 000x, rotationStart) keeping every 002 matching number unchanged; create `lib/features/daily/data/daily_seed.dart` (30-day history giving the seeded person 96 % with 1 late cancel this month, network drivers for backup steps 3–4, trust statuses) per R11
+- [X] T015 `lib/features/daily/data/fake_daily_commute_repository.dart`: `myGroup` (seed group + the person as member with their role/legs from 002 profile + membership), `schedule` (RotationPlanner + stored absences/backups), `ride`, notices stream, storage keys from data-model; action methods stubbed to throw `UnimplementedError` until their story
+- [X] T016 [P] `lib/features/daily/data/url_phone_dialer.dart`, `share_plus_sharer.dart`, and `lib/features/daily/data/providers.dart` (repositories, dialer, sharer, location source; all overridable)
+- [X] T017 Rerun `flutter analyze` and the 002 suite (`flutter test test/unit test/widget test/golden`) — must stay green after T007/T014
 
 **Shell and routing (FR-001, FR-002)**
 
-- [ ] T018 [P] Core widgets in `lib/core/widgets/`: `goora_stat_tile.dart`, `goora_progress_bar.dart`, `goora_status_chip.dart` (icon + text: covered, waiting, pickedUp, noShow, backup, off), live-marker option on `goora_route_map.dart`; add each to `lib/features/design_gallery/presentation/design_gallery_screen.dart` (R13)
-- [ ] T019 [P] `test/golden/daily_widgets_golden_test.dart` + goldens RTL/LTR for T018 widgets
-- [ ] T020 `lib/features/daily/presentation/shell/app_shell.dart` (GooraBottomNav: Today · Week · Wallet · Trust, labelled) and `lib/features/daily/presentation/wallet/wallet_tab.dart` (004 placeholder card); `lib/app/routes.dart` + `lib/app/router.dart`: `StatefulShellRoute.indexedStack` with `/today`, `/week`, `/wallet`, `/trust`; drop `PlaceholderKind.today` (R1)
-- [ ] T021 `lib/features/onboarding/presentation/onboarding_routes.dart`: members (membership key present) resume at `/today`; `lib/features/placeholder/presentation/placeholder_screen.dart`: plan placeholder gets "Continue" → `/today` (FR-002)
-- [ ] T022 `test/widget/shell_flow_test.dart`: driver Join → shell with Today selected; rider Join → plan → Continue → shell; restart with membership → shell; language switch keeps the current tab (ar + en)
+- [X] T018 [P] Core widgets in `lib/core/widgets/`: `goora_stat_tile.dart`, `goora_progress_bar.dart`, `goora_status_chip.dart` (icon + text: covered, waiting, pickedUp, noShow, backup, off), live-marker option on `goora_route_map.dart`; add each to `lib/features/design_gallery/presentation/design_gallery_screen.dart` (R13)
+- [X] T019 [P] `test/golden/daily_widgets_golden_test.dart` + goldens RTL/LTR for T018 widgets
+- [X] T020 `lib/features/daily/presentation/shell/app_shell.dart` (GooraBottomNav: Today · Week · Wallet · Trust, labelled) and `lib/features/daily/presentation/wallet/wallet_tab.dart` (004 placeholder card); `lib/app/routes.dart` + `lib/app/router.dart`: `StatefulShellRoute.indexedStack` with `/today`, `/week`, `/wallet`, `/trust`; drop `PlaceholderKind.today` (R1)
+- [X] T021 `lib/features/onboarding/presentation/onboarding_routes.dart`: members (membership key present) resume at `/today`; `lib/features/placeholder/presentation/placeholder_screen.dart`: plan placeholder gets "Continue" → `/today` (FR-002)
+- [X] T022 `test/widget/shell_flow_test.dart`: driver Join → shell with Today selected; rider Join → plan → Continue → shell; restart with membership → shell; language switch keeps the current tab (ar + en)
 
 **Checkpoint**: shell reachable, rules foundation and seed in place, 002 suite green.
 
@@ -71,11 +71,11 @@ goldens RTL + LTR for new core widgets.
 **Goal**: rider opens the app and sees today's ride end to end. **Independent test**: seeded rider,
 fixed clock, every element of US1/AC2 in ar + en.
 
-- [ ] T023 [US1] `lib/features/daily/presentation/today/today_controller.dart`: next ride day, my legs and their actual drivers, pickup stop (nearest group stop to home — only the stop is exposed), pickup countdown, price per trip, non-working-day / off state
-- [ ] T024 [US1] `lib/features/daily/presentation/today/today_screen.dart` (rider vs driver layout switch) and `rider_today.dart`: greeting; hero "Your ride is confirmed · time · route"; legs card with Covered chips and the separate-trips note (US1/AC3 single leg / other group); map card with "Pickup in N min"; driver card (avatar, name, verified badge, car + colour, rating, "Call driver"); timeline (GooraTimelineRow); Return time + "You pay per trip" tiles ("40 EGP to the driver · no per-trip fees", FR-004); Share trip + SOS buttons (wired in US7, visible now); "I can't come tomorrow" + caption; "Need an extra trip? Book a seat" → `/empty-seats`
-- [ ] T025 [US1] "Call driver" via `PhoneDialer` only for the current or next trip's driver (US1/AC4); next ride day hero without countdown when today is not a ride day (US1/AC5)
-- [ ] T026 [US1] `lib/features/daily/presentation/labels.dart`: day, leg, stop, vehicle colour, status, notice kind → l10n
-- [ ] T027 [P] [US1] `test/widget/today_rider_test.dart`: all AC2 elements ar + en with fixed clock; one-leg rider; Call driver dials the seeded number (fake dialer); off day → next ride day, no countdown; extra-trip entry routes to `/empty-seats`; no "fee" text other than "no per-trip fees"
+- [X] T023 [US1] `lib/features/daily/presentation/today/today_controller.dart`: next ride day, my legs and their actual drivers, pickup stop (nearest group stop to home — only the stop is exposed), pickup countdown, price per trip, non-working-day / off state
+- [X] T024 [US1] `lib/features/daily/presentation/today/today_screen.dart` (rider vs driver layout switch) and `rider_today.dart`: greeting; hero "Your ride is confirmed · time · route"; legs card with Covered chips and the separate-trips note (US1/AC3 single leg / other group); map card with "Pickup in N min"; driver card (avatar, name, verified badge, car + colour, rating, "Call driver"); timeline (GooraTimelineRow); Return time + "You pay per trip" tiles ("40 EGP to the driver · no per-trip fees", FR-004); Share trip + SOS buttons (wired in US7, visible now); "I can't come tomorrow" + caption; "Need an extra trip? Book a seat" → `/empty-seats`
+- [X] T025 [US1] "Call driver" via `PhoneDialer` only for the current or next trip's driver (US1/AC4); next ride day hero without countdown when today is not a ride day (US1/AC5)
+- [X] T026 [US1] `lib/features/daily/presentation/labels.dart`: day, leg, stop, vehicle colour, status, notice kind → l10n
+- [X] T027 [P] [US1] `test/widget/today_rider_test.dart`: all AC2 elements ar + en with fixed clock; one-leg rider; Call driver dials the seeded number (fake dialer); off day → next ride day, no countdown; extra-trip entry routes to `/empty-seats`; no "fee" text other than "no per-trip fees"
 
 ---
 
@@ -84,13 +84,13 @@ fixed clock, every element of US1/AC2 in ar + en.
 **Goal**: §6.5 rules exactly, with charges recorded. **Independent test**: fixed clock, cancel
 before/after 9 PM, no-shows → charges, banners, standing.
 
-- [ ] T028 [US2] `lib/features/daily/domain/attendance_rules.dart` with `AttendanceLimits` (21:00, 5 min, 2, 3): cutoffFor, cancelCharge, canCancel, canUndo, noShowAvailableAt, canMarkNoShow, noShowCharge, standing, driverNoShow, driverCantDriveLate (R3)
-- [ ] T029 [P] [US2] `test/unit/attendance_rules_test.dart`: 20:59 free / 21:00 late = 20; both legs late = 40; Sunday ride → Saturday 21:00 cut-off; cancel after pickup time refused; undo before cut-off ok, after refused; no-show at 4:59 refused, 5:00 allowed; full share 40; standing 1 ok / 2 warning / 3 removal; going + return same day = 2; month boundary resets count; driver no-show at pickup + 5; price even → exact half
-- [ ] T030 [US2] Implement in the fake repository: `cancel`, `undoCancel` (seat taken by the waitlist at the cut-off, R3), `notComingNextWeek`, `chargesOwed`, `noShowsInMonth`, standing effects (warning notice at 2; removal at 3 clears membership and frees the seat), reliability events, `chooseNoCoverOption(dayOff)`
-- [ ] T031 [P] [US2] `test/unit/fake_daily_repository_test.dart`: each repository action above with a fixed clock — charges owed to the driver with the right amounts, no Goora fee, events written, removal clears membership but keeps the commute profile
-- [ ] T032 [US2] `lib/features/daily/presentation/today/cant_come_sheet.dart`: legs to cancel (both by default), exact charge shown before confirming (free / N EGP), confirm; "Not coming next week" action with confirm; info banner "You're off tomorrow…" + "Undo, I'm coming"; late-cancel banner; undo-refused message; warning banner at 2; removal notice with "Find me a new group" → `/commute-setup`
-- [ ] T033 [US2] Debug-only Demo section in `lib/features/settings/presentation/settings_screen.dart`: demo time presets (ride-day 7:15 AM, 8:55 PM, 9:05 PM, real time) and "Reset demo data" (R11); hidden in release
-- [ ] T034 [P] [US2] `test/widget/cancel_test.dart` (ar + en): 2 taps to cancel with the exact charge visible (SC-002); free banner + undo; late cancel shows 40 for both legs; undo refused copy; warning banner; removal notice routes to setup
+- [X] T028 [US2] `lib/features/daily/domain/attendance_rules.dart` with `AttendanceLimits` (21:00, 5 min, 2, 3): cutoffFor, cancelCharge, canCancel, canUndo, noShowAvailableAt, canMarkNoShow, noShowCharge, standing, driverNoShow, driverCantDriveLate (R3)
+- [X] T029 [P] [US2] `test/unit/attendance_rules_test.dart`: 20:59 free / 21:00 late = 20; both legs late = 40; Sunday ride → Saturday 21:00 cut-off; cancel after pickup time refused; undo before cut-off ok, after refused; no-show at 4:59 refused, 5:00 allowed; full share 40; standing 1 ok / 2 warning / 3 removal; going + return same day = 2; month boundary resets count; driver no-show at pickup + 5; price even → exact half
+- [X] T030 [US2] Implement in the fake repository: `cancel`, `undoCancel` (seat taken by the waitlist at the cut-off, R3), `notComingNextWeek`, `chargesOwed`, `noShowsInMonth`, standing effects (warning notice at 2; removal at 3 clears membership and frees the seat), reliability events, `chooseNoCoverOption(dayOff)`
+- [X] T031 [P] [US2] `test/unit/fake_daily_repository_test.dart`: each repository action above with a fixed clock — charges owed to the driver with the right amounts, no Goora fee, events written, removal clears membership but keeps the commute profile
+- [X] T032 [US2] `lib/features/daily/presentation/today/cant_come_sheet.dart`: legs to cancel (both by default), exact charge shown before confirming (free / N EGP), confirm; "Not coming next week" action with confirm; info banner "You're off tomorrow…" + "Undo, I'm coming"; late-cancel banner; undo-refused message; warning banner at 2; removal notice with "Find me a new group" → `/commute-setup`
+- [X] T033 [US2] Debug-only Demo section in `lib/features/settings/presentation/settings_screen.dart`: demo time presets (ride-day 7:15 AM, 8:55 PM, 9:05 PM, real time) and "Reset demo data" (R11); hidden in release
+- [X] T034 [P] [US2] `test/widget/cancel_test.dart` (ar + en): 2 taps to cancel with the exact charge visible (SC-002); free banner + undo; late cancel shows 40 for both legs; undo refused copy; warning banner; removal notice routes to setup
 
 ---
 
@@ -99,12 +99,12 @@ before/after 9 PM, no-shows → charges, banners, standing.
 **Goal**: driver Today + check-in producing no-show facts. **Independent test**: seeded driver,
 confirm/undo, check-in with one picked up + one no-show, timers and charges.
 
-- [ ] T035 [US3] Implement in the fake repository: `setConfirmed`, `reportDelay` (5/10/15, shifts stop times), `cantDrive` (absence + late flag + reliability event; returns `BackupResult.none` until US4), `arrivedAt`, `mark` (refuses noShow before 5 min; switchable until start; last mark counts), `startTrip`, `endTrip`; each emits the right notices (FR-014)
-- [ ] T036 [US3] `lib/features/daily/presentation/today/driver_today.dart`: greeting + "You're driving tomorrow."; "Offer a trip" → `/offer-trip` and "Find riders" → `/offer-trip` placeholders; hero "Tomorrow · direction · N passengers" with stops + times and "Return from … time" when both ways; "Estimated contribution" = passengers × price × trips (FR-013); Confirm ⇄ "Undo confirmation" with "Confirmed. Your passengers have been notified."; Report delay; Can't drive (confirm); "Requests on your route" placeholder + detour note; "Riding <day> with <driver>" card on off-duty days with cancel (FR-022a)
-- [ ] T037 [US3] `lib/features/daily/presentation/today/delay_sheet.dart` (5 / 10 / 15 min → new time shown)
-- [ ] T038 [US3] `lib/features/daily/presentation/today/pickup_check_in.dart`: "I've arrived at <stop>" per stop in order; note "Passengers get notified. You wait 5 minutes max."; per passenger row "Notified · waiting" + 5:00 countdown (widget-scoped ticker), "Picked up" at once, "No-show" disabled with remaining time until 5:00; "No-show · full share charged" + note; riders shown as "Verified rider" / "Verified rider (woman)" + rating until picked up, then name + photo (FR-016); "Start trip" / "End trip"
-- [ ] T039 [US3] `lib/features/daily/presentation/inbox/inbox_sheet.dart`: bell on Today header (labelled, unread count as text) → notices list, designed empty state
-- [ ] T040 [P] [US3] `test/widget/today_driver_test.dart` (ar + en): hero values and contribution (2 passengers × 40 × 2 = 160); confirm ⇄ undo text; delay sheet; can't drive confirm; check-in countdown with fake clock — No-show disabled at 4:59, enabled at 5:00, charge row text; anonymity before pickup, name after; switching Picked up → No-show before start; inbox shows the rider-facing notices
+- [X] T035 [US3] Implement in the fake repository: `setConfirmed`, `reportDelay` (5/10/15, shifts stop times), `cantDrive` (absence + late flag + reliability event; returns `BackupResult.none` until US4), `arrivedAt`, `mark` (refuses noShow before 5 min; switchable until start; last mark counts), `startTrip`, `endTrip`; each emits the right notices (FR-014)
+- [X] T036 [US3] `lib/features/daily/presentation/today/driver_today.dart`: greeting + "You're driving tomorrow."; "Offer a trip" → `/offer-trip` and "Find riders" → `/offer-trip` placeholders; hero "Tomorrow · direction · N passengers" with stops + times and "Return from … time" when both ways; "Estimated contribution" = passengers × price × trips (FR-013); Confirm ⇄ "Undo confirmation" with "Confirmed. Your passengers have been notified."; Report delay; Can't drive (confirm); "Requests on your route" placeholder + detour note; "Riding <day> with <driver>" card on off-duty days with cancel (FR-022a)
+- [X] T037 [US3] `lib/features/daily/presentation/today/delay_sheet.dart` (5 / 10 / 15 min → new time shown)
+- [X] T038 [US3] `lib/features/daily/presentation/today/pickup_check_in.dart`: "I've arrived at <stop>" per stop in order; note "Passengers get notified. You wait 5 minutes max."; per passenger row "Notified · waiting" + 5:00 countdown (widget-scoped ticker), "Picked up" at once, "No-show" disabled with remaining time until 5:00; "No-show · full share charged" + note; riders shown as "Verified rider" / "Verified rider (woman)" + rating until picked up, then name + photo (FR-016); "Start trip" / "End trip"
+- [X] T039 [US3] `lib/features/daily/presentation/inbox/inbox_sheet.dart`: bell on Today header (labelled, unread count as text) → notices list, designed empty state
+- [X] T040 [P] [US3] `test/widget/today_driver_test.dart` (ar + en): hero values and contribution (2 passengers × 40 × 2 = 160); confirm ⇄ undo text; delay sheet; can't drive confirm; check-in countdown with fake clock — No-show disabled at 4:59, enabled at 5:00, charge row text; anonymity before pickup, name after; switching Picked up → No-show before start; inbox shows the rider-facing notices
 
 **Checkpoint P1**: US1–US3 work on fake data; `flutter analyze` + `flutter test` green. Commit.
 
@@ -211,3 +211,13 @@ Setup (T001–T003) → Foundational (T004–T022)
    rotation, cancellation and no-show rules, driver check-in. Commit + converge.
 2. **Session 2 (P2)**: US4–US6 → backup, Week, Trust, privacy into matching. Commit + converge.
 3. **Session 3 (P3 + server + polish)**: US7, TS mirrors + vectors, SQL, functions, polish gates.
+
+---
+
+## Phase 12: Convergence
+
+- [ ] T070 Apply `AttendanceRules.driverNoShow` in the fake repository: when a driver neither checked in nor cancelled by first pickup + 5 min, record a `noShow` reliability event for the driver and apply the same 2 → warning / 3 → removal standing per FR-010, FR-009 (partial)
+- [ ] T071 Compute free seats per leg and day (`onDuty.seats − riders − off-duty drivers + absent`) and keep a ride from carrying more passengers than the on-duty car's seats per FR-022a (partial)
+- [ ] T072 Settle passenger marks automatically once a trip's arrival time has passed without "End trip", so no-show charges and kept trips are always recorded per plan: research R11 (partial)
+- [ ] T073 Move user-facing strings joined in code (`share_trip.dart` car line, `demo_section.dart` time line) into ARB keys per Constitution III (contradicts)
+- [ ] T074 Add a widget test: a returning member who signs in by OTP lands on the shell with Today selected per FR-002 (partial)

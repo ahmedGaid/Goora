@@ -361,5 +361,594 @@
         "type": "String"
       }
     }
-  }
+  },
+  "goodMorning": "صباح الخير يا {name}",
+  "@goodMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "goodEvening": "مساء الخير يا {name}",
+  "@goodEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "todaySub": "ده مشوارك النهارده.",
+  "nextRide": "مشوارك الجاي · {day}",
+  "@nextRide": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "relToday": "النهارده",
+  "relTomorrow": "بكرة",
+  "relTomorrowDay": "بكرة ({day})",
+  "@relTomorrowDay": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "relOn": "يوم {day}",
+  "@relOn": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "heroToday": "النهارده",
+  "heroTomorrow": "بكرة",
+  "legGoing": "الذهاب",
+  "legReturn": "الرجوع",
+  "legRow": "{leg}: {driver} · {time}",
+  "@legRow": {
+    "placeholders": {
+      "leg": {
+        "type": "String"
+      },
+      "driver": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "youWord": "إنت",
+  "noDriverYet": "لسه مفيش سواق",
+  "legsNote": "الذهاب والرجوع مشوارين منفصلين، وممكن كل واحد يبقى بسواق.",
+  "goingLeg": "الذهاب مع مجموعة {time}",
+  "@goingLeg": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "pickupInMin": "التجمع بعد {minutes, plural, =1{دقيقة} =2{دقيقتين} few{{minutes} دقايق} other{{minutes} دقيقة}}",
+  "@pickupInMin": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "callDriver": "كلّم السواق",
+  "callName": "كلّم {name}",
+  "@callName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "verified": "موثّق",
+  "notVerified": "مش موثّق",
+  "carLine": "{car} · {colour} · {rating} ★",
+  "@carLine": {
+    "placeholders": {
+      "car": {
+        "type": "String"
+      },
+      "colour": {
+        "type": "String"
+      },
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "colourWhite": "أبيض",
+  "colourSilver": "فضي",
+  "colourBlack": "أسود",
+  "colourGrey": "رمادي",
+  "colourRed": "أحمر",
+  "colourBlue": "أزرق",
+  "stopMainGate": "البوابة الرئيسية",
+  "stopCentralSt": "الشارع الرئيسي",
+  "stopGasStation": "بنزينة 26 يوليو",
+  "stopSmartVillageGate2": "القرية الذكية، بوابة 2",
+  "tlPickup": "التجمع · {time}",
+  "@tlPickup": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tlOnTheWay": "في الطريق",
+  "tlPassengers": "{count, plural, =1{راكب واحد} =2{راكبين} few{{count} ركاب} other{{count} راكب}} · {names}",
+  "@tlPassengers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "tlArrival": "الوصول · {time}",
+  "@tlArrival": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "listSep": "، ",
+  "returnTime": "ميعاد الرجوع",
+  "noReturnTrip": "مفيش رجوع",
+  "payPerTrip": "بتدفع في المشوار",
+  "shareTrip": "شارك المشوار",
+  "cantComeNote": "مجاني قبل 9 بالليل · بعدها تدفع نص مساهمتك",
+  "offTitle": "إنت مش جاي {when}",
+  "@offTitle": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "offLegTitle": "مش جاي في {trip} {when}",
+  "@offLegTitle": {
+    "placeholders": {
+      "trip": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "tripGoing": "رحلة الذهاب",
+  "tripReturn": "رحلة الرجوع",
+  "offBody": "اعتذرت قبل 9 بالليل، فمفيش أي رسوم. كرسيك اتعرض على قائمة الانتظار.",
+  "lateOffBody": "اعتذرت بعد 9 بالليل — {amount} ج للسواق.",
+  "@lateOffBody": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "undo": "لأ، أنا جاي",
+  "undoRefused": "الكرسي اتاخد من قايمة الانتظار، فمش هينفع نرجّعه. ممكن تحجز كرسي فاضي لو محتاج.",
+  "undoTooLate": "عدّى ميعاد التجمع، فمش هينفع نرجّع الإلغاء.",
+  "cantComeTitle": "إيه المشاوير اللي مش هتلحقها؟",
+  "legAt": "{leg} · {time}",
+  "@legAt": {
+    "placeholders": {
+      "leg": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "freeCancelPreview": "قبل 9 بالليل: من غير فلوس",
+  "lateCancelPreview": "بعد 9 بالليل: هتدفع {amount} ج للسواق",
+  "@lateCancelPreview": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "confirmCancel": "أكّد الإلغاء",
+  "pickOneTrip": "اختار مشوار واحد على الأقل",
+  "cancelAfterPickup": "عدّى ميعاد التجمع. لو مجتش، السواق هيسجّلك غياب.",
+  "notNextWeek": "مش جاي الأسبوع الجاي",
+  "notNextWeekConfirm": "هنعلّم كل أيام الأسبوع الجاي إجازة. الأيام اللي لسه قبل 9 بالليل من غير فلوس.",
+  "notNextWeekDone": "تمام، علّمنا الأسبوع الجاي إجازة.",
+  "keepIt": "لأ، سيبه",
+  "headsUp": "خلي بالك",
+  "noShowWarning": "مجتش مرتين الشهر ده. المرة التالتة هتخرجك من المجموعة.",
+  "removedTitle": "مبقتش في المجموعة",
+  "removedNotice": "خرجناك من المجموعة عشان مجتش 3 مرات الشهر ده. مشوارك متسجّل، ونقدر ندوّرلك على مجموعة جديدة.",
+  "findNewGroup": "دوّرلي على مجموعة جديدة",
+  "drivingWhen": "إنت اللي هتسوق {when}.",
+  "@drivingWhen": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "notDrivingSoon": "مفيش سواقة عليك الأيام الجاية.",
+  "heroDriver": "{when} · {direction} · {count, plural, =0{مفيش ركاب} =1{راكب واحد} =2{راكبين} few{{count} ركاب} other{{count} راكب}}",
+  "@heroDriver": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      },
+      "direction": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pickupN": "تجمع {n} — {stop}",
+  "@pickupN": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "stop": {
+        "type": "String"
+      }
+    }
+  },
+  "returnFrom": "الرجوع من {place}",
+  "@returnFrom": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "estContrib": "المساهمة المتوقعة",
+  "confirmDrive": "أكّد مشوار بكرة",
+  "confirmDriveToday": "أكّد مشوار النهارده",
+  "confirmDriveDay": "أكّد مشوار يوم {day}",
+  "@confirmDriveDay": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmedNote": "اتأكد. الركاب وصلهم إشعار.",
+  "undoConfirm": "إلغاء التأكيد",
+  "reportDelay": "هتأخر",
+  "cantDrive": "مش هقدر أسوق",
+  "cantDriveConfirm": "متأكد؟ هندوّر على سواق بديل لركابك.",
+  "cantDriveYes": "أيوه، مش هقدر",
+  "keepDriving": "لأ، هسوق",
+  "cantDriveDone": "قلنا للمجموعة إنك مش هتسوق {when}. بندوّر على سواق بديل.",
+  "@cantDriveDone": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "delayTitle": "هتتأخر قد إيه؟",
+  "delayMinutes": "{minutes, plural, few{{minutes} دقايق} other{{minutes} دقيقة}}",
+  "@delayMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "delaySent": "بلّغنا الركاب بالميعاد الجديد: {time}",
+  "@delaySent": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reqPrivacy": "الطلبات بتظهرلك بس لو لفّتك أقل من 10 دقايق. والسعر ثابت من Goora.",
+  "reqsPlaceholder": "طلبات الركاب اللي على خطك هتظهر هنا.",
+  "rideWith": "راكب {day} مع {driver}",
+  "@rideWith": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "driver": {
+        "type": "String"
+      }
+    }
+  },
+  "checkin": "تسجيل الوصول",
+  "arrivedAt": "وصلت {stop}",
+  "@arrivedAt": {
+    "placeholders": {
+      "stop": {
+        "type": "String"
+      }
+    }
+  },
+  "arrivedNote": "الركاب هيوصلهم إشعار. هتستنى 5 دقايق بالكتير.",
+  "stWaiting": "وصله إشعار · مستنيين {time}",
+  "@stWaiting": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "stNotArrived": "لسه موصلتش",
+  "stNoShow": "مجاش · اتحسبت مساهمته كاملة",
+  "noShowAvailableIn": "متاح بعد {time}",
+  "@noShowAvailableIn": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "noShowNote": "لو الراكب مجاش بعد 5 دقايق، بيدفع مساهمته كاملة.",
+  "ratingStars": "{rating} ★",
+  "@ratingStars": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "startTrip": "يلا نتحرك",
+  "endTrip": "وصلنا",
+  "tripOnWay": "المشوار بدأ. سوق بالراحة.",
+  "tripEndedNote": "المشوار خلص. شكرًا!",
+  "refusedNoShowEarly": "استنى لحد ما الـ 5 دقايق يخلصوا.",
+  "refusedTripStarted": "المشوار بدأ، فمش هينفع تغيّر.",
+  "inboxTitle": "الإشعارات",
+  "inboxEmpty": "مفيش إشعارات لسه",
+  "inboxEmptyBody": "هنبلغك هنا بأي تغيير في مشاويرك.",
+  "inboxAria": "الإشعارات، {count} مش مقروءة",
+  "@inboxAria": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sentToRiders": "اتبعت لركابك",
+  "nDriverConfirmed": "السواق أكّد مشوار {day}.",
+  "@nDriverConfirmed": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "nDriverUnconfirmed": "السواق لغى تأكيد مشوار {day}.",
+  "@nDriverUnconfirmed": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "nDelay": "السواق هيتأخر {minutes, plural, few{{minutes} دقايق} other{{minutes} دقيقة}}. الميعاد الجديد {time}.",
+  "@nDelay": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "nDriverArrived": "السواق وصل {stop}. تعالى في خلال 5 دقايق.",
+  "@nDriverArrived": {
+    "placeholders": {
+      "stop": {
+        "type": "String"
+      }
+    }
+  },
+  "nLateCancel": "إلغاء متأخر يوم {day}: {amount} ج للسواق.",
+  "@nLateCancel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "nNoShow": "غياب يوم {day}: {amount} ج للسواق.",
+  "@nNoShow": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "nSeatOffered": "كرسيك يوم {day} اتعرض على قائمة الانتظار.",
+  "@nSeatOffered": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "backupTitleFor": "{driver} مش هيقدر يسوق يوم {day}",
+  "@backupTitleFor": {
+    "placeholders": {
+      "driver": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "backupBodyFor": "{cover} هيسوق بداله. مشوارك متغطّي، ومش محتاج تعمل حاجة.",
+  "@backupBodyFor": {
+    "placeholders": {
+      "cover": {
+        "type": "String"
+      }
+    }
+  },
+  "noCoverTitle": "مفيش سواق {when}",
+  "@noCoverTitle": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "noCoverBody": "{driver} مش هيقدر يسوق، وملقيناش بديل. اختار اللي يناسبك:",
+  "@noCoverBody": {
+    "placeholders": {
+      "driver": {
+        "type": "String"
+      }
+    }
+  },
+  "noCoverDayOff": "خد اليوم إجازة — من غير فلوس",
+  "sosTitle": "محتاج مساعدة؟",
+  "sosCall": "اتصل بـ 122",
+  "sosAlert": "بلّغ الناس اللي بثق فيهم",
+  "sosAlertSent": "بعتنالهم لينك المشوار",
+  "sosNoContacts": "ضيف حد بتثق فيه عشان نبلّغه وقت الطوارئ",
+  "trustedTitle": "ناس بثق فيهم",
+  "trustedAdd": "ضيف حد",
+  "trustedMax": "ممكن تضيف لحد 3",
+  "shareMessage": "أنا في مشواري مع {driver} ({car}) من {from} لـ {to}، هوصل حوالي {time}. تابعني: {link}",
+  "@shareMessage": {
+    "placeholders": {
+      "driver": {
+        "type": "String"
+      },
+      "car": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "scheduleTitle": "جدول مشاويرك",
+  "rotateNote": "Goora بيوزّع السواقة بالعدل، ولو حد اعتذر بيسد مكانه تلقائي.",
+  "drivesName": "{name} بيسوق",
+  "@drivesName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "youDrive": "إنت بتسوق",
+  "youRide": "إنت راكب",
+  "youOff": "إنت مش جاي",
+  "offNote": "اعتذرت قبل 9 بالليل · من غير رسوم",
+  "lateOffNote": "اعتذرت بعد 9 بالليل · {amount} ج للسواق",
+  "@lateOffNote": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "backupName": "{name} (بديل)",
+  "@backupName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "verifiedMemberRating": "عضو موثّق · {rating} ★",
+  "@verifiedMemberRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "reliability": "الالتزام",
+  "relLateCancels": "{count, plural, =1{إلغاء متأخر واحد الشهر ده.} =2{إلغاءين متأخرين الشهر ده.} few{{count} إلغاءات متأخرة الشهر ده.} other{{count} إلغاء متأخر الشهر ده.}}",
+  "@relLateCancels": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relNoShows": "{count, plural, =1{غياب واحد الشهر ده.} =2{غيابين الشهر ده.} few{{count} مرات غياب الشهر ده.} other{{count} مرة غياب الشهر ده.}}",
+  "@relNoShows": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relRule": "3 مرات غياب في الشهر بتخرّجك من المجموعة.",
+  "whoRide": "مين يركب معايا",
+  "checkPhone": "رقم الموبايل",
+  "checkNationalId": "البطاقة",
+  "checkWorkEmail": "إيميل الشغل",
+  "checkLicense": "رخصة السواقة",
+  "checkVehicle": "العربية",
+  "notNeeded": "مش مطلوب",
+  "privacyVerified": "الموثّقين بس",
+  "privacyCompany": "نفس الشركة",
+  "privacyCompound": "نفس الكمبوند",
+  "privacyWomen": "سيدات فقط",
+  "privacyNote": "الاختيار ده هيتطبّق على المجموعات الجاية، مش مجموعتك الحالية.",
+  "needWorkEmail": "وثّق إيميل الشغل الأول",
+  "needCompound": "ضيف اسم الكمبوند الأول",
+  "driverNeedsDocs": "عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.",
+  "walletSoon": "المحفظة جاية قريب",
+  "demoSection": "تجربة (للمطورين)",
+  "demoNow": "الوقت دلوقتي: {time}",
+  "@demoNow": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "demoRideDay": "يوم مشوار · 7:15 ص",
+  "demo855": "قبل 9 بالليل · 8:55 م",
+  "demo905": "بعد 9 بالليل · 9:05 م",
+  "demoRealTime": "الوقت الحقيقي",
+  "demoReset": "امسح بيانات التجربة",
+  "noRidesSoon": "مفيش مشاوير الأيام الجاية.",
+  "loadingToday": "بنجهّز مشوارك…",
+  "todayError": "معرفناش نجيب مشوارك دلوقتي."
 }

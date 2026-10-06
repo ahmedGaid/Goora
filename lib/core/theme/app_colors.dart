@@ -39,6 +39,7 @@ abstract final class AppColors {
   static const danger = Color(0xFFC93A3A);
   static const dangerText = Color(0xFFA33030);
   static const dangerBorder = Color(0xFFE3B4B4);
+  static const dangerBg = Color(0xFFFBECEC);
 
   // Map
   static const mapLand = Color(0xFFEAF0E8);

@@ -599,4 +599,672 @@ class AppLocalizationsEn extends AppLocalizations {
   String timeDays(String time, String days) {
     return '$time · $days';
   }
+
+  @override
+  String goodMorning(String name) {
+    return 'Good morning, $name';
+  }
+
+  @override
+  String goodEvening(String name) {
+    return 'Good evening, $name';
+  }
+
+  @override
+  String get todaySub => 'Here\'s your commute for today.';
+
+  @override
+  String nextRide(String day) {
+    return 'Your next ride · $day';
+  }
+
+  @override
+  String get relToday => 'today';
+
+  @override
+  String get relTomorrow => 'tomorrow';
+
+  @override
+  String relTomorrowDay(String day) {
+    return 'tomorrow ($day)';
+  }
+
+  @override
+  String relOn(String day) {
+    return 'on $day';
+  }
+
+  @override
+  String get heroToday => 'Today';
+
+  @override
+  String get heroTomorrow => 'Tomorrow';
+
+  @override
+  String get legGoing => 'Going';
+
+  @override
+  String get legReturn => 'Return';
+
+  @override
+  String legRow(String leg, String driver, String time) {
+    return '$leg: $driver · $time';
+  }
+
+  @override
+  String get youWord => 'You';
+
+  @override
+  String get noDriverYet => 'No driver yet';
+
+  @override
+  String get legsNote =>
+      'Going and return are separate trips — they can have different drivers.';
+
+  @override
+  String goingLeg(String time) {
+    return 'Going with the $time group';
+  }
+
+  @override
+  String pickupInMin(int minutes) {
+    return 'Pickup in $minutes min';
+  }
+
+  @override
+  String get callDriver => 'Call driver';
+
+  @override
+  String callName(String name) {
+    return 'Call $name';
+  }
+
+  @override
+  String get verified => 'Verified';
+
+  @override
+  String get notVerified => 'Not verified';
+
+  @override
+  String carLine(String car, String colour, String rating) {
+    return '$car · $colour · $rating ★';
+  }
+
+  @override
+  String get colourWhite => 'White';
+
+  @override
+  String get colourSilver => 'Silver';
+
+  @override
+  String get colourBlack => 'Black';
+
+  @override
+  String get colourGrey => 'Grey';
+
+  @override
+  String get colourRed => 'Red';
+
+  @override
+  String get colourBlue => 'Blue';
+
+  @override
+  String get stopMainGate => 'Main Gate';
+
+  @override
+  String get stopCentralSt => 'Central St.';
+
+  @override
+  String get stopGasStation => 'Gas station, 26th of July';
+
+  @override
+  String get stopSmartVillageGate2 => 'Smart Village, Gate 2';
+
+  @override
+  String tlPickup(String time) {
+    return 'Pickup · $time';
+  }
+
+  @override
+  String get tlOnTheWay => 'On the way';
+
+  @override
+  String tlPassengers(int count, String names) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count passengers',
+      one: '1 passenger',
+    );
+    return '$_temp0 · $names';
+  }
+
+  @override
+  String tlArrival(String time) {
+    return 'Arrival · $time';
+  }
+
+  @override
+  String get listSep => ', ';
+
+  @override
+  String get returnTime => 'Return time';
+
+  @override
+  String get noReturnTrip => 'No return trip';
+
+  @override
+  String get payPerTrip => 'You pay per trip';
+
+  @override
+  String get shareTrip => 'Share trip';
+
+  @override
+  String get cantComeNote =>
+      'Free before 9 PM · after that you pay half your share';
+
+  @override
+  String offTitle(String when) {
+    return 'You\'re off $when';
+  }
+
+  @override
+  String offLegTitle(String trip, String when) {
+    return 'You\'re skipping $trip $when';
+  }
+
+  @override
+  String get tripGoing => 'the going trip';
+
+  @override
+  String get tripReturn => 'the return trip';
+
+  @override
+  String get offBody =>
+      'Cancelled before 9 PM — no charge. Your seat was offered to the waitlist.';
+
+  @override
+  String lateOffBody(int amount) {
+    return 'Cancelled after 9 PM — $amount EGP to the driver.';
+  }
+
+  @override
+  String get undo => 'Undo, I\'m coming';
+
+  @override
+  String get undoRefused =>
+      'Your seat went to the waitlist, so we can\'t undo this. You can book an empty seat if you need one.';
+
+  @override
+  String get undoTooLate => 'Pickup time has passed, so this can\'t be undone.';
+
+  @override
+  String get cantComeTitle => 'Which trips can\'t you make?';
+
+  @override
+  String legAt(String leg, String time) {
+    return '$leg · $time';
+  }
+
+  @override
+  String get freeCancelPreview => 'Before 9 PM: free';
+
+  @override
+  String lateCancelPreview(int amount) {
+    return 'After 9 PM: you\'ll pay $amount EGP to the driver';
+  }
+
+  @override
+  String get confirmCancel => 'Confirm cancel';
+
+  @override
+  String get pickOneTrip => 'Pick at least one trip';
+
+  @override
+  String get cancelAfterPickup =>
+      'Pickup time has passed. If you don\'t come, the driver will mark a no-show.';
+
+  @override
+  String get notNextWeek => 'Not coming next week';
+
+  @override
+  String get notNextWeekConfirm =>
+      'We\'ll mark every day next week off. Days still before 9 PM are free.';
+
+  @override
+  String get notNextWeekDone => 'Done — next week is marked off.';
+
+  @override
+  String get keepIt => 'No, keep it';
+
+  @override
+  String get headsUp => 'Heads up';
+
+  @override
+  String get noShowWarning =>
+      'You missed 2 pickups this month. A third will remove you from the group.';
+
+  @override
+  String get removedTitle => 'You\'re no longer in the group';
+
+  @override
+  String get removedNotice =>
+      'You were removed from the group after 3 no-shows this month. Your commute is saved and we can find you a new group.';
+
+  @override
+  String get findNewGroup => 'Find me a new group';
+
+  @override
+  String drivingWhen(String when) {
+    return 'You\'re driving $when.';
+  }
+
+  @override
+  String get notDrivingSoon => 'No drives for you in the coming days.';
+
+  @override
+  String heroDriver(String when, String direction, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count passengers',
+      one: '1 passenger',
+      zero: 'no passengers',
+    );
+    return '$when · $direction · $_temp0';
+  }
+
+  @override
+  String pickupN(int n, String stop) {
+    return 'Pickup $n — $stop';
+  }
+
+  @override
+  String returnFrom(String place) {
+    return 'Return from $place';
+  }
+
+  @override
+  String get estContrib => 'Estimated contribution';
+
+  @override
+  String get confirmDrive => 'Confirm tomorrow’s drive';
+
+  @override
+  String get confirmDriveToday => 'Confirm today’s drive';
+
+  @override
+  String confirmDriveDay(String day) {
+    return 'Confirm the drive on $day';
+  }
+
+  @override
+  String get confirmedNote => 'Confirmed. Your passengers have been notified.';
+
+  @override
+  String get undoConfirm => 'Undo confirmation';
+
+  @override
+  String get reportDelay => 'Report delay';
+
+  @override
+  String get cantDrive => 'Can\'t drive';
+
+  @override
+  String get cantDriveConfirm =>
+      'Sure? We\'ll look for a backup driver for your riders.';
+
+  @override
+  String get cantDriveYes => 'Yes, I can\'t drive';
+
+  @override
+  String get keepDriving => 'No, I\'ll drive';
+
+  @override
+  String cantDriveDone(String when) {
+    return 'We told the group you can\'t drive $when. We\'re looking for a backup driver.';
+  }
+
+  @override
+  String get delayTitle => 'How late will you be?';
+
+  @override
+  String delayMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String delaySent(String time) {
+    return 'Riders were told the new time: $time';
+  }
+
+  @override
+  String get reqPrivacy =>
+      'Requests show only if your detour is under 10 minutes. The price is fixed by Goora.';
+
+  @override
+  String get reqsPlaceholder =>
+      'Riders\' requests on your route will show here.';
+
+  @override
+  String rideWith(String day, String driver) {
+    return 'Riding $day with $driver';
+  }
+
+  @override
+  String get checkin => 'Pickup check-in';
+
+  @override
+  String arrivedAt(String stop) {
+    return 'I\'ve arrived at $stop';
+  }
+
+  @override
+  String get arrivedNote => 'Passengers get notified. You wait 5 minutes max.';
+
+  @override
+  String stWaiting(String time) {
+    return 'Notified · waiting $time';
+  }
+
+  @override
+  String get stNotArrived => 'Not arrived yet';
+
+  @override
+  String get stNoShow => 'No-show · full share charged';
+
+  @override
+  String noShowAvailableIn(String time) {
+    return 'Available in $time';
+  }
+
+  @override
+  String get noShowNote =>
+      'No-show after 5 minutes: the rider still pays their full share.';
+
+  @override
+  String ratingStars(String rating) {
+    return '$rating ★';
+  }
+
+  @override
+  String get startTrip => 'Start trip';
+
+  @override
+  String get endTrip => 'End trip';
+
+  @override
+  String get tripOnWay => 'Trip started. Drive safe.';
+
+  @override
+  String get tripEndedNote => 'Trip ended. Thanks!';
+
+  @override
+  String get refusedNoShowEarly => 'Wait until the 5 minutes are up.';
+
+  @override
+  String get refusedTripStarted =>
+      'The trip has started, so marks can\'t change.';
+
+  @override
+  String get inboxTitle => 'Notifications';
+
+  @override
+  String get inboxEmpty => 'No notifications yet';
+
+  @override
+  String get inboxEmptyBody =>
+      'We\'ll tell you here about any change to your rides.';
+
+  @override
+  String inboxAria(int count) {
+    return 'Notifications, $count unread';
+  }
+
+  @override
+  String get sentToRiders => 'Sent to your riders';
+
+  @override
+  String nDriverConfirmed(String day) {
+    return 'The driver confirmed $day\'s drive.';
+  }
+
+  @override
+  String nDriverUnconfirmed(String day) {
+    return 'The driver undid the confirmation for $day.';
+  }
+
+  @override
+  String nDelay(int minutes, String time) {
+    return 'The driver is running $minutes min late. New pickup time: $time.';
+  }
+
+  @override
+  String nDriverArrived(String stop) {
+    return 'The driver is at $stop. Please come within 5 minutes.';
+  }
+
+  @override
+  String nLateCancel(String day, int amount) {
+    return 'Late cancel on $day: $amount EGP to the driver.';
+  }
+
+  @override
+  String nNoShow(String day, int amount) {
+    return 'No-show on $day: $amount EGP to the driver.';
+  }
+
+  @override
+  String nSeatOffered(String day) {
+    return 'Your seat on $day was offered to the waitlist.';
+  }
+
+  @override
+  String backupTitleFor(String driver, String day) {
+    return '$driver can\'t drive on $day';
+  }
+
+  @override
+  String backupBodyFor(String cover) {
+    return '$cover will drive instead. Your commute is still covered — nothing for you to do.';
+  }
+
+  @override
+  String noCoverTitle(String when) {
+    return 'No driver $when';
+  }
+
+  @override
+  String noCoverBody(String driver) {
+    return '$driver can\'t drive and we found no cover. Pick what suits you:';
+  }
+
+  @override
+  String get noCoverDayOff => 'Take the day off — free';
+
+  @override
+  String get sosTitle => 'Need help?';
+
+  @override
+  String get sosCall => 'Call 122';
+
+  @override
+  String get sosAlert => 'Alert my trusted contacts';
+
+  @override
+  String get sosAlertSent => 'We sent them your trip link';
+
+  @override
+  String get sosNoContacts =>
+      'Add a trusted contact so we can alert them in an emergency';
+
+  @override
+  String get trustedTitle => 'Trusted contacts';
+
+  @override
+  String get trustedAdd => 'Add contact';
+
+  @override
+  String get trustedMax => 'You can add up to 3';
+
+  @override
+  String shareMessage(
+    String driver,
+    String car,
+    String from,
+    String to,
+    String time,
+    String link,
+  ) {
+    return 'I\'m on my commute with $driver ($car) from $from to $to, arriving around $time. Follow along: $link';
+  }
+
+  @override
+  String get scheduleTitle => 'Your commute schedule';
+
+  @override
+  String get rotateNote =>
+      'Goora rotates drivers fairly and fills gaps automatically when someone can\'t make it.';
+
+  @override
+  String drivesName(String name) {
+    return '$name drives';
+  }
+
+  @override
+  String get youDrive => 'You drive';
+
+  @override
+  String get youRide => 'You ride';
+
+  @override
+  String get youOff => 'You\'re off';
+
+  @override
+  String get offNote => 'Cancelled before 9 PM · no charge';
+
+  @override
+  String lateOffNote(int amount) {
+    return 'Cancelled after 9 PM · $amount EGP to the driver';
+  }
+
+  @override
+  String backupName(String name) {
+    return '$name (backup)';
+  }
+
+  @override
+  String verifiedMemberRating(String rating) {
+    return 'Verified member · $rating ★';
+  }
+
+  @override
+  String get reliability => 'Reliability';
+
+  @override
+  String relLateCancels(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count late cancels this month.',
+      one: '1 late cancel this month.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String relNoShows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count no-shows this month.',
+      one: '1 no-show this month.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get relRule => '3 no-shows in a month removes you from the group.';
+
+  @override
+  String get whoRide => 'Who can ride with me';
+
+  @override
+  String get checkPhone => 'Phone number';
+
+  @override
+  String get checkNationalId => 'National ID';
+
+  @override
+  String get checkWorkEmail => 'Work email';
+
+  @override
+  String get checkLicense => 'Driving license';
+
+  @override
+  String get checkVehicle => 'Vehicle';
+
+  @override
+  String get notNeeded => 'Not needed';
+
+  @override
+  String get privacyVerified => 'Verified users';
+
+  @override
+  String get privacyCompany => 'Same company';
+
+  @override
+  String get privacyCompound => 'Same compound';
+
+  @override
+  String get privacyWomen => 'Women only';
+
+  @override
+  String get privacyNote =>
+      'This applies to future groups, not your current one.';
+
+  @override
+  String get needWorkEmail => 'Verify your work email first';
+
+  @override
+  String get needCompound => 'Add your compound first';
+
+  @override
+  String get driverNeedsDocs =>
+      'To drive, your license and vehicle need to be verified.';
+
+  @override
+  String get walletSoon => 'Wallet is coming soon';
+
+  @override
+  String get demoSection => 'Demo (developers)';
+
+  @override
+  String demoNow(String time) {
+    return 'Time now: $time';
+  }
+
+  @override
+  String get demoRideDay => 'Ride day · 7:15 AM';
+
+  @override
+  String get demo855 => 'Before 9 PM · 8:55 PM';
+
+  @override
+  String get demo905 => 'After 9 PM · 9:05 PM';
+
+  @override
+  String get demoRealTime => 'Real time';
+
+  @override
+  String get demoReset => 'Reset demo data';
+
+  @override
+  String get noRidesSoon => 'No rides in the coming days.';
+
+  @override
+  String get loadingToday => 'Getting your commute…';
+
+  @override
+  String get todayError => 'We couldn\'t load your commute right now.';
 }

@@ -9,6 +9,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_ghost_button.dart';
 import '../../../core/widgets/goora_icons.dart';
+import '../../../core/widgets/goora_primary_button.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 
 /// Screens owned by later features.
@@ -16,8 +17,7 @@ enum PlaceholderKind {
   emptySeats(Routes.frequency), // 005-A
   offerTrip(Routes.frequency), // 005-C
   postTrip(Routes.noMatch), // 005-B
-  plan(Routes.match), // 004
-  today(Routes.match); // 003
+  plan(Routes.match); // 004
 
   const PlaceholderKind(this.backRoute);
   final String backRoute;
@@ -36,11 +36,10 @@ class PlaceholderScreen extends StatelessWidget {
       PlaceholderKind.offerTrip => l10n.offerTitle,
       PlaceholderKind.postTrip => l10n.postReq,
       PlaceholderKind.plan => l10n.planTitle,
-      PlaceholderKind.today => l10n.tabToday,
     };
     return OnboardingScaffold(
       title: title,
-      onBack: () => context.go(kind.backRoute),
+      onBack: () => context.canPop() ? context.pop() : context.go(kind.backRoute),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -55,6 +54,16 @@ class PlaceholderScreen extends StatelessWidget {
               ],
             ),
           ),
+          if (kind == PlaceholderKind.plan) ...[
+            const SizedBox(height: AppSpacing.gap),
+            // Until 004 exists, the plan step continues straight to the shell (FR-002).
+            GooraPrimaryButton(
+              key: const Key('plan-continue'),
+              label: l10n.continueBtn,
+              trailingArrow: true,
+              onPressed: () => context.go(Routes.today),
+            ),
+          ],
           const SizedBox(height: AppSpacing.gap),
           GooraGhostButton(
             key: const Key('open-settings'),

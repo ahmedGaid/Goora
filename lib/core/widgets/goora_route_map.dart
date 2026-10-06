@@ -7,18 +7,21 @@ import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 
 /// Drawn home → work card used until a live map is available. Shows area
-/// names only — never exact points. Home sits on the start side.
+/// names only — never exact points. Home sits on the start side. During a
+/// trip, [driverProgress] (0…1) places a live driver marker on the route.
 class GooraRouteMap extends StatelessWidget {
   const GooraRouteMap({
     super.key,
     required this.fromLabel,
     required this.toLabel,
     required this.semanticLabel,
+    this.driverProgress,
   });
 
   final String fromLabel;
   final String toLabel;
   final String semanticLabel;
+  final double? driverProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class GooraRouteMap extends StatelessWidget {
           padding: const EdgeInsetsDirectional.all(AppSpacing.cardPad),
           child: Stack(
             children: [
-              Positioned.fill(child: CustomPaint(painter: _RoutePainter(startOnRight: rtl))),
+              Positioned.fill(child: CustomPaint(painter: _RoutePainter(startOnRight: rtl, driverProgress: driverProgress))),
               PositionedDirectional(start: 0, bottom: 0, child: Text(fromLabel, style: labelStyle)),
               PositionedDirectional(end: 0, top: 0, child: Text(toLabel, style: labelStyle)),
             ],
@@ -47,9 +50,10 @@ class GooraRouteMap extends StatelessWidget {
 }
 
 class _RoutePainter extends CustomPainter {
-  const _RoutePainter({required this.startOnRight});
+  const _RoutePainter({required this.startOnRight, this.driverProgress});
 
   final bool startOnRight;
+  final double? driverProgress;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -81,8 +85,18 @@ class _RoutePainter extends CustomPainter {
     canvas.drawCircle(from, AppSizes.timelineDot / 2, Paint()..color = AppColors.green);
     canvas.drawCircle(to, AppSizes.timelineDot / 2 + 2, ring);
     canvas.drawCircle(to, AppSizes.timelineDot / 2, Paint()..color = AppColors.mapDestination);
+
+    final progress = driverProgress;
+    if (progress != null) {
+      final metric = path.computeMetrics().first;
+      final at = metric.getTangentForOffset(metric.length * progress.clamp(0.0, 1.0))!.position;
+      canvas.drawCircle(at, AppSizes.liveMarker / 2 + 2, ring);
+      canvas.drawCircle(at, AppSizes.liveMarker / 2, Paint()..color = AppColors.forest);
+      canvas.drawCircle(at, AppSizes.liveMarker / 6, ring);
+    }
   }
 
   @override
-  bool shouldRepaint(_RoutePainter old) => old.startOnRight != startOnRight;
+  bool shouldRepaint(_RoutePainter old) =>
+      old.startOnRight != startOnRight || old.driverProgress != driverProgress;
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import '../../../core/widgets/goora_ghost_button.dart';
 import '../../onboarding/domain/choices.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
+import 'demo_section.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -25,33 +27,39 @@ class SettingsScreen extends ConsumerWidget {
     return OnboardingScaffold(
       title: l10n.settingsTitle,
       onBack: () => context.pop(),
-      body: GooraCard.rows(
-        padding: const EdgeInsetsDirectional.all(AppSpacing.listCardPad),
-        rows: [
-          Row(
-            children: [
-              Expanded(child: Text(l10n.languageLabel, style: labelStyle)),
-              const LanguageToggle(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          GooraCard.rows(
+            padding: const EdgeInsetsDirectional.all(AppSpacing.listCardPad),
+            rows: [
+              Row(
+                children: [
+                  Expanded(child: Text(l10n.languageLabel, style: labelStyle)),
+                  const LanguageToggle(),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(l10n.roleLabel, style: labelStyle),
+                  if (role != null) ...[
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(role == Role.driver ? l10n.canDrive : l10n.needRide, style: valueStyle),
+                    const SizedBox(height: AppSpacing.md),
+                    GooraGhostButton(
+                      key: const Key('switch-role'),
+                      label: role == Role.driver ? l10n.toRider : l10n.toDriver,
+                      onPressed: () => ref
+                          .read(sessionControllerProvider.notifier)
+                          .setRole(role == Role.driver ? Role.rider : Role.driver),
+                    ),
+                  ],
+                ],
+              ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(l10n.roleLabel, style: labelStyle),
-              if (role != null) ...[
-                const SizedBox(height: AppSpacing.xxs),
-                Text(role == Role.driver ? l10n.canDrive : l10n.needRide, style: valueStyle),
-                const SizedBox(height: AppSpacing.md),
-                GooraGhostButton(
-                  key: const Key('switch-role'),
-                  label: role == Role.driver ? l10n.toRider : l10n.toDriver,
-                  onPressed: () => ref
-                      .read(sessionControllerProvider.notifier)
-                      .setRole(role == Role.driver ? Role.rider : Role.driver),
-                ),
-              ],
-            ],
-          ),
+          if (kDebugMode) ...[const SizedBox(height: AppSpacing.gap), const DemoSection()],
         ],
       ),
     );

@@ -29,4 +29,7 @@ abstract final class AppSizes {
   static const backButton = 44.0;
   static const routeMapHeight = 140.0;
   static const routeStroke = 4.0;
+  static const progressBarHeight = 8.0;
+  static const liveMarker = 18.0;
+  static const statusIcon = 14.0;
 }

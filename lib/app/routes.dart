@@ -15,6 +15,9 @@ abstract final class Routes {
   static const postTrip = '/post-trip';
   static const plan = '/plan';
   static const today = '/today';
+  static const week = '/week';
+  static const wallet = '/wallet';
+  static const trust = '/trust';
   static const settings = '/settings';
   static const gallery = '/debug/gallery';
 

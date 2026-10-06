@@ -1,3 +1,4 @@
+import '../../../core/time/calendar_date.dart';
 import '../domain/clock.dart';
 import '../domain/commute_profile.dart';
 import '../domain/geo.dart';
@@ -21,6 +22,14 @@ abstract final class CorridorSeed {
   static const _weekdays = CommuteProfile.defaultDays;
   static const _destination = GeoPoint(30.0719, 31.017);
 
+  /// Rotation periods start on this Sunday (research R5).
+  static const rotationStart = CalendarDate.ymd(2026, 10, 4);
+
+  /// sz-0725 pickup stops (prototype): Main Gate is the matching point (002);
+  /// Central St. is the second stop, nearest to the Sheikh Zayed home.
+  static const mainGate = Stop(id: 'main-gate', name: StopName.mainGate, point: GeoPoint(30.0427, 30.98), time: Clock.hm(7, 20));
+  static const centralSt = Stop(id: 'central-st', name: StopName.centralSt, point: GeoPoint(30.0405, 30.9805), time: Clock.hm(7, 25));
+
   static const _ahmed = Member(
     id: 'ahmed',
     firstName: 'Ahmed',
@@ -29,6 +38,9 @@ abstract final class CorridorSeed {
     isWoman: false,
     rating: 4.9,
     reliability: 97,
+    seats: 4,
+    vehicle: Vehicle(make: 'Toyota Corolla', colour: VehicleColour.white),
+    phone: '+201000000001',
   );
   static const _mohamed = Member(
     id: 'mohamed',
@@ -38,6 +50,9 @@ abstract final class CorridorSeed {
     isWoman: false,
     rating: 4.8,
     reliability: 96,
+    seats: 4,
+    vehicle: Vehicle(make: 'Hyundai Elantra', colour: VehicleColour.silver),
+    phone: '+201000000002',
   );
   static const _sara = Member(
     id: 'sara',
@@ -47,6 +62,7 @@ abstract final class CorridorSeed {
     isWoman: true,
     rating: 5,
     reliability: 98,
+    phone: '+201000000003',
   );
   static const _youssef = Member(
     id: 'youssef',
@@ -56,6 +72,7 @@ abstract final class CorridorSeed {
     isWoman: false,
     rating: 4.7,
     reliability: 94,
+    phone: '+201000000004',
   );
 
   static const groups = <CommuteGroup>[
@@ -73,6 +90,10 @@ abstract final class CorridorSeed {
       freeSeatsGoing: 2,
       freeSeatsReturn: 2,
       detourMinutes: 6,
+      stops: [mainGate, centralSt],
+      arrival: Clock.hm(8, 5),
+      arrivalName: StopName.smartVillageGate2,
+      rotationStart: rotationStart,
     ),
     CommuteGroup(
       id: 'sz-0740',
@@ -91,6 +112,10 @@ abstract final class CorridorSeed {
       freeSeatsGoing: 2,
       freeSeatsReturn: 2,
       detourMinutes: 4,
+      stops: [Stop(id: 'stop-1', name: StopName.gasStation, point: GeoPoint(30.0472, 30.98), time: Clock.hm(7, 40))],
+      arrival: Clock.hm(8, 20),
+      arrivalName: StopName.smartVillageGate2,
+      rotationStart: rotationStart,
     ),
     CommuteGroup(
       id: 'sz-0715',
@@ -109,6 +134,10 @@ abstract final class CorridorSeed {
       freeSeatsGoing: 1,
       freeSeatsReturn: 1,
       detourMinutes: 8,
+      stops: [Stop(id: 'stop-1', name: StopName.gasStation, point: GeoPoint(30.0463, 30.98), time: Clock.hm(7, 15))],
+      arrival: Clock.hm(7, 55),
+      arrivalName: StopName.smartVillageGate2,
+      rotationStart: rotationStart,
     ),
     CommuteGroup(
       id: 'sz-0720',
@@ -127,6 +156,10 @@ abstract final class CorridorSeed {
       freeSeatsGoing: 3,
       freeSeatsReturn: 3,
       detourMinutes: 5,
+      stops: [Stop(id: 'stop-1', name: StopName.gasStation, point: GeoPoint(30.0436, 30.98), time: Clock.hm(7, 20))],
+      arrival: Clock.hm(8, 0),
+      arrivalName: StopName.smartVillageGate2,
+      rotationStart: rotationStart,
     ),
     CommuteGroup(
       id: 'oct-0700',
@@ -142,6 +175,10 @@ abstract final class CorridorSeed {
       freeSeatsGoing: 2,
       freeSeatsReturn: 2,
       detourMinutes: 7,
+      stops: [Stop(id: 'stop-1', name: StopName.gasStation, point: GeoPoint(29.9727, 30.94), time: Clock.hm(7, 0))],
+      arrival: Clock.hm(7, 50),
+      arrivalName: StopName.smartVillageGate2,
+      rotationStart: rotationStart,
     ),
   ];
 }

@@ -9,14 +9,14 @@ even, research R3).
 | Type | Fields | Rules |
 |---|---|---|
 | `CalendarDate` | year, month, day | `day` → `Day` (sun…sat); `addDays(n)`; `monthKey` "YYYY-MM"; comparable |
-| `WallTime` | date: CalendarDate, time: Clock | Cairo wall clock; comparable; `plusMinutes`; `minutesUntil(other)` |
+| `WallTime` | date: CalendarDate, time: Clock, second | Cairo wall clock; comparable; `plusMinutes`, `plusSeconds`; `minutesUntil` / `secondsUntil` (seconds for the 4:59 / 5:00 no-show boundary) |
 
 ## Additions to 002 types (`commute/domain/group.dart`)
 
 | Type | New fields | Notes |
 |---|---|---|
 | `Member` | `seats?` (drivers, 1–4), `vehicle?` (make, colour), `phone?` (E.164, fake), `privacy` (default verifiedUsers), `days?` (null = group days) | 002 constructors keep working (all optional) |
-| `CommuteGroup` | `stops: List<Stop>`, `arrival: Clock`, `arrivalName`, `rotationStart: CalendarDate` | `pickupPoints` stays for matching; `stops[i].point == pickupPoints[i]` |
+| `CommuteGroup` | `stops: List<Stop>`, `arrival: Clock?`, `arrivalName?`, `rotationStart: CalendarDate?` | `pickupPoints` stays the matching input and is unchanged; `stops[0]` is at `pickupPoints[0]`, extra stops (Central St.) exist only in `stops` so every 002 matching number holds. Nullable with fallbacks (`goingStops`, `arrivalTime`) so 002 constructors compile |
 | `Stop` | id, name (mainGate, centralSt — l10n), point, time: Clock | going order; last stop time == `going` |
 | `Vehicle` | make (proper noun, not translated), colour (enum → l10n) | |
 

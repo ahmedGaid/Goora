@@ -17,9 +17,12 @@ import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_logo.dart';
 import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
+import '../../../core/widgets/goora_progress_bar.dart';
 import '../../../core/widgets/goora_progress_dots.dart';
 import '../../../core/widgets/goora_radio_card.dart';
 import '../../../core/widgets/goora_route_map.dart';
+import '../../../core/widgets/goora_stat_tile.dart';
+import '../../../core/widgets/goora_status_chip.dart';
 import '../../../core/widgets/goora_stepper.dart';
 import '../../../core/widgets/goora_timeline_row.dart';
 
@@ -318,6 +321,36 @@ class _DesignGalleryScreenState extends State<DesignGalleryScreen> {
             fromLabel: l10n.areaSheikhZayed,
             toLabel: l10n.areaSmartVillage,
             semanticLabel: l10n.mapAria,
+          ),
+          const SizedBox(height: AppSpacing.gap),
+          GooraRouteMap(
+            fromLabel: l10n.areaSheikhZayed,
+            toLabel: l10n.areaSmartVillage,
+            semanticLabel: l10n.mapAria,
+            driverProgress: 0.4,
+          ),
+          const SizedBox(height: AppSpacing.gap),
+          Row(
+            children: [
+              Expanded(child: GooraStatTile(label: l10n.returnTime, value: l10n.timePm('5:00'))),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(child: GooraStatTile(label: l10n.payPerTrip, value: l10n.egpAmount(40), caption: l10n.feeLine(40))),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.gap),
+          GooraProgressBar(value: 0.96, valueLabel: '96%', label: l10n.reliability),
+          const SizedBox(height: AppSpacing.gap),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              GooraStatusChip(status: GooraStatus.covered, label: l10n.covered),
+              GooraStatusChip(status: GooraStatus.waiting, label: l10n.stWaiting('4:12')),
+              GooraStatusChip(status: GooraStatus.pickedUp, label: l10n.pickedUp),
+              GooraStatusChip(status: GooraStatus.noShow, label: l10n.stNoShow),
+              GooraStatusChip(status: GooraStatus.backup, label: l10n.backupName('Mohamed')),
+              GooraStatusChip(status: GooraStatus.off, label: l10n.youOff),
+            ],
           ),
           _Section(l10n.galleryNav),
           Text(l10n.navMain, style: tokenStyle),

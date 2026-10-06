@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/routes.dart';
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/storage/preferences.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -14,6 +15,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../../core/widgets/goora_text_field.dart';
+import '../../commute/data/fake_commute_repository.dart';
 import '../data/providers.dart';
 import '../domain/phone_number.dart';
 import '../domain/repositories.dart';
@@ -73,7 +75,10 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       await ref.read(authRepositoryProvider).verifyCode(widget.phone, _controller.text);
       await ref.read(sessionControllerProvider.notifier).signedIn(widget.phone);
       if (!mounted) return;
-      context.go(routeForSession(ref.read(sessionControllerProvider)));
+      context.go(routeForSession(
+        ref.read(sessionControllerProvider),
+        isMember: FakeCommuteRepository.hasMembership(ref.read(sharedPreferencesProvider)),
+      ));
     } on InvalidCodeException {
       if (mounted) setState(() => _wrong = true);
     } finally {
