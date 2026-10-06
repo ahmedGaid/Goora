@@ -168,6 +168,7 @@ void main() {
     await tester.ensureVisible(find.byKey(const Key('demo-reset')));
     await tester.tap(find.byKey(const Key('demo-reset')));
     await tester.pumpAndSettle();
+    expect(find.text(l10nFor(en).demoResetDone), findsOneWidget);
     final prefs = c.read(sharedPreferencesProvider);
     for (final key in FakeTrustRepository.allKeys) {
       expect(prefs.containsKey(key), isFalse, reason: key);

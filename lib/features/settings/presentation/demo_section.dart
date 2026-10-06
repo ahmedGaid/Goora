@@ -54,7 +54,7 @@ class DemoSection extends ConsumerWidget {
             ('demo-driver-arrives', l10n.demoDriverArrives, () => _driverArrives(ref)),
             ('demo-backup', l10n.demoBackup, () => _driverOut(ref, cover: true)),
             ('demo-no-cover', l10n.demoNoCover, () => _driverOut(ref, cover: false)),
-            ('demo-reset', l10n.demoReset, () => _reset(ref)),
+            ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
             GooraGhostButton(key: Key(key), label: label, onPressed: action),
@@ -117,7 +117,7 @@ class DemoSection extends ConsumerWidget {
     ref.invalidate(dailyCommuteRepositoryProvider);
   }
 
-  Future<void> _reset(WidgetRef ref) async {
+  Future<void> _reset(BuildContext context, WidgetRef ref) async {
     final repo = ref.read(dailyCommuteRepositoryProvider);
     if (repo is FakeDailyCommuteRepository) await repo.reset();
     final prefs = ref.read(sharedPreferencesProvider);
@@ -125,5 +125,9 @@ class DemoSection extends ConsumerWidget {
       await prefs.remove(key);
     }
     ref.invalidate(dailyCommuteRepositoryProvider);
+    // The only demo action with no visible trace on this screen otherwise.
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).demoResetDone)));
+    }
   }
 }
