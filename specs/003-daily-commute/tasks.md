@@ -115,12 +115,12 @@ confirm/undo, check-in with one picked up + one no-show, timers and charges.
 **Goal**: §6.6 search order with banners and no-cover options. **Independent test**: seeded
 driver unavailable → cover by order; no-cover path.
 
-- [ ] T041 [US4] `lib/features/daily/domain/backup_service.dart`: steps sameGroup → nearbyGroup → sameCompany → sameCommunity; pass = available + free seats ≥ passengers + 002 hard constraints via `MatchingService.evaluate` (driver Seeker limited to the leg and day) + every passenger's `PrivacyRules.accepts`; within a step least detour → rating → id; `BackupResult.covered(cover, step)` / `none` (R6)
-- [ ] T042 [P] [US4] `test/unit/backup_service_test.dart`: each step wins only when earlier steps have no passing candidate; same-group beats a better nearby candidate; seats too few → skipped; constraint fail at limit + 1, pass at limit; women-only passenger rejects a male cover; no candidates → none; group price unchanged on covered days
-- [ ] T043 [US4] Fake repository: `cantDrive` runs `BackupService` over candidates built from the seed (off-duty group drivers, other corridor groups' drivers, network drivers), stores the `LegAssignment` override, emits `backupCover` or `noCover` notices; `noCover` is created by the cut-off at the latest (FR-020)
-- [ ] T044 [US4] Rider Today banners: warning "<driver> can't drive on <day>" + "<cover> will drive instead. Your commute is still covered — nothing for you to do." + "Got it"; no-cover card with the three options (empty seat → `/empty-seats`, post trip → `/post-trip`, day off → free absence)
-- [ ] T045 [US4] Demo section: "Driver can't drive next Tuesday" and "Driver can't drive — no cover" actions (R11)
-- [ ] T046 [P] [US4] `test/widget/backup_test.dart` (ar + en): cover banner text and Got it; no-cover options route correctly; day off creates a free absence
+- [X] T041 [US4] `lib/features/daily/domain/backup_service.dart`: steps sameGroup → nearbyGroup → sameCompany → sameCommunity; pass = available + free seats ≥ passengers + 002 hard constraints via `MatchingService.evaluate` (driver Seeker limited to the leg and day) + every passenger's `PrivacyRules.accepts`; within a step least detour → rating → id; `BackupResult.covered(cover, step)` / `none` (R6)
+- [X] T042 [P] [US4] `test/unit/backup_service_test.dart`: each step wins only when earlier steps have no passing candidate; same-group beats a better nearby candidate; seats too few → skipped; constraint fail at limit + 1, pass at limit; women-only passenger rejects a male cover; no candidates → none; group price unchanged on covered days
+- [X] T043 [US4] Fake repository: `cantDrive` runs `BackupService` over candidates built from the seed (off-duty group drivers, other corridor groups' drivers, network drivers), stores the `LegAssignment` override, emits `backupCover` or `noCover` notices; `noCover` is created by the cut-off at the latest (FR-020)
+- [X] T044 [US4] Rider Today banners: warning "<driver> can't drive on <day>" + "<cover> will drive instead. Your commute is still covered — nothing for you to do." + "Got it"; no-cover card with the three options (empty seat → `/empty-seats`, post trip → `/post-trip`, day off → free absence)
+- [X] T045 [US4] Demo section: "Driver can't drive next Tuesday" and "Driver can't drive — no cover" actions (R11)
+- [X] T046 [P] [US4] `test/widget/backup_test.dart` (ar + en): cover banner text and Got it; no-cover options route correctly; day off creates a free absence
 
 ---
 
@@ -129,8 +129,8 @@ driver unavailable → cover by order; no-cover path.
 **Goal**: Week tab schedule. **Independent test**: seeded group, fixed date, backup + absence in
 place, rider and driver views.
 
-- [ ] T047 [US5] `lib/features/daily/presentation/week/week_controller.dart` + `week_screen.dart`: "Your commute schedule", route and time, one row per working day with avatar and "<name> drives" / "You drive"; detail line — riders "Going: … · Return: …", drivers "<direction> · N riders" or "You ride"; "<cover> (backup)" labels; off rows "You're off · Cancelled before 9 PM · no charge" or the late text; rotation note; "Not coming next week" (reuses T032 flow)
-- [ ] T048 [P] [US5] `test/widget/week_test.dart` (ar + en): rider and driver rows for a seeded week with one backup and one absence; rotation spreads days between Ahmed and Mohamed
+- [X] T047 [US5] `lib/features/daily/presentation/week/week_controller.dart` + `week_screen.dart`: "Your commute schedule", route and time, one row per working day with avatar and "<name> drives" / "You drive"; detail line — riders "Going: … · Return: …", drivers "<direction> · N riders" or "You ride"; "<cover> (backup)" labels; off rows "You're off · Cancelled before 9 PM · no charge" or the late text; rotation note; "Not coming next week" (reuses T032 flow)
+- [X] T048 [P] [US5] `test/widget/week_test.dart` (ar + en): rider and driver rows for a seeded week with one backup and one absence; rotation spreads days between Ahmed and Mohamed
 
 ---
 
@@ -139,14 +139,14 @@ place, rider and driver views.
 **Goal**: Trust tab, reliability, privacy feeding matching. **Independent test**: rider and driver
 views; privacy choice changes matching results.
 
-- [ ] T049 [US6] `lib/features/daily/domain/reliability_rules.dart`: 30-day window, booked/missed, round half up, 0 booked → 100, month caption counts (R4)
-- [ ] T050 [P] [US6] `test/unit/reliability_rules_test.dart`: 12.5 / 13 → 96; 0 → 100; 1 no-show of 4 → 75; 1 late of 2 → 75; free cancel not booked; day 30 vs 31 window edge; .5 rounds up; month counts reset on the 1st while % does not
-- [ ] T051 [US6] `lib/features/daily/data/fake_trust_repository.dart`: profile from 001 profile + seed statuses, privacy get/set with availability, trusted contacts (max 3, `PhoneNumber` validation), `sendSos` recorded
-- [ ] T052 [US6] `lib/features/daily/presentation/trust/trust_controller.dart` + `trust_screen.dart`: avatar, name, "Verified member · rating ★"; checklist (rider: license + vehicle "Not needed"; driver: all five) statuses only (FR-023a); reliability card with % text, `GooraProgressBar`, caption; "Switch to driver/rider mode"; "Who can ride with me" pills with availability hints and the applies-to-future note (FR-026); trusted contacts entry
-- [ ] T053 [US6] `lib/features/daily/presentation/trust/trusted_contacts_sheet.dart`: add / remove up to 3 (name + Egyptian mobile), designed empty state
-- [ ] T054 [US6] Role switch: rider → `/commute-setup` in driver mode, with the "license and vehicle need verifying" note blocking driver matching while not verified; driver → rider keeps the saved commute (US6/AC4); update `lib/features/commute/presentation/commute_controller.dart` to build `Seeker` privacy flags from the saved `PrivacyPreference` (FR-024)
-- [ ] T055 [P] [US6] `test/widget/trust_test.dart` (ar + en): rider vs driver checklist; 96 % bar + caption; Women only hidden for a man; Same company disabled without work email with hint; choosing a pill persists; role switch routes; contacts add/remove and max 3
-- [ ] T056 [P] [US6] Extend `test/unit/matching_service_test.dart`: a seeker with `womenOnly` / `sameCompany` from `PrivacyPreference` excludes the groups 002 rules exclude (FR-024)
+- [X] T049 [US6] `lib/features/daily/domain/reliability_rules.dart`: 30-day window, booked/missed, round half up, 0 booked → 100, month caption counts (R4)
+- [X] T050 [P] [US6] `test/unit/reliability_rules_test.dart`: 12.5 / 13 → 96; 0 → 100; 1 no-show of 4 → 75; 1 late of 2 → 75; free cancel not booked; day 30 vs 31 window edge; .5 rounds up; month counts reset on the 1st while % does not
+- [X] T051 [US6] `lib/features/daily/data/fake_trust_repository.dart`: profile from 001 profile + seed statuses, privacy get/set with availability, trusted contacts (max 3, `PhoneNumber` validation), `sendSos` recorded
+- [X] T052 [US6] `lib/features/daily/presentation/trust/trust_controller.dart` + `trust_screen.dart`: avatar, name, "Verified member · rating ★"; checklist (rider: license + vehicle "Not needed"; driver: all five) statuses only (FR-023a); reliability card with % text, `GooraProgressBar`, caption; "Switch to driver/rider mode"; "Who can ride with me" pills with availability hints and the applies-to-future note (FR-026); trusted contacts entry
+- [X] T053 [US6] `lib/features/daily/presentation/trust/trusted_contacts_sheet.dart`: add / remove up to 3 (name + Egyptian mobile), designed empty state
+- [X] T054 [US6] Role switch: rider → `/commute-setup` in driver mode, with the "license and vehicle need verifying" note blocking driver matching while not verified; driver → rider keeps the saved commute (US6/AC4); update `lib/features/commute/presentation/commute_controller.dart` to build `Seeker` privacy flags from the saved `PrivacyPreference` (FR-024)
+- [X] T055 [P] [US6] `test/widget/trust_test.dart` (ar + en): rider vs driver checklist; 96 % bar + caption; Women only hidden for a man; Same company disabled without work email with hint; choosing a pill persists; role switch routes; contacts add/remove and max 3
+- [X] T056 [P] [US6] Extend `test/unit/matching_service_test.dart`: a seeker with `womenOnly` / `sameCompany` from `PrivacyPreference` excludes the groups 002 rules exclude (FR-024)
 
 **Checkpoint P2**: US4–US6 work; analyze + tests green. Commit.
 
@@ -216,8 +216,15 @@ Setup (T001–T003) → Foundational (T004–T022)
 
 ## Phase 12: Convergence
 
-- [ ] T070 Apply `AttendanceRules.driverNoShow` in the fake repository: when a driver neither checked in nor cancelled by first pickup + 5 min, record a `noShow` reliability event for the driver and apply the same 2 → warning / 3 → removal standing per FR-010, FR-009 (partial)
-- [ ] T071 Compute free seats per leg and day (`onDuty.seats − riders − off-duty drivers + absent`) and keep a ride from carrying more passengers than the on-duty car's seats per FR-022a (partial)
-- [ ] T072 Settle passenger marks automatically once a trip's arrival time has passed without "End trip", so no-show charges and kept trips are always recorded per plan: research R11 (partial)
-- [ ] T073 Move user-facing strings joined in code (`share_trip.dart` car line, `demo_section.dart` time line) into ARB keys per Constitution III (contradicts)
-- [ ] T074 Add a widget test: a returning member who signs in by OTP lands on the shell with Today selected per FR-002 (partial)
+- [X] T070 Apply `AttendanceRules.driverNoShow` in the fake repository: when a driver neither checked in nor cancelled by first pickup + 5 min, record a `noShow` reliability event for the driver and apply the same 2 → warning / 3 → removal standing per FR-010, FR-009 (partial)
+- [X] T071 Compute free seats per leg and day (`onDuty.seats − riders − off-duty drivers + absent`) and keep a ride from carrying more passengers than the on-duty car's seats per FR-022a (partial)
+- [X] T072 Settle passenger marks automatically once a trip's arrival time has passed without "End trip", so no-show charges and kept trips are always recorded per plan: research R11 (partial)
+- [X] T073 Move user-facing strings joined in code (`share_trip.dart` car line, `demo_section.dart` time line) into ARB keys per Constitution III (contradicts)
+- [X] T074 Add a widget test: a returning member who signs in by OTP lands on the shell with Today selected per FR-002 (partial)
+
+---
+
+## Phase 13: Convergence
+
+- [X] T075 Make the Settings "Switch to driver mode" use the Trust role switch, so license and vehicle wait for verification and driver matching waits with them, per US6/AC4 (partial)
+- [X] T076 Clear trust data (privacy, trusted contacts, SOS log, pending driver documents) in the debug "Reset demo data", per plan: research R11 (partial)

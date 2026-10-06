@@ -9,6 +9,7 @@ import 'package:goora/features/daily/domain/charge.dart';
 import 'package:goora/features/daily/domain/check_in.dart';
 import 'package:goora/features/daily/domain/notice.dart';
 import 'package:goora/features/daily/domain/ride.dart';
+import 'package:goora/features/daily/domain/schedule.dart';
 import 'package:goora/features/daily/domain/trust.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
@@ -24,8 +25,8 @@ final class _Setup {
   final TestClock clock;
 }
 
-Future<_Setup> _make(Role role, {required WallTime start}) async {
-  SharedPreferences.setMockInitialValues(memberPrefs(role: role));
+Future<_Setup> _make(Role role, {required WallTime start, CommuteProfile? commute}) async {
+  SharedPreferences.setMockInitialValues(memberPrefs(role: role, commute: commute));
   final prefs = await SharedPreferences.getInstance();
   final clock = TestClock(start);
   final person = Profile(phone: testPhone, firstName: 'Omar', lastName: 'Khaled', gender: Gender.male, role: role);
@@ -177,17 +178,25 @@ void main() {
     // Three drivers (ahmed, me, mohamed): Thursday 8 Oct is mine.
     final thu = tue.addDays(2);
 
-    test("can't drive after 9 PM: reliability event, no money, riders told, no cover yet", () async {
+    test("can't drive after 9 PM: reliability event, no money, a same-group cover, riders told", () async {
       final s = await _make(Role.driver, start: at(wed, 21, 30));
       expect((await s.repo.ride(thu, Leg.going))!.driverId, 'me');
       final result = await s.repo.cantDrive(thu, {Leg.going, Leg.ret}, at(wed, 21, 30));
-      expect(result.found, isFalse);
-      expect((await s.repo.ride(thu, Leg.going))!.driverId, isNull);
+      expect(result.found, isTrue);
+      expect(result.step, BackupStep.sameGroup);
+      expect(result.coverId, 'ahmed', reason: 'boards at Main Gate, the pickup point: least detour');
+      final ride = (await s.repo.ride(thu, Leg.going))!;
+      expect(ride.driverId, 'ahmed');
+      expect(ride.carries('me'), isFalse);
+      final day = (await s.repo.schedule(thu, thu)).single;
+      expect(day.going!.planned, 'me', reason: 'the rotation count keeps the planned driver');
+      expect(day.going!.isBackup, isTrue);
       expect(await s.repo.chargesOwed(), isEmpty);
       final events = await s.repo.events(thu, thu);
       expect(events.map((e) => e.kind), everyElement(ReliabilityEventKind.lateCantDrive));
       final notices = await s.repo.notices().first;
-      expect(notices.where((n) => n.kind == NoticeKind.noCover && !n.toMe), hasLength(2));
+      expect(notices.where((n) => n.kind == NoticeKind.backupCover && !n.toMe), hasLength(2));
+      expect(notices.first.params['cover'], 'Ahmed');
     });
 
     test("can't drive before 9 PM: no reliability event", () async {
@@ -215,6 +224,140 @@ void main() {
       expect({for (final p in ride.passengers) p.memberId}, {'ahmed', 'mohamed', 'sara', 'youssef'});
       final tuesday = (await s.repo.ride(tue, Leg.going))!;
       expect(tuesday.carries('me'), isTrue);
+    });
+  });
+
+  group('backup (US4)', () {
+    final nextTue = tue.addDays(7);
+
+    test('demo: next Tuesday\'s driver is out → same-group cover; riders hear it', () async {
+      final s = await _make(Role.rider, start: at(tue, 9, 0));
+      final planned = (await s.repo.ride(nextTue, Leg.going))!.driverId;
+      expect(await s.repo.demoDriverOut(cover: true), nextTue);
+      final ride = (await s.repo.ride(nextTue, Leg.going))!;
+      expect(ride.driverId, isNot(planned));
+      expect(ride.driverId, isIn(['ahmed', 'mohamed']));
+      expect(ride.carries('me'), isTrue);
+      final banner = (await s.repo.notices().first).where((n) => n.kind == NoticeKind.backupCover && n.toMe);
+      expect(banner, hasLength(2));
+    });
+
+    test('a covered day keeps the group price: a late cancel owes 20 to the cover', () async {
+      final s = await _make(Role.rider, start: at(tue, 9, 0));
+      await s.repo.demoDriverOut(cover: true);
+      final cover = (await s.repo.ride(nextTue, Leg.going))!.driverId;
+      final charges = await s.repo.cancel(nextTue, {Leg.going}, at(nextTue.addDays(-1), 21, 0));
+      expect(charges.single.amount, 20);
+      expect(charges.single.owedTo, cover);
+    });
+
+    test('no cover: riders get the no-cover notice; a day off is free', () async {
+      final s = await _make(Role.rider, start: at(tue, 9, 0));
+      await s.repo.demoDriverOut(cover: false);
+      expect((await s.repo.ride(nextTue, Leg.going))!.driverId, isNull);
+      final notices = await s.repo.notices().first;
+      expect(notices.where((n) => n.kind == NoticeKind.noCover && n.toMe), hasLength(2));
+      s.clock.now = at(nextTue.addDays(-1), 22, 0);
+      await s.repo.chooseNoCoverOption(nextTue, Leg.going, NoCoverOption.dayOff);
+      final absence = (await s.repo.absences(nextTue, nextTue)).singleWhere((a) => a.personId == 'me');
+      expect(absence.kind, AbsenceKind.noCover);
+      expect(await s.repo.chargesOwed(), isEmpty);
+      expect(await s.repo.events(nextTue, nextTue), isEmpty);
+    });
+  });
+
+  group('seats (FR-022a)', () {
+    final thu = tue.addDays(2);
+
+    test('free seats = car seats − riders − off-duty drivers; an absence frees one', () async {
+      final s = await _make(Role.rider, start: at(mon, 12, 0));
+      final ride = (await s.repo.ride(tue, Leg.going))!;
+      expect(ride.seats, 4);
+      expect(ride.passengers, hasLength(4), reason: 'mohamed (off duty), sara, youssef, me');
+      expect(ride.freeSeats, 0);
+      await s.repo.cancel(tue, {Leg.going}, at(mon, 12, 0));
+      expect((await s.repo.ride(tue, Leg.going))!.freeSeats, 1);
+    });
+
+    test('a 2-seat car carries 2: riders first, off-duty drivers drive themselves', () async {
+      final s = await _make(
+        Role.driver,
+        start: at(wed, 12, 0),
+        commute: corridorProfile(driver: const DriverOffer(seats: 2, trips: DrivenTrips.both, contribution: 40)),
+      );
+      final ride = (await s.repo.ride(thu, Leg.going))!;
+      expect(ride.driverId, 'me');
+      expect([for (final p in ride.passengers) p.memberId], ['sara', 'youssef']);
+      expect(ride.freeSeats, 0);
+    });
+  });
+
+  group('timed rules (FR-010, research R11)', () {
+    final thu = tue.addDays(2);
+
+    test('driver who never checks in: no-show at first pickup + 5 min, warning at 2', () async {
+      final s = await _make(Role.driver, start: at(wed, 20, 0));
+      await s.repo.myGroup();
+      s.clock.now = at(thu, 7, 24, 59);
+      await s.repo.myGroup();
+      expect(await s.repo.events(thu, thu), isEmpty, reason: 'first pickup 7:20 → no-show from 7:25');
+      s.clock.now = at(thu, 7, 25);
+      await s.repo.myGroup();
+      expect((await s.repo.events(thu, thu)).map((e) => e.kind), [ReliabilityEventKind.noShow]);
+      expect(await s.repo.chargesOwed(), isEmpty, reason: 'drivers owe no money');
+      s.clock.now = at(thu, 17, 5);
+      await s.repo.myGroup();
+      expect(await s.repo.noShowsInMonth('2026-10'), 2);
+      final kinds = [for (final n in await s.repo.notices().first) n.kind];
+      expect(kinds.where((k) => k == NoticeKind.driverNoShow), hasLength(2));
+      expect(kinds, contains(NoticeKind.noShowWarning));
+      s.clock.now = at(thu, 17, 6);
+      await s.repo.myGroup();
+      expect(await s.repo.noShowsInMonth('2026-10'), 2, reason: 'recorded once');
+    });
+
+    test('a driver who checked in is no no-show; the trip settles at arrival without End trip', () async {
+      final s = await _make(Role.driver, start: at(wed, 20, 0));
+      final id = _id(thu, Leg.going);
+      await s.repo.arrivedAt(id, 'main-gate', at(thu, 7, 20));
+      await s.repo.arrivedAt(id, 'central-st', at(thu, 7, 25));
+      await s.repo.mark(id, 'youssef', Outcome.noShow, at(thu, 7, 30));
+      s.clock.now = at(thu, 8, 4);
+      await s.repo.myGroup();
+      expect(await s.repo.events(thu, thu), isEmpty, reason: 'arrival is 8:05');
+      s.clock.now = at(thu, 8, 5);
+      await s.repo.myGroup();
+      expect((await s.repo.events(thu, thu)).map((e) => e.kind), [ReliabilityEventKind.kept]);
+      final notices = await s.repo.notices().first;
+      expect(notices.where((n) => n.kind == NoticeKind.noShowCharged && !n.toMe), hasLength(1));
+      expect(notices.where((n) => n.kind == NoticeKind.driverNoShow), isEmpty);
+    });
+
+    test('rider: a kept trip is recorded once arrival passes; a marked no-show is charged', () async {
+      final s = await _make(Role.rider, start: at(tue, 7, 0));
+      await s.repo.myGroup();
+      final going = _id(tue, Leg.going);
+      s.clock.now = at(tue, 8, 4);
+      await s.repo.myGroup();
+      expect(await s.repo.events(tue, tue), isEmpty);
+      s.clock.now = at(tue, 8, 5);
+      await s.repo.myGroup();
+      expect((await s.repo.events(tue, tue)).map((e) => e.rideId), [going]);
+      expect((await s.repo.events(tue, tue)).single.kind, ReliabilityEventKind.kept);
+
+      final ret = _id(tue, Leg.ret);
+      await s.repo.arrivedAt(ret, 'work', at(tue, 17, 0));
+      await s.repo.mark(ret, 'me', Outcome.noShow, at(tue, 17, 5));
+      s.clock.now = at(tue, 17, 40);
+      await s.repo.myGroup();
+      expect((await s.repo.events(tue, tue)).map((e) => e.kind), [ReliabilityEventKind.kept, ReliabilityEventKind.noShow]);
+      expect((await s.repo.chargesOwed()).single.amount, 40);
+    });
+
+    test('trips before joining never settle', () async {
+      final s = await _make(Role.driver, start: at(thu, 9, 0));
+      await s.repo.myGroup();
+      expect(await s.repo.events(thu, thu), isEmpty, reason: 'joined after the 7:20 pickup');
     });
   });
 }

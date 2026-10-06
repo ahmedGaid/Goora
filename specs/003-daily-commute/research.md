@@ -260,3 +260,11 @@ Not in the prototype dictionary; Arabic in `lib/core/l10n/app_ar.arb`, English i
 `nDriverArrived`, `nLateCancel`, `nNoShow`, `nSeatOffered`, `noRidesSoon`, `loadingToday`,
 `todayError`, `demoNow`, `demoRideDay`, `demo855`, `demo905`, `demoRealTime`, `demoReset`.
 `offTitle` / `noCoverTitle` take a `{when}` ("tomorrow (Tue)", "on Sun") instead of a fixed day.
+
+### R14 addendum — drafted during the P2 build and convergence (founder review)
+
+Arabic in `lib/core/l10n/app_ar.arb`, English in `app_en.arb`: `nDriverNoShow` (a driver who never
+checked in), `carColour`, `demoNowValue`, `noCoverEmptySeat`, `offNoCoverBody`, `noCoverNote`,
+`demoBackup`, `demoNoCover`, `weekRiderLine` (also the Week header times), `weekDriveLine`,
+`weekEmpty`, `verificationTitle`, `percentValue`, `trustedCount`, `contactName`, `removeContact`.
+"Post your trip" on the no-cover card reuses `postReq`.

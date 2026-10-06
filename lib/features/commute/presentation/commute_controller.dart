@@ -1,5 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../daily/data/providers.dart';
+import '../../daily/domain/privacy.dart';
+import '../../daily/domain/trust.dart';
 import '../../onboarding/domain/choices.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../data/providers.dart';
@@ -87,6 +90,9 @@ class CommuteController extends _$CommuteController {
     await repo.saveProfile(profile);
     state = AsyncData(profile);
 
+    // Who can ride with me (FR-024): the saved preference turns on the 002
+    // constraint; company and compound come from trust data.
+    final trust = await ref.read(trustRepositoryProvider).profile();
     final seeker = Seeker(
       role: isDriver ? MemberRole.driver : MemberRole.rider,
       home: profile.home!.point,
@@ -96,6 +102,11 @@ class CommuteController extends _$CommuteController {
       days: profile.days,
       legs: isDriver ? profile.driver!.trips.legs : const {Leg.going, Leg.ret},
       isWoman: session.gender == Gender.female,
+      company: trust.company,
+      compound: trust.compound,
+      womenOnly: trust.privacy.wantsWomenOnly,
+      sameCompanyOnly: trust.privacy.wantsSameCompany,
+      sameCompoundOnly: trust.privacy.wantsSameCompound,
     );
     final groups = await repo.groupsFor(profile.home!.area, profile.work!.area);
     final result = MatchingService.match(seeker, groups);
@@ -108,6 +119,17 @@ class CommuteController extends _$CommuteController {
     ref.read(lastMatchProvider.notifier).set(outcome);
     return outcome;
   }
+}
+
+/// A driver whose license or vehicle is not verified yet can't be matched
+/// as a driver (US6/AC4).
+@riverpod
+Future<bool> driverDocsPending(Ref ref) async {
+  if (ref.watch(sessionControllerProvider).profile?.role != Role.driver) return false;
+  final items = (await ref.watch(trustRepositoryProvider).profile()).items;
+  return items.any((i) =>
+      (i.kind == VerificationKind.license || i.kind == VerificationKind.vehicle) &&
+      i.status == VerificationStatus.notVerified);
 }
 
 final class MatchOutcome {

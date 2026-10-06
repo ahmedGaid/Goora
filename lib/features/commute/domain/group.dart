@@ -80,6 +80,8 @@ final class Member {
   final Set<Day>? days;
 
   Set<Day> daysIn(CommuteGroup g) => days ?? g.days;
+
+  PersonFacts get facts => PersonFacts(isWoman: isWoman, company: company, compound: compound);
 }
 
 final class CommuteGroup {
@@ -195,6 +197,11 @@ final class CommuteGroup {
   Clock get arrivalTime => arrival ?? going.shift(defaultTripMinutes);
 
   static const defaultTripMinutes = 40;
+
+  int get tripMinutes => arrivalTime.minutes - going.minutes;
+
+  /// When the [leg] trip arrives, before any reported delay.
+  Clock endFor(Leg leg) => leg == Leg.going ? arrivalTime : ret.shift(tripMinutes);
 
   Member? member(String id) {
     for (final m in members) {

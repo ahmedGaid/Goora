@@ -950,5 +950,92 @@
   "demoReset": "امسح بيانات التجربة",
   "noRidesSoon": "مفيش مشاوير الأيام الجاية.",
   "loadingToday": "بنجهّز مشوارك…",
-  "todayError": "معرفناش نجيب مشوارك دلوقتي."
+  "todayError": "معرفناش نجيب مشوارك دلوقتي.",
+  "nDriverNoShow": "مسجّلتش وصولك لمشوار يوم {day}، فاتحسب إنك مجتش.",
+  "@nDriverNoShow": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "carColour": "{car} · {colour}",
+  "@carColour": {
+    "placeholders": {
+      "car": {
+        "type": "String"
+      },
+      "colour": {
+        "type": "String"
+      }
+    }
+  },
+  "demoNowValue": "{day} {date} · {time}",
+  "@demoNowValue": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "noCoverEmptySeat": "احجز كرسي فاضي",
+  "offNoCoverBody": "مفيش سواق اليوم ده، فمن غير رسوم.",
+  "noCoverNote": "مفيش سواق · من غير رسوم",
+  "demoBackup": "السواق مش هيقدر يسوق الثلاثاء الجاي",
+  "demoNoCover": "السواق مش هيقدر يسوق — من غير بديل",
+  "weekRiderLine": "الذهاب: {going} · الرجوع: {ret}",
+  "@weekRiderLine": {
+    "placeholders": {
+      "going": {
+        "type": "String"
+      },
+      "ret": {
+        "type": "String"
+      }
+    }
+  },
+  "weekDriveLine": "{direction} · {count, plural, =0{مفيش ركاب} =1{راكب واحد} =2{راكبين} few{{count} ركاب} other{{count} راكب}}",
+  "@weekDriveLine": {
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "weekEmpty": "مفيش أيام مشاوير الأسبوع ده.",
+  "verificationTitle": "التوثيق",
+  "percentValue": "{percent}%",
+  "@percentValue": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "trustedCount": "{count, plural, =0{لسه مفيش حد} =1{شخص واحد} =2{شخصين} few{{count} أشخاص} other{{count} شخص}}",
+  "@trustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "contactName": "الاسم",
+  "removeContact": "شيل {name}",
+  "@removeContact": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

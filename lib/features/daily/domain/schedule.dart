@@ -23,6 +23,7 @@ final class LegAssignment {
     required this.actual,
     this.isBackup = false,
     this.backupStep,
+    this.cover,
   });
 
   final Leg leg;
@@ -32,6 +33,10 @@ final class LegAssignment {
   final String? actual;
   final bool isBackup;
   final BackupStep? backupStep;
+
+  /// The backup driver's public details (name, car, rating, phone); they may
+  /// be from another group or the wider network.
+  final Member? cover;
 
   bool get covered => actual != null;
 }

@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_card.dart';
+import '../../../../core/widgets/goora_ghost_button.dart';
 
 /// Scrollable tab body: title row (with optional actions) and content,
 /// 20 px side padding (brief §3.3 tab padding).
@@ -45,6 +46,36 @@ class TabPage extends StatelessWidget {
           ...children,
         ],
       ),
+    );
+  }
+}
+
+/// A tab's body while it loads, or when it could not (designed states).
+class TabLoadState extends StatelessWidget {
+  const TabLoadState({super.key, required this.failed, required this.onRetry});
+
+  final bool failed;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (!failed) {
+      return Semantics(
+        label: l10n.loadingToday,
+        child: const Padding(
+          padding: EdgeInsetsDirectional.symmetric(vertical: AppSpacing.xxl),
+          child: Center(child: CircularProgressIndicator(color: AppColors.greenText)),
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(l10n.todayError, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+        const SizedBox(height: AppSpacing.md),
+        GooraGhostButton(label: l10n.retry, onPressed: onRetry),
+      ],
     );
   }
 }

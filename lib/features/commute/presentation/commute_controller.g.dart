@@ -36,7 +36,7 @@ final class CommuteControllerProvider
   CommuteController create() => CommuteController();
 }
 
-String _$commuteControllerHash() => r'4f02e33c8b316638cb3b418693f1e51c4400939c';
+String _$commuteControllerHash() => r'ffe313ea689ea0b312475d6df54036ea8ace6003';
 
 /// The commute profile being edited on the setup screen.
 
@@ -57,6 +57,47 @@ abstract class _$CommuteController extends $AsyncNotifier<CommuteProfile> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// A driver whose license or vehicle is not verified yet can't be matched
+/// as a driver (US6/AC4).
+
+@ProviderFor(driverDocsPending)
+final driverDocsPendingProvider = DriverDocsPendingProvider._();
+
+/// A driver whose license or vehicle is not verified yet can't be matched
+/// as a driver (US6/AC4).
+
+final class DriverDocsPendingProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  /// A driver whose license or vehicle is not verified yet can't be matched
+  /// as a driver (US6/AC4).
+  DriverDocsPendingProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'driverDocsPendingProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$driverDocsPendingHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    return driverDocsPending(ref);
+  }
+}
+
+String _$driverDocsPendingHash() => r'371194a759cba0e4f915d7185d928b3c888f6f38';
 
 @ProviderFor(LastMatch)
 final lastMatchProvider = LastMatchProvider._();

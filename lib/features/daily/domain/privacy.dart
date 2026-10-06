@@ -1,6 +1,13 @@
 /// Who can ride with me (FR-024 – FR-026, research R7). Default: verified users.
 enum PrivacyPreference { verifiedUsers, sameCompany, sameCompound, womenOnly }
 
+/// The 002 matching constraint each preference turns on (FR-024).
+extension PrivacyFlags on PrivacyPreference {
+  bool get wantsWomenOnly => this == PrivacyPreference.womenOnly;
+  bool get wantsSameCompany => this == PrivacyPreference.sameCompany;
+  bool get wantsSameCompound => this == PrivacyPreference.sameCompound;
+}
+
 /// What privacy rules may know about a person. [company] is set only when the
 /// work email is verified; [compound] only when the person added one.
 final class PersonFacts {

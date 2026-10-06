@@ -17,6 +17,7 @@ import '../../domain/daily_commute_repository.dart';
 import '../../domain/notice.dart';
 import '../../domain/ride.dart';
 import '../../domain/schedule.dart';
+import '../week/week_controller.dart';
 
 part 'today_controller.g.dart';
 
@@ -84,6 +85,7 @@ final class TodayView {
     required this.drive,
     required this.standing,
     this.otherLegs = const {},
+    this.alerts = const [],
   });
 
   const TodayView.removed(this.now)
@@ -93,7 +95,8 @@ final class TodayView {
         target = null,
         drive = null,
         standing = NoShowStanding.removal,
-        otherLegs = const {};
+        otherLegs = const {},
+        alerts = const [];
 
   final WallTime now;
   final CommuteGroup? group;
@@ -111,6 +114,16 @@ final class TodayView {
 
   /// Rider legs another corridor group serves (US1/AC3): leg → that group's time.
   final Map<Leg, Clock> otherLegs;
+
+  /// Unread backup and no-cover notices for the person, for days not yet
+  /// past (US4), oldest first.
+  final List<Notice> alerts;
+
+  /// Backup drivers from outside the group, by id.
+  Map<String, Member> get covers => {
+        for (final m in [display, target, drive].expand((d) => d?.legs ?? const <LegPlan>[]).map((l) => l.driver).nonNulls)
+          m.id: m,
+      };
 
   bool get removed => group == null;
   bool get isDriver => me?.role == MemberRole.driver;
@@ -160,11 +173,18 @@ class TodayController extends _$TodayController {
       drive: drive,
       standing: AttendanceRules.standing(await repo.noShowsInMonth(now.date.monthKey)),
       otherLegs: profile == null || me.role == MemberRole.driver ? const {} : await _otherLegs(g, me, profile),
+      alerts: [
+        for (final n in await repo.notices().first)
+          if (!n.read &&
+              n.toMe &&
+              (n.kind == NoticeKind.backupCover || n.kind == NoticeKind.noCover) &&
+              !CalendarDate.parse(n.params['day']!).isBefore(now.date))
+            n,
+      ],
     );
   }
 
   Future<DayPlan> _plan(DailyCommuteRepository repo, CommuteGroup g, Member me, Stop myStop, ScheduleDay d) async {
-    final tripMinutes = g.arrivalTime.minutes - g.going.minutes;
     final legs = <LegPlan>[];
     for (final leg in Leg.values) {
       final assignment = d.assignment(leg);
@@ -174,16 +194,15 @@ class TodayController extends _$TodayController {
       final base = leg == Leg.going ? myStop : g.workStop;
       final stop = ride?.stop(base.id) ?? base;
       final delay = ride?.delayMinutes ?? 0;
-      final endClock = leg == Leg.going ? g.arrivalTime.shift(delay) : g.ret.shift(tripMinutes + delay);
       final driving = duty == Duty.drive && ride != null;
       legs.add(LegPlan(
         date: d.date,
         leg: leg,
         duty: duty,
         ride: ride,
-        driver: assignment.actual == null ? null : g.member(assignment.actual!),
+        driver: assignment.cover ?? (assignment.actual == null ? null : g.member(assignment.actual!)),
         stop: stop,
-        end: WallTime(d.date, endClock),
+        end: WallTime(d.date, g.endFor(leg).shift(delay)),
         absence: d.absenceOf(me.id, leg),
         checkIns: driving ? await repo.checkIns(ride.id) : const [],
         outcomes: driving ? await repo.outcomes(ride.id) : const [],
@@ -220,6 +239,7 @@ class TodayController extends _$TodayController {
 
   Future<T> _act<T>(Future<T> Function(DailyCommuteRepository repo, WallTime now) action) async {
     final result = await action(_repo, _now());
+    ref.invalidate(weekControllerProvider);
     ref.invalidateSelf();
     await future;
     return result;
@@ -252,6 +272,23 @@ class TodayController extends _$TodayController {
   Future<void> startTrip(String rideId) => _act((r, now) => r.startTrip(rideId, now));
 
   Future<void> endTrip(String rideId) => _act((r, now) => r.endTrip(rideId, now));
+
+  // Backup notices (US4).
+  Future<void> dismiss(Iterable<String> noticeIds) => _act((r, _) async {
+        for (final id in noticeIds) {
+          await r.markRead(id);
+        }
+      });
+
+  /// No cover: take those trips off, free (FR-020).
+  Future<void> takeDayOff(CalendarDate date, Set<Leg> legs, Iterable<String> noticeIds) => _act((r, _) async {
+        for (final leg in Leg.values.where(legs.contains)) {
+          await r.chooseNoCoverOption(date, leg, NoCoverOption.dayOff);
+        }
+        for (final id in noticeIds) {
+          await r.markRead(id);
+        }
+      });
 }
 
 /// In-app inbox (research R11), newest first.

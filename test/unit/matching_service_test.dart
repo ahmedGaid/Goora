@@ -5,6 +5,7 @@ import 'package:goora/features/commute/domain/geo.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/commute/domain/matching_service.dart';
 import 'package:goora/features/commute/domain/place.dart';
+import 'package:goora/features/daily/domain/privacy.dart';
 
 const home = GeoPoint(30.04, 30.98);
 const work = GeoPoint(30.071, 31.017);
@@ -116,4 +117,65 @@ void main() {
   test('no group → no match', () {
     expect(MatchingService.match(seeker(), const []).found, isFalse);
   });
+
+  // Privacy preference → 002 constraints (FR-024). (`group` is this file's
+  // group builder, so a plain block.)
+  {
+    Seeker withPreference(PrivacyPreference p, {bool woman = false, String? company, String? compound}) => Seeker(
+          role: MemberRole.rider,
+          home: home,
+          work: work,
+          departure: const Clock.hm(7, 30),
+          ret: const Clock.hm(17, 0),
+          days: CommuteProfile.defaultDays,
+          legs: const {Leg.going, Leg.ret},
+          isWoman: woman,
+          company: company,
+          compound: compound,
+          womenOnly: p.wantsWomenOnly,
+          sameCompanyOnly: p.wantsSameCompany,
+          sameCompoundOnly: p.wantsSameCompound,
+        );
+    Member at(String id, {bool woman = false, String? company, String? compound}) => Member(
+          id: id,
+          firstName: id,
+          initials: id,
+          role: id == 'd' ? MemberRole.driver : MemberRole.rider,
+          isWoman: woman,
+          rating: 5,
+          reliability: 100,
+          company: company,
+          compound: compound,
+        );
+
+    final mixed = group(members: [at('d'), at('r', woman: true)]);
+    final women = group(members: [at('d', woman: true), at('r', woman: true)]);
+    final valeo = group(members: [at('d', company: 'Valeo'), at('r', company: 'Valeo')]);
+    final dunes = group(members: [at('d', compound: 'Dunes'), at('r', compound: 'Dunes')]);
+
+    test('verified users (default) keeps every group', () {
+      for (final g in [mixed, women, valeo, dunes]) {
+        expect(MatchingService.evaluate(withPreference(PrivacyPreference.verifiedUsers, woman: true), g), isNotNull);
+      }
+    });
+
+    test('women only excludes a group with a man', () {
+      final s = withPreference(PrivacyPreference.womenOnly, woman: true);
+      expect(MatchingService.evaluate(s, mixed), isNull);
+      expect(MatchingService.evaluate(s, women), isNotNull);
+    });
+
+    test('same company excludes groups with anyone from another company', () {
+      final s = withPreference(PrivacyPreference.sameCompany, company: 'Valeo');
+      expect(MatchingService.evaluate(s, valeo), isNotNull);
+      expect(MatchingService.evaluate(s, mixed), isNull);
+      expect(MatchingService.evaluate(s, dunes), isNull);
+    });
+
+    test('same compound excludes groups with anyone from another compound', () {
+      final s = withPreference(PrivacyPreference.sameCompound, compound: 'Dunes');
+      expect(MatchingService.evaluate(s, dunes), isNotNull);
+      expect(MatchingService.evaluate(s, valeo), isNull);
+    });
+  }
 }

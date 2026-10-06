@@ -1267,4 +1267,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get todayError => 'We couldn\'t load your commute right now.';
+
+  @override
+  String nDriverNoShow(String day) {
+    return 'You didn\'t check in for $day\'s drive, so it counts as a no-show.';
+  }
+
+  @override
+  String carColour(String car, String colour) {
+    return '$car · $colour';
+  }
+
+  @override
+  String demoNowValue(String day, String date, String time) {
+    return '$day $date · $time';
+  }
+
+  @override
+  String get noCoverEmptySeat => 'Book an empty seat';
+
+  @override
+  String get offNoCoverBody => 'No driver that day, so there\'s no charge.';
+
+  @override
+  String get noCoverNote => 'No driver · no charge';
+
+  @override
+  String get demoBackup => 'Driver can\'t drive next Tuesday';
+
+  @override
+  String get demoNoCover => 'Driver can\'t drive — no cover';
+
+  @override
+  String weekRiderLine(String going, String ret) {
+    return 'Going: $going · Return: $ret';
+  }
+
+  @override
+  String weekDriveLine(String direction, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count riders',
+      one: '1 rider',
+      zero: 'no riders',
+    );
+    return '$direction · $_temp0';
+  }
+
+  @override
+  String get weekEmpty => 'No commute days this week.';
+
+  @override
+  String get verificationTitle => 'Verification';
+
+  @override
+  String percentValue(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String trustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count contacts',
+      one: '1 contact',
+      zero: 'None yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get contactName => 'Name';
+
+  @override
+  String removeContact(String name) {
+    return 'Remove $name';
+  }
 }

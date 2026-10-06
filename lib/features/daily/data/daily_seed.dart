@@ -1,5 +1,6 @@
 import '../../../core/time/calendar_date.dart';
 import '../../commute/data/corridor_seed.dart';
+import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/geo.dart';
 import '../../commute/domain/group.dart';
@@ -46,23 +47,33 @@ abstract final class DailySeed {
     return events;
   }
 
-  /// Fake verification statuses (FR-023a): everything verified except the
-  /// vehicle, so the driver checklist shows both states.
+  /// The person's company, known from their verified work email.
   static const company = 'Valeo';
 
-  static List<VerificationItem> verification({required bool driver}) => [
-        const VerificationItem(VerificationKind.phone, VerificationStatus.verified),
-        const VerificationItem(VerificationKind.nationalId, VerificationStatus.verified),
-        const VerificationItem(VerificationKind.workEmail, VerificationStatus.verified),
-        VerificationItem(VerificationKind.license, driver ? VerificationStatus.verified : VerificationStatus.notNeeded),
-        VerificationItem(VerificationKind.vehicle, driver ? VerificationStatus.notVerified : VerificationStatus.notNeeded),
-      ];
+  /// Fake verification statuses (FR-023a): phone, ID and work email are
+  /// verified; license and vehicle are not needed for riders, verified for
+  /// drivers, and not verified yet for a rider who just switched to driving.
+  static List<VerificationItem> verification({required bool driver, bool docsPending = false}) {
+    final docs = !driver
+        ? VerificationStatus.notNeeded
+        : docsPending
+            ? VerificationStatus.notVerified
+            : VerificationStatus.verified;
+    return [
+      const VerificationItem(VerificationKind.phone, VerificationStatus.verified),
+      const VerificationItem(VerificationKind.nationalId, VerificationStatus.verified),
+      const VerificationItem(VerificationKind.workEmail, VerificationStatus.verified),
+      VerificationItem(VerificationKind.license, docs),
+      VerificationItem(VerificationKind.vehicle, docs),
+    ];
+  }
 
   /// Drivers outside the corridor groups, for backup steps 3–4 (same
-  /// company, same compound). Homes are approximate and never shown.
-  static const networkDrivers = <(Member, GeoPoint)>[
+  /// company, same compound), with their own commute to Smart Village.
+  /// Homes are approximate and never shown.
+  static const networkDrivers = <({Member member, GeoPoint home, Clock going, Clock ret})>[
     (
-      Member(
+      member: Member(
         id: 'tarek',
         firstName: 'Tarek',
         initials: 'TR',
@@ -75,10 +86,12 @@ abstract final class DailySeed {
         vehicle: Vehicle(make: 'Kia Cerato', colour: VehicleColour.grey),
         phone: '+201000000011',
       ),
-      GeoPoint(30.0432, 30.981),
+      home: GeoPoint(30.0432, 30.981),
+      going: Clock.hm(7, 30),
+      ret: Clock.hm(17, 0),
     ),
     (
-      Member(
+      member: Member(
         id: 'heba',
         firstName: 'Heba',
         initials: 'HB',
@@ -91,7 +104,9 @@ abstract final class DailySeed {
         vehicle: Vehicle(make: 'Nissan Sunny', colour: VehicleColour.white),
         phone: '+201000000012',
       ),
-      GeoPoint(30.0418, 30.9795),
+      home: GeoPoint(30.0418, 30.9795),
+      going: Clock.hm(7, 20),
+      ret: Clock.hm(17, 10),
     ),
   ];
 

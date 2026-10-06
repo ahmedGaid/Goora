@@ -347,5 +347,21 @@
   "demoReset": "Reset demo data",
   "noRidesSoon": "No rides in the coming days.",
   "loadingToday": "Getting your commute…",
-  "todayError": "We couldn't load your commute right now."
+  "todayError": "We couldn't load your commute right now.",
+  "nDriverNoShow": "You didn't check in for {day}'s drive, so it counts as a no-show.",
+  "carColour": "{car} · {colour}",
+  "demoNowValue": "{day} {date} · {time}",
+  "noCoverEmptySeat": "Book an empty seat",
+  "offNoCoverBody": "No driver that day, so there's no charge.",
+  "noCoverNote": "No driver · no charge",
+  "demoBackup": "Driver can't drive next Tuesday",
+  "demoNoCover": "Driver can't drive — no cover",
+  "weekRiderLine": "Going: {going} · Return: {ret}",
+  "weekDriveLine": "{direction} · {count, plural, =0{no riders} =1{1 rider} other{{count} riders}}",
+  "weekEmpty": "No commute days this week.",
+  "verificationTitle": "Verification",
+  "percentValue": "{percent}%",
+  "trustedCount": "{count, plural, =0{None yet} =1{1 contact} other{{count} contacts}}",
+  "contactName": "Name",
+  "removeContact": "Remove {name}"
 }

@@ -2192,6 +2192,102 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'معرفناش نجيب مشوارك دلوقتي.'**
   String get todayError;
+
+  /// No description provided for @nDriverNoShow.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسجّلتش وصولك لمشوار يوم {day}، فاتحسب إنك مجتش.'**
+  String nDriverNoShow(String day);
+
+  /// No description provided for @carColour.
+  ///
+  /// In ar, this message translates to:
+  /// **'{car} · {colour}'**
+  String carColour(String car, String colour);
+
+  /// No description provided for @demoNowValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'{day} {date} · {time}'**
+  String demoNowValue(String day, String date, String time);
+
+  /// No description provided for @noCoverEmptySeat.
+  ///
+  /// In ar, this message translates to:
+  /// **'احجز كرسي فاضي'**
+  String get noCoverEmptySeat;
+
+  /// No description provided for @offNoCoverBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش سواق اليوم ده، فمن غير رسوم.'**
+  String get offNoCoverBody;
+
+  /// No description provided for @noCoverNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش سواق · من غير رسوم'**
+  String get noCoverNote;
+
+  /// No description provided for @demoBackup.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق مش هيقدر يسوق الثلاثاء الجاي'**
+  String get demoBackup;
+
+  /// No description provided for @demoNoCover.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق مش هيقدر يسوق — من غير بديل'**
+  String get demoNoCover;
+
+  /// No description provided for @weekRiderLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'الذهاب: {going} · الرجوع: {ret}'**
+  String weekRiderLine(String going, String ret);
+
+  /// No description provided for @weekDriveLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{direction} · {count, plural, =0{مفيش ركاب} =1{راكب واحد} =2{راكبين} few{{count} ركاب} other{{count} راكب}}'**
+  String weekDriveLine(String direction, int count);
+
+  /// No description provided for @weekEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش أيام مشاوير الأسبوع ده.'**
+  String get weekEmpty;
+
+  /// No description provided for @verificationTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التوثيق'**
+  String get verificationTitle;
+
+  /// No description provided for @percentValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'{percent}%'**
+  String percentValue(int percent);
+
+  /// No description provided for @trustedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{لسه مفيش حد} =1{شخص واحد} =2{شخصين} few{{count} أشخاص} other{{count} شخص}}'**
+  String trustedCount(int count);
+
+  /// No description provided for @contactName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم'**
+  String get contactName;
+
+  /// No description provided for @removeContact.
+  ///
+  /// In ar, this message translates to:
+  /// **'شيل {name}'**
+  String removeContact(String name);
 }
 
 class _AppLocalizationsDelegate

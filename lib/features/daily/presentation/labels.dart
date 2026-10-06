@@ -5,6 +5,8 @@ import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/presentation/labels.dart';
 import '../domain/notice.dart';
+import '../domain/privacy.dart';
+import '../domain/trust.dart';
 
 /// Turns daily-commute domain values into localized text. Digits stay Western.
 extension DailyLabels on AppLocalizations {
@@ -19,6 +21,28 @@ extension DailyLabels on AppLocalizations {
 
   /// "the going trip" / "the return trip", used inside sentences.
   String tripName(Leg leg) => leg == Leg.going ? tripGoing : tripReturn;
+
+  String checkLabel(VerificationKind k) => switch (k) {
+        VerificationKind.phone => checkPhone,
+        VerificationKind.nationalId => checkNationalId,
+        VerificationKind.workEmail => checkWorkEmail,
+        VerificationKind.license => checkLicense,
+        VerificationKind.vehicle => checkVehicle,
+      };
+
+  String privacyLabel(PrivacyPreference p) => switch (p) {
+        PrivacyPreference.verifiedUsers => privacyVerified,
+        PrivacyPreference.sameCompany => privacyCompany,
+        PrivacyPreference.sameCompound => privacyCompound,
+        PrivacyPreference.womenOnly => privacyWomen,
+      };
+
+  /// Why a preference is unavailable (research R7); null when it always is.
+  String? privacyHint(PrivacyPreference p) => switch (p) {
+        PrivacyPreference.sameCompany => needWorkEmail,
+        PrivacyPreference.sameCompound => needCompound,
+        PrivacyPreference.verifiedUsers || PrivacyPreference.womenOnly => null,
+      };
 
   String colour(VehicleColour c) => switch (c) {
         VehicleColour.white => colourWhite,
@@ -88,6 +112,7 @@ extension DailyLabels on AppLocalizations {
       NoticeKind.noCover => noCoverTitle(relOn(dayParam())),
       NoticeKind.backupCover => backupBodyFor(n.params['cover'] ?? ''),
       NoticeKind.sosSent => sosAlertSent,
+      NoticeKind.driverNoShow => nDriverNoShow(dayParam()),
     };
   }
 }

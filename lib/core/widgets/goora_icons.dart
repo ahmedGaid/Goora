@@ -28,6 +28,7 @@ abstract final class GooraIcons {
   static const IconData backup = LucideIcons.repeat;
   static const IconData dayOff = LucideIcons.calendarX;
   static const IconData bell = LucideIcons.bell;
+  static const IconData close = LucideIcons.x;
   static const IconData share = LucideIcons.share2;
   static const IconData sos = LucideIcons.siren;
   static const IconData delay = LucideIcons.timer;

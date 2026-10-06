@@ -7,7 +7,9 @@ import '../../onboarding/presentation/session_controller.dart';
 import '../domain/daily_commute_repository.dart';
 import '../domain/phone_dialer.dart';
 import '../domain/trip_sharer.dart';
+import '../domain/trust_repository.dart';
 import 'fake_daily_commute_repository.dart';
+import 'fake_trust_repository.dart';
 import 'share_plus_sharer.dart';
 import 'url_phone_dialer.dart';
 
@@ -17,6 +19,13 @@ part 'providers.g.dart';
 DailyCommuteRepository dailyCommuteRepository(Ref ref) => FakeDailyCommuteRepository(
       ref.watch(sharedPreferencesProvider),
       commute: ref.watch(commuteRepositoryProvider),
+      person: () => ref.read(sessionControllerProvider).profile,
+      now: ref.watch(nowProvider),
+    );
+
+@Riverpod(keepAlive: true)
+TrustRepository trustRepository(Ref ref) => FakeTrustRepository(
+      ref.watch(sharedPreferencesProvider),
       person: () => ref.read(sessionControllerProvider).profile,
       now: ref.watch(nowProvider),
     );

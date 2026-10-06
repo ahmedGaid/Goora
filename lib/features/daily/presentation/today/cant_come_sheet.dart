@@ -111,27 +111,33 @@ class _CantComeSheetState extends ConsumerState<CantComeSheet> {
   }
 
   Future<void> _notNextWeek() async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text(l10n.notNextWeekConfirm),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.keepIt)),
-          TextButton(
-            key: const Key('confirm-not-next-week'),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.notNextWeek),
-          ),
-        ],
-      ),
-    );
-    if (ok != true) return;
-    setState(() => _busy = true);
-    await ref.read(todayControllerProvider.notifier).notComingNextWeek();
-    navigator.pop();
-    messenger.showSnackBar(SnackBar(content: Text(l10n.notNextWeekDone)));
+    if (await confirmNotNextWeek(context, ref, onConfirmed: () => setState(() => _busy = true))) navigator.pop();
   }
+}
+
+/// "Not coming next week" after a confirmation (US2/AC4); from the cancel
+/// sheet and the Week tab. True when done.
+Future<bool> confirmNotNextWeek(BuildContext context, WidgetRef ref, {VoidCallback? onConfirmed}) async {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: Text(l10n.notNextWeekConfirm),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.keepIt)),
+        TextButton(
+          key: const Key('confirm-not-next-week'),
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.notNextWeek),
+        ),
+      ],
+    ),
+  );
+  if (ok != true) return false;
+  onConfirmed?.call();
+  await ref.read(todayControllerProvider.notifier).notComingNextWeek();
+  messenger.showSnackBar(SnackBar(content: Text(l10n.notNextWeekDone)));
+  return true;
 }

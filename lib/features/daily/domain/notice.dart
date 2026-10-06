@@ -13,6 +13,7 @@ enum NoticeKind {
   removed,
   seatOffered,
   sosSent,
+  driverNoShow,
 }
 
 /// An in-app notification (research R11). [toMe] is false for notices the

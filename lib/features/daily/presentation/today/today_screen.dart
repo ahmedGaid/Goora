@@ -4,11 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../core/l10n/app_localizations.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_banner.dart';
-import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../onboarding/presentation/session_controller.dart';
 import '../labels.dart';
@@ -36,18 +33,7 @@ class TodayScreen extends ConsumerWidget {
       return TabPage(
         title: greeting,
         actions: const [TodayHeaderActions()],
-        children: [
-          if (state.hasError)
-            _ErrorState(onRetry: () => ref.invalidate(todayControllerProvider))
-          else
-            Semantics(
-              label: l10n.loadingToday,
-              child: const Padding(
-                padding: EdgeInsetsDirectional.symmetric(vertical: AppSpacing.xxl),
-                child: Center(child: CircularProgressIndicator(color: AppColors.greenText)),
-              ),
-            ),
-        ],
+        children: [TabLoadState(failed: state.hasError, onRetry: () => ref.invalidate(todayControllerProvider))],
       );
     }
 
@@ -75,25 +61,6 @@ class TodayScreen extends ConsumerWidget {
           : l10n.todaySub,
       actions: const [TodayHeaderActions()],
       children: [view.isDriver ? DriverToday(view: view) : RiderToday(view: view)],
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(l10n.todayError, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
-        const SizedBox(height: AppSpacing.md),
-        GooraGhostButton(label: l10n.retry, onPressed: onRetry),
-      ],
     );
   }
 }

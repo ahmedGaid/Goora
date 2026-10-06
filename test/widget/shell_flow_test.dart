@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/locale_controller.dart';
 import 'package:goora/core/widgets/goora_bottom_nav.dart';
+import 'package:goora/features/onboarding/data/fake_auth_repository.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 
 import '../helpers/daily_fakes.dart';
@@ -55,6 +56,23 @@ void main() {
     );
     expect(find.byType(GooraBottomNav), findsOneWidget);
     expect(selectedTab(tester), 0);
+  });
+
+  testWidgets('returning member logs in by OTP → shell, Today selected', (tester) async {
+    final prefs = memberPrefs(role: Role.rider)..remove('fake_auth.session');
+    await pumpGooraApp(tester, prefs: prefs, overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))));
+    expect(find.byType(GooraBottomNav), findsNothing, reason: 'signed out: welcome');
+    await tester.tap(find.text(a.login));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('phone-field')), '01012345678');
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('phone-continue')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('otp-field')), FakeAuthRepository.testCode);
+    await tester.pumpAndSettle();
+    expect(find.byType(GooraBottomNav), findsOneWidget);
+    expect(selectedTab(tester), 0);
+    expect(find.text(a.todaySub), findsOneWidget);
   });
 
   testWidgets('tabs switch, and a language switch keeps the current tab', (tester) async {

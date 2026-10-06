@@ -57,6 +57,48 @@ final class DailyCommuteRepositoryProvider
 String _$dailyCommuteRepositoryHash() =>
     r'eb27688d5d3c995c611228fdbedf8d100a2164f9';
 
+@ProviderFor(trustRepository)
+final trustRepositoryProvider = TrustRepositoryProvider._();
+
+final class TrustRepositoryProvider
+    extends
+        $FunctionalProvider<TrustRepository, TrustRepository, TrustRepository>
+    with $Provider<TrustRepository> {
+  TrustRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'trustRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$trustRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<TrustRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  TrustRepository create(Ref ref) {
+    return trustRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TrustRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TrustRepository>(value),
+    );
+  }
+}
+
+String _$trustRepositoryHash() => r'50748e00457ffbef4ee6058a2845802adf4d7b82';
+
 @ProviderFor(phoneDialer)
 final phoneDialerProvider = PhoneDialerProvider._();
 

@@ -23,7 +23,7 @@ Future<void> shareTrip(BuildContext context, WidgetRef ref, TodayView v) async {
   final going = leg.leg == Leg.going;
   final text = l10n.shareMessage(
     driver?.firstName ?? '',
-    vehicle == null ? '' : '${vehicle.make} · ${l10n.colour(vehicle.colour)}',
+    vehicle == null ? '' : l10n.carColour(vehicle.make, l10n.colour(vehicle.colour)),
     l10n.area(going ? g.origin : g.destination),
     l10n.area(going ? g.destination : g.origin),
     l10n.time(leg.end.time),

@@ -16,6 +16,7 @@ import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/presentation/labels.dart';
 import '../../daily/data/fake_daily_commute_repository.dart';
+import '../../daily/data/fake_trust_repository.dart';
 import '../../daily/data/providers.dart';
 import '../../daily/domain/schedule.dart';
 import '../../daily/presentation/labels.dart';
@@ -41,7 +42,7 @@ class DemoSection extends ConsumerWidget {
           Text(l10n.demoSection, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
           const SizedBox(height: AppSpacing.xxs),
           Text(
-            l10n.demoNow('${l10n.dayOf(now.date)} ${now.date.toIso()} · ${l10n.time(now.time)}'),
+            l10n.demoNow(l10n.demoNowValue(l10n.dayOf(now.date), now.date.toIso(), l10n.time(now.time))),
             style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
           ),
           for (final (key, label, action) in [
@@ -49,6 +50,8 @@ class DemoSection extends ConsumerWidget {
             ('demo-855', l10n.demo855, () => _eveningBefore(ref, const Clock.hm(20, 55))),
             ('demo-905', l10n.demo905, () => _eveningBefore(ref, const Clock.hm(21, 5))),
             ('demo-real', l10n.demoRealTime, () => _setClock(ref, null)),
+            ('demo-backup', l10n.demoBackup, () => _driverOut(ref, cover: true)),
+            ('demo-no-cover', l10n.demoNoCover, () => _driverOut(ref, cover: false)),
             ('demo-reset', l10n.demoReset, () => _reset(ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -93,9 +96,20 @@ class DemoSection extends ConsumerWidget {
     return null;
   }
 
+  /// Next Tuesday's driver can't drive, with or without a cover.
+  Future<void> _driverOut(WidgetRef ref, {required bool cover}) async {
+    final repo = ref.read(dailyCommuteRepositoryProvider);
+    if (repo is FakeDailyCommuteRepository) await repo.demoDriverOut(cover: cover);
+    ref.invalidate(dailyCommuteRepositoryProvider);
+  }
+
   Future<void> _reset(WidgetRef ref) async {
     final repo = ref.read(dailyCommuteRepositoryProvider);
     if (repo is FakeDailyCommuteRepository) await repo.reset();
+    final prefs = ref.read(sharedPreferencesProvider);
+    for (final key in FakeTrustRepository.allKeys) {
+      await prefs.remove(key);
+    }
     ref.invalidate(dailyCommuteRepositoryProvider);
   }
 }

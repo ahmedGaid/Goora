@@ -9,6 +9,7 @@ import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/goora_banner.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_pill.dart';
@@ -88,6 +89,7 @@ class _CommuteSetupScreenState extends ConsumerState<CommuteSetupScreen> {
     final async = ref.watch(commuteControllerProvider);
     final controller = ref.read(commuteControllerProvider.notifier);
     final profile = async.value;
+    final docsPending = ref.watch(driverDocsPendingProvider).value ?? false;
 
     return OnboardingScaffold(
       title: l10n.whereGo,
@@ -98,17 +100,31 @@ class _CommuteSetupScreenState extends ConsumerState<CommuteSetupScreen> {
               padding: EdgeInsetsDirectional.all(AppSpacing.xxl),
               child: Center(child: CircularProgressIndicator(color: AppColors.green)),
             )
-          : _SetupForm(
-              profile: profile,
-              isDriver: controller.isDriver,
-              onPickHome: () => _pickPlace(home: true),
-              onPickWork: () => _pickPlace(home: false),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (docsPending) ...[
+                  GooraBanner(
+                    key: const Key('driver-docs-pending'),
+                    kind: GooraBannerKind.info,
+                    title: l10n.headsUp,
+                    body: l10n.driverNeedsDocs,
+                  ),
+                  const SizedBox(height: AppSpacing.gap),
+                ],
+                _SetupForm(
+                  profile: profile,
+                  isDriver: controller.isDriver,
+                  onPickHome: () => _pickPlace(home: true),
+                  onPickWork: () => _pickPlace(home: false),
+                ),
+              ],
             ),
       bottom: GooraPrimaryButton(
         key: const Key('find-commute'),
         label: l10n.findCommute,
         trailingArrow: true,
-        onPressed: profile == null || profile.problem != null || _finding ? null : _find,
+        onPressed: profile == null || profile.problem != null || _finding || docsPending ? null : _find,
       ),
     );
   }

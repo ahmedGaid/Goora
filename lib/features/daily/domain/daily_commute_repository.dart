@@ -3,6 +3,7 @@ import '../../../core/time/wall_time.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
 import 'absence.dart';
+import 'backup_service.dart';
 import 'charge.dart';
 import 'check_in.dart';
 import 'notice.dart';
@@ -10,19 +11,7 @@ import 'ride.dart';
 import 'schedule.dart';
 import 'trust.dart';
 
-/// Result of a backup search (§6.6). P1 always returns [BackupResult.none].
-final class BackupResult {
-  const BackupResult.covered(String this.coverId, BackupStep this.step);
-
-  const BackupResult.none()
-      : coverId = null,
-        step = null;
-
-  final String? coverId;
-  final BackupStep? step;
-
-  bool get found => coverId != null;
-}
+export 'backup_service.dart' show BackupResult;
 
 /// Everything after joining a group (contracts/repositories.md). Fakes run
 /// on shared_preferences; Supabase implementations call the Edge Functions.

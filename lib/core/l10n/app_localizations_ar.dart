@@ -1285,4 +1285,86 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get todayError => 'معرفناش نجيب مشوارك دلوقتي.';
+
+  @override
+  String nDriverNoShow(String day) {
+    return 'مسجّلتش وصولك لمشوار يوم $day، فاتحسب إنك مجتش.';
+  }
+
+  @override
+  String carColour(String car, String colour) {
+    return '$car · $colour';
+  }
+
+  @override
+  String demoNowValue(String day, String date, String time) {
+    return '$day $date · $time';
+  }
+
+  @override
+  String get noCoverEmptySeat => 'احجز كرسي فاضي';
+
+  @override
+  String get offNoCoverBody => 'مفيش سواق اليوم ده، فمن غير رسوم.';
+
+  @override
+  String get noCoverNote => 'مفيش سواق · من غير رسوم';
+
+  @override
+  String get demoBackup => 'السواق مش هيقدر يسوق الثلاثاء الجاي';
+
+  @override
+  String get demoNoCover => 'السواق مش هيقدر يسوق — من غير بديل';
+
+  @override
+  String weekRiderLine(String going, String ret) {
+    return 'الذهاب: $going · الرجوع: $ret';
+  }
+
+  @override
+  String weekDriveLine(String direction, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count راكب',
+      few: '$count ركاب',
+      two: 'راكبين',
+      one: 'راكب واحد',
+      zero: 'مفيش ركاب',
+    );
+    return '$direction · $_temp0';
+  }
+
+  @override
+  String get weekEmpty => 'مفيش أيام مشاوير الأسبوع ده.';
+
+  @override
+  String get verificationTitle => 'التوثيق';
+
+  @override
+  String percentValue(int percent) {
+    return '$percent%';
+  }
+
+  @override
+  String trustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخص',
+      few: '$count أشخاص',
+      two: 'شخصين',
+      one: 'شخص واحد',
+      zero: 'لسه مفيش حد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get contactName => 'الاسم';
+
+  @override
+  String removeContact(String name) {
+    return 'شيل $name';
+  }
 }

@@ -28,6 +28,7 @@ final class Ride {
     this.startedAt,
     this.endedAt,
     this.shareToken,
+    this.seats,
   });
 
   final String groupId;
@@ -46,6 +47,13 @@ final class Ride {
   final WallTime? startedAt;
   final WallTime? endedAt;
   final String? shareToken;
+
+  /// Passenger seats in the actual driver's car; null when unknown.
+  final int? seats;
+
+  /// Seats still free on this leg (FR-022a): the car's seats minus everyone
+  /// riding in it — riders and off-duty drivers — absent people excluded.
+  int? get freeSeats => seats == null ? null : seats! - passengers.length;
 
   String get id => idFor(groupId, date, leg);
 

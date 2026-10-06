@@ -8,14 +8,17 @@ import '../../../core/time/now_provider.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/data/corridor_seed.dart';
 import '../../commute/data/fake_commute_repository.dart';
+import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/commute_repository.dart';
+import '../../commute/domain/geo.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/domain/matching_service.dart';
 import '../../onboarding/domain/choices.dart';
 import '../../onboarding/domain/profile.dart';
 import '../domain/absence.dart';
 import '../domain/attendance_rules.dart';
+import '../domain/backup_service.dart';
 import '../domain/charge.dart';
 import '../domain/check_in.dart';
 import '../domain/daily_commute_repository.dart';
@@ -50,6 +53,12 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   static const noticesKey = 'daily.notices';
   static const privacyKey = 'trust.privacy';
 
+  /// When the person joined (first read); trips before it never settle.
+  static const joinedAtKey = 'daily.joinedAt';
+
+  /// The last date the timed rules have run through.
+  static const settledKey = 'daily.settledThrough';
+
   static const allKeys = [
     absencesKey,
     checkInsKey,
@@ -59,6 +68,8 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
     chargesKey,
     eventsKey,
     noticesKey,
+    joinedAtKey,
+    settledKey,
   ];
 
   final SharedPreferences _prefs;
@@ -87,6 +98,9 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
     if (seed == null || person == null) return null;
     final group = seed.withMembers([...seed.members, _me(seed, person, await _commute.loadProfile())]);
     await _seedHistory(group);
+    await _catchUp(group);
+    // Three no-shows found while catching up remove the person (FR-009).
+    if (await _commute.joinedGroupId() == null) return null;
     return group;
   }
 
@@ -118,6 +132,8 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
       reliability: 100,
       legs: legs,
       seats: driver ? commute?.driver?.seats : null,
+      // Known because the work email is verified (seed trust data, FR-025).
+      company: DailySeed.company,
       phone: person.phone.e164,
       privacy: PrivacyPreference.values.asNameMap()[_prefs.getString(privacyKey)] ?? PrivacyPreference.verifiedUsers,
       days: days == null || days.length == g.days.length ? null : days,
@@ -130,9 +146,17 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
       .join();
 
   Future<void> _seedHistory(CommuteGroup g) async {
+    if (!_prefs.containsKey(joinedAtKey)) await _prefs.setString(joinedAtKey, _now().toJson());
     if (_prefs.containsKey(eventsKey)) return;
     await _writeList(eventsKey, DailySeed.history(g, _now().date), (e) => e.toJson());
   }
+
+  /// Anyone the fake knows: group members, other corridor groups' members,
+  /// and network drivers.
+  Member? _known(CommuteGroup g, String id) =>
+      g.member(id) ??
+      _groups.expand((o) => o.members).where((m) => m.id == id).firstOrNull ??
+      DailySeed.networkDrivers.map((n) => n.member).where((m) => m.id == id).firstOrNull;
 
   /// The going stop a member boards at.
   Future<String> _stopIdOf(CommuteGroup g, Member m) async {
@@ -155,10 +179,21 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
 
   List<ScheduleDay> _schedule(CommuteGroup g, CalendarDate from, CalendarDate to) {
     final absences = _absences().where((a) => !a.date.isBefore(from) && !a.date.isAfter(to)).toList();
+    final backups = _backups();
     LegAssignment? apply(LegAssignment? a, CalendarDate date) {
       if (a == null || a.planned == null) return a;
       final away = absences.any((x) => x.driving && x.personId == a.planned && x.date == date && x.leg == a.leg);
-      return away ? LegAssignment(leg: a.leg, planned: a.planned, actual: null) : a;
+      if (!away) return a;
+      final b = backups.where((b) => b.date == date && b.leg == a.leg).firstOrNull;
+      if (b == null) return LegAssignment(leg: a.leg, planned: a.planned, actual: null);
+      return LegAssignment(
+        leg: a.leg,
+        planned: a.planned,
+        actual: b.coverId,
+        isBackup: true,
+        backupStep: b.step,
+        cover: _known(g, b.coverId),
+      );
     }
 
     return [
@@ -187,11 +222,29 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
     final state = _rideState()[id] ?? const {};
     final delay = state['delay'] as int? ?? 0;
     final baseStops = leg == Leg.going ? g.goingStops : [g.workStop];
-    final passengers = <Passenger>[
+    final travelling = [
       for (final m in g.members)
         if (m.id != driverId &&
             travelsOn(g, m, date, leg) &&
             day.absences.every((a) => !(a.personId == m.id && a.leg == leg)))
+          m,
+    ];
+    // The car never carries more than its seats (FR-022a). Riders keep their
+    // seats first; an off-duty driver who doesn't fit drives their own car.
+    final seats = driverId == null
+        ? null
+        : g.member(driverId)?.seats ??
+            _backups().where((b) => b.date == date && b.leg == leg && b.coverId == driverId).firstOrNull?.seats;
+    final seated = {
+      for (final m in [
+        ...travelling.where((m) => m.role == MemberRole.rider),
+        ...travelling.where((m) => m.role == MemberRole.driver),
+      ].take(seats ?? travelling.length))
+        m.id,
+    };
+    final passengers = <Passenger>[
+      for (final m in travelling)
+        if (seated.contains(m.id))
           Passenger(memberId: m.id, stopId: leg == Leg.going ? await _stopIdOf(g, m) : g.workStop.id),
     ];
     return Ride(
@@ -208,6 +261,7 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
       arrivedStopIds: {for (final c in _checkIns()) if (c.rideId == id) c.stopId},
       startedAt: _time(state['startedAt']),
       endedAt: _time(state['endedAt']),
+      seats: seats,
     );
   }
 
@@ -357,35 +411,173 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   Future<BackupResult> cantDrive(CalendarDate date, Set<Leg> legs, WallTime madeAt) async {
     final g = await myGroup();
     if (g == null) return const BackupResult.none();
+    return _driverOut(g, meId, date, legs, madeAt);
+  }
+
+  /// [driverId] can't drive [legs] on [date]: the absence (and, from the
+  /// cut-off, a reliability event; drivers owe no money), then a cover in
+  /// §6.6 order, and the riders told either way (FR-014, FR-017 – FR-020).
+  /// The no-cover notice goes out now, so riders have it by 9 PM at the
+  /// latest. [search] false = the demo's "no cover" scenario.
+  Future<BackupResult> _driverOut(
+    CommuteGroup g,
+    String driverId,
+    CalendarDate date,
+    Set<Leg> legs,
+    WallTime madeAt, {
+    bool search = true,
+  }) async {
     final day = _schedule(g, date, date).firstOrNull;
     if (day == null) return const BackupResult.none();
-    final absences = _absences();
-    final events = _events();
-    for (final leg in Leg.values.where(legs.contains)) {
-      if (day.assignment(leg)?.planned != meId) continue;
-      final late = AttendanceRules.driverCantDriveLate(date, madeAt);
-      absences.add(Absence(
-        personId: meId,
-        date: date,
-        leg: leg,
-        madeAt: madeAt,
-        kind: late ? AbsenceKind.lateCancel : AbsenceKind.freeCancel,
-        driving: true,
-      ));
-      if (late) {
-        events.add(ReliabilityEvent(
-          personId: meId,
-          rideId: Ride.idFor(g.id, date, leg),
-          date: date,
-          kind: ReliabilityEventKind.lateCantDrive,
-        ));
-      }
-      // Backup search arrives with US4; until then riders hear there is no cover.
-      await _notify(NoticeKind.noCover, {'day': date.toIso(), 'leg': leg.name}, toMe: false);
+    final out = [for (final leg in Leg.values) if (legs.contains(leg) && day.assignment(leg)?.planned == driverId) leg];
+    if (out.isEmpty) return const BackupResult.none();
+    final late = AttendanceRules.driverCantDriveLate(date, madeAt);
+    await _writeList(
+      absencesKey,
+      [
+        ..._absences(),
+        for (final leg in out)
+          Absence(
+            personId: driverId,
+            date: date,
+            leg: leg,
+            madeAt: madeAt,
+            kind: late ? AbsenceKind.lateCancel : AbsenceKind.freeCancel,
+            driving: true,
+          ),
+      ],
+      (a) => a.toJson(),
+    );
+    if (late) {
+      await _writeList(
+        eventsKey,
+        [
+          ..._events(),
+          for (final leg in out)
+            ReliabilityEvent(
+              personId: driverId,
+              rideId: Ride.idFor(g.id, date, leg),
+              date: date,
+              kind: ReliabilityEventKind.lateCantDrive,
+            ),
+        ],
+        (e) => e.toJson(),
+      );
     }
-    await _writeList(absencesKey, absences, (a) => a.toJson());
-    await _writeList(eventsKey, events, (e) => e.toJson());
-    return const BackupResult.none();
+    await _writeList(
+      backupsKey,
+      _backups()..removeWhere((b) => b.date == date && out.contains(b.leg)),
+      (b) => b.toJson(),
+    );
+
+    final driverName = _known(g, driverId)?.firstName ?? '';
+    final results = <BackupResult>[];
+    for (final leg in out) {
+      final ride = await _ride(g, date, leg);
+      final candidates = ride == null || !search ? const <BackupCandidate>[] : await _candidates(g, ride);
+      final result = ride == null ? const BackupResult.none() : BackupService.findCover(ride, g, candidates);
+      results.add(result);
+      final params = {'day': date.toIso(), 'leg': leg.name, 'driver': driverName};
+      if (result.found) {
+        final chosen = candidates.firstWhere((c) => c.member.id == result.coverId && c.step == result.step);
+        await _writeList(
+          backupsKey,
+          [
+            ..._backups(),
+            _Backup(date: date, leg: leg, coverId: chosen.member.id, step: chosen.step, seats: chosen.freeSeats),
+          ],
+          (b) => b.toJson(),
+        );
+        await _notify(NoticeKind.backupCover, {...params, 'cover': chosen.member.firstName}, toMe: driverId != meId);
+      } else {
+        await _notify(NoticeKind.noCover, params, toMe: driverId != meId);
+      }
+    }
+    return results.where((r) => r.found).firstOrNull ?? const BackupResult.none();
+  }
+
+  /// Who could cover [ride], by search step (research R6). Seeded drivers'
+  /// homes are approximated by their pickup stop; other groups' drivers by
+  /// their group's pickup point.
+  Future<List<BackupCandidate>> _candidates(CommuteGroup g, Ride ride) async {
+    final date = ride.date;
+    final away = {for (final a in _absences()) if (a.date == date && a.leg == ride.leg) a.personId};
+    final inGroup = {for (final m in g.members) m.id};
+    final profile = await _commute.loadProfile();
+    final riders = [for (final p in ride.passengers) ?g.member(p.memberId)];
+    Seeker seeker(GeoPoint home, GeoPoint work, Clock going, Clock ret, Set<Day> days) => Seeker(
+          role: MemberRole.driver,
+          home: home,
+          work: work,
+          departure: going,
+          ret: ret,
+          days: days,
+          legs: const {Leg.going, Leg.ret},
+        );
+
+    return [
+      // 1. The group's other drivers who drive this leg (off duty that day).
+      for (final m in g.drivers)
+        if (m.legs.contains(ride.leg))
+          BackupCandidate(
+            member: m,
+            step: BackupStep.sameGroup,
+            seeker: m.id == meId && profile?.home != null && profile?.work != null
+                ? seeker(profile!.home!.point, profile.work!.point, profile.departure, profile.ret, m.daysIn(g))
+                : seeker(await _stopPointOf(g, m), g.destinationPoint, g.going, g.ret, m.daysIn(g)),
+            freeSeats: m.seats ?? 0,
+            available: !away.contains(m.id),
+          ),
+      // 2. Drivers of other corridor groups on duty that leg and day.
+      for (final other in _groups)
+        if (other.id != g.id)
+          for (final d in RotationPlanner.plan(other, date, date))
+            if (d.assignment(ride.leg)?.planned case final id? when !inGroup.contains(id))
+              BackupCandidate(
+                member: other.member(id)!,
+                step: BackupStep.nearbyGroup,
+                seeker: seeker(other.pickupPoints.first, other.destinationPoint, other.going, other.ret, other.days),
+                freeSeats: other.freeSeats(ride.leg),
+              ),
+      // 3–4. Network drivers sharing a company, then a compound, with a passenger.
+      for (final n in DailySeed.networkDrivers)
+        if (riders.any((r) => r.company != null && r.company == n.member.company))
+          BackupCandidate(
+            member: n.member,
+            step: BackupStep.sameCompany,
+            seeker: seeker(n.home, g.destinationPoint, n.going, n.ret, g.days),
+            freeSeats: n.member.seats ?? 0,
+          )
+        else if (riders.any((r) => r.compound != null && r.compound == n.member.compound))
+          BackupCandidate(
+            member: n.member,
+            step: BackupStep.sameCommunity,
+            seeker: seeker(n.home, g.destinationPoint, n.going, n.ret, g.days),
+            freeSeats: n.member.seats ?? 0,
+          ),
+    ];
+  }
+
+  Future<GeoPoint> _stopPointOf(CommuteGroup g, Member m) async {
+    final id = await _stopIdOf(g, m);
+    return g.goingStops.firstWhere((s) => s.id == id).point;
+  }
+
+  /// Debug demo (research R11): the driver planned for next Tuesday can't
+  /// drive, with a cover found or ([cover] false) none. Returns that date.
+  Future<CalendarDate?> demoDriverOut({required bool cover}) async {
+    final g = await myGroup();
+    if (g == null) return null;
+    final now = _now();
+    for (var date = now.date.addDays(1); !date.isAfter(now.date.addDays(14)); date = date.addDays(1)) {
+      if (date.weekday != Day.tue || !g.days.contains(date.weekday)) continue;
+      final day = _schedule(g, date, date).single;
+      final driverId = day.going?.planned ?? day.ret?.planned;
+      if (driverId == null) return null;
+      await _driverOut(g, driverId, date, const {Leg.going, Leg.ret}, now, search: cover);
+      return date;
+    }
+    return null;
   }
 
   @override
@@ -417,46 +609,64 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   @override
   Future<void> startTrip(String rideId, WallTime at) async {
     await _updateRide(rideId, (s) => s['startedAt'] = at.toJson());
-    await _settle(rideId);
+    await _settleRide(rideId);
   }
 
   @override
   Future<void> endTrip(String rideId, WallTime at) async {
-    final started = _rideState()[rideId]?['startedAt'] != null;
     await _updateRide(rideId, (s) {
       s['endedAt'] = at.toJson();
       s['startedAt'] ??= at.toJson();
     });
-    if (!started) await _settle(rideId);
+    await _settleRide(rideId);
+  }
+
+  Future<void> _settleRide(String rideId) async {
+    final g = await myGroup();
+    final ride = g == null ? null : await _ride(g, _dateOf(rideId), _legOf(rideId));
+    if (g != null && ride != null) await _settle(g, ride);
   }
 
   /// Marks become final when the trip starts: each no-show owes the full
-  /// share to the driver and counts toward the monthly standing; each
-  /// passenger picked up keeps a trip (FR-008, FR-009).
-  Future<void> _settle(String rideId) async {
-    final g = await myGroup();
-    if (g == null) return;
-    final date = _dateOf(rideId);
-    final ride = await _ride(g, date, _legOf(rideId));
-    if (ride == null || ride.driverId == null) return;
+  /// share to the driver and counts toward the monthly standing; everyone
+  /// else on board kept the trip, and so did its driver (FR-008, FR-009,
+  /// FR-036). A no-show is only ever an explicit mark. Settling twice changes
+  /// nothing. The fake knows the person's own trips and the riders of the car
+  /// they drive.
+  Future<void> _settle(CommuteGroup g, Ride ride) async {
+    final driverId = ride.driverId;
+    if (driverId == null) return;
+    final drivenByMe = driverId == meId;
+    // The person's car never came: that is a driver no-show, not a trip.
+    if (drivenByMe && ride.arrivedStopIds.isEmpty && ride.startedAt == null) return;
     final charges = _charges();
     final events = _events();
+    final marks = {for (final o in _outcomes()) if (o.rideId == ride.id) o.personId: o.outcome};
+    bool settled(String personId) => events.any((e) => e.rideId == ride.id && e.personId == personId);
+    void record(String personId, ReliabilityEventKind kind) =>
+        events.add(ReliabilityEvent(personId: personId, rideId: ride.id, date: ride.date, kind: kind));
+
+    final people = [
+      for (final p in ride.passengers)
+        if ((drivenByMe || p.memberId == meId) && !settled(p.memberId)) p.memberId,
+      if (drivenByMe && !settled(meId)) meId,
+    ];
+    if (people.isEmpty) return;
     final noShows = <String>[];
-    for (final o in _outcomes().where((o) => o.rideId == rideId)) {
-      if (events.any((e) => e.rideId == rideId && e.personId == o.personId)) continue;
-      if (o.outcome == Outcome.noShow) {
-        noShows.add(o.personId);
+    for (final personId in people) {
+      if (personId != driverId && marks[personId] == Outcome.noShow) {
+        noShows.add(personId);
         charges.add(Charge(
-          id: 'noShow:$rideId:${o.personId}',
-          personId: o.personId,
-          rideId: rideId,
+          id: 'noShow:${ride.id}:$personId',
+          personId: personId,
+          rideId: ride.id,
           reason: ChargeReason.noShow,
           amount: AttendanceRules.noShowCharge(g.price),
-          owedTo: ride.driverId!,
+          owedTo: driverId,
         ));
-        events.add(ReliabilityEvent(personId: o.personId, rideId: rideId, date: date, kind: ReliabilityEventKind.noShow));
-      } else if (o.outcome == Outcome.pickedUp) {
-        events.add(ReliabilityEvent(personId: o.personId, rideId: rideId, date: date, kind: ReliabilityEventKind.kept));
+        record(personId, ReliabilityEventKind.noShow);
+      } else {
+        record(personId, ReliabilityEventKind.kept);
       }
     }
     await _writeList(chargesKey, charges, (c) => c.toJson());
@@ -464,11 +674,54 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
     for (final personId in noShows) {
       await _notify(
         NoticeKind.noShowCharged,
-        {'day': date.toIso(), 'amount': '${g.price}', 'leg': ride.leg.name},
+        {'day': ride.date.toIso(), 'amount': '${g.price}', 'leg': ride.leg.name},
         toMe: personId == meId,
       );
     }
-    if (noShows.contains(meId)) await _applyStanding(date.monthKey);
+    if (noShows.contains(meId)) await _applyStanding(ride.date.monthKey);
+  }
+
+  /// What the server's timed jobs do, run on read in the fake: a driver who
+  /// neither checked in nor cancelled by first pickup + 5 min is a no-show
+  /// (FR-010), and a trip whose arrival time has passed settles its marks
+  /// even without "End trip" (research R11). Only trips from the moment the
+  /// person joined count.
+  Future<void> _catchUp(CommuteGroup g) async {
+    final now = _now();
+    final joined = WallTime.fromJson(_prefs.getString(joinedAtKey)!);
+    final through = _prefs.getString(settledKey);
+    var date = through == null ? joined.date : CalendarDate.parse(through);
+    if (date.isBefore(joined.date)) date = joined.date;
+    for (; !date.isAfter(now.date); date = date.addDays(1)) {
+      for (final leg in Leg.values) {
+        final ride = await _ride(g, date, leg);
+        if (ride == null || ride.driverId == null || ride.firstPickup.isBefore(joined)) continue;
+        final noShow = ride.driverId == meId &&
+            AttendanceRules.driverNoShow(
+              firstPickup: ride.firstPickup,
+              now: now,
+              checkedIn: ride.arrivedStopIds.isNotEmpty || ride.startedAt != null,
+              // A driver who cancelled is no longer the ride's driver.
+              cancelled: false,
+            );
+        if (noShow) {
+          await _recordDriverNoShow(ride);
+        } else if (!now.isBefore(WallTime(date, g.endFor(leg).shift(ride.delayMinutes)))) {
+          await _settle(g, ride);
+        }
+      }
+    }
+    await _prefs.setString(settledKey, now.date.toIso());
+  }
+
+  /// Same standing as riders: 2 in a month → warning, 3 → removal (FR-009).
+  Future<void> _recordDriverNoShow(Ride ride) async {
+    final events = _events();
+    if (events.any((e) => e.rideId == ride.id && e.personId == meId)) return;
+    events.add(ReliabilityEvent(personId: meId, rideId: ride.id, date: ride.date, kind: ReliabilityEventKind.noShow));
+    await _writeList(eventsKey, events, (e) => e.toJson());
+    await _notify(NoticeKind.driverNoShow, {'day': ride.date.toIso(), 'leg': ride.leg.name});
+    await _applyStanding(ride.date.monthKey);
   }
 
   /// Second no-show this month → warning; third → removal from the group,
@@ -576,4 +829,29 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   List<Charge> _charges() => _readList(chargesKey, Charge.fromJson);
   List<ReliabilityEvent> _events() => _readList(eventsKey, ReliabilityEvent.fromJson);
   List<Notice> _notices() => _readList(noticesKey, Notice.fromJson);
+  List<_Backup> _backups() => _readList(backupsKey, _Backup.fromJson);
+}
+
+/// A cover driver standing in for one leg on one date.
+final class _Backup {
+  const _Backup({required this.date, required this.leg, required this.coverId, required this.step, required this.seats});
+
+  final CalendarDate date;
+  final Leg leg;
+  final String coverId;
+  final BackupStep step;
+
+  /// Seats free in the cover's car that leg.
+  final int seats;
+
+  Map<String, Object?> toJson() =>
+      {'date': date.toIso(), 'leg': leg.name, 'coverId': coverId, 'step': step.name, 'seats': seats};
+
+  static _Backup fromJson(Map<String, Object?> j) => _Backup(
+        date: CalendarDate.parse(j['date']! as String),
+        leg: Leg.values.byName(j['leg']! as String),
+        coverId: j['coverId']! as String,
+        step: BackupStep.values.byName(j['step']! as String),
+        seats: j['seats']! as int,
+      );
 }
