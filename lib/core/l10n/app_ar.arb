@@ -26,6 +26,43 @@
   "pickedUp": "ركب",
   "noShow": "مجاش",
   "planTitle": "ابدأ أول شهر مجانًا",
+  "planSubline": "تدفع لأول مرة بعد ما نلقى جروبك — ولقيناه.",
+  "planMonthlyTitle": "شهري",
+  "planMonthlySub": "129 جنيه/الشهر",
+  "planYearlyTitle": "سنوي",
+  "planYearlySub": "1,290 جنيه/السنة",
+  "planYearlyChip": "شهرين مجانًا",
+  "planCompanyTitle": "عن طريق شركتي",
+  "planCompanySub": "مجاني — أكّد إيميل الشغل",
+  "planIncludedTitle": "هتحصل على",
+  "planIncludedMatch": "ترشيح يومي لجروب ركوبتك",
+  "planIncludedBackup": "سواق بدّل لو سواقك اتأخر",
+  "planIncludedTrust": "تتبّع الالتزام وأدوات أمان SOS",
+  "planFuelNote": "مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.",
+  "planCtaStart": "ابدأ الشهر المجاني",
+  "planCtaVerify": "أكّد إيميل الشغل",
+  "planFooter": "تقدر تلغي في أي وقت. جورة مجانية للسواقين.",
+  "verifyEmailTitle": "أكّد إيميل شغلك",
+  "verifyEmailBody": "{company} هتدفع خطة جورة بتاعتك بعد تأكيد إيميل شغلك.",
+  "@verifyEmailBody": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "verifyConfirm": "تأكيد",
+  "verifyNotVerified": "أكّد إيميل شغلك من تبويب الموثوقية الأول.",
+  "balanceLabel": "رصيد المحفظة",
+  "topUp": "اشحن",
+  "coversTrips": "{count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}}",
+  "@coversTrips": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "postReq": "انشر مشوارك",
   "offerBtn": "اعرض مشوار",
   "reqsOnRoute": "طلبات على خطك",

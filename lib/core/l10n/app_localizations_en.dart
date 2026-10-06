@@ -87,6 +87,88 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planTitle => 'Start your free month';
 
   @override
+  String get planSubline =>
+      'You only pay once we find your group — and we did.';
+
+  @override
+  String get planMonthlyTitle => 'Monthly';
+
+  @override
+  String get planMonthlySub => '129 EGP/month';
+
+  @override
+  String get planYearlyTitle => 'Yearly';
+
+  @override
+  String get planYearlySub => '1,290 EGP/year';
+
+  @override
+  String get planYearlyChip => '2 months free';
+
+  @override
+  String get planCompanyTitle => 'Through my company';
+
+  @override
+  String get planCompanySub => 'Free — verify your work email';
+
+  @override
+  String get planIncludedTitle => 'What\'s included';
+
+  @override
+  String get planIncludedMatch => 'Matching with your daily group';
+
+  @override
+  String get planIncludedBackup => 'A backup driver when yours can\'t make it';
+
+  @override
+  String get planIncludedTrust => 'Reliability tracking and SOS safety tools';
+
+  @override
+  String get planFuelNote =>
+      'The fuel & tolls you pay each trip go straight to your driver, in full.';
+
+  @override
+  String get planCtaStart => 'Start free month';
+
+  @override
+  String get planCtaVerify => 'Verify work email';
+
+  @override
+  String get planFooter => 'Cancel anytime. Goora is free for drivers.';
+
+  @override
+  String get verifyEmailTitle => 'Verify your work email';
+
+  @override
+  String verifyEmailBody(String company) {
+    return '$company will cover your Goora plan once your work email is verified.';
+  }
+
+  @override
+  String get verifyConfirm => 'Confirm';
+
+  @override
+  String get verifyNotVerified => 'Verify your work email in Trust first.';
+
+  @override
+  String get balanceLabel => 'Wallet balance';
+
+  @override
+  String get topUp => 'Top up';
+
+  @override
+  String coversTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Covers about $count trips',
+      one: 'Covers about 1 trip',
+      zero: 'Covers no trips yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get postReq => 'Post your trip';
 
   @override

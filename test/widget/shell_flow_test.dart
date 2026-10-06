@@ -31,7 +31,7 @@ void main() {
     expect(find.text(a.goodMorning('Omar')), findsOneWidget);
   });
 
-  testWidgets('rider: Join → plan placeholder → Continue → shell', (tester) async {
+  testWidgets('rider: Join → plan screen → Start free month → shell', (tester) async {
     await pumpGooraApp(
       tester,
       prefs: memberPrefs(role: Role.rider, member: false),
@@ -42,7 +42,7 @@ void main() {
     await tester.tap(find.byKey(const Key('join-group')));
     await tester.pumpAndSettle();
     expect(find.text(a.planTitle), findsWidgets);
-    await tester.tap(find.byKey(const Key('plan-continue')));
+    await tester.tap(find.byKey(const Key('plan-cta')));
     await tester.pumpAndSettle();
     expect(selectedTab(tester), 0);
     expect(find.text(a.todaySub), findsOneWidget);

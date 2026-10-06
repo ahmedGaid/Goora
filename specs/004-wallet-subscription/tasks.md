@@ -23,7 +23,7 @@ ends with green `flutter analyze` + `flutter test` and can be committed on its o
 
 ## Phase 1: Setup
 
-- [ ] T001 [P] Add all 004 ARB keys (Plan screen title/subline/cards/CTA/footer, rider + driver
+- [X] T001 [P] Add all 004 ARB keys (Plan screen title/subline/cards/CTA/footer, rider + driver
   Wallet copy, "How paying works" rules, top-up/withdraw/change-plan sheet copy, activity-row
   labels) to `lib/core/l10n/app_ar.arb` and `lib/core/l10n/app_en.arb` — drafted copy from
   spec.md, founder review before ship (same pattern as 003); run `flutter gen-l10n`
@@ -34,52 +34,52 @@ ends with green `flutter analyze` + `flutter test` and can be committed on its o
 
 **Time core**
 
-- [ ] T002 [P] `lib/core/time/calendar_date.dart`: add `addMonths(int months)` — keeps
+- [X] T002 [P] `lib/core/time/calendar_date.dart`: add `addMonths(int months)` — keeps
   day-of-month, clamps to the target month's last day when it has fewer days (R1)
-- [ ] T003 [P] `test/unit/calendar_add_months_test.dart`: 31 Jan + 1 → 28/29 Feb (leap + non-leap);
+- [X] T003 [P] `test/unit/calendar_add_months_test.dart`: 31 Jan + 1 → 28/29 Feb (leap + non-leap);
   31 Mar + 1 → 30 Apr; Dec → Jan year rollover; a mid-month date unaffected
 
 **Domain model**
 
-- [ ] T004 [P] `lib/features/wallet/domain/plan.dart`: `PlanType`, `PlanStatus`, `Plan` (fields +
+- [X] T004 [P] `lib/features/wallet/domain/plan.dart`: `PlanType`, `PlanStatus`, `Plan` (fields +
   `type == company ⇒ price == 0 && untilDate == null` invariant) per data-model
-- [ ] T005 [P] `lib/features/wallet/domain/wallet.dart`: `Wallet` (ownerId, role, balance, activity)
-- [ ] T006 [P] `lib/features/wallet/domain/activity_entry.dart`: `ActivityKind`, `ActivityEntry`
+- [X] T005 [P] `lib/features/wallet/domain/wallet.dart`: `Wallet` (ownerId, role, balance, activity)
+- [X] T006 [P] `lib/features/wallet/domain/activity_entry.dart`: `ActivityKind`, `ActivityEntry`
   (id, kind, amount, date, rideId?, otherPersonId?)
-- [ ] T007 [P] `lib/features/wallet/domain/payment_provider.dart`: `PaymentProvider` interface
+- [X] T007 [P] `lib/features/wallet/domain/payment_provider.dart`: `PaymentProvider` interface
   (`topUp`, `withdraw`), `PaymentResult` enum
-- [ ] T008 `lib/features/wallet/domain/wallet_rules.dart`: `trialEndDate` (uses `addMonths`,
+- [X] T008 `lib/features/wallet/domain/wallet_rules.dart`: `trialEndDate` (uses `addMonths`,
   depends on T002/T004), `tripsCovered` (`max(0, balance ~/ (2 * legShare))`), `isPlanDue`
-- [ ] T009 [P] `test/unit/wallet_rules_test.dart`: trialEndDate = chosenAt.addMonths(1);
+- [X] T009 [P] `test/unit/wallet_rules_test.dart`: trialEndDate = chosenAt.addMonths(1);
   tripsCovered at 0 (balance < one leg-share), exact round-trip boundary (80 EGP = 1 trip, 79 = 0),
   and the brief's numbers (40 EGP/leg ⇒ 80/round-trip); isPlanDue true only when `untilDate` is set
   and in the past
-- [ ] T010 `lib/features/wallet/domain/wallet_repository.dart`: `WalletRepository` interface per
+- [X] T010 `lib/features/wallet/domain/wallet_repository.dart`: `WalletRepository` interface per
   `contracts/repositories.md`
 
 **Fake data and wiring**
 
-- [ ] T011 [P] `lib/features/wallet/data/fake_payment_provider.dart`: `FakePaymentProvider`
+- [X] T011 [P] `lib/features/wallet/data/fake_payment_provider.dart`: `FakePaymentProvider`
   implementing `PaymentProvider`, `shouldFail` hook defaulting to always-succeed (R4)
-- [ ] T012 `lib/features/wallet/data/wallet_seed.dart`: seeded rider Plan (trialing) + Wallet
+- [X] T012 `lib/features/wallet/data/wallet_seed.dart`: seeded rider Plan (trialing) + Wallet
   (top-up row, trip deduction, late-cancel charge, free-cancel zero-row) and seeded driver Wallet
   (trip income rows, one fee-received row) so US2/US3 independent tests have activity without
   replaying 003's flows live
-- [ ] T013 `lib/features/wallet/data/fake_wallet_repository.dart`: implements
+- [X] T013 `lib/features/wallet/data/fake_wallet_repository.dart`: implements
   `WalletRepository` over `shared_preferences`; `getPlan`/`choosePlan`/`changePlan`/`getWallet`/
   `topUp`/`withdraw`; `getWallet` merges this feature's own activity (top-up, withdrawal, fee
   received) with rows read from `DailyCommuteRepository`'s `Charge`/`Ride` records for
   `tripDeduction`/`lateCancelCharge`/`freeCancelZero` (R3, not duplicated/stored)
-- [ ] T014 [P] `lib/features/wallet/data/providers.dart`: Riverpod providers for
+- [X] T014 [P] `lib/features/wallet/data/providers.dart`: Riverpod providers for
   `WalletRepository`/`PaymentProvider` (overridable, same pattern as `daily/data/providers.dart`)
-- [ ] T015 [P] `test/unit/fake_wallet_repository_test.dart`: `choosePlan(monthly/yearly)` sets
+- [X] T015 [P] `test/unit/fake_wallet_repository_test.dart`: `choosePlan(monthly/yearly)` sets
   `trialing` + `untilDate = today.addMonths(1)`; `choosePlan(company)` sets `active`-equivalent
   free/no-trial-date; `changePlan` doesn't affect the current period; `topUp`/`withdraw` success
   updates balance + adds a row; failure changes neither (SC-005); `getWallet` includes 003's
   seeded `Charge` rows
-- [ ] T016 [P] `lib/core/widgets/goora_balance_card.dart`: dark balance card (balance text,
+- [X] T016 [P] `lib/core/widgets/goora_balance_card.dart`: dark balance card (balance text,
   "Covers about {N} trips", Top up action) per constitution VI
-- [ ] T017 [P] `test/golden/wallet_widgets_golden_test.dart` + goldens RTL/LTR for
+- [X] T017 [P] `test/golden/wallet_widgets_golden_test.dart` + goldens RTL/LTR for
   `goora_balance_card`
 
 **Checkpoint**: domain + fake repository + balance card ready; 003 suite still green.
@@ -92,24 +92,24 @@ ends with green `flutter analyze` + `flutter test` and can be committed on its o
 drivers never see it. **Independent test**: complete "Join this group" as a rider, land on Plan,
 choose Monthly, confirm the free-trial starts with no charge.
 
-- [ ] T018 [US1] `lib/features/wallet/presentation/plan/plan_controller.dart`: load plan state;
+- [X] T018 [US1] `lib/features/wallet/presentation/plan/plan_controller.dart`: load plan state;
   `choosePlan(monthly/yearly)` using `nowProvider` for `today`; `choosePlan(company)` only after
   the verify sheet confirms
-- [ ] T019 [US1] `lib/features/wallet/presentation/plan/company_verify_sheet.dart`: reuses 001's
+- [X] T019 [US1] `lib/features/wallet/presentation/plan/company_verify_sheet.dart`: reuses 001's
   work-email verification pattern (`VerificationKind.workEmail`); on confirm calls
   `choosePlan(company)` (FR-003)
-- [ ] T020 [US1] `lib/features/wallet/presentation/plan/plan_screen.dart`: title "Start your free
+- [X] T020 [US1] `lib/features/wallet/presentation/plan/plan_screen.dart`: title "Start your free
   month", subline, three `GooraRadioCard`s (Monthly 129 EGP / Yearly 1,290 EGP + "2 months free"
   chip / Through my company: free), "What's included" list, fuel-to-driver note, CTA
   ("Start free month" / "Verify work email"), footer "Cancel anytime. Goora is free for drivers."
-- [ ] T021 [US1] `lib/features/wallet/presentation/labels.dart`: plan-type/plan-status → l10n
+- [X] T021 [US1] `lib/features/wallet/presentation/labels.dart`: plan-type/plan-status → l10n
   (start here; extended in US2/US3)
-- [ ] T022 [US1] `lib/app/routes.dart`: `Routes.plan` → `PlanScreen`; `lib/app/router.dart`:
+- [X] T022 [US1] `lib/app/routes.dart`: `Routes.plan` → `PlanScreen`; `lib/app/router.dart`:
   redirect guard on the shell's `today`/`week` routes — a rider with no `Plan`, or a due/expired
   one and no Company verification, redirects to `Routes.plan` (R2); Wallet/Trust stay reachable
-- [ ] T023 [US1] `lib/features/placeholder/presentation/placeholder_screen.dart`: remove
+- [X] T023 [US1] `lib/features/placeholder/presentation/placeholder_screen.dart`: remove
   `PlaceholderKind.plan`
-- [ ] T024 [P] [US1] `test/widget/plan_screen_test.dart` (ar + en): AC1 — all elements present;
+- [X] T024 [P] [US1] `test/widget/plan_screen_test.dart` (ar + en): AC1 — all elements present;
   AC2 — Monthly/Yearly → "Start free month" → plan active, free-until one month out, no charge;
   AC3 — Through my company → verify sheet → Company plan, no trial date; AC4 — a driver never
   sees this screen; AC5 — dismiss/back reappears until a plan is chosen

@@ -87,6 +87,87 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planTitle => 'ابدأ أول شهر مجانًا';
 
   @override
+  String get planSubline => 'تدفع لأول مرة بعد ما نلقى جروبك — ولقيناه.';
+
+  @override
+  String get planMonthlyTitle => 'شهري';
+
+  @override
+  String get planMonthlySub => '129 جنيه/الشهر';
+
+  @override
+  String get planYearlyTitle => 'سنوي';
+
+  @override
+  String get planYearlySub => '1,290 جنيه/السنة';
+
+  @override
+  String get planYearlyChip => 'شهرين مجانًا';
+
+  @override
+  String get planCompanyTitle => 'عن طريق شركتي';
+
+  @override
+  String get planCompanySub => 'مجاني — أكّد إيميل الشغل';
+
+  @override
+  String get planIncludedTitle => 'هتحصل على';
+
+  @override
+  String get planIncludedMatch => 'ترشيح يومي لجروب ركوبتك';
+
+  @override
+  String get planIncludedBackup => 'سواق بدّل لو سواقك اتأخر';
+
+  @override
+  String get planIncludedTrust => 'تتبّع الالتزام وأدوات أمان SOS';
+
+  @override
+  String get planFuelNote =>
+      'مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.';
+
+  @override
+  String get planCtaStart => 'ابدأ الشهر المجاني';
+
+  @override
+  String get planCtaVerify => 'أكّد إيميل الشغل';
+
+  @override
+  String get planFooter => 'تقدر تلغي في أي وقت. جورة مجانية للسواقين.';
+
+  @override
+  String get verifyEmailTitle => 'أكّد إيميل شغلك';
+
+  @override
+  String verifyEmailBody(String company) {
+    return '$company هتدفع خطة جورة بتاعتك بعد تأكيد إيميل شغلك.';
+  }
+
+  @override
+  String get verifyConfirm => 'تأكيد';
+
+  @override
+  String get verifyNotVerified => 'أكّد إيميل شغلك من تبويب الموثوقية الأول.';
+
+  @override
+  String get balanceLabel => 'رصيد المحفظة';
+
+  @override
+  String get topUp => 'اشحن';
+
+  @override
+  String coversTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بيغطي حوالي $count رحلات',
+      one: 'بيغطي حوالي رحلة واحدة',
+      zero: 'لسه مش بيغطي أي رحلة',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get postReq => 'انشر مشوارك';
 
   @override

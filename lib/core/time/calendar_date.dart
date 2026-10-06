@@ -33,6 +33,17 @@ final class CalendarDate implements Comparable<CalendarDate> {
 
   CalendarDate addDays(int days) => CalendarDate._(_utc.add(Duration(days: days)));
 
+  /// Same day next month, or the target month's last day when it has fewer
+  /// days (research R1) — `DateTime` would otherwise overflow 31 Jan + 1
+  /// into March instead of clamping to Feb.
+  CalendarDate addMonths(int months) {
+    final total = year * 12 + (month - 1) + months;
+    final y = total ~/ 12;
+    final m = total % 12 + 1;
+    final lastDay = DateTime.utc(y, m + 1, 0).day;
+    return CalendarDate(y, m, day > lastDay ? lastDay : day);
+  }
+
   /// `2026-10`: the key no-show counts reset on.
   String get monthKey => '$year-${_two(month)}';
 

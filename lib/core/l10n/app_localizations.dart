@@ -254,6 +254,144 @@ abstract class AppLocalizations {
   /// **'ابدأ أول شهر مجانًا'**
   String get planTitle;
 
+  /// No description provided for @planSubline.
+  ///
+  /// In ar, this message translates to:
+  /// **'تدفع لأول مرة بعد ما نلقى جروبك — ولقيناه.'**
+  String get planSubline;
+
+  /// No description provided for @planMonthlyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهري'**
+  String get planMonthlyTitle;
+
+  /// No description provided for @planMonthlySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'129 جنيه/الشهر'**
+  String get planMonthlySub;
+
+  /// No description provided for @planYearlyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنوي'**
+  String get planYearlyTitle;
+
+  /// No description provided for @planYearlySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'1,290 جنيه/السنة'**
+  String get planYearlySub;
+
+  /// No description provided for @planYearlyChip.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهرين مجانًا'**
+  String get planYearlyChip;
+
+  /// No description provided for @planCompanyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عن طريق شركتي'**
+  String get planCompanyTitle;
+
+  /// No description provided for @planCompanySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجاني — أكّد إيميل الشغل'**
+  String get planCompanySub;
+
+  /// No description provided for @planIncludedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتحصل على'**
+  String get planIncludedTitle;
+
+  /// No description provided for @planIncludedMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترشيح يومي لجروب ركوبتك'**
+  String get planIncludedMatch;
+
+  /// No description provided for @planIncludedBackup.
+  ///
+  /// In ar, this message translates to:
+  /// **'سواق بدّل لو سواقك اتأخر'**
+  String get planIncludedBackup;
+
+  /// No description provided for @planIncludedTrust.
+  ///
+  /// In ar, this message translates to:
+  /// **'تتبّع الالتزام وأدوات أمان SOS'**
+  String get planIncludedTrust;
+
+  /// No description provided for @planFuelNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.'**
+  String get planFuelNote;
+
+  /// No description provided for @planCtaStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ الشهر المجاني'**
+  String get planCtaStart;
+
+  /// No description provided for @planCtaVerify.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد إيميل الشغل'**
+  String get planCtaVerify;
+
+  /// No description provided for @planFooter.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تلغي في أي وقت. جورة مجانية للسواقين.'**
+  String get planFooter;
+
+  /// No description provided for @verifyEmailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد إيميل شغلك'**
+  String get verifyEmailTitle;
+
+  /// No description provided for @verifyEmailBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'{company} هتدفع خطة جورة بتاعتك بعد تأكيد إيميل شغلك.'**
+  String verifyEmailBody(String company);
+
+  /// No description provided for @verifyConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد'**
+  String get verifyConfirm;
+
+  /// No description provided for @verifyNotVerified.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد إيميل شغلك من تبويب الموثوقية الأول.'**
+  String get verifyNotVerified;
+
+  /// No description provided for @balanceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيد المحفظة'**
+  String get balanceLabel;
+
+  /// No description provided for @topUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن'**
+  String get topUp;
+
+  /// No description provided for @coversTrips.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}}'**
+  String coversTrips(int count);
+
   /// No description provided for @postReq.
   ///
   /// In ar, this message translates to:
