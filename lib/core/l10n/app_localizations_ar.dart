@@ -249,7 +249,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get female => 'ست';
 
   @override
-  String get genderNote => 'بنستخدمه بس لاختيار «ستات بس»، ومحدش بيشوفه.';
+  String get genderNote => 'بنستخدمه بس لاختيار «سيدات فقط»، ومحدش بيشوفه.';
 
   @override
   String get settingsTitle => 'الإعدادات';

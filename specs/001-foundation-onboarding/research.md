@@ -132,7 +132,7 @@ Every string below is listed again in the feature summary for founder review.
 | lastName | اسم العيلة | Last name |
 | genderLabel | النوع | Gender |
 | male / female | راجل / ست | Male / Female |
-| genderNote | بنستخدمه بس لاختيار «ستات بس»، ومحدش بيشوفه. | Used only for the women-only option. No one else sees it. |
+| genderNote | بنستخدمه بس لاختيار «سيدات فقط»، ومحدش بيشوفه. | Used only for the women-only option. No one else sees it. |
 | settingsTitle | الإعدادات | Settings |
 | languageLabel | اللغة | Language |
 | roleLabel | بتتحرك إزاي | How you travel |

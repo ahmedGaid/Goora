@@ -575,7 +575,7 @@ abstract class AppLocalizations {
   /// No description provided for @genderNote.
   ///
   /// In ar, this message translates to:
-  /// **'بنستخدمه بس لاختيار «ستات بس»، ومحدش بيشوفه.'**
+  /// **'بنستخدمه بس لاختيار «سيدات فقط»، ومحدش بيشوفه.'**
   String get genderNote;
 
   /// No description provided for @settingsTitle.
