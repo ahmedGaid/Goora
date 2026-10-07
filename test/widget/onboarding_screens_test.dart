@@ -68,7 +68,7 @@ void main() {
         expect(find.text(l10n.getStarted), findsOneWidget);
         expect(find.text(l10n.login), findsOneWidget);
         expect(find.text(l10n.langBtn), findsOneWidget);
-        expect(find.text('Goora'), findsOneWidget);
+        expect(find.bySemanticsLabel('Goora'), findsOneWidget);
         final arrow = tester.widget<Icon>(find.byIcon(GooraIcons.forward));
         expect(arrow.icon!.matchTextDirection, isTrue);
         await _expectAccessible(tester);

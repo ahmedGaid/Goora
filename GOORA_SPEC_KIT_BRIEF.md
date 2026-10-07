@@ -185,7 +185,7 @@ abstract final class AppSpacing {
 | `GooraProgressDots` | Onboarding progress. Bars are 5 px tall, 14 px wide and 28 px wide when active, `green` when active and `borderStrong` when not, with a gap of 6. |
 | `GooraBottomNav` | 4 tabs on a white background with a 1 px `border` top line. Icon is 22 px, label is 12/700. Active: `greenText`. Inactive: `textMuted`. Bottom padding is 22. |
 | `GooraTimelineRow` | A 14 px dot (`green` for pickup, `disabled` for the transit leg, `mapDestination` for arrival) with a title and subline. |
-| `GooraLogo` | An arc ring (stroke 7, `mint`, ~70% of the circle, round caps) with a 5 px `mint` center dot, next to the wordmark. Paint it with a `CustomPainter`. |
+| `GooraLogo` | The official brand mark, rendered from the SVG masters in `assets/brand/logo/` (symbol / wordmark / horizontal lockup, each in a primary or reversed tone). |
 
 **Icons:** use outline stroke icons with a 2 px stroke and round caps (`lucide_icons` or a similar package). Do not use emoji or filled Material icons. Directional icons (back, forward, arrows) must mirror in RTL.
 
