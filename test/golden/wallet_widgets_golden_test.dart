@@ -6,7 +6,9 @@ import 'package:goora/core/l10n/app_localizations.dart';
 import 'package:goora/core/theme/app_spacing.dart';
 import 'package:goora/core/theme/app_theme.dart';
 import 'package:goora/core/widgets/goora_balance_card.dart';
+import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
+import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/presentation/wallet/change_plan_sheet.dart';
 import 'package:goora/features/wallet/presentation/wallet/top_up_sheet.dart';
 import 'package:goora/features/wallet/presentation/wallet/withdraw_sheet.dart';
@@ -57,7 +59,7 @@ void main() {
       await expectLater(find.byType(Scaffold), matchesGoldenFile('goldens/wallet_widgets_$dir.png'));
     });
 
-    testWidgets('plan screen [$dir]', (tester) async {
+    testWidgets('pay method screen [$dir]', (tester) async {
       await loadAppFonts();
       addTearDown(tester.view.reset);
       await pumpGooraApp(
@@ -65,9 +67,40 @@ void main() {
         prefs: memberPrefs(role: Role.rider, locale: code, withPlan: false),
         overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
       );
+      tester.view.physicalSize = const Size(390, 1200);
+      await tester.pumpAndSettle();
+      await expectLater(find.byType(Scaffold).first, matchesGoldenFile('goldens/screen_pay_method_$dir.png'));
+    });
+
+    testWidgets('plan screen [$dir]', (tester) async {
+      await loadAppFonts();
+      addTearDown(tester.view.reset);
+      final c = await pumpGooraApp(
+        tester,
+        prefs: memberPrefs(role: Role.rider, locale: code, withPlan: false),
+        overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
+      );
       tester.view.physicalSize = const Size(390, 2200);
+      c.read(routerProvider).go(Routes.plan);
       await tester.pumpAndSettle();
       await expectLater(find.byType(Scaffold).first, matchesGoldenFile('goldens/screen_plan_$dir.png'));
+    });
+
+    testWidgets('rider wallet, cash trial [$dir]', (tester) async {
+      await loadAppFonts();
+      addTearDown(tester.view.reset);
+      final c = await pumpGooraApp(
+        tester,
+        prefs: {
+          ...memberPrefs(role: Role.rider, locale: code, withPlan: false, method: PaymentMethod.cash),
+          FakeDailyCommuteRepository.eventsKey: '[]',
+        },
+        overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
+      );
+      tester.view.physicalSize = const Size(390, 2600);
+      c.read(routerProvider).go(Routes.wallet);
+      await tester.pumpAndSettle();
+      await expectLater(find.byType(Scaffold).first, matchesGoldenFile('goldens/screen_wallet_rider_cash_$dir.png'));
     });
 
     testWidgets('rider wallet [$dir]', (tester) async {
@@ -75,7 +108,11 @@ void main() {
       addTearDown(tester.view.reset);
       final c = await pumpGooraApp(
         tester,
-        prefs: memberPrefs(role: Role.rider, locale: code, withPlan: true),
+        prefs: {
+          ...memberPrefs(role: Role.rider, locale: code, withPlan: false, method: PaymentMethod.wallet),
+          FakeDailyCommuteRepository.eventsKey: '[]',
+          'wallet.balance.me': 200,
+        },
         overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
       );
       tester.view.physicalSize = const Size(390, 2600);

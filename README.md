@@ -64,16 +64,24 @@ driver arrive at your stop (live trip), simulates a driver who can't drive (with
 backup), and resets the fake data. Release builds always use real time. New packages in 003:
 `url_launcher` (Call driver, Call 122) and `share_plus` (Share trip).
 
-## Wallet and subscription (feature 004)
+## Wallet and payment model (feature 004)
 
-A rider with no active plan is redirected to **Plan** (Monthly/Yearly/Company) before Today/Week;
-Wallet is a tab in the shell for both roles — a rider sees balance, top-up, plan status and
-activity, a driver sees recovered balance, withdraw-to-InstaPay and a trip-cost breakdown.
-`FakePaymentProvider`'s `shouldFail` hook forces a top-up/withdrawal failure to exercise the
-inline, blame-free retry path — wired only in widget tests today (`top_up_sheet_test.dart`,
-`withdraw_sheet_test.dart`), not reachable from the Settings → Demo UI. No new packages;
-wallet activity rows read 003's `Charge`/`Absence` records rather than duplicating them (one
-writer per fact — see `specs/004-wallet-subscription/research.md` R3).
+After joining a group a rider picks how to pay: **cash to the driver** for their first 10 trips,
+or the **wallet** (40 EGP to the driver + a 10% service fee = 44 per trip). Subscribing (129/month,
+1,290/year, or a company plan) is optional and removes the fee. Drivers never pay anything. The
+rules are pure Dart — `PricingService.serviceFee/riderTotal` (commute domain), `CashTrialPolicy`,
+`FeeSavingsCalculator` (wallet domain) — and the fee rule has a TypeScript twin on shared vectors:
+
+```bash
+python test/fixtures/gen_pricing_vectors.py          # only when the fee rule changes
+```
+
+The wallet derives each rider's trips from 003's settled ride outcomes and prices them at read
+time (research R7), so a trip's fee is never stored twice. Trips before the rider set up payment
+aren't billed. In the fakes Youssef (group sz-0725) is a cash rider, so a driver on that group
+gets "Received cash" / "Didn't pay" after ending a trip. `FakePaymentProvider`'s `shouldFail`
+hook (top-up/withdrawal failure) is wired only in widget tests, not in Settings → Demo. No new
+packages.
 
 ## Code generation
 

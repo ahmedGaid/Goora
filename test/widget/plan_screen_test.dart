@@ -7,19 +7,23 @@ import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/presentation/today/today_screen.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/wallet/data/providers.dart';
-import 'package:goora/features/wallet/presentation/plan/plan_screen.dart';
+import 'package:goora/features/wallet/domain/plan.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
-/// US1: the plan screen, ar + en (T024).
-Future<ProviderContainer> _openAsRider(WidgetTester tester, String locale) async {
+/// v2 US3: the optional subscription screen, paid from the wallet, ar + en.
+Future<ProviderContainer> _openSubscription(WidgetTester tester, String locale, {int balance = 0}) async {
   final c = await pumpGooraApp(
     tester,
-    prefs: memberPrefs(role: Role.rider, locale: locale, withPlan: false),
+    prefs: {
+      ...memberPrefs(role: Role.rider, locale: locale, withPlan: false),
+      'wallet.balance.me': balance,
+    },
     overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
   );
-  tester.view.physicalSize = const Size(390, 2200);
+  tester.view.physicalSize = const Size(390, 2400);
+  c.read(routerProvider).go(Routes.plan);
   await tester.pumpAndSettle();
   return c;
 }
@@ -29,85 +33,63 @@ void main() {
     final l = l10nFor(locale);
     final code = locale.languageCode;
 
-    testWidgets('[$code] AC1: a rider with no plan lands here with every element present', (tester) async {
-      await _openAsRider(tester, code);
+    testWidgets('[$code] the subscription screen: three plans, no free-month copy', (tester) async {
+      await _openSubscription(tester, code);
       expect(find.text(l.planTitle), findsOneWidget);
       expect(find.text(l.planSubline), findsOneWidget);
       expect(find.byKey(const Key('plan-monthly')), findsOneWidget);
       expect(find.byKey(const Key('plan-yearly')), findsOneWidget);
       expect(find.byKey(const Key('plan-company')), findsOneWidget);
       expect(find.text(l.planYearlyChip), findsOneWidget);
-      expect(find.text(l.planIncludedTitle), findsOneWidget);
-      expect(find.text(l.planFuelNote), findsOneWidget);
+      expect(find.text(l.subscribeCta(129)), findsOneWidget);
       expect(find.text(l.planFooter), findsOneWidget);
     });
 
-    testWidgets('[$code] AC2: choosing Monthly starts a free month with no charge', (tester) async {
-      final c = await _openAsRider(tester, code);
-      expect(find.text(l.planCtaStart), findsOneWidget);
+    testWidgets('[$code] AC1: Monthly with 200 in the wallet → 129 charged, plan active, on to Today',
+        (tester) async {
+      final c = await _openSubscription(tester, code, balance: 200);
       await tester.tap(find.byKey(const Key('plan-cta')));
       await tester.pumpAndSettle();
-
       final meId = c.read(dailyCommuteRepositoryProvider).meId;
-      final plan = await c.read(walletRepositoryProvider).getPlan(meId);
-      expect(plan, isNotNull);
-      expect(plan!.price, 129);
+      final plan = (await c.read(walletRepositoryProvider).getPlan(meId))!;
+      expect(plan.type, PlanType.monthly);
       expect(plan.untilDate, rideTuesday.addMonths(1));
-      expect(find.byType(TodayScreen), findsOneWidget, reason: 'plan chosen, no longer redirected');
+      expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 71);
+      expect(find.byType(TodayScreen), findsOneWidget);
+      expect(find.text(l.priceSubscribed(40)), findsOneWidget, reason: 'AC2: no fee once subscribed');
     });
 
-    testWidgets('[$code] AC2: choosing Yearly starts a free month at the yearly price', (tester) async {
-      final c = await _openAsRider(tester, code);
+    testWidgets('[$code] Yearly shows its 1,290 price on the button', (tester) async {
+      await _openSubscription(tester, code);
       await tester.tap(find.byKey(const Key('plan-yearly')));
       await tester.pumpAndSettle();
-      expect(find.text(l.planCtaStart), findsOneWidget);
-      await tester.tap(find.byKey(const Key('plan-cta')));
-      await tester.pumpAndSettle();
-
-      final meId = c.read(dailyCommuteRepositoryProvider).meId;
-      final plan = await c.read(walletRepositoryProvider).getPlan(meId);
-      expect(plan!.price, 1290);
-      expect(plan.untilDate, rideTuesday.addMonths(1));
+      expect(find.text(l.subscribeCta(1290)), findsOneWidget);
     });
 
-    testWidgets('[$code] AC3: Through my company verifies and starts a free, trial-less Company plan',
-        (tester) async {
-      final c = await _openAsRider(tester, code);
+    testWidgets('[$code] AC3: not enough balance → "top up first", nothing charged', (tester) async {
+      final c = await _openSubscription(tester, code, balance: 100);
+      await tester.tap(find.byKey(const Key('plan-cta')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('sub-needs-top-up')), findsOneWidget);
+      expect(find.text(l.subNeedsTopUp(29, 100)), findsOneWidget);
+      final meId = c.read(dailyCommuteRepositoryProvider).meId;
+      expect(await c.read(walletRepositoryProvider).getPlan(meId), isNull);
+      expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 100);
+    });
+
+    testWidgets('[$code] AC4: Through my company verifies and costs nothing', (tester) async {
+      final c = await _openSubscription(tester, code);
       await tester.tap(find.byKey(const Key('plan-company')));
       await tester.pumpAndSettle();
       expect(find.text(l.planCtaVerify), findsOneWidget);
       await tester.tap(find.byKey(const Key('plan-cta')));
       await tester.pumpAndSettle();
-
-      expect(find.text(l.verifyEmailTitle), findsOneWidget);
       await tester.tap(find.byKey(const Key('verify-confirm')));
       await tester.pumpAndSettle();
-
       final meId = c.read(dailyCommuteRepositoryProvider).meId;
-      final plan = await c.read(walletRepositoryProvider).getPlan(meId);
-      expect(plan!.price, 0);
-      expect(plan.untilDate, isNull);
+      expect((await c.read(walletRepositoryProvider).getPlan(meId))!.type, PlanType.company);
+      expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 0);
       expect(find.byType(TodayScreen), findsOneWidget);
-    });
-
-    testWidgets('[$code] AC4: a driver never sees the plan screen', (tester) async {
-      await pumpGooraApp(
-        tester,
-        prefs: memberPrefs(role: Role.driver, locale: code),
-        overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(PlanScreen), findsNothing);
-      expect(find.byType(TodayScreen), findsOneWidget);
-    });
-
-    testWidgets('[$code] AC5: without a plan, Today/Week keep redirecting back to the plan screen',
-        (tester) async {
-      final c = await _openAsRider(tester, code);
-      expect(find.byType(PlanScreen), findsOneWidget);
-      c.read(routerProvider).go(Routes.today);
-      await tester.pumpAndSettle();
-      expect(find.byType(PlanScreen), findsOneWidget, reason: 'no plan chosen yet — still redirected');
     });
   }
 }

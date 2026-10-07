@@ -17,6 +17,7 @@ import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/presentation/labels.dart';
 import '../labels.dart';
 import 'cant_come_sheet.dart';
+import 'cash_after_trip.dart';
 import 'delay_sheet.dart';
 import 'pickup_check_in.dart';
 import 'rider_today.dart';
@@ -34,10 +35,8 @@ class DriverToday extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final drive = view.drive;
     final drivingToday = drive != null && drive.date == view.now.date ? drive.driving : const <LegPlan>[];
-    // After "End trip" the last leg stays up so cash riders can be recorded
-    // (004 v2 FR-012).
-    final checkIn = drivingToday.where((l) => !l.overAt(view.now)).firstOrNull ??
-        drivingToday.where((l) => l.ride?.endedAt != null).lastOrNull;
+    final checkIn = drivingToday.where((l) => !l.overAt(view.now)).firstOrNull;
+    final ended = drivingToday.where((l) => l.ride?.endedAt != null).lastOrNull;
     final riding = view.display != null && view.display!.date != drive?.date ? view.display : null;
     // A leg I ride off duty today: the same live map and countdown riders get.
     final rideToday = view.upcomingRides.where((l) => l.date == view.now.date).firstOrNull;
@@ -74,6 +73,10 @@ class DriverToday extends StatelessWidget {
         if (checkIn != null) ...[
           const SizedBox(height: AppSpacing.gap),
           PickupCheckIn(view: view, leg: checkIn),
+        ],
+        if (ended != null) ...[
+          const SizedBox(height: AppSpacing.gap),
+          CashAfterTrip(view: view, leg: ended),
         ],
         if (riding != null && riding.riding.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.gap),

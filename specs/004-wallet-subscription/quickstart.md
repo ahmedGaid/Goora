@@ -23,8 +23,9 @@ Device validation. Run alongside `flutter analyze`, `flutter test` and
 1. Reset, onboard again, pick "Use wallet". **Expect** on match result and Today:
    "40 EGP to the driver + 4 EGP service fee".
 2. Wallet → Top up InstaPay 200. **Expect** balance exactly 200.
-3. Settings → Demo → ride day 7:15, then "Real time" after the ride's arrival time (a trip
-   settles). **Expect** a "Trip" row of 44 EGP with "40 EGP to the driver + 4 EGP service fee",
+3. Let a trip settle: 003 settles a ride once its arrival time passes (or the driver taps End
+   trip). Not yet confirmed on device which demo-clock steps make that quick — check and fix
+   this step during T077. **Expect** a "Trip" row of 44 EGP with "40 EGP to the driver + 4 EGP service fee",
    balance 156.
 4. Plan card → Change → Monthly → Subscribe. **Expect** balance 27, plan card "Subscribed until
    {date}", price lines "40 EGP · no fees (subscribed)".

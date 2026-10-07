@@ -181,6 +181,48 @@ void main() {
       expect(find.text(l.breakdownNoFee), findsOneWidget);
     });
 
+    testWidgets('[$code] US3 AC5: a lapsed subscription is back to pay per trip, fee included', (tester) async {
+      await _openWallet(
+        tester,
+        code,
+        extra: {
+          ..._balance(200),
+          FakeWalletRepository.planKey: jsonEncode(Plan(
+            personId: 'me',
+            type: PlanType.monthly,
+            status: PlanStatus.active,
+            price: 129,
+            startDate: CalendarDate(2026, 9, 1),
+            untilDate: CalendarDate(2026, 10, 1),
+          ).toJson()),
+        },
+      );
+      expect(find.text(l.planLapsedLine), findsOneWidget);
+      expect(find.text(l.planPayPerTrip), findsOneWidget);
+      expect(find.text(l.breakdownFee), findsOneWidget);
+    });
+
+    testWidgets('[$code] the savings banner hides once subscribed', (tester) async {
+      await _openWallet(
+        tester,
+        code,
+        extra: {
+          ..._trips(33),
+          ..._balance(2000),
+          FakeWalletRepository.planKey: jsonEncode(Plan(
+            personId: 'me',
+            type: PlanType.monthly,
+            status: PlanStatus.active,
+            price: 129,
+            startDate: CalendarDate(2026, 10, 28),
+            untilDate: CalendarDate(2026, 11, 28),
+          ).toJson()),
+        },
+      );
+      expect(find.byKey(const Key('fee-savings')), findsNothing,
+          reason: 'fees were paid this month, but the rider is subscribed now');
+    });
+
     testWidgets('[$code] a wallet rider below one trip sees "Top up to keep riding"', (tester) async {
       await _openWallet(tester, code);
       expect(find.byKey(const Key('needs-top-up')), findsOneWidget);

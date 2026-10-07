@@ -211,3 +211,16 @@ Brief §7 strings are used verbatim. Drafted for founder review (not in §7):
 | breakdownShare / breakdownFee / breakdownNoFee | نصيب السواق / رسوم الخدمة (10%) / رسوم الخدمة: مفيش | Driver's share / Service fee (10%) / Service fee: none |
 | cashMarkedReceived / cashMarkedUnpaid | الكاش وصل / اتسجّل إنه مدفعش | Cash received / Marked unpaid |
 | cashReceivedTitle / cashReceivedNote | الكاش اللي استلمته / متسجّل بس — مش بيتسحب | Cash received / Recorded only — not withdrawable |
+| priceDriver | {price} ج ليك من كل راكب · جورة مجانية للسواقين | {price} EGP to you per passenger · Goora is free for drivers |
+| needsTopUpBody | رصيدك أقل من تمن مشوار واحد ({total} ج). | Your balance is below one trip ({total} EGP). |
+
+`priceDriver` exists because a driver viewing the match result would otherwise read "+ 4 EGP
+service fee" as a fee on them (goora-brand check 4). Copy check for review: the cash-trial copy
+uses مشوار/مشاوير for trips per the lexicon; the v1 رحلة drift noted above is unchanged.
+
+### R7 addendum — trips before payment setup (found while implementing)
+
+003 seeds ~30 days of demo reliability history (`kept` events before the person joined). Billing
+those would hit a brand-new rider with ~13 trips (−572 EGP) and use up a cash trial at once. The
+wallet only bills trips from the day the rider set up payment (`wallet.since.<id>`: the day they
+chose a method or a plan started).

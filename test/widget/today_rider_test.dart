@@ -115,12 +115,13 @@ void main() {
     expect(find.text(l10nFor(en).emptySeatsTitle), findsWidgets);
   });
 
-  testWidgets('no fee text other than "no per-trip fees" (FR-004)', (tester) async {
+  testWidgets("the only fee text is the rider's own price line (004 v2 FR-004)", (tester) async {
     await pumpRider(tester, TestClock(at(rideTuesday, 7, 13)));
     final texts = tester.widgetList<Text>(find.byType(Text)).map((t) => t.data ?? '').toList();
     final fees = texts.where((t) => t.toLowerCase().contains('fee')).toList();
     expect(fees, isNotEmpty);
-    expect(fees.every((t) => t.contains('no per-trip fees')), isTrue, reason: '$fees');
+    // memberPrefs seeds a company plan: fee-free, said once on the pay tile.
+    expect(fees.every((t) => t.contains('no fees (company)')), isTrue, reason: '$fees');
   });
 
   testWidgets('screen fits at 1.3× text size', (tester) async {
