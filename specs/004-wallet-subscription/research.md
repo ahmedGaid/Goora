@@ -57,6 +57,13 @@ implementation-level: how to build what the spec already decided.
 - **Decision**: `FakePaymentProvider` takes an optional `shouldFail` hook (defaults to "never"),
   settable from the debug Demo section (same pattern as 003's demo-clock override in Settings),
   so SC-005's failure path is reachable without hand-editing code.
+  **As shipped (checked 2026-10-08): the hook exists but nothing wires it to a Settings control —
+  `paymentProvider` in `data/providers.dart` always constructs a plain `FakePaymentProvider()`.
+  Only widget tests (`top_up_sheet_test.dart`, `withdraw_sheet_test.dart`) exercise `shouldFail`
+  today via a provider override. quickstart.md Scenario 2/3's "force the next top-up/withdrawal to
+  fail" steps have no live UI path yet** — either add the Settings → Demo toggle this decision
+  describes, or update quickstart.md to say the failure path is test-only. Not decided this
+  session; flagging for the founder/next session.
 - **Rationale**: 003 already has precedent (research R11) for a debug-only way to force
   demo-relevant edge cases; a widget test can also inject a provider that always fails without
   touching the debug UI.

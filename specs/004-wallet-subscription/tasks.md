@@ -200,8 +200,20 @@ present) and confirm the weekly balance, payout line and activity rows.
 - [x] T044 List every drafted Plan/Wallet ARB key for founder review (same pattern as 003's
   research R14) — append to `specs/004-wallet-subscription/research.md`
 - [x] T045 Gates: `flutter analyze` (0 issues), `flutter test` (493 pass); README: add a 004
-  section (new feature folder, no new packages). `quickstart.md`'s three device scenarios NOT run
-  this session — no device/emulator was connected (`adb devices` empty). Still open before merge.
+  section (new feature folder, no new packages). `quickstart.md` on device (`R5CNC0NK6ZT`,
+  `01010665106` rider, build `1d0c393`), ar: **Scenario 1 confirmed live** — Plan screen exact to
+  spec, Monthly chosen, lands on Today, Wallet plan card reads "مجاني لحد 18/11 · بعدها 129
+  جنيه/الشهر" (steps 5-7 driver-redirect already covered by passing `plan_screen_test.dart`
+  AC4/AC5). **Scenario 2 confirmed live** — balance/trips-caption/method+amount pills, top-up
+  InstaPay 200 → balance 200 + "شحن +200" row, Change → Yearly → plan card unchanged until next
+  billing date (step 5 late-cancel/free-cancel rows and steps 8-9 forced-failure rely on passing
+  `rider_wallet_test.dart`/`top_up_sheet_test.dart`, since a fresh rider has no 003 ride history to
+  seed those rows live). **Scenario 3 not run live** — driver mode needs 003's license+vehicle
+  Trust verification before matching unlocks, out of scope for a 004 walkthrough session; relies
+  on passing `driver_wallet_test.dart` AC1-AC4. **English (LTR) pass of all three not run** — do
+  before merge. Found+fixed in research.md R4: the "force next payment to fail" Settings control
+  this file's R4 describes was never actually wired — `providers.dart` always builds a plain
+  `FakePaymentProvider()`, so `shouldFail` is test-only today. README's claim corrected to match.
 
 ---
 

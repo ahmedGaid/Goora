@@ -69,8 +69,9 @@ backup), and resets the fake data. Release builds always use real time. New pack
 A rider with no active plan is redirected to **Plan** (Monthly/Yearly/Company) before Today/Week;
 Wallet is a tab in the shell for both roles — a rider sees balance, top-up, plan status and
 activity, a driver sees recovered balance, withdraw-to-InstaPay and a trip-cost breakdown.
-`FakePaymentProvider`'s `shouldFail` hook (set from Settings → Demo) forces a top-up/withdrawal
-failure to exercise the inline, blame-free retry path without hand-editing code. No new packages;
+`FakePaymentProvider`'s `shouldFail` hook forces a top-up/withdrawal failure to exercise the
+inline, blame-free retry path — wired only in widget tests today (`top_up_sheet_test.dart`,
+`withdraw_sheet_test.dart`), not reachable from the Settings → Demo UI. No new packages;
 wallet activity rows read 003's `Charge`/`Absence` records rather than duplicating them (one
 writer per fact — see `specs/004-wallet-subscription/research.md` R3).
 
