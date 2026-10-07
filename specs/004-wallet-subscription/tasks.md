@@ -250,3 +250,128 @@ Setup (T001) → Foundational (T002–T017)
    breakdown). Commit + converge.
 3. **Session 3**: US3 + Polish → driver Wallet tab, withdrawal, goldens, contrast, gates,
    quickstart walkthrough.
+
+---
+
+# v2 — payment model (amendment 2026-10-08)
+
+Story labels below refer to the **v2** spec's US1–US5. Tests are requested (spec SC-003,
+Constitution VIII). Paths are repo-relative.
+
+## Phase 7: Foundational v2 (blocks every v2 story)
+
+**Purpose**: the three pure rules, the twin, and the reshaped model + repository.
+
+- [ ] T046 [P] Create `PricingService` (`feeRatePercent`, `serviceFee`, `riderTotal`, half-up per
+  research R6) in `lib/features/wallet/domain/pricing_service.dart`
+- [ ] T047 [P] Create `CashTrialPolicy` (limit 10, strikes 2, banner after 7; `available`,
+  `tripsLeft`, `showTopUpBanner`) in `lib/features/wallet/domain/cash_trial_policy.dart`
+- [ ] T048 [P] Create `FeeSavingsCalculator` (`subscriptionPrice` 129, `feesInMonth`,
+  `shouldUpsell`) in `lib/features/wallet/domain/fee_savings_calculator.dart`
+- [ ] T049 [P] Write `test/fixtures/pricing_vectors.json` (contributions 32–48 × subscriber ×
+  cash, expected fee/total) and `test/unit/pricing_service_test.dart` reading it, plus the brief's
+  40 → 44 example
+- [ ] T050 [P] Write `test/unit/cash_trial_policy_test.dart` (0, 3, 6, 7, 9, 10 trips; 0/1/2
+  strikes; strike on the 10th) and `test/unit/fee_savings_calculator_test.dart` (fees 128/129/130,
+  other month ignored, fee-free never upsells)
+- [ ] T051 [P] Create `supabase/functions/_shared/pricing.ts` + `pricing.test.ts` reading
+  `test/fixtures/pricing_vectors.json`
+- [ ] T052 Create `PaymentMethod` (`lib/features/wallet/domain/payment_method.dart`) and
+  `CashMark`/`CashOutcome` (`lib/features/wallet/domain/cash_mark.dart`) with JSON
+- [ ] T053 Reshape `Plan` (drop `trialing`), `ActivityEntry` (+ `trip`, `cashTrip`,
+  `subscription`, `cashReceived`; + `fee`, `notCollected`), `Wallet` (+ `method`, `cashTrial`,
+  `feesThisMonth`, `cashReceived`), `WalletRules` (drop `trialEndDate`; `tripsCovered` by leg
+  total) in `lib/features/wallet/domain/`
+- [ ] T054 Update `WalletRepository` to the v2 contract (`subscribe`, `getMethod`, `setMethod`,
+  `methodOf`, `cashMarks`, `markCash`; drop `choosePlan`) in
+  `lib/features/wallet/domain/wallet_repository.dart`
+- [ ] T055 Rewrite `FakeWalletRepository`: method/marks storage, subscribe from the ledger
+  (R10), derived wallet — the R8 fold over 003's kept rider events and charges using
+  PricingService/CashTrialPolicy, balance = ledger − derived debits, fees this month, driver cash
+  received — in `lib/features/wallet/data/fake_wallet_repository.dart`
+- [ ] T056 Seed Youssef as a cash rider and a driver's demo cash rows in
+  `lib/features/wallet/data/wallet_seed.dart`; make Settings → "Reset demo data" clear the
+  wallet keys too
+- [ ] T057 Add `riderPricingProvider` (the rider's `PricingMode`: cash / wallet / subscribed /
+  company) in `lib/features/wallet/data/providers.dart`
+- [ ] T058 Update `test/unit/fake_wallet_repository_test.dart` for the derived wallet (44-EGP
+  trip, 200 top-up, charges without fee, cash fold, subscribe/needsTopUp, lapse) and
+  `test/helpers/daily_fakes.dart` (`withPlan` keeps seeding a company plan; add `method`)
+
+**Checkpoint**: rules + repo green in unit tests; UI not yet changed.
+
+## Phase 8: US1 — choose how to pay (P1) 🎯 MVP
+
+**Independent test**: join as a rider → payment-method screen → cash → Today shows the cash line.
+
+- [ ] T059 [US1] Add `Routes.payMethod`; replace `_requirePlan` with an arrangement guard (R9);
+  match result's rider "Join" goes to `Routes.payMethod` — `lib/app/routes.dart`,
+  `lib/app/router.dart`, `lib/features/commute/presentation/match_result_screen.dart`
+- [ ] T060 [US1] Build `PayMethodScreen` (cash / wallet radio cards, Continue, "Subscribe and pay
+  no fees" link) in `lib/features/wallet/presentation/pay_method/pay_method_screen.dart`
+- [ ] T061 [US1] Add `PriceLine` (one function: contribution + PricingMode → string) in
+  `lib/features/wallet/presentation/price_line.dart`; use it in
+  `lib/features/commute/presentation/match_result_screen.dart` and
+  `lib/features/daily/presentation/today/rider_today.dart`; retire `feeLine` (gallery too)
+- [ ] T062 [US1] ARB: §7 strings + R13 drafted keys, both locales, `flutter gen-l10n` —
+  `lib/core/l10n/app_ar.arb`, `lib/core/l10n/app_en.arb`
+- [ ] T063 [US1] Widget tests ar/en: `test/widget/pay_method_screen_test.dart` (AC1–6) and the
+  price lines in the existing match-result / Today tests
+
+## Phase 9: US3 — subscribe (P1)
+
+**Independent test**: 200-EGP wallet rider subscribes Monthly → balance 71, plan Subscribed.
+
+- [ ] T064 [US3] Turn `PlanScreen` into the subscription screen (new title/subline, "Subscribe ·
+  {price}", needs-top-up message, company verify unchanged) and its controller to `subscribe` —
+  `lib/features/wallet/presentation/plan/`
+- [ ] T065 [US3] Rewrite `test/widget/plan_screen_test.dart` for the subscription screen (AC1–5)
+
+## Phase 10: US2 + US4 — rider wallet with fees and cash trial (P1)
+
+**Independent test**: seeded histories show the 44-EGP rows, savings banner, cash counter and
+switch-overs with CashTrialPolicy's numbers.
+
+- [ ] T066 [US2] Plan card states (Pay per trip / Subscribed until / Company / lapsed), Change →
+  subscription screen; drop the v1 due banner — `rider_wallet.dart`, `labels.dart`
+- [ ] T067 [US2] Activity rows: trip shows total with the split caption; charges show
+  "Not charged during the cash trial" when skipped; subscription and cash-trip rows —
+  `lib/features/wallet/presentation/wallet/activity_row.dart`, `labels.dart`
+- [ ] T068 [US2] Fee-savings banner with "Subscribe"; breakdown share / fee / total; updated
+  "How paying works" — `rider_wallet.dart`, `wallet_controller.dart`
+- [ ] T069 [US4] Cash-trial counter card, the from-trip-8 banner, cash ended / cash off states,
+  "Top up to keep riding" (not for company) — `rider_wallet.dart`
+- [ ] T070 [US2] [US4] Rewrite `test/widget/rider_wallet_test.dart` (US2 AC1–6, US4 AC1–5) ar/en
+
+## Phase 11: US5 — driver cash (P2)
+
+- [ ] T071 [US5] Cash buttons for picked-up cash riders after the trip ends, status chip after —
+  `lib/features/daily/presentation/today/pickup_check_in.dart` (+ a small provider for marks)
+- [ ] T072 [US5] "Cash received" card, separate and not withdrawable —
+  `lib/features/wallet/presentation/wallet/driver_wallet.dart`
+- [ ] T073 [US5] Tests: `test/widget/driver_cash_test.dart` (AC1–2) and
+  `test/widget/driver_wallet_test.dart` (AC3–4) ar/en
+
+## Phase 12: Polish v2
+
+- [ ] T074 Regenerate goldens for changed screens and add `pay_method` screen goldens —
+  `test/golden/wallet_widgets_golden_test.dart`
+- [ ] T075 Contrast: add any new text/background pair to `test/unit/contrast_test.dart`
+- [ ] T076 Gates: `flutter analyze`, `flutter test`, `node --test
+  "supabase/functions/_shared/*.test.ts"`; README 004 section updated for v2
+- [ ] T077 quickstart.md scenarios 1–3 on device, ar + en
+
+## v2 Dependencies
+
+```text
+Phase 7 (T046–T058) → US1 (T059–T063) → US3 (T064–T065) → US2+US4 (T066–T070) → US5 (T071–T073)
+  → Polish (T074–T077)
+```
+
+- T046–T051 are parallel (separate files). T055 needs T046–T054.
+- US5 depends only on Phase 7 (marks + seed), not on the rider screens.
+
+## v2 Implementation Strategy
+
+MVP = Phase 7 + US1: riders can pick cash or wallet and see honest prices. Then subscribe, then
+the wallet states, then the driver side. Commit after each phase; converge at the end.
