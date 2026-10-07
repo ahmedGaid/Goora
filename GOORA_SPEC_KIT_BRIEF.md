@@ -271,11 +271,15 @@ Live trip: real-time driver location during an active trip, share-trip link, SOS
 ### Feature 004: Wallet and subscription
 
 ```text
-/speckit-specify Read GOORA_SPEC_KIT_BRIEF.md section 6.7. Build the subscription and wallet:
+/speckit-specify Read GOORA_SPEC_KIT_BRIEF.md section 6.7. Build the payment model and wallet:
 
-Plan screen (shown to riders after "Join this group"; drivers skip it): title "Start your free month", subline "You only pay once we find your group — and we did.", three radio cards (Monthly 129 EGP / Yearly 1,290 EGP with "2 months free" chip / Through my company: free, verify work email), "What's included" list, note that the fuel contribution goes to the driver in full, CTA "Start free month" / "Verify work email", footer "Cancel anytime. Goora is free for drivers."
-Wallet, rider: plan card (name, status "Free until <date> · then 129 EGP/month", Change), dark balance card with "Covers about N trips" and Top up (method pills InstaPay / Vodafone Cash / Card, amounts 200/400/800), "How paying works" rules list, activity list (trip deductions, late-cancel half charge, zero rows for free cancellations, top-ups), and "What you pay per trip" breakdown (your share of fuel & tolls / Goora fees: in your plan / total).
-Wallet, driver: "Recovered this week" balance, "Paid out every Thursday · no fees taken from you", Withdraw to InstaPay, activity (trip income, late-cancel and no-show fees), "Your trip cost" breakdown (trip cost / you receive from riders / what you pay yourself / Goora is free for drivers).
+Payment-method screen (shown to riders after "Join this group"; drivers skip it): "Pay cash to the driver (first 10 trips)" or "Use wallet", plus a small "Subscribe and pay no fees" link. There is no mandatory plan step.
+Subscription screen (from that link and from the Wallet): Monthly 129 EGP / Yearly 1,290 EGP with "2 months free" chip / Through my company (verify work email), "What's included" list, note that the fuel contribution goes to the driver in full, footer "Cancel anytime. Goora is free for drivers." Subscribers pay no per-trip fee.
+Prices everywhere a trip is priced (match result, Today, booking): "40 EGP to the driver + 4 EGP service fee" for non-subscribers, "40 EGP · no fees (subscribed)" for subscribers, "Pay 40 EGP cash to the driver" during the cash trial.
+Wallet, rider: plan card (Pay per trip / Subscribed / Company, Change), dark balance card with "Covers about N trips" and Top up (method pills InstaPay / Vodafone Cash / Card, amounts 200/400/800), the cash-trial counter "N cash trips left" while it is active (top-up banner from cash trip 8), the fee-savings banner when this month's fees exceed 129 EGP, "How paying works" rules list, activity list (each trip shows its service fee separately, late-cancel half charge, zero rows for free cancellations, cash trips, top-ups), and "What you pay per trip" breakdown (driver's share / service fee / total).
+Wallet, driver: "Recovered this week" balance, "Paid out every Thursday · no fees taken from you", Withdraw to InstaPay, cash received shown separately (recorded only, not withdrawable), activity (trip income, late-cancel and no-show fees), "Your trip cost" breakdown (trip cost / you receive from riders / what you pay yourself / Goora is free for drivers).
+Driver Today: after drop-off, for each cash rider, "Received 40 EGP cash" / "Didn't pay".
+Domain (pure Dart, unit tests with these exact numbers): PricingService.riderTotal(contribution, isSubscriber, isCashTrial), CashTrialPolicy (10-trip limit, 2 "didn't pay" strikes, banner from trip 8), FeeSavingsCalculator (monthly fees vs 129).
 Money is held by a licensed payment partner; the app keeps a ledger only. Use FakePaymentProvider in this feature.
 ```
 
@@ -289,9 +293,9 @@ Entry points:
 - From inside the app, at any time: a rider who already belongs to a group sees "Need an extra trip? Book a seat" on Today, which opens A. A driver sees "Offer a trip" on Today, which opens C. Back returns to the app.
 
 A) Empty seats today (riders, no subscription needed): Going/Return toggle, route line, list of seats from existing groups (driver avatar, rating, pickup point, time, seats left, price, Book seat), the rule caption about subscriber priority and refunds, and a dashed card "Nothing fits your time? Post your trip".
-   - Non-subscribers see "45 EGP · 40 to the driver + 5 booking". The booked confirmation shows a summary plus an upsell card "Liked it? Make it your daily commute", which leads to commute setup with "every day" preselected.
-   - Subscribers see "40 EGP · Included in your plan · no booking fee". The booked confirmation shows the summary and "Back to today" with no upsell.
-B) Post your trip (rider): From / To / Time, "Just once" or "Every workday", the three rules shown with check icons, Post. Then a posted state ("Sent to N drivers on your route", progress, Cancel) and an accepted state (driver card, pickup, time, contribution; if daily: "You're now a commute group" → plan).
+   - Non-subscribers see "44 EGP · 40 to the driver + 4 service fee" (the same 10% per-trip service fee as section 6.7). The booked confirmation shows a summary plus an upsell card "Liked it? Make it your daily commute", which leads to commute setup with "every day" preselected.
+   - Subscribers see "40 EGP · no fees (subscribed)". The booked confirmation shows the summary and "Back to today" with no upsell.
+B) Post your trip (rider): From / To / Time, "Just once" or "Every workday", the three rules shown with check icons, Post. Then a posted state ("Sent to N drivers on your route", progress, Cancel) and an accepted state (driver card, pickup, time, contribution; if daily: "You're now a commute group" → payment method).
 C) Offer a trip (driver): verification chips, From / To / Time, seats, once/daily, contribution stepper, the three rules, Publish. Then a live state with a seat progress bar, anonymous booked riders list, "Your car is full!" when full, and a daily trip with riders that becomes a group.
 D) Find riders (driver browses requests without posting a trip first). Entry points: "Find riders" next to "Offer a trip" on driver Today, and a text link "Or find riders who already posted" on the Offer screen. The screen shows a "Leaving from" area filter (All / Sheikh Zayed / 6th of October / Smart Village…), a Morning/Evening toggle, a "Trips left today" counter (starts at 2), and anonymous request cards (route, verified rider / verified rider (woman), pickup, time, once/daily, rating or New, fixed price).
    - Accept opens an inline confirm: "This creates your trip: <route> · <time>. Trips left after this: N". Confirming creates the driver's trip, the same as Offer a trip.
@@ -368,11 +372,13 @@ When a driver can't drive, Goora searches in this order:
 Riders get a banner telling them who covers the day. If nobody can cover, riders are notified the evening before with options.
 
 ### 6.7 Monetization
-- **Rider subscription:** 129 EGP/month or 1,290 EGP/year. The first month is free, and it starts only once a group is found (no match, no charge). It includes the group seat, backup, rotation, tracking and SOS, with no per-trip fees.
-- **Drivers:** always free.
-- **One-off seat booking:** 40 to the driver + 5 EGP booking fee for non-subscribers. Free for subscribers.
-- **Company plan (feature 006):** 75 EGP per registered employee per month.
-- **Wallet:** prepaid top-ups through a licensed partner, and the app keeps a ledger. Payouts to drivers run weekly (Thursday) to InstaPay.
+- **A) Per-trip service fee (default for riders):** the rider pays the driver's contribution + a 10% Goora service fee on each trip, rounded to the nearest whole EGP (40 EGP trip → rider pays 44: 40 to the driver, 4 to Goora). The fee is deducted per completed trip, never at top-up (topping up 200 EGP gives a 200 EGP balance). Late-cancel (half share) and no-show (full share) charges go to the driver only, with no Goora fee.
+- **Drivers:** never pay any fee or subscription. They always receive 100% of their contribution.
+- **B) Optional subscription (frequent riders):** 129 EGP/month or 1,290 EGP/year. Subscribers pay no per-trip fee: trips and one-off seats cost exactly the driver's contribution. There is no mandatory plan step after "Join this group"; riders go to the payment-method screen instead (C). When a rider's fees this month exceed the subscription price, the Wallet shows "You paid X EGP in fees this month. With a subscription you'd pay 129." with a "Subscribe" button.
+- **C) Cash trial (new riders, first 10 trips):** a new rider can pay the driver in cash for their first 10 completed trips (trips, not days), with no Goora fee. After each cash trip the driver confirms "Received 40 EGP cash" or taps "Didn't pay"; both are recorded. Two "Didn't pay" marks turn cash off for that rider immediately, and they must top up. Late-cancel and no-show charges are not collected during cash trips; they affect the reliability score only. The rider sees "N cash trips left", and from cash trip 8 a banner: "Top up your wallet to keep riding — get backup drivers, guaranteed seats and refunds." After 10 cash trips, booking requires a wallet balance (or a company plan). Payment-method screen after joining a group: "Pay cash to the driver (first 10 trips)" or "Use wallet", plus a small "Subscribe and pay no fees" link.
+- **D) Company plan (feature 006):** unchanged. 75 EGP per registered employee per month; employees pay no fees.
+- **Wallet:** prepaid top-ups through a licensed partner, and the app keeps a ledger. Payouts to drivers run weekly (Thursday) to InstaPay. Cash a driver receives is recorded only and is not withdrawable.
+- **Constitution II reading:** the hard cap ("riders' total payments never exceed the full trip cost") applies to what drivers receive. The Goora service fee is not part of trip cost and never reaches the driver, the same reading the earlier 5 EGP booking fee used. To be confirmed by the legal opinion in §8.
 
 ### 6.8 Marketplace limits (so it never becomes a taxi)
 - **Max 2 offered trips per driver per day**, going and return. A trip is created either by "Offer a trip" or by accepting a request in "Find riders". Riders on the same route within ±30 min of each other count as one trip.
@@ -381,7 +387,7 @@ Riders get a banner telling them who covers the day. If nobody can cover, riders
 - **No bidding.** Prices are always system-set.
 - **Drivers can't pick riders by name or photo.** Riders appear as "Verified rider" or "Verified rider (woman)" with a rating until they board. Filters exist only as settings: women-only, same company.
 - **Subscribers get priority on empty seats.** A one-off booking is fully refunded if the seat is reclaimed before 9 PM.
-- **One-off trips are available to everyone at any time.** New users reach them from onboarding ("Just one trip"). Group members reach them from the Today tab, and subscribers pay no booking fee.
+- **One-off trips are available to everyone at any time.** New users reach them from onboarding ("Just one trip"). Group members reach them from the Today tab, and subscribers pay no service fee.
 - **A daily request or offer that gets riders automatically becomes a group.**
 
 ---
@@ -399,7 +405,7 @@ Riders get a banner telling them who covers the day. If nobody can cover, riders
 | fRegular / fOnce | كل يوم / مشوار واحد بس | Every day / Just one trip |
 | fTag | الأوفر | Best value |
 | extraTrip | عايز مشوار زيادة؟ احجز كرسي | Need an extra trip? Book a seat |
-| subNote | ضمن اشتراكك · من غير رسوم حجز | Included in your plan · no booking fee |
+| subNote | ضمن اشتراكك · من غير رسوم | Included in your plan · no fees |
 | whereGo | بتروح فين كل يوم؟ | Where do you go every day? |
 | dirBoth / dirGoing / dirRet | رايح جاي / رايح بس / راجع بس | Both ways / Going only / Return only |
 | findCommute | دوّرلي على مشواري | Find my commute |
@@ -410,7 +416,7 @@ Riders get a banner telling them who covers the day. If nobody can cover, riders
 | cantCome | مش هقدر آجي بكرة | I can't come tomorrow |
 | arrivedBtn | وصلت البوابة الرئيسية | I've arrived at Main Gate |
 | pickedUp / noShow | ركب / مجاش | Picked up / No-show |
-| planTitle | ابدأ أول شهر مجانًا | Start your free month |
+| planTitle | اشترك ومن غير رسوم | Subscribe and pay no fees |
 | postReq | انشر مشوارك | Post your trip |
 | offerBtn | اعرض مشوار | Offer a trip |
 | reqsOnRoute | طلبات على خطك | Requests on your route |
@@ -419,6 +425,20 @@ Riders get a banner telling them who covers the day. If nobody can cover, riders
 | tripsLeftA | المشاوير الباقية النهارده | Trips left today |
 | tabs | النهارده · الأسبوع · المحفظة · الأمان | Today · Week · Wallet · Trust |
 | sos | استغاثة | SOS |
+| priceWithFee | {price} ج للسواق + {fee} ج رسوم خدمة | {price} EGP to the driver + {fee} EGP service fee |
+| priceSubscribed | {price} ج · من غير رسوم (مشترك) | {price} EGP · no fees (subscribed) |
+| priceCash | ادفع {price} ج كاش للسواق | Pay {price} EGP cash to the driver |
+| payMethodTitle | هتدفع إزاي؟ | How do you want to pay? |
+| payCash | ادفع كاش للسواق (أول 10 مشاوير) | Pay cash to the driver (first 10 trips) |
+| payWallet | ادفع من المحفظة | Use wallet |
+| subscribeLink | اشترك ومن غير رسوم | Subscribe and pay no fees |
+| cashTripsLeft | فاضل {count} مشاوير كاش | {count} cash trips left |
+| cashTopUpBanner | اشحن محفظتك عشان تكمّل مشاويرك — سواق بديل وكرسي مضمون وفلوسك ترجعلك. | Top up your wallet to keep riding — get backup drivers, guaranteed seats and refunds. |
+| feeSavings | دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس. | You paid {fees} EGP in fees this month. With a subscription you'd pay 129. |
+| subscribe | اشترك | Subscribe |
+| planPayPerTrip | بالمشوار | Pay per trip |
+| cashReceived | استلمت {price} ج كاش | Received {price} EGP cash |
+| didNotPay | مدفعش | Didn't pay |
 
 **Tone:** warm, short, Egyptian Arabic ("يلا"، "متغطّي"، "مجاش"), never formal MSA. In English, keep it plain and friendly.
 
@@ -426,7 +446,7 @@ Riders get a banner telling them who covers the day. If nobody can cover, riders
 
 ## 8. Open items (not for Claude Code to decide)
 
-- **Legal opinion:** does a cost-sharing coordination platform with a subscription fall under Law 87/2018?
+- **Legal opinion:** does a cost-sharing coordination platform with a subscription and a 10% per-trip service fee fall under Law 87/2018? Confirm that the fee sits outside the Constitution II cap (§6.7).
 - **Insurance product** for passengers.
 - **Payment partner** selection (Paymob or Fawry) and wallet licensing.
 - **Final pricing**, to be tested at 99, 129 and 149 with the first 50 riders.
