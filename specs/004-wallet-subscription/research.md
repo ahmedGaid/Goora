@@ -214,6 +214,34 @@ Brief §7 strings are used verbatim. Drafted for founder review (not in §7):
 | priceDriver | {price} ج ليك من كل راكب · جورة مجانية للسواقين | {price} EGP to you per passenger · Goora is free for drivers |
 | needsTopUpBody | رصيدك أقل من تمن مشوار واحد ({total} ج). | Your balance is below one trip ({total} EGP). |
 
+## R14 — a real bug: subscribing retroactively waives same-day fees already charged (found live, T077)
+
+`_riderTrips` (`fake_wallet_repository.dart:229`) computes `feeFree = plan != null &&
+plan.coversDate(item.date)` for every historical trip in the lookback window, every time the
+wallet is read. `Plan.coversDate` only compares `CalendarDate`s (day granularity, no time of
+day), so once a rider subscribes, `plan.startDate` is today and `coversDate(today)` is true for
+the rest of that day's reads — including a trip that already settled, and was already correctly
+debited its 4 EGP service fee, *before* the rider subscribed that same day.
+
+Observed live on device: rider joined on wallet pay, let the return leg settle (wallet showed
+"Trip · 40 EGP to the driver + 4 EGP service fee · -44 EGP", balance 156 — correct), then
+subscribed Monthly (-129 EGP). The same trip's activity row silently changed to
+"Trip · Service fee: none · -40 EGP" and the balance came out to 31 EGP (200 − 40 − 129) instead
+of the expected 27 EGP (156 − 129) — the already-paid 4 EGP fee was credited back with no
+activity row explaining why. Reproduced identically in English.
+
+Because the derivation recomputes every entry from the live ride/charge records on every read
+instead of storing what was actually charged at the time, this is a day-granularity bug, not a
+one-off: any trip taken earlier the same day a rider subscribes gets its fee quietly refunded.
+Smallest fix is likely to use a timestamp (not just a date) for `plan.startDate`/`coversDate`, or
+to stop recomputing `feeFree` from the current plan for entries that already happened — a trip's
+fee should be fixed at settlement time, not recomputed against the rider's current plan every
+time the wallet is read.
+
+Founder/implementer call: fix before merging `004-wallet-subscription`, or merge and fix in a
+follow-up — this is a real-money correctness bug (small amounts, direction favors the rider),
+not a cosmetic one.
+
 `priceDriver` exists because a driver viewing the match result would otherwise read "+ 4 EGP
 service fee" as a fee on them (goora-brand check 4). Copy check for review: the cash-trial copy
 uses مشوار/مشاوير for trips per the lexicon; the v1 رحلة drift noted above is unchanged.

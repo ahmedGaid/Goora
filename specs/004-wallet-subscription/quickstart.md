@@ -23,10 +23,12 @@ Device validation. Run alongside `flutter analyze`, `flutter test` and
 1. Reset, onboard again, pick "Use wallet". **Expect** on match result and Today:
    "40 EGP to the driver + 4 EGP service fee".
 2. Wallet → Top up InstaPay 200. **Expect** balance exactly 200.
-3. Let a trip settle: 003 settles a ride once its arrival time passes (or the driver taps End
-   trip). Not yet confirmed on device which demo-clock steps make that quick — check and fix
-   this step during T077. **Expect** a "Trip" row of 44 EGP with "40 EGP to the driver + 4 EGP service fee",
-   balance 156.
+3. Let a trip settle: Settings → Demo → "After 9 PM" (or "Before 9 PM") jumps to today's own
+   evening — past the return leg's arrival — because `_nextDuty(from: 1)` resolves to tomorrow's
+   ride day and backs up one day to get there. "Ride day" instead jumps to *today* at 7:15 AM
+   (today still counts as the next ride day before its own legs have run), which moves the clock
+   backward, not forward — don't use it for this step. Reopen Wallet. **Expect** a "Trip" row of
+   44 EGP with "40 EGP to the driver + 4 EGP service fee", balance 156.
 4. Plan card → Change → Monthly → Subscribe. **Expect** balance 27, plan card "Subscribed until
    {date}", price lines "40 EGP · no fees (subscribed)".
 5. With less than 129 EGP, subscribing shows "Top up {gap} EGP first" and charges nothing.
