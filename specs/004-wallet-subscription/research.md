@@ -214,7 +214,7 @@ Brief §7 strings are used verbatim. Drafted for founder review (not in §7):
 | priceDriver | {price} ج ليك من كل راكب · جورة مجانية للسواقين | {price} EGP to you per passenger · Goora is free for drivers |
 | needsTopUpBody | رصيدك أقل من تمن مشوار واحد ({total} ج). | Your balance is below one trip ({total} EGP). |
 
-## R14 — a real bug: subscribing retroactively waives same-day fees already charged (found live, T077)
+## R14 — a real bug: subscribing retroactively waived same-day fees already charged (found live T077, fixed `0636fda`)
 
 `_riderTrips` (`fake_wallet_repository.dart:229`) computes `feeFree = plan != null &&
 plan.coversDate(item.date)` for every historical trip in the lookback window, every time the
@@ -238,9 +238,14 @@ to stop recomputing `feeFree` from the current plan for entries that already hap
 fee should be fixed at settlement time, not recomputed against the rider's current plan every
 time the wallet is read.
 
-Founder/implementer call: fix before merging `004-wallet-subscription`, or merge and fix in a
-follow-up — this is a real-money correctness bug (small amounts, direction favors the rider),
-not a cosmetic one.
+**Fixed (`0636fda`)**: `Plan.startDate` is now a `WallTime` (date + time), set from the wallet's
+`now()` at the moment of subscribing. `coversDate(CalendarDate)` is kept, unchanged, for
+forward-looking pricing (today's Pay tile, the pay-method screen) where day granularity is
+correct. A new `coversTrip(WallTime)` is used only in `_riderTrips`, judging each trip's fee
+against its own settlement time. Two existing tests had unknowingly encoded the buggy behavior
+as expected and were corrected; a dedicated same-day-before/same-day-after regression test was
+added. `flutter test` 611 (was 608), `flutter analyze` 0, `node --test` 107 — all green. Not yet
+re-verified live on device (that still needs doing before merge, per goora-status).
 
 `priceDriver` exists because a driver viewing the match result would otherwise read "+ 4 EGP
 service fee" as a fee on them (goora-brand check 4). Copy check for review: the cash-trial copy
