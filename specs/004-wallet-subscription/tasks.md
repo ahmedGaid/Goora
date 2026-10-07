@@ -192,16 +192,16 @@ present) and confirm the weekly balance, payout line and activity rows.
 
 ## Phase 6: Polish
 
-- [ ] T041 [P] Extend `test/golden/wallet_widgets_golden_test.dart` with goldens RTL/LTR for Plan
+- [x] T041 [P] Extend `test/golden/wallet_widgets_golden_test.dart` with goldens RTL/LTR for Plan
   screen, rider/driver Wallet, and the three sheets
-- [ ] T042 [P] Add the new dark-balance-card and due-state text/background pairs to
+- [x] T042 [P] Add the new dark-balance-card and due-state text/background pairs to
   `test/unit/contrast_test.dart`
-- [ ] T043 Confirm `test/architecture/no_hardcoded_values_test.dart` covers `lib/features/wallet`
-- [ ] T044 List every drafted Plan/Wallet ARB key for founder review (same pattern as 003's
+- [x] T043 Confirm `test/architecture/no_hardcoded_values_test.dart` covers `lib/features/wallet`
+- [x] T044 List every drafted Plan/Wallet ARB key for founder review (same pattern as 003's
   research R14) — append to `specs/004-wallet-subscription/research.md`
-- [ ] T045 Gates: `flutter analyze` (0 issues), `flutter test`; run `quickstart.md`'s three
-  scenarios on a device/emulator in ar + en; README: add a 004 section (new feature folder, no
-  new packages)
+- [x] T045 Gates: `flutter analyze` (0 issues), `flutter test` (493 pass); README: add a 004
+  section (new feature folder, no new packages). `quickstart.md`'s three device scenarios NOT run
+  this session — no device/emulator was connected (`adb devices` empty). Still open before merge.
 
 ---
 

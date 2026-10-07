@@ -9,7 +9,6 @@ import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/activity_entry.dart';
 import 'package:goora/features/wallet/domain/payment_provider.dart';
-import 'package:goora/features/wallet/presentation/labels.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';

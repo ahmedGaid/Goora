@@ -64,6 +64,16 @@ driver arrive at your stop (live trip), simulates a driver who can't drive (with
 backup), and resets the fake data. Release builds always use real time. New packages in 003:
 `url_launcher` (Call driver, Call 122) and `share_plus` (Share trip).
 
+## Wallet and subscription (feature 004)
+
+A rider with no active plan is redirected to **Plan** (Monthly/Yearly/Company) before Today/Week;
+Wallet is a tab in the shell for both roles — a rider sees balance, top-up, plan status and
+activity, a driver sees recovered balance, withdraw-to-InstaPay and a trip-cost breakdown.
+`FakePaymentProvider`'s `shouldFail` hook (set from Settings → Demo) forces a top-up/withdrawal
+failure to exercise the inline, blame-free retry path without hand-editing code. No new packages;
+wallet activity rows read 003's `Charge`/`Absence` records rather than duplicating them (one
+writer per fact — see `specs/004-wallet-subscription/research.md` R3).
+
 ## Code generation
 
 Riverpod providers and l10n are generated and committed. After changing a `@riverpod` provider or

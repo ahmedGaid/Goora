@@ -64,3 +64,40 @@ implementation-level: how to build what the spec already decided.
   deterministically); no way to trigger a failure at all outside unit tests (rejected — SC-005's
   "verified by a unit test for each path" still needs the widget-level inline error reachable for
   manual device walkthroughs, same as every other feature's quickstart).
+
+## R5 Drafted copy (founder review) — not in the prototype dictionary
+
+Same pattern as 003's R14: everything else is taken from the existing dictionary and brief §6.7;
+these ~67 keys are new to this feature, Arabic in `lib/core/l10n/app_ar.arb`, English in
+`app_en.arb`. `shortDate` (`labels.dart`) is a Dart formatting helper, not an ARB key — no copy to
+review there.
+
+| key | ar | en |
+|---|---|---|
+| planSubline | تدفع لأول مرة بعد ما نلقى جروبك — ولقيناه. | You only pay once we find your group — and we did. |
+| planMonthlyTitle / planMonthlySub | شهري / 129 جنيه/الشهر | Monthly / 129 EGP/month |
+| planYearlyTitle / planYearlySub / planYearlyChip | سنوي / 1,290 جنيه/السنة / شهرين مجانًا | Yearly / 1,290 EGP/year / 2 months free |
+| planCompanyTitle / planCompanySub | عن طريق شركتي / مجاني — أكّد إيميل الشغل | Through my company / Free — verify your work email |
+| planIncludedTitle | هتحصل على | What's included |
+| planIncludedMatch | ترشيح يومي لجروب ركوبتك | Matching with your daily group |
+| planIncludedBackup | سواق بدّل لو سواقك اتأخر | A backup driver when yours can't make it |
+| planIncludedTrust | تتبّع الالتزام وأدوات أمان SOS | Reliability tracking and SOS safety tools |
+| planFuelNote | مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق. | The fuel & tolls you pay each trip go straight to your driver, in full. |
+| planCtaStart / planCtaVerify | ابدأ الشهر المجاني / أكّد إيميل الشغل | Start free month / Verify work email |
+| planFooter | تقدر تلغي في أي وقت. جورة مجانية للسواقين. | Cancel anytime. Goora is free for drivers. |
+| verifyEmailTitle / verifyEmailBody | أكّد إيميل شغلك / {company} هتدفع خطة جورة بتاعتك بعد تأكيد إيميل شغلك. | Verify your work email / {company} will cover your Goora plan once your work email is verified. |
+| verifyConfirm / verifyNotVerified | تأكيد / أكّد إيميل شغلك من تبويب الموثوقية الأول. | Confirm / Verify your work email in Trust first. |
+| balanceLabel / topUp / coversTrips | رصيد المحفظة / اشحن / {count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}} | Wallet balance / Top up / {count, plural, =0{Covers no trips yet} =1{Covers about 1 trip} other{Covers about {count} trips}} |
+| planChange / planFreeUntil / planActiveLine / planCompanyActive | تغيير / مجاني لحد {date} · بعدها {price} جنيه/الشهر / مفعّلة · {price} جنيه/الشهر / مجانية · شركتك بتدفعها | Change / Free until {date} · then {price} EGP/month / Active · {price} EGP/month / Free · paid by your company |
+| planDueTitle / planDueBody | خطتك محتاجة تجديد / اشحن محفظتك أو حوّل لخطة الشركة علشان مكانك يفضل متأكد. | Plan due / Top up your wallet or switch to Through my company to keep your seat confirmed. |
+| howPayTitle / howPayRule1-3 | إزاي الدفع بيشتغل / اشتراكك بيغطي ترشيح الجروب والسواق البديل وأدوات الأمان. / البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة. / الإلغاء المتأخر والغياب من غير اعتذار بتدفعهم من محفظتك. | How paying works / Your subscription covers matching, backup drivers and trust tools. / Fuel & tolls go straight to your driver — Goora takes no cut. / Late cancellations and no-shows are charged from your wallet. |
+| topUpSheetTitle / topUpMethodInstaPay / topUpMethodVodafone / topUpMethodCard | اشحن محفظتك / InstaPay / فودافون كاش / كارت | Top up your wallet / InstaPay / Vodafone Cash / Card |
+| topUpConfirm / topUpFailTitle / topUpFailBody | أكّد الشحن / الشحن ملحقش يتم / مفيش حاجة اتحصلت — جرّب تاني. | Confirm top-up / Top-up didn't go through / Nothing was charged — try again. |
+| changePlanTitle / changePlanNote / changePlanConfirm | غيّر خطتك / الخطة الجديدة تتفعل من تاريخ الفوترة الجاي — مفيش تغيير في الفترة الحالية. / أكّد التغيير | Change your plan / Takes effect on your next billing date — nothing changes for your current period. / Confirm change |
+| breakdownTitle / breakdownFuel / breakdownFees / breakdownTotal | بتدفع كام في الرحلة / البنزين والرسوم / رسوم جورة: ضمن اشتراكك / الإجمالي | What you pay per trip / Fuel & tolls / Goora fees: in your plan / Total |
+| activityTitle / activityEmpty | الحركة / لسه مفيش حركة | Activity / No activity yet |
+| actTopUp / actTripDeduction / actLateCancelCharge / actFreeCancelZero / actTripIncome / actFeeReceivedFrom / actWithdrawal | شحن / تكلفة رحلة / إلغاء متأخر / إلغاء مجاني / دخل الرحلة / رسوم {name} / سحب | Top-up / Trip cost / Late cancel / Free cancellation / Trip income / {name}'s fee / Withdrawal |
+| recoveredTitle / payoutNote | اتجمّع الأسبوع ده / بيتصرف كل خميس · من غير أي رسوم عليك | Recovered this week / Paid out every Thursday · no fees taken from you |
+| withdraw / withdrawSheetTitle | اسحب على InstaPay (both keys, same copy) | Withdraw to InstaPay (both keys, same copy) |
+| withdrawConfirm / withdrawFailTitle / withdrawFailBody | أكّد السحب / السحب ملحقش يتم / مفيش حاجة تحرّكت — جرّب تاني. | Confirm withdrawal / Withdrawal didn't go through / Nothing moved — try again. |
+| driverBreakdownTitle / driverBreakdownCost / driverBreakdownReceived / driverBreakdownGap / driverBreakdownFree | تكلفة رحلتك / تكلفة الرحلة / بتستلم من الركاب / بتدفعه من جيبك / جورة مجانية للسواقين | Your trip cost / Trip cost / You receive from riders / What you pay yourself / Goora is free for drivers |
