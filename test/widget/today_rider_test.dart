@@ -33,6 +33,7 @@ void main() {
       await pumpRider(tester, TestClock(at(rideTuesday, 7, 13, 30)), locale: code);
       expect(directionOf(tester, find.text(l.goodMorning('Omar'))), code == 'ar' ? TextDirection.rtl : TextDirection.ltr);
       expect(find.text(l.todaySub), findsOneWidget);
+      expect(find.byKey(const Key('today-logo')), findsOneWidget);
       // Hero: confirmed · my pickup time · route.
       expect(find.text(l.confirmed), findsOneWidget);
       expect(find.text(l.timeAm('7:25')), findsWidgets);

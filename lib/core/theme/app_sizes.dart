@@ -21,8 +21,7 @@ abstract final class AppSizes {
   static const iconTiny = 16.0;
   static const avatarSizes = [40.0, 44.0, 48.0, 52.0];
   static const logoMark = 52.0;
-  static const logoStroke = 7.0;
-  static const logoDot = 5.0;
+  static const logoHeader = 28.0;
   static const contentMaxWidth = 310.0;
   static const langPillHeight = 36.0;
   static const radioIcon = 34.0;

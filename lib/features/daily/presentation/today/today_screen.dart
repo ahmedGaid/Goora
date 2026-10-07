@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/goora_banner.dart';
+import '../../../../core/widgets/goora_logo.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../onboarding/presentation/session_controller.dart';
 import '../labels.dart';
@@ -20,6 +22,12 @@ class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
 
   static const _noon = 12;
+  static const _logo = GooraLogo(
+    key: Key('today-logo'),
+    variant: GooraLogoVariant.symbol,
+    tone: GooraLogoTone.primary,
+    size: AppSizes.logoHeader,
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,6 +39,7 @@ class TodayScreen extends ConsumerWidget {
 
     if (view == null) {
       return TabPage(
+        leading: _logo,
         title: greeting,
         actions: const [TodayHeaderActions()],
         children: [TabLoadState(failed: state.hasError, onRetry: () => ref.invalidate(todayControllerProvider))],
@@ -39,6 +48,7 @@ class TodayScreen extends ConsumerWidget {
 
     if (view.removed) {
       return TabPage(
+        leading: _logo,
         title: greeting,
         actions: const [TodayHeaderActions()],
         children: [
@@ -55,6 +65,7 @@ class TodayScreen extends ConsumerWidget {
 
     final drive = view.drive;
     return TabPage(
+      leading: _logo,
       title: greeting,
       subtitle: view.isDriver
           ? (drive == null ? l10n.notDrivingSoon : l10n.drivingWhen(l10n.when(drive.date, view.now.date)))

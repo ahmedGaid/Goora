@@ -1,0 +1,12 @@
+flutter_native_splash:
+  color: "#0B3B2E"
+  image: assets/brand/splash/symbol-reversed.png
+
+  android_12:
+    color: "#0B3B2E"
+    image: assets/brand/splash/symbol-reversed.png
+    icon_background_color: "#0B3B2E"
+
+  android: true
+  ios: true
+  web: false
