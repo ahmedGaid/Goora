@@ -1,0 +1,364 @@
+{
+ "cases": [
+  {
+   "name": "32 EGP, wallet",
+   "contribution": 32,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 3,
+   "total": 35
+  },
+  {
+   "name": "32 EGP, subscriber",
+   "contribution": 32,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 32
+  },
+  {
+   "name": "32 EGP, cash",
+   "contribution": 32,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 32
+  },
+  {
+   "name": "34 EGP, wallet",
+   "contribution": 34,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 3,
+   "total": 37
+  },
+  {
+   "name": "34 EGP, subscriber",
+   "contribution": 34,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 34
+  },
+  {
+   "name": "34 EGP, cash",
+   "contribution": 34,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 34
+  },
+  {
+   "name": "36 EGP, wallet",
+   "contribution": 36,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 4,
+   "total": 40
+  },
+  {
+   "name": "36 EGP, subscriber",
+   "contribution": 36,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 36
+  },
+  {
+   "name": "36 EGP, cash",
+   "contribution": 36,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 36
+  },
+  {
+   "name": "38 EGP, wallet",
+   "contribution": 38,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 4,
+   "total": 42
+  },
+  {
+   "name": "38 EGP, subscriber",
+   "contribution": 38,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 38
+  },
+  {
+   "name": "38 EGP, cash",
+   "contribution": 38,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 38
+  },
+  {
+   "name": "40 EGP, wallet",
+   "contribution": 40,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 4,
+   "total": 44
+  },
+  {
+   "name": "40 EGP, subscriber",
+   "contribution": 40,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 40
+  },
+  {
+   "name": "40 EGP, cash",
+   "contribution": 40,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 40
+  },
+  {
+   "name": "42 EGP, wallet",
+   "contribution": 42,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 4,
+   "total": 46
+  },
+  {
+   "name": "42 EGP, subscriber",
+   "contribution": 42,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 42
+  },
+  {
+   "name": "42 EGP, cash",
+   "contribution": 42,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 42
+  },
+  {
+   "name": "44 EGP, wallet",
+   "contribution": 44,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 4,
+   "total": 48
+  },
+  {
+   "name": "44 EGP, subscriber",
+   "contribution": 44,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 44
+  },
+  {
+   "name": "44 EGP, cash",
+   "contribution": 44,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 44
+  },
+  {
+   "name": "46 EGP, wallet",
+   "contribution": 46,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 5,
+   "total": 51
+  },
+  {
+   "name": "46 EGP, subscriber",
+   "contribution": 46,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 46
+  },
+  {
+   "name": "46 EGP, cash",
+   "contribution": 46,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 46
+  },
+  {
+   "name": "48 EGP, wallet",
+   "contribution": 48,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 5,
+   "total": 53
+  },
+  {
+   "name": "48 EGP, subscriber",
+   "contribution": 48,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 48
+  },
+  {
+   "name": "48 EGP, cash",
+   "contribution": 48,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 48
+  },
+  {
+   "name": "25 EGP, wallet",
+   "contribution": 25,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 3,
+   "total": 28
+  },
+  {
+   "name": "25 EGP, subscriber",
+   "contribution": 25,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 25
+  },
+  {
+   "name": "25 EGP, cash",
+   "contribution": 25,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 25
+  },
+  {
+   "name": "35 EGP, wallet",
+   "contribution": 35,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 4,
+   "total": 39
+  },
+  {
+   "name": "35 EGP, subscriber",
+   "contribution": 35,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 35
+  },
+  {
+   "name": "35 EGP, cash",
+   "contribution": 35,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 35
+  },
+  {
+   "name": "45 EGP, wallet",
+   "contribution": 45,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 5,
+   "total": 50
+  },
+  {
+   "name": "45 EGP, subscriber",
+   "contribution": 45,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 45
+  },
+  {
+   "name": "45 EGP, cash",
+   "contribution": 45,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 45
+  },
+  {
+   "name": "15 EGP, wallet",
+   "contribution": 15,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 2,
+   "total": 17
+  },
+  {
+   "name": "15 EGP, subscriber",
+   "contribution": 15,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 15
+  },
+  {
+   "name": "15 EGP, cash",
+   "contribution": 15,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 15
+  },
+  {
+   "name": "5 EGP, wallet",
+   "contribution": 5,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 1,
+   "total": 6
+  },
+  {
+   "name": "5 EGP, subscriber",
+   "contribution": 5,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 5
+  },
+  {
+   "name": "5 EGP, cash",
+   "contribution": 5,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 5
+  },
+  {
+   "name": "0 EGP, wallet",
+   "contribution": 0,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 0
+  },
+  {
+   "name": "0 EGP, subscriber",
+   "contribution": 0,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 0
+  },
+  {
+   "name": "0 EGP, cash",
+   "contribution": 0,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 0
+  }
+ ]
+}

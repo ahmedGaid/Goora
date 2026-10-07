@@ -208,7 +208,7 @@ void main() {
         expect(find.text(l.foundGroup), findsOneWidget);
         expect(find.text(l.membersCount(main.group.members.length + 1)), findsOneWidget);
         expect(find.text(l.routeLine(l.areaSheikhZayed, l.areaSmartVillage)), findsOneWidget);
-        expect(find.text(l.feeLine(40)), findsOneWidget);
+        expect(find.text(l.priceWithFee(40, 4)), findsOneWidget, reason: 'no method chosen yet: the wallet price');
         for (final r in main.reasons) {
           await _scrollTo(tester, find.text(l.reason(r)));
         }
@@ -242,7 +242,7 @@ void main() {
         await tester.tap(find.byKey(const Key('other-match-1')));
         await tester.pumpAndSettle();
         expect(find.text(l.matchPercent(firstAlt.score)), findsOneWidget);
-        expect(find.text(l.feeLine(firstAlt.group.price)), findsOneWidget);
+        expect(find.text(l.priceWithFee(firstAlt.group.price, (firstAlt.group.price + 5) ~/ 10)), findsOneWidget);
         // The replaced main now shows up among the alternatives instead; the list stays open.
         await _scrollTo(tester, find.byKey(const Key('other-match-0')));
         expect(find.text(l.matchPercent(main.score)), findsWidgets);

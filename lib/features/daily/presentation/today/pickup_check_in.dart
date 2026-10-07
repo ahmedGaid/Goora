@@ -12,6 +12,9 @@ import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../../core/widgets/goora_status_chip.dart';
 import '../../../commute/domain/group.dart';
+import '../../../wallet/data/providers.dart';
+import '../../../wallet/domain/cash_mark.dart';
+import '../../../wallet/presentation/wallet/wallet_controller.dart';
 import '../../domain/absence.dart';
 import '../../domain/attendance_rules.dart';
 import '../../domain/check_in.dart';
@@ -153,6 +156,7 @@ class _PassengerRow extends ConsumerWidget {
                   Outcome.noShow => GooraStatusChip(status: GooraStatus.noShow, label: l10n.stNoShow),
                 },
               ),
+              if (ride.endedAt != null && outcome == Outcome.pickedUp) _CashRow(ride: ride, member: member, price: view.group!.price),
               if (!locked) ...[
                 const SizedBox(height: AppSpacing.sm),
                 Row(
@@ -200,5 +204,68 @@ class _PassengerRow extends ConsumerWidget {
       final text = e.reason == RefusalReason.noShowTooEarly ? l10n.refusedNoShowEarly : l10n.refusedTripStarted;
       messenger.showSnackBar(SnackBar(content: Text(text)));
     }
+  }
+}
+
+/// After drop-off, a picked-up cash rider gets "Received N EGP cash" /
+/// "Didn't pay" (004 v2 FR-012); once recorded, a status instead. Wallet
+/// riders show nothing here.
+class _CashRow extends ConsumerWidget {
+  const _CashRow({required this.ride, required this.member, required this.price});
+
+  final Ride ride;
+  final Member member;
+  final int price;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final status = ref.watch(cashStatusProvider(ride.id, member.id)).value;
+    if (status == null || !status.isCash) return const SizedBox.shrink();
+    final outcome = status.outcome;
+    return Padding(
+      key: Key('cash-${member.id}'),
+      padding: const EdgeInsetsDirectional.only(top: AppSpacing.sm),
+      child: outcome != null
+          ? Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: outcome == CashOutcome.received
+                  ? GooraStatusChip(status: GooraStatus.covered, label: l10n.cashMarkedReceived)
+                  : GooraStatusChip(status: GooraStatus.off, label: l10n.cashMarkedUnpaid),
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: GooraGhostButton(
+                    key: Key('cash-received-${member.id}'),
+                    label: l10n.cashReceived(price),
+                    onPressed: () => _record(ref, CashOutcome.received),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: GooraGhostButton(
+                    key: Key('cash-unpaid-${member.id}'),
+                    label: l10n.didNotPay,
+                    onPressed: () => _record(ref, CashOutcome.didNotPay),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Future<void> _record(WidgetRef ref, CashOutcome outcome) async {
+    await ref.read(walletRepositoryProvider).markCash(CashMark(
+          rideId: ride.id,
+          riderId: member.id,
+          driverId: ride.driverId!,
+          outcome: outcome,
+          amount: price,
+          date: ride.date,
+        ));
+    ref
+      ..invalidate(cashStatusProvider(ride.id, member.id))
+      ..invalidate(walletControllerProvider);
   }
 }

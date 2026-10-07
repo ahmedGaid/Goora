@@ -42,7 +42,7 @@ void main() {
                           Expanded(child: GooraStatTile(label: l.returnTime, value: l.timePm('5:00'))),
                           const SizedBox(width: AppSpacing.md),
                           Expanded(
-                            child: GooraStatTile(label: l.payPerTrip, value: l.egpAmount(40), caption: l.feeLine(40)),
+                            child: GooraStatTile(label: l.payPerTrip, value: l.egpAmount(44), caption: l.priceWithFee(40, 4)),
                           ),
                         ],
                       ),

@@ -71,7 +71,7 @@ v1 fields plus **(v2)**:
 
 ## Rules (pure, `lib/features/wallet/domain/`)
 
-- `PricingService.serviceFee(c, {isSubscriber, isCashTrial})` = `0` if either, else
+- `PricingService.serviceFee(c, {isSubscriber, isCashTrial})` (002's commute PricingService) = `0` if either, else
   `(c + 5) ~/ 10` (R6). `riderTotal(c, {isSubscriber, isCashTrial})` = `c + serviceFee(…)`.
   `feeRatePercent = 10`.
 - `CashTrialPolicy`: `tripLimit = 10`, `strikeLimit = 2`, `bannerAfter = 7`.

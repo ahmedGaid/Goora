@@ -263,13 +263,13 @@ Constitution VIII). Paths are repo-relative.
 **Purpose**: the three pure rules, the twin, and the reshaped model + repository.
 
 - [ ] T046 [P] Create `PricingService` (`feeRatePercent`, `serviceFee`, `riderTotal`, half-up per
-  research R6) in `lib/features/wallet/domain/pricing_service.dart`
+  research R6) — added to 002's `lib/features/commute/domain/pricing_service.dart` (one PricingService)
 - [ ] T047 [P] Create `CashTrialPolicy` (limit 10, strikes 2, banner after 7; `available`,
   `tripsLeft`, `showTopUpBanner`) in `lib/features/wallet/domain/cash_trial_policy.dart`
 - [ ] T048 [P] Create `FeeSavingsCalculator` (`subscriptionPrice` 129, `feesInMonth`,
   `shouldUpsell`) in `lib/features/wallet/domain/fee_savings_calculator.dart`
 - [ ] T049 [P] Write `test/fixtures/pricing_vectors.json` (contributions 32–48 × subscriber ×
-  cash, expected fee/total) and `test/unit/pricing_service_test.dart` reading it, plus the brief's
+  cash, expected fee/total, from `gen_pricing_vectors.py`) and `test/unit/rider_total_test.dart` reading it, plus the brief's
   40 → 44 example
 - [ ] T050 [P] Write `test/unit/cash_trial_policy_test.dart` (0, 3, 6, 7, 9, 10 trips; 0/1/2
   strikes; strike on the 10th) and `test/unit/fee_savings_calculator_test.dart` (fees 128/129/130,

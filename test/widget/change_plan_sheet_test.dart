@@ -21,13 +21,13 @@ void main() {
     final code = locale.languageCode;
     final until = rideTuesday.addDays(10);
 
-    testWidgets('[$code] switching Monthly → Yearly keeps the current free-until date', (tester) async {
+    testWidgets('[$code] switching Monthly → Yearly keeps the current paid-until date', (tester) async {
       final c = await pumpGooraApp(
         tester,
         prefs: {
           ...memberPrefs(role: Role.rider, locale: code, withPlan: false),
           FakeWalletRepository.planKey: jsonEncode(
-            Plan(personId: 'me', type: PlanType.monthly, status: PlanStatus.trialing, price: 129, untilDate: until)
+            Plan(personId: 'me', type: PlanType.monthly, status: PlanStatus.active, price: 129, startDate: rideTuesday.addDays(-20), untilDate: until)
                 .toJson(),
           ),
         },

@@ -28,8 +28,7 @@ import '../features/onboarding/presentation/welcome_screen.dart';
 import '../features/placeholder/presentation/placeholder_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/wallet/data/providers.dart';
-import '../features/wallet/domain/plan.dart';
-import '../features/wallet/domain/wallet_rules.dart';
+import '../features/wallet/presentation/pay_method/pay_method_screen.dart';
 import '../features/wallet/presentation/plan/plan_screen.dart';
 import '../features/wallet/presentation/wallet/wallet_tab.dart';
 import 'routes.dart';
@@ -42,17 +41,18 @@ const _placeholderPaths = {
   PlaceholderKind.postTrip: Routes.postTrip,
 };
 
-/// A rider with no plan, or a due/expired one, is sent to the plan screen
-/// before they can use Today/Week (research R2); Wallet/Trust stay
-/// reachable (FR-014 is a prompt, not a lockout).
-Future<String?> _requirePlan(Ref ref, BuildContext context, GoRouterState state) async {
+/// A rider with no payment arrangement — a payment method, a paid-up
+/// subscription or a company plan — is sent to the payment-method screen
+/// before Today/Week (004 v2 research R9); Wallet/Trust stay reachable.
+Future<String?> _requireArrangement(Ref ref, BuildContext context, GoRouterState state) async {
   final role = ref.read(sessionControllerProvider).profile?.role;
   if (role != Role.rider) return null;
   final meId = ref.read(dailyCommuteRepositoryProvider).meId;
-  final plan = await ref.read(walletRepositoryProvider).getPlan(meId);
+  final repo = ref.read(walletRepositoryProvider);
+  if (await repo.getMethod(meId) != null) return null;
+  final plan = await repo.getPlan(meId);
   final today = ref.read(nowProvider)().date;
-  final ok = plan != null && (plan.type == PlanType.company || !WalletRules.isPlanDue(plan, today));
-  return ok ? null : Routes.plan;
+  return plan != null && plan.coversDate(today) ? null : Routes.payMethod;
 }
 
 /// Built once; the first location is the person's resume step.
@@ -82,6 +82,7 @@ GoRouter router(Ref ref) {
       GoRoute(path: Routes.match, builder: (_, _) => const MatchResultScreen()),
       GoRoute(path: Routes.noMatch, builder: (_, _) => const NoMatchScreen()),
       GoRoute(path: Routes.plan, builder: (_, _) => const PlanScreen()),
+      GoRoute(path: Routes.payMethod, builder: (_, _) => const PayMethodScreen()),
       for (final kind in PlaceholderKind.values)
         GoRoute(path: _placeholderPaths[kind]!, builder: (_, _) => PlaceholderScreen(kind: kind)),
       StatefulShellRoute.indexedStack(
@@ -91,7 +92,7 @@ GoRouter router(Ref ref) {
             routes: [
               GoRoute(
                 path: Routes.today,
-                redirect: (context, state) => _requirePlan(ref, context, state),
+                redirect: (context, state) => _requireArrangement(ref, context, state),
                 builder: (_, _) => const TodayScreen(),
               ),
             ],
@@ -100,7 +101,7 @@ GoRouter router(Ref ref) {
             routes: [
               GoRoute(
                 path: Routes.week,
-                redirect: (context, state) => _requirePlan(ref, context, state),
+                redirect: (context, state) => _requireArrangement(ref, context, state),
                 builder: (_, _) => const WeekScreen(),
               ),
             ],

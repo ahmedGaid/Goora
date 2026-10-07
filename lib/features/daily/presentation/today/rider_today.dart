@@ -19,7 +19,11 @@ import '../../../../core/widgets/goora_status_chip.dart';
 import '../../../../core/widgets/goora_timeline_row.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/domain/group.dart';
+import '../../../commute/domain/pricing_service.dart';
 import '../../../commute/presentation/labels.dart';
+import '../../../wallet/data/providers.dart';
+import '../../../wallet/domain/payment_method.dart';
+import '../../../wallet/presentation/labels.dart';
 import '../../data/providers.dart';
 import '../../domain/location_source.dart';
 import '../../domain/ride.dart';
@@ -359,16 +363,20 @@ class TripTimeline extends StatelessWidget {
   }
 }
 
-class _Tiles extends StatelessWidget {
+class _Tiles extends ConsumerWidget {
   const _Tiles({required this.view, required this.day});
 
   final TodayView view;
   final DayPlan day;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final price = view.group!.price;
+    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
+    final fee = mode == PricingMode.wallet
+        ? PricingService.serviceFee(price, isSubscriber: false, isCashTrial: false)
+        : 0;
     final ret = day.leg(Leg.ret);
     return IntrinsicHeight(
       child: Row(
@@ -385,8 +393,8 @@ class _Tiles extends StatelessWidget {
             child: GooraStatTile(
               key: const Key('pay-tile'),
               label: l10n.payPerTrip,
-              value: l10n.egpAmount(price),
-              caption: l10n.feeLine(price),
+              value: l10n.egpAmount(price + fee),
+              caption: l10n.priceLine(price, mode, fee: fee),
             ),
           ),
         ],

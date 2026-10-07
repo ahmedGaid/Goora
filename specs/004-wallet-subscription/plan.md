@@ -71,7 +71,8 @@ specs/004-wallet-subscription/  spec · plan · research (R1–R4 v1, R5 copy, R
 lib/app/router.dart             guard: payment arrangement → Routes.payMethod
 lib/app/routes.dart             + payMethod; plan stays (subscription screen)
 lib/features/wallet/
-  domain/  pricing_service.dart · cash_trial_policy.dart · fee_savings_calculator.dart   (new)
+  domain/  cash_trial_policy.dart · fee_savings_calculator.dart                        (new)
+           (PricingService.serviceFee/riderTotal extend 002's commute/domain/pricing_service.dart)
            payment_method.dart · cash_mark.dart                                         (new)
            plan.dart (no trialing) · activity_entry.dart (+ kinds, + fee) · wallet.dart (+ cash
            trial, fees this month, cash received) · wallet_repository.dart (+ methods)

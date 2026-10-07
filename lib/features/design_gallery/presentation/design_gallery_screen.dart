@@ -334,7 +334,7 @@ class _DesignGalleryScreenState extends State<DesignGalleryScreen> {
             children: [
               Expanded(child: GooraStatTile(label: l10n.returnTime, value: l10n.timePm('5:00'))),
               const SizedBox(width: AppSpacing.md),
-              Expanded(child: GooraStatTile(label: l10n.payPerTrip, value: l10n.egpAmount(40), caption: l10n.feeLine(40))),
+              Expanded(child: GooraStatTile(label: l10n.payPerTrip, value: l10n.egpAmount(44), caption: l10n.priceWithFee(40, 4))),
             ],
           ),
           const SizedBox(height: AppSpacing.gap),

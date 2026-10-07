@@ -54,10 +54,10 @@ void main() {
       expect(find.text(l.stopCentralSt), findsOneWidget);
       expect(find.text(l.tlPassengers(4, ['Mohamed', 'Sara', 'Youssef', l.youWord].join(l.listSep))), findsOneWidget);
       expect(find.text(l.tlArrival(l.timeAm('8:05'))), findsOneWidget);
-      // Tiles: return time, price per trip with no fee (FR-004).
+      // Tiles: return time, price per trip — memberPrefs seeds a company plan, so no fee (004 v2 FR-004).
       expect(find.text(l.returnTime), findsOneWidget);
       expect(find.text(l.payPerTrip), findsOneWidget);
-      expect(find.text(l.feeLine(40)), findsOneWidget);
+      expect(find.text(l.priceCompany(40)), findsOneWidget);
       // Safety + cancel + extra trip.
       expect(find.text(l.shareTrip), findsOneWidget);
       expect(find.text(l.sos), findsOneWidget);

@@ -60,4 +60,20 @@ abstract final class PricingService {
 
   /// Positive = above suggested, negative = below, 0 = the suggested price.
   static int deltaFromSuggested(int price, PriceRange r) => price - r.suggested;
+
+  /// Goora's per-trip service fee (brief §6.7 A). The contribution still goes
+  /// to the driver in full; the fee is on top, never part of the trip cost the
+  /// cap above protects (004 spec "Constitution II reading").
+  static const feeRatePercent = 10;
+
+  /// 10% of the contribution, nearest whole EGP, halves up (004 research R6);
+  /// 0 for subscribers, company-plan riders and cash trips.
+  static int serviceFee(int contribution, {required bool isSubscriber, required bool isCashTrial}) {
+    if (isSubscriber || isCashTrial) return 0;
+    return (contribution * feeRatePercent + 50) ~/ 100;
+  }
+
+  /// What the rider pays for one trip: 40 → 44, or 40 when fee-free.
+  static int riderTotal(int contribution, {required bool isSubscriber, required bool isCashTrial}) =>
+      contribution + serviceFee(contribution, isSubscriber: isSubscriber, isCashTrial: isCashTrial);
 }

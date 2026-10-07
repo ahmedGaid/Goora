@@ -17,6 +17,7 @@ import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/data/fake_wallet_repository.dart';
+import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
 
 final testPhone = PhoneNumber.tryParse('01012345678')!;
@@ -70,6 +71,7 @@ Map<String, Object> memberPrefs({
   CommuteProfile? commute,
   bool member = true,
   bool withPlan = true,
+  PaymentMethod? method,
 }) =>
     {
       LocaleController.storageKey: locale,
@@ -95,14 +97,17 @@ Map<String, Object> memberPrefs({
             .toJson(),
       ),
       if (member) FakeCommuteRepository.membershipKey: 'sz-0725',
-      // 004: a rider needs an active plan to reach Today/Week; seeded here
-      // (Company — never due) so pre-004 tests don't all need to know about
-      // the plan screen. Tests exercising US1 itself pass withPlan: false.
+      // 004: a rider needs a payment arrangement to reach Today/Week; a
+      // Company plan (fee-free, never lapses) is seeded so pre-004 tests keep
+      // their 40 EGP numbers. Tests of the payment flow pass withPlan: false
+      // and/or a [method].
       if (member && role == Role.rider && withPlan)
         FakeWalletRepository.planKey: jsonEncode(
           const Plan(personId: DailySeed.meId, type: PlanType.company, status: PlanStatus.active, price: 0)
               .toJson(),
         ),
+      if (method != null) FakeWalletRepository.methodKey(DailySeed.meId): method.name,
+      if (method != null) FakeWalletRepository.sinceKey(DailySeed.meId): '2026-10-01',
     };
 
 List<Override> dailyOverrides(TestClock clock, {RecordingDialer? dialer, RecordingSharer? sharer}) => [

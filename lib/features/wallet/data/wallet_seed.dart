@@ -1,14 +1,17 @@
 import '../../../core/time/calendar_date.dart';
 import '../domain/activity_entry.dart';
+import '../domain/cash_mark.dart';
+import '../domain/payment_method.dart';
 
-/// Seeded wallet activity (research R3 / T012) so US2/US3's independent
-/// tests have rows to show without replaying 003's flows live. Only the
-/// kinds this feature's own repository actually writes — tripDeduction,
-/// lateCancelCharge and freeCancelZero are read from 003 at render time.
+/// Seeded wallet data (research R3, R11) so the driver's side has rows and a
+/// cash rider to show without replaying 003's flows live.
 abstract final class WalletSeed {
-  static List<ActivityEntry> riderActivity(CalendarDate today) => [
-        ActivityEntry(id: 'w-topup-1', kind: ActivityKind.topUp, amount: 400, date: today.addDays(-3)),
-      ];
+  /// Other riders' payment methods. Youssef (group sz-0725) is in the cash
+  /// trial, so a driver on that group sees "Received cash" / "Didn't pay".
+  static const methods = <String, PaymentMethod>{
+    'youssef': PaymentMethod.cash,
+    'sara': PaymentMethod.wallet,
+  };
 
   static List<ActivityEntry> driverActivity(CalendarDate today) => [
         ActivityEntry(
@@ -26,4 +29,14 @@ abstract final class WalletSeed {
           otherPersonId: 'sara',
         ),
       ];
+
+  /// Cash Youssef handed over on yesterday's seeded ride.
+  static CashMark driverCashMark(String driverId, CalendarDate today) => CashMark(
+        rideId: 'seed-ride-1',
+        riderId: 'youssef',
+        driverId: driverId,
+        outcome: CashOutcome.received,
+        amount: 40,
+        date: today.addDays(-1),
+      );
 }

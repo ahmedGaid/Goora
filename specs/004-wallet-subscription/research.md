@@ -180,7 +180,7 @@ listed for the founder's copy review.
 
 - **Decision**: `supabase/functions/_shared/pricing.ts` exports `serviceFee` and `riderTotal`;
   `test/fixtures/pricing_vectors.json` (hand-written, small) is read by both
-  `pricing.test.ts` and `test/unit/pricing_service_test.dart`. The cash-trial and savings rules
+  `pricing.test.ts` and `test/unit/rider_total_test.dart`. The cash-trial and savings rules
   stay app-only for now (no server consumer yet), documented as such.
 
 ## R13 — copy

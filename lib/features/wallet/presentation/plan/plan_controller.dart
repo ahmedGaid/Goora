@@ -4,6 +4,8 @@ import '../../../../core/time/now_provider.dart';
 import '../../../daily/data/providers.dart';
 import '../../data/providers.dart';
 import '../../domain/plan.dart';
+import '../../domain/wallet_repository.dart';
+import '../wallet/wallet_controller.dart';
 
 part 'plan_controller.g.dart';
 
@@ -15,13 +17,18 @@ class PlanController extends _$PlanController {
     return ref.watch(walletRepositoryProvider).getPlan(meId);
   }
 
-  /// Monthly/Yearly start the trial immediately (FR-002). Company only
-  /// after the work-email verify sheet confirms (FR-003).
-  Future<void> choosePlan(PlanType type) async {
+  /// Monthly/yearly are paid from the wallet (research R10); company only
+  /// after the work-email sheet confirms. Nothing changes on `needsTopUp`.
+  Future<SubscribeResult> subscribe(PlanType type) async {
     final meId = ref.read(dailyCommuteRepositoryProvider).meId;
     final today = ref.read(nowProvider)().date;
-    await ref.read(walletRepositoryProvider).choosePlan(meId, type, today: today);
-    ref.invalidateSelf();
-    await future;
+    final result = await ref.read(walletRepositoryProvider).subscribe(meId, type, today: today);
+    if (result == SubscribeResult.subscribed) {
+      ref.invalidate(riderPricingProvider);
+      ref.invalidate(walletControllerProvider);
+      ref.invalidateSelf();
+      await future;
+    }
+    return result;
   }
 }

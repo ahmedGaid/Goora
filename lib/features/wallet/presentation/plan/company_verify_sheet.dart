@@ -32,7 +32,7 @@ class _CompanyVerifySheetState extends ConsumerState<CompanyVerifySheet> {
 
   Future<void> _confirm() async {
     setState(() => _busy = true);
-    await ref.read(planControllerProvider.notifier).choosePlan(PlanType.company);
+    await ref.read(planControllerProvider.notifier).subscribe(PlanType.company);
     if (!mounted) return;
     Navigator.of(context).pop();
   }

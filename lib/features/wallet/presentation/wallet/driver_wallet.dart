@@ -43,6 +43,31 @@ class DriverWallet extends StatelessWidget {
             ],
           ),
         ),
+        if (view.wallet.cashReceived > 0) ...[
+          const SizedBox(height: AppSpacing.gap),
+          // Recorded only: never part of the balance above or a withdrawal (FR-013).
+          GooraCard(
+            key: const Key('cash-received'),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.cashReceivedTitle, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(l10n.cashReceivedNote, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+                    ],
+                  ),
+                ),
+                Text(
+                  l10n.egpAmount(view.wallet.cashReceived),
+                  style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+                ),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: AppSpacing.gap),
         Text(l10n.activityTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
         const SizedBox(height: AppSpacing.sm),

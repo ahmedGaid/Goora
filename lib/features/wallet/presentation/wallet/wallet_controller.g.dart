@@ -33,7 +33,7 @@ final class WalletControllerProvider
   WalletController create() => WalletController();
 }
 
-String _$walletControllerHash() => r'68f7bc78e568fe2b4809f1ef851b6044ee09322a';
+String _$walletControllerHash() => r'6782497cfb2c5d7cafa54f623e11739f2ef25ef6';
 
 abstract class _$WalletController extends $AsyncNotifier<WalletView> {
   FutureOr<WalletView> build();

@@ -33,9 +33,11 @@ class DriverToday extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final drive = view.drive;
-    final checkIn = drive != null && drive.date == view.now.date
-        ? drive.driving.where((l) => !l.overAt(view.now)).firstOrNull
-        : null;
+    final drivingToday = drive != null && drive.date == view.now.date ? drive.driving : const <LegPlan>[];
+    // After "End trip" the last leg stays up so cash riders can be recorded
+    // (004 v2 FR-012).
+    final checkIn = drivingToday.where((l) => !l.overAt(view.now)).firstOrNull ??
+        drivingToday.where((l) => l.ride?.endedAt != null).lastOrNull;
     final riding = view.display != null && view.display!.date != drive?.date ? view.display : null;
     // A leg I ride off duty today: the same live map and countdown riders get.
     final rideToday = view.upcomingRides.where((l) => l.date == view.now.date).firstOrNull;

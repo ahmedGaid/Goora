@@ -16,9 +16,13 @@ import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
+import '../../wallet/data/providers.dart';
+import '../../wallet/domain/payment_method.dart';
+import '../../wallet/presentation/labels.dart';
 import '../data/providers.dart';
 import '../domain/group.dart';
 import '../domain/matching_service.dart';
+import '../domain/pricing_service.dart';
 import 'commute_controller.dart';
 import 'labels.dart';
 
@@ -37,7 +41,7 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
   Future<void> _join(GroupMatch main, MatchOutcome outcome) async {
     setState(() => _joining = true);
     await ref.read(commuteRepositoryProvider).join(main.group.id);
-    if (mounted) context.go(outcome.viewerIsDriver ? Routes.today : Routes.plan);
+    if (mounted) context.go(outcome.viewerIsDriver ? Routes.today : Routes.payMethod);
   }
 
   @override
@@ -64,6 +68,11 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
     final from = l10n.area(outcome.profile.home!.area);
     final to = l10n.area(g.destination);
     final secondary = AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
+    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
+    final priceText = viewerIsDriver
+        ? l10n.priceDriver(g.price)
+        : l10n.priceLine(g.price, mode,
+            fee: PricingService.serviceFee(g.price, isSubscriber: false, isCashTrial: false));
 
     return OnboardingScaffold(
       header: GooraChip(key: const Key('match-chip'), label: l10n.matchPercent(main.score)),
@@ -117,7 +126,7 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
                     borderRadius: BorderRadius.circular(AppRadii.pill),
                   ),
                   child: Text(
-                    l10n.feeLine(g.price),
+                    priceText,
                     textAlign: TextAlign.center,
                     style: AppTypography.bodySmall.copyWith(color: AppColors.textBody),
                   ),

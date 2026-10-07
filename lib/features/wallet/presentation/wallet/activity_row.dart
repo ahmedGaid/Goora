@@ -7,12 +7,16 @@ import '../../../../core/theme/app_typography.dart';
 import '../../domain/activity_entry.dart';
 import '../labels.dart';
 
-/// One row of the activity list (FR-007/FR-011), shared by rider and driver
-/// Wallet tabs so neither forks the other's row rendering.
+/// One row of the activity list, shared by rider and driver Wallet tabs so
+/// neither forks the other's row rendering. A trip's fee shows on its own
+/// line under the label (v2 FR-011).
 class ActivityRow extends StatelessWidget {
-  const ActivityRow({super.key, required this.entry});
+  const ActivityRow({super.key, required this.entry, this.contribution = 0});
 
   final ActivityEntry entry;
+
+  /// The group's per-trip contribution, for a cash trip's "Paid N EGP cash".
+  final int contribution;
 
   static const _credit = {ActivityKind.topUp, ActivityKind.tripIncome, ActivityKind.feeReceived};
 
@@ -24,6 +28,8 @@ class ActivityRow extends StatelessWidget {
     final color = zero ? AppColors.textSecondary : (credit ? AppColors.greenText : AppColors.textPrimary);
     final sign = zero ? '' : (credit ? '+' : '-');
     final amountText = '$sign${l10n.egpAmount(entry.amount)}';
+    final caption = l10n.activityCaption(entry, contribution: contribution);
+    final small = AppTypography.caption.copyWith(color: AppColors.textSecondary);
     return Row(
       children: [
         Expanded(
@@ -31,8 +37,12 @@ class ActivityRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(l10n.activityLabel(entry), style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+              if (caption != null) ...[
+                const SizedBox(height: AppSpacing.xxs),
+                Text(caption, key: Key('caption-${entry.id}'), style: small),
+              ],
               const SizedBox(height: AppSpacing.xxs),
-              Text(l10n.shortDate(entry.date), style: AppTypography.caption.copyWith(color: AppColors.textSecondary)),
+              Text(l10n.shortDate(entry.date), style: small),
             ],
           ),
         ),
