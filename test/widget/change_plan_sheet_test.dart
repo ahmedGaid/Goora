@@ -27,7 +27,13 @@ void main() {
         prefs: {
           ...memberPrefs(role: Role.rider, locale: code, withPlan: false),
           FakeWalletRepository.planKey: jsonEncode(
-            Plan(personId: 'me', type: PlanType.monthly, status: PlanStatus.active, price: 129, startDate: rideTuesday.addDays(-20), untilDate: until)
+            Plan(
+                personId: 'me',
+                type: PlanType.monthly,
+                status: PlanStatus.active,
+                price: 129,
+                startDate: at(rideTuesday.addDays(-20), 0, 0),
+                untilDate: until)
                 .toJson(),
           ),
         },

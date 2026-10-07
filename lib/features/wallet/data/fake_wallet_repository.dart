@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/time/calendar_date.dart';
 import '../../../core/time/now_provider.dart';
+import '../../../core/time/wall_time.dart';
 import '../../commute/domain/commute_profile.dart' show Leg;
 import '../../commute/domain/group.dart';
 import '../../commute/domain/pricing_service.dart';
@@ -77,7 +78,7 @@ final class FakeWalletRepository implements WalletRepository {
   Future<SubscribeResult> subscribe(String personId, PlanType type, {required CalendarDate today}) async {
     if (type == PlanType.company) {
       await _markSince(personId, today);
-      await _savePlan(Plan(personId: personId, type: type, status: PlanStatus.active, price: 0, startDate: today));
+      await _savePlan(Plan(personId: personId, type: type, status: PlanStatus.active, price: 0, startDate: _now()));
       return SubscribeResult.subscribed;
     }
     await _markSince(personId, today);
@@ -90,7 +91,7 @@ final class FakeWalletRepository implements WalletRepository {
       type: type,
       status: PlanStatus.active,
       price: price,
-      startDate: today,
+      startDate: _now(),
       untilDate: today.addMonths(type == PlanType.yearly ? 12 : 1),
     ));
     return SubscribeResult.subscribed;
@@ -199,7 +200,7 @@ final class FakeWalletRepository implements WalletRepository {
     final group = await _daily.myGroup();
     if (group == null) return const _Derived();
     final sinceRaw = _prefs.getString(sinceKey(ownerId));
-    final since = sinceRaw == null ? plan?.startDate : CalendarDate.parse(sinceRaw);
+    final since = sinceRaw == null ? plan?.startDate?.date : CalendarDate.parse(sinceRaw);
     if (since == null) return const _Derived();
     final window = today.addDays(-_window);
     final from = since.isAfter(window) ? since : window;
@@ -226,7 +227,8 @@ final class FakeWalletRepository implements WalletRepository {
     var cashDone = 0;
     var strikes = 0;
     for (final item in items) {
-      final feeFree = plan != null && plan.coversDate(item.date);
+      final itemAt = WallTime(item.date, item.leg == Leg.going ? group.going : group.ret);
+      final feeFree = plan != null && plan.coversTrip(itemAt);
       final inCash = method == PaymentMethod.cash && !feeFree && CashTrialPolicy.available(cashDone, strikes);
       final charge = item.charge;
       if (charge == null) {

@@ -1,8 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/time/calendar_date.dart';
+import 'package:goora/core/time/wall_time.dart';
+import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
 import 'package:goora/features/wallet/domain/wallet_rules.dart';
+
+WallTime _midnight(CalendarDate date) => WallTime(date, const Clock.hm(0, 0));
 
 void main() {
   group('tripsCovered — a round-trip day at the rider\'s leg total', () {
@@ -28,7 +32,7 @@ void main() {
           type: PlanType.monthly,
           status: PlanStatus.active,
           price: 129,
-          startDate: start,
+          startDate: _midnight(start),
           untilDate: start.addMonths(1),
         );
 
@@ -42,7 +46,8 @@ void main() {
     });
 
     test('company covers from its start and never lapses', () {
-      final p = Plan(personId: 'me', type: PlanType.company, status: PlanStatus.active, price: 0, startDate: today);
+      final p =
+          Plan(personId: 'me', type: PlanType.company, status: PlanStatus.active, price: 0, startDate: _midnight(today));
       expect(p.coversDate(today.addDays(400)), isTrue);
       expect(WalletRules.isPlanDue(p, today.addDays(400)), isFalse);
     });
@@ -51,6 +56,38 @@ void main() {
       final p = Plan.fromJson({'personId': 'me', 'type': 'monthly', 'status': 'trialing', 'price': 129, 'untilDate': '2026-11-08'});
       expect(p.status, PlanStatus.due);
       expect(p.coversDate(today), isFalse);
+    });
+
+    test('a v1 plan with a bare-date startDate still parses (research R14)', () {
+      final p = Plan.fromJson({
+        'personId': 'me',
+        'type': 'monthly',
+        'status': 'active',
+        'price': 129,
+        'startDate': today.toIso(),
+        'untilDate': today.addMonths(1).toIso(),
+      });
+      expect(p.startDate, WallTime(today, const Clock.hm(0, 0)));
+      expect(p.coversDate(today), isTrue);
+    });
+
+    test('coversTrip keeps the fee a trip already settled before subscribing, same day (research R14)', () {
+      final subscribedAt = WallTime(today, const Clock.hm(21, 5)); // 9:05 PM
+      final p = Plan(
+        personId: 'me',
+        type: PlanType.monthly,
+        status: PlanStatus.active,
+        price: 129,
+        startDate: subscribedAt,
+        untilDate: today.addMonths(1),
+      );
+      final tripBeforeSubscribing = WallTime(today, const Clock.hm(17, 0)); // 5 PM return leg
+      final tripAfterSubscribing = WallTime(today, const Clock.hm(21, 30));
+      expect(p.coversTrip(tripBeforeSubscribing), isFalse, reason: 'already charged its fee before the rider subscribed');
+      expect(p.coversTrip(tripAfterSubscribing), isTrue);
+      // The forward-looking, day-granularity check still treats the whole day as covered —
+      // that's right for "what will I pay on my next trip today", just not for history.
+      expect(p.coversDate(today), isTrue);
     });
   });
 
@@ -69,7 +106,7 @@ void main() {
         type: PlanType.yearly,
         status: PlanStatus.active,
         price: 1290,
-        startDate: today,
+        startDate: _midnight(today),
         untilDate: today.addMonths(12),
       );
       expect(PricingMode.of(method: PaymentMethod.cash, plan: sub, today: today, cashAvailable: true), PricingMode.subscribed);

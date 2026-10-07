@@ -257,7 +257,7 @@ void main() {
       expect(await repo.subscribe('me', PlanType.monthly, today: today), SubscribeResult.subscribed);
       final plan = (await repo.getPlan('me'))!;
       expect(plan.status, PlanStatus.active);
-      expect(plan.startDate, today);
+      expect(plan.startDate, WallTime(today, const Clock.hm(9, 0)));
       expect(plan.untilDate, today.addMonths(1));
       final w = await repo.getWallet('me');
       expect(w.balance, 71);
@@ -281,7 +281,8 @@ void main() {
     });
 
     test('company: no charge, fee-free trips', () async {
-      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: [rideId(today, Leg.going)]));
+      // The return leg (5 PM) settles after _repo's now() (9 AM today).
+      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: [rideId(today, Leg.ret)]));
       await repo.setMethod('me', PaymentMethod.wallet);
       await repo.subscribe('me', PlanType.company, today: today);
       final w = await repo.getWallet('me');
@@ -291,7 +292,8 @@ void main() {
 
     test('trips before the subscription keep their fee; trips after cost 40', () async {
       final before = rideId(today.addDays(-1), Leg.going);
-      final after = rideId(today, Leg.going);
+      // The return leg (5 PM) settles after _repo's now() (9 AM today).
+      final after = rideId(today, Leg.ret);
       final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: [before, after]));
       await repo.setMethod('me', PaymentMethod.wallet);
       await repo.topUp('me', method: 'instapay', amount: 400);
@@ -301,13 +303,31 @@ void main() {
       expect(rows[after]!.amount, 40);
     });
 
+    test(
+        'research R14: a trip that settled earlier the SAME DAY the rider subscribes keeps its '
+        'fee — only a trip after the exact subscribe moment is fee-free', () async {
+      // _repo's now() is 9:00 AM `today`. The going leg (7:25 AM) settles before that;
+      // the return leg (5:00 PM) settles after it.
+      final earlierToday = rideId(today, Leg.going);
+      final laterToday = rideId(today, Leg.ret);
+      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: [earlierToday, laterToday]));
+      await repo.setMethod('me', PaymentMethod.wallet);
+      await repo.topUp('me', method: 'instapay', amount: 400);
+      await repo.subscribe('me', PlanType.monthly, today: today);
+      final rows = {for (final e in (await repo.getWallet('me')).activity) e.rideId: e};
+      expect(rows[earlierToday]!.amount, 44, reason: 'settled before subscribing, even same-day — keeps its fee');
+      expect(rows[earlierToday]!.fee, 4);
+      expect(rows[laterToday]!.amount, 40, reason: 'settled after subscribing — fee-free');
+      expect(rows[laterToday]!.fee, 0);
+    });
+
     test("changePlan doesn't affect the current period", () async {
       final repo = _repo(await _prefs());
       await repo.topUp('me', method: 'instapay', amount: 200);
       await repo.subscribe('me', PlanType.monthly, today: today);
       final changed = await repo.changePlan('me', PlanType.yearly);
       expect(changed.untilDate, today.addMonths(1));
-      expect(changed.startDate, today);
+      expect(changed.startDate, WallTime(today, const Clock.hm(9, 0)));
     });
   });
 
