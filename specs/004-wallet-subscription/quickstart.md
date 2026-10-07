@@ -7,6 +7,13 @@ Device validation. Run alongside `flutter analyze`, `flutter test` and
 
 - `flutter pub get` (no new packages). Debug build per `goora-stack` "Device testing".
 - Settings → Demo → "Reset demo data" before Scenario 1.
+- **Set the clock to a ride-day morning first.** Trips that start before the moment you join never
+  settle (`FakeDailyCommuteRepository._catchUp` skips `firstPickup` before `daily.joinedAt`), and
+  joining stamps the demo clock's time. Onboard in a real-time evening and none of the demo-clock
+  buttons can settle a trip: "After 9 PM" lands on that same evening (whose legs predate the join),
+  and "Ride day" jumps back to that morning. Reset keeps the demo clock (`debug.demoNow`), so: while
+  still in a group, tap "Ride day · 7:15 AM", *then* "Reset demo data", then onboard. (Derived from
+  the code after a 2026-10-07 device run stalled here; not yet re-run on a phone.)
 - The top-up/withdraw failure path is test-only (research R4 addendum); it is not part of these
   scenarios.
 
@@ -27,7 +34,8 @@ Device validation. Run alongside `flutter analyze`, `flutter test` and
    evening — past the return leg's arrival — because `_nextDuty(from: 1)` resolves to tomorrow's
    ride day and backs up one day to get there. "Ride day" instead jumps to *today* at 7:15 AM
    (today still counts as the next ride day before its own legs have run), which moves the clock
-   backward, not forward — don't use it for this step. Reopen Wallet. **Expect** a "Trip" row of
+   backward, not forward — don't use it for this step. This only settles anything if you joined
+   before that day's first pickup (see Prerequisites). Reopen Wallet. **Expect** a "Trip" row of
    44 EGP with "40 EGP to the driver + 4 EGP service fee", balance 156.
 4. Plan card → Change → Monthly → Subscribe. **Expect** balance 27, plan card "Subscribed until
    {date}", price lines "40 EGP · no fees (subscribed)".
