@@ -10,12 +10,22 @@ import '../../../../core/widgets/goora_ghost_button.dart';
 /// Scrollable tab body: title row (with optional actions) and content,
 /// 20 px side padding (brief §3.3 tab padding).
 class TabPage extends StatelessWidget {
-  const TabPage({super.key, required this.title, required this.children, this.subtitle, this.actions = const []});
+  const TabPage({
+    super.key,
+    required this.title,
+    required this.children,
+    this.subtitle,
+    this.actions = const [],
+    this.leading,
+  });
 
   final String title;
   final String? subtitle;
   final List<Widget> actions;
   final List<Widget> children;
+
+  /// Shown above the title row, at the start edge.
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +34,10 @@ class TabPage extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsetsDirectional.fromSTEB(AppSpacing.tabH, AppSpacing.md, AppSpacing.tabH, AppSpacing.lg),
         children: [
+          if (leading != null) ...[
+            Align(alignment: AlignmentDirectional.centerStart, child: leading),
+            const SizedBox(height: AppSpacing.md),
+          ],
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
