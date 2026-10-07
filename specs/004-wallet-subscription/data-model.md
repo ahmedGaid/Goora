@@ -1,92 +1,91 @@
-# Phase 1 Data Model: Wallet and Subscription
+# Phase 1 Data Model: Wallet and Payment Model
 
-Pure Dart, no persistence framework — `FakeWalletRepository` serialises these to/from
-`shared_preferences` as JSON, same pattern as 003's `Charge.toJson`/`fromJson`.
+Pure Dart, serialised to `shared_preferences` as JSON by `FakeWalletRepository` (v1 pattern).
+v2 changes are marked **(v2)**.
 
-## PlanType
+## PaymentMethod (v2)
+
+```dart
+enum PaymentMethod { cash, wallet }
+```
+
+A rider's choice on the payment-method screen, stored once (`wallet.method`). Choosing `wallet`
+gives up the cash trial (spec clarification).
+
+## PlanType / PlanStatus / Plan
 
 ```dart
 enum PlanType { monthly, yearly, company }
+enum PlanStatus { active, due }        // (v2) `trialing` removed — no free month
 ```
-
-- `monthly`: 129 EGP/month. `yearly`: 1,290 EGP/year ("2 months free" chip — 1,290 = 10× monthly).
-- `company`: 0 EGP, requires work-email verification (reuses 001's `VerificationKind.workEmail`).
-
-## PlanStatus
-
-```dart
-enum PlanStatus { trialing, active, due }
-```
-
-- `trialing`: inside the one-month free trial (monthly/yearly only).
-- `active`: trial ended, a payment arrangement exists (top-up balance covers it, or Company).
-- `due`: trial or paid period ended with no arrangement (FR-014) — not a removal, a prompt state.
-
-## Plan
 
 | Field | Type | Notes |
 |---|---|---|
-| `personId` | `String` | the rider; drivers have no `Plan` |
-| `type` | `PlanType` | |
-| `status` | `PlanStatus` | |
-| `price` | `int` | whole EGP; 0 for Company |
-| `untilDate` | `CalendarDate?` | free-until (trialing) or paid-until (active); `null` once `due` |
+| `personId` | `String` | riders only |
+| `type` | `PlanType` | monthly 129, yearly 1,290, company 0 |
+| `status` | `PlanStatus` | `due` = paid period over → pay per trip again |
+| `price` | `int` | whole EGP; 0 for company |
+| `untilDate` | `CalendarDate?` | **(v2)** paid-until; `null` for company |
 
-Invariant: `type == company` ⇒ `price == 0 && untilDate == null` (Company never trials or bills
-the rider — FR-003).
+A plan is **fee-free** when `type == company`, or when it is active and `today ≤ untilDate`.
 
-## Wallet
+## CashMark (v2)
 
 | Field | Type | Notes |
 |---|---|---|
-| `ownerId` | `String` | rider or driver member id |
-| `role` | `MemberRole` | from `commute/domain/group.dart` — picks rider vs. driver presentation |
-| `balance` | `int` | whole EGP; rider: prepaid; driver: recoverable-this-week awaiting Thursday payout |
-| `activity` | `List<ActivityEntry>` | newest first |
+| `rideId` | `String` | 003's ride id |
+| `riderId` | `String` | the cash rider |
+| `driverId` | `String` | who recorded it |
+| `outcome` | `CashOutcome { received, didNotPay }` | one mark per (ride, rider); first wins |
+| `amount` | `int` | the contribution (40) |
+| `date` | `CalendarDate` | the ride's date |
 
 ## ActivityEntry
 
 ```dart
-enum ActivityKind { topUp, tripDeduction, lateCancelCharge, freeCancelZero, tripIncome, feeReceived, withdrawal }
+enum ActivityKind {
+  topUp, tripDeduction, lateCancelCharge, freeCancelZero, tripIncome, feeReceived, withdrawal,
+  trip, cashTrip, subscription, cashReceived,      // (v2)
+}
 ```
 
 | Field | Type | Notes |
 |---|---|---|
-| `id` | `String` | |
-| `kind` | `ActivityKind` | |
-| `amount` | `int` | EGP, may be `0` (`freeCancelZero`) |
-| `date` | `CalendarDate` | |
-| `rideId` | `String?` | set for trip-linked kinds; `null` for `topUp`/`withdrawal` |
-| `otherPersonId` | `String?` | set for `feeReceived` (which rider's charge reached the driver) |
+| `amount` | `int` | what moved in the wallet (trip: contribution + fee; cashTrip: 0) |
+| `fee` | `int` | **(v2)** the service-fee part of `amount` (trip only; else 0) |
+| `notCollected` | `bool` | **(v2)** a charge skipped during the cash trial (amount 0) |
+| … | | v1 fields unchanged (`id`, `kind`, `date`, `rideId`, `otherPersonId`) |
 
-`lateCancelCharge`/`tripDeduction`/`freeCancelZero` are read from 003's `Charge` + `Ride`/
-`Absence` records at render time (research R3), not written by this feature's repository;
-`topUp`, `withdrawal` and `feeReceived` (the driver's side of a rider's `Charge`) are the only
-kinds this feature's repository actually creates.
+`tripDeduction` is no longer produced (v2 uses `trip`); kept so stored v1 data still parses.
 
-## WalletRules (pure functions, no state)
+## Wallet
 
-- `trialEndDate(CalendarDate chosenAt) → CalendarDate` = `chosenAt.addMonths(1)` (research R1).
-- `tripsCovered(int balance, int legShare) → int` = `max(0, balance ~/ (2 * legShare))` — a
-  "trip" is a round-trip day (going + return), so the divisor is `2 × legShare` (clarification:
-  40 EGP/leg ⇒ 80 EGP per round-trip day).
-- `isPlanDue(Plan plan, CalendarDate today) → bool` = `plan.status != PlanStatus.company-equivalent
-  check` — concretely: `plan.untilDate != null && today.isAfter(plan.untilDate!)`.
+v1 fields plus **(v2)**:
 
-## PaymentProvider (interface)
+| Field | Type | Notes |
+|---|---|---|
+| `method` | `PaymentMethod?` | riders |
+| `cashTrial` | `CashTrialStatus?` | `{tripsDone, strikes, tripsLeft, available, showTopUpBanner, endedBy}` — null for wallet riders |
+| `feesThisMonth` | `int` | sum of `fee` on this calendar month's trips |
+| `cashReceived` | `int` | drivers: sum of `received` marks; not part of `balance` |
 
-```dart
-abstract interface class PaymentProvider {
-  Future<PaymentResult> topUp({required String method, required int amount});
-  Future<PaymentResult> withdraw({required int amount});
-}
+## Rules (pure, `lib/features/wallet/domain/`)
 
-enum PaymentResult { success, failure }
-```
+- `PricingService.serviceFee(c, {isSubscriber, isCashTrial})` = `0` if either, else
+  `(c + 5) ~/ 10` (R6). `riderTotal(c, {isSubscriber, isCashTrial})` = `c + serviceFee(…)`.
+  `feeRatePercent = 10`.
+- `CashTrialPolicy`: `tripLimit = 10`, `strikeLimit = 2`, `bannerAfter = 7`.
+  `available(tripsDone, strikes)` = `tripsDone < 10 && strikes < 2`;
+  `tripsLeft(tripsDone)` = `max(0, 10 − tripsDone)`;
+  `showTopUpBanner(tripsDone, strikes)` = `available(…) && tripsDone ≥ 7`.
+- `FeeSavingsCalculator`: `subscriptionPrice = 129`;
+  `feesInMonth(entries, monthKey)` = Σ `fee` of that month's trips;
+  `shouldUpsell(fees, {isFeeFree})` = `!isFeeFree && fees > 129`.
+- `WalletRules.tripsCovered(balance, legTotal)` = `max(0, balance ~/ (2 × legTotal))`
+  (v2: `legTotal` is what one leg costs this rider, 44 or 40). `isPlanDue` unchanged.
+  `trialEndDate` removed.
 
-`FakePaymentProvider` is the only implementation; its `shouldFail` hook is research R4's debug
-override, defaulting to always-succeed.
+## PaymentProvider
 
-## WalletRepository (interface)
-
-See `contracts/repositories.md` for the full method list and who calls what.
+v1 interface unchanged (`topUp`, `withdraw`). Subscriptions move money inside the ledger only
+(R10), so no new provider call.

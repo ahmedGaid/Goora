@@ -1,266 +1,274 @@
-# Feature Specification: Wallet and Subscription
+# Feature Specification: Wallet and Payment Model
 
 **Feature Branch**: `004-wallet-subscription`
 
-**Created**: 2026-10-08
+**Created**: 2026-10-08 · **Amended**: 2026-10-08 (payment model v2, see "Amendment" below)
 
 **Status**: Draft
 
-**Input**: User description: "Read GOORA_SPEC_KIT_BRIEF.md section 6.7. Build the subscription and
-wallet: Plan screen (shown to riders after 'Join this group'; drivers skip it): title 'Start your
-free month', subline 'You only pay once we find your group — and we did.', three radio cards
-(Monthly 129 EGP / Yearly 1,290 EGP with '2 months free' chip / Through my company: free, verify
-work email), 'What's included' list, note that the fuel contribution goes to the driver in full,
-CTA 'Start free month' / 'Verify work email', footer 'Cancel anytime. Goora is free for drivers.'
-Wallet, rider: plan card (name, status 'Free until <date> · then 129 EGP/month', Change), dark
-balance card with 'Covers about N trips' and Top up (method pills InstaPay / Vodafone Cash / Card,
-amounts 200/400/800), 'How paying works' rules list, activity list (trip deductions, late-cancel
-half charge, zero rows for free cancellations, top-ups), and 'What you pay per trip' breakdown
-(your share of fuel & tolls / Goora fees: in your plan / total). Wallet, driver: 'Recovered this
-week' balance, 'Paid out every Thursday · no fees taken from you', Withdraw to InstaPay, activity
-(trip income, late-cancel and no-show fees), 'Your trip cost' breakdown (trip cost / you receive
-from riders / what you pay yourself / Goora is free for drivers). Money is held by a licensed
-payment partner; the app keeps a ledger only. Use FakePaymentProvider in this feature."
+**Input**: User description (v2, replaces the v1 "free month + mandatory plan" model): "Read
+GOORA_SPEC_KIT_BRIEF.md section 6.7. Build the payment model and wallet: payment-method screen
+after 'Join this group' (cash to the driver for the first 10 trips, or wallet, plus a 'Subscribe
+and pay no fees' link); optional subscription (129 EGP/month, 1,290 EGP/year, company plan
+unchanged); a 10% per-trip service fee for non-subscribers, deducted per completed trip; price
+lines on match result and Today; rider wallet with plan card, cash-trial counter, fee-savings
+banner and per-trip fee rows; driver Today 'Received cash' / 'Didn't pay' after drop-off; driver
+wallet showing cash received separately; pure-Dart PricingService, CashTrialPolicy and
+FeeSavingsCalculator with unit tests using the brief's numbers."
 
-**Sources of truth**: `GOORA_SPEC_KIT_BRIEF.md` §5 (004), §6.2, §6.7; approved prototype has no
-wallet/plan screens, so all copy here is drafted (research R-series, founder review before ship,
-same pattern as 001/002/003).
+**Sources of truth**: `GOORA_SPEC_KIT_BRIEF.md` §5 (004), §6.2, §6.5, §6.7 (rewritten 2026-10-08),
+§7. Copy not in §7 is drafted (research R5 + R6, founder review before ship).
 
-**Carried over from 001–003 (decided, not re-asked)**: demo trip cost 160 EGP → 40 EGP per rider
-per trip per leg; fakes-first backend (fake data now, server code written and tested for later
-keys); late cancellation owes half the leg share (`AttendanceRules.cancelCharge`, 20 EGP/leg — 40
-EGP across both legs of a day, matching the "40 EGP, both legs" figure already shown live in 003);
-a no-show owes the full leg share (40 EGP/leg); "Goora fee" never appears as a separate per-trip
-line (brief wins over the prototype) — it is folded into the subscription price instead, so the
-per-trip breakdown says "Goora fees: in your plan" rather than a number.
+**Carried over from 001–003 (decided, not re-asked)**: 40 EGP contribution per rider per trip
+(one leg); late cancellation owes half the leg share (20 EGP), a no-show the full share (40 EGP),
+both to the driver with no Goora fee; fakes-first backend; Constitution II (drivers never profit).
+
+## Amendment — payment model v2 (2026-10-08)
+
+v1 (US1–US3 built, T001–T045) had a mandatory plan screen with a free month and folded Goora's
+cut into the subscription. v2 makes the subscription optional, adds a 10% per-trip service fee for
+everyone else, and adds a 10-trip cash trial for new riders. What survives from v1 unchanged: the
+wallet ledger, top-up and withdrawal (with their failure paths), the subscription screen's plan
+cards and company verification, the driver wallet's recovered balance and breakdown, and the
+"read 003's records, don't duplicate them" seam (research R3). What is removed: the free month,
+the trialing status, the "Start your free month" copy, and the redirect that forced a plan.
+
+**Constitution II reading**: the cap ("riders' total payments must not exceed the full trip
+cost") applies to the contributions drivers receive, which are unchanged. The service fee goes to
+Goora, is not trip cost and never reaches the driver — the same reading the brief already used
+for the old 5 EGP booking fee. The brief records this for the pending legal opinion (§8). This
+feature does not amend the constitution.
 
 ## Clarifications
 
-### Session 2026-10-08
+### Session 2026-10-08 (v1)
 
-- Q: The brief's wallet balance card says "Covers about N trips" — what counts as a "trip" for
-  that estimate, and does it apply to subscribers? → A: Round-trip days (going + return = one
-  trip), floor(balance ÷ 2×leg-share). It only matters for the rare top-up a subscriber makes
-  ahead of a late-cancel charge or a one-off seat booking; subscribers don't spend from the wallet
-  for their daily group trips (that's covered by the subscription), so the tile is most relevant
-  to someone between plans or paying as a one-off rider.
-- Q: Company verification ("Through my company: free, verify work email") reuses the existing
-  `needWorkEmail` copy and flow from onboarding (001) — does accepting it grant the plan
-  immediately, or wait for an async check? → A: Immediate in this feature (fake verifier, same
-  spirit as other "fakes-first" checks in 001–003). A real email-domain/SSO check is out of scope
-  until feature 006 (company network).
-- Q: Can a rider change plans (Monthly ↔ Yearly ↔ Company) from the wallet "Change" link, and does
-  a mid-cycle change pro-rate? → A: Yes, they can switch any time from "Change"; it takes effect
-  at the next billing date, no pro-rating or refund for the current period (simplest fair rule,
-  matches "Cancel anytime" — no clawback either way).
+- Q: "Covers about N trips" — what is a trip? → A: a round-trip day, floor(balance ÷ 2 × leg
+  total). In v2 the leg total includes the service fee for non-subscribers (44 EGP, so 88 per day).
+- Q: Company verification — immediate or async? → A: immediate, fake verifier; a real check
+  belongs to feature 006.
+- Q: Mid-cycle plan change? → A: takes effect at the next billing date, no pro-rating.
+
+### Session 2026-10-08 (v2 — decided by the implementer from the brief, founder to confirm)
+
+- Q: Is there still a free month? → A: No. §6.7 B lists no trial; the cash trial is the new
+  low-friction start.
+- Q: How is a subscription paid? → A: From the wallet balance at the moment of subscribing (the
+  ledger stays the one money source). Not enough balance → an inline "top up first" with the gap.
+  At the end of the paid period the plan lapses back to pay-per-trip (no auto-renew in the fakes).
+- Q: Fee rounding? → A: Nearest whole EGP, halves up: fee = (contribution + 5) ÷ 10, integer.
+  40 → 4, 45 → 5, 44 → 4, 48 → 5.
+- Q: "From cash trip 8 onwards" — when exactly does the banner show? → A: Once the rider's next
+  cash trip is their 8th, i.e. after 7 completed cash trips (3 left), until cash ends.
+- Q: Does a "Didn't pay" trip count toward the 10? → A: Yes — it is a completed cash trip.
+- Q: Does a "Didn't pay" mark create a wallet debt? → A: No. It is recorded (and counts as a
+  strike); collecting it is out of scope.
+- Q: Can a rider move between cash and wallet? → A: The choice is made once on the
+  payment-method screen. Choosing the wallet gives up the cash trial. Cash ends by policy (10
+  trips or 2 strikes); topping up during the cash trial does not end it.
+- Q: "After 10 cash trips, booking requires a wallet balance (or a company plan)" — enforced
+  where? → A: There is no booking engine yet (005/server). This feature shows a "Top up to keep
+  riding" state in the Wallet when cash is not available and the balance is below one trip; a
+  company-plan rider never sees it. Blocking a seat is server/005 work.
+- Q: Do subscribers and company employees still pay the contribution? → A: Yes. "No fees" means no
+  Goora service fee; the driver's contribution is always paid (it is the cost-sharing).
 
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - A rider starts their free month after joining a group (Priority: P1)
+### User Story 1 - A rider chooses how to pay after joining a group (Priority: P1)
 
-A rider who just joined a group (002/003) sees the plan screen once, picks a plan, and starts
-their free month. Drivers never see this screen — Goora is free for drivers.
+After "Join this group", a rider picks cash (first 10 trips) or wallet, or follows the small
+"Subscribe and pay no fees" link. Drivers never see this screen.
 
-**Why this priority**: Without this, a rider has a group but no paid relationship with Goora — the
-business model (brief §6.7's "people pay") has no entry point at all.
+**Why this priority**: it replaces v1's mandatory plan screen as the rider's entry into the
+business model; without it a new rider has no payment arrangement.
 
-**Independent Test**: Can be fully tested by completing "Join this group" as a rider, landing on
-the plan screen, choosing Monthly, and confirming it starts a free month that only begins billing
-after the trial.
+**Independent Test**: join a group as a rider, land on the payment-method screen, choose cash,
+and confirm Today opens with the cash price line.
 
 **Acceptance Scenarios**:
 
-1. **Given** a rider has just joined a group for the first time, **When** they land on the plan
-   screen, **Then** they see the title "Start your free month", the subline "You only pay once we
-   find your group — and we did.", three plan cards (Monthly 129 EGP, Yearly 1,290 EGP with a "2
-   months free" chip, Through my company: free), the "What's included" list, the note that the
-   fuel contribution goes to the driver in full, and the footer "Cancel anytime. Goora is free for
-   drivers."
-2. **Given** the rider selects Monthly or Yearly, **When** they tap "Start free month", **Then**
-   their plan shows as active with a free-until date one calendar month out, and no charge is made.
-3. **Given** the rider selects "Through my company", **When** they tap "Verify work email" and
-   complete the (fake) verification, **Then** their plan is Company, marked free, with no trial
-   date (the company pays).
-4. **Given** a driver has just been confirmed into the same group, **When** they open the app,
-   **Then** they never see the plan screen — only riders see it.
-5. **Given** a rider dismisses or backs out of the plan screen without choosing, **When** they
-   return to the app, **Then** the plan screen reappears until a plan is chosen (a rider cannot use
-   the group without an active plan, even a free-trial one).
+1. **Given** a rider has just joined a group, **When** the payment-method screen opens, **Then**
+   it shows "How do you want to pay?", the cash option "Pay cash to the driver (first 10 trips)",
+   the wallet option "Use wallet", and a small "Subscribe and pay no fees" link — and no free-month
+   or mandatory plan copy.
+2. **Given** the rider picks cash and continues, **Then** Today opens and every price line reads
+   "Pay 40 EGP cash to the driver".
+3. **Given** the rider picks wallet and continues, **Then** Today opens and every price line reads
+   "40 EGP to the driver + 4 EGP service fee".
+4. **Given** the rider taps "Subscribe and pay no fees", **Then** the subscription screen opens
+   (Monthly / Yearly / Through my company).
+5. **Given** a driver joins a group, **Then** they never see the payment-method screen.
+6. **Given** a rider leaves the payment-method screen without choosing, **When** they return,
+   **Then** it reappears until a choice is made (subscribing or a company plan also counts).
 
 ---
 
-### User Story 2 - A rider manages their wallet, plan and top-ups (Priority: P1)
+### User Story 2 - A rider pays per trip from the wallet, with the fee shown (Priority: P1)
 
-A rider on the Wallet tab sees their plan, a balance, a way to top up, a plain-language
-explanation of how paying works, and a running activity list of what they were charged and when.
+A wallet rider sees what each trip costs, tops up, sees each trip's fee as its own line, and is
+told when a subscription would have been cheaper.
 
-**Why this priority**: This is the tab that answers "did I get charged, and why" — without it,
-every attendance rule from 003 (late-cancel charge, no-show charge) is invisible money leaving a
-black box.
+**Why this priority**: this is the default way riders pay and the main revenue line.
 
-**Independent Test**: Can be fully tested by opening the Wallet tab as a rider with seeded demo
-activity (a top-up, a trip deduction, a late-cancel charge, a free cancellation) and confirming
-each row and the balance match.
+**Independent Test**: seed a wallet rider with completed trips this month, open Wallet, and check
+balance, fee rows and the savings banner against the numbers below.
 
 **Acceptance Scenarios**:
 
-1. **Given** a rider is on a Monthly plan with a free-until date, **When** they open the Wallet
-   tab, **Then** the plan card shows "Free until {date} · then 129 EGP/month" and a "Change" link.
-2. **Given** the rider has a wallet balance, **When** they view the dark balance card, **Then**
-   it shows the balance and "Covers about {N} trips" (round-trip days at 2×leg-share each) plus a
-   "Top up" action with method pills (InstaPay / Vodafone Cash / Card) and amount choices (200 /
-   400 / 800 EGP).
-3. **Given** the rider taps Top up, picks a method and an amount, **When** the (fake) payment
-   completes, **Then** the balance increases by that amount and a new "Top-up" row appears at the
-   top of the activity list.
-4. **Given** the rider was charged for a late cancellation (003), **When** they open the activity
-   list, **Then** a row shows the half-share charge for that trip, distinct from a free
-   cancellation (which shows as a zero-amount row, not a missing one — the rider can see it was
-   recorded, just not charged).
-5. **Given** the rider wants to know what they pay per trip, **When** they view the "What you pay
-   per trip" breakdown, **Then** it shows their share of fuel & tolls as a number and "Goora fees:
-   in your plan" (never a separate fee number), with a total that equals their share.
+1. **Given** a non-subscriber rides a 40 EGP trip, **When** the trip completes, **Then** 44 EGP
+   leaves the wallet: 40 to the driver, 4 service fee, shown as one trip row with the split.
+2. **Given** a rider tops up 200 EGP, **Then** the balance rises by exactly 200 (no fee at top-up).
+3. **Given** a late cancellation (20 EGP) or a no-show (40 EGP), **Then** the wallet row shows the
+   charge to the driver with no service fee.
+4. **Given** a non-subscriber's service fees this calendar month exceed 129 EGP, **Then** the
+   Wallet shows "You paid {X} EGP in fees this month. With a subscription you'd pay 129." with a
+   "Subscribe" button that opens the subscription screen.
+5. **Given** the plan card, **Then** it reads "Pay per trip", "Subscribed" (with the paid-until
+   date) or "Company", with a "Change" link to the subscription screen.
+6. **Given** the "What you pay per trip" breakdown, **Then** it shows the driver's share (40), the
+   service fee (4, or "none" for subscribers, company and cash), and the total.
 
 ---
 
-### User Story 3 - A driver sees what they're paid and withdraws it (Priority: P2)
+### User Story 3 - A rider subscribes and stops paying fees (Priority: P1)
 
-A driver on the Wallet tab sees money recovered this week, when it pays out, a way to withdraw
-early, and an activity list of trip income and the rare rider fee that reaches them.
-
-**Why this priority**: Drivers are the supply side; if what they're owed isn't legible, drivers
-stop driving. Lower priority than the rider wallet because a driver's number is the same net
-figure riders already see confirmed live in 003 — this is presentation and withdrawal, not new
-money logic.
-
-**Independent Test**: Can be fully tested by opening the Wallet tab as a driver with seeded demo
-trip income and confirming the weekly balance, payout day and activity rows.
+**Independent Test**: a wallet rider with 200 EGP subscribes Monthly; balance drops to 71, plan
+card reads Subscribed, the next trip costs exactly 40.
 
 **Acceptance Scenarios**:
 
-1. **Given** a driver has driven trips this week, **When** they open the Wallet tab, **Then** they
-   see "Recovered this week" with the total and the line "Paid out every Thursday · no fees taken
-   from you".
-2. **Given** a driver wants their balance sooner, **When** they tap "Withdraw to InstaPay", **Then**
-   the (fake) withdrawal completes and the balance resets, with a new "Withdrawal" row in activity.
-3. **Given** a driver views "Your trip cost" breakdown for a trip, **When** they expand it,
-   **Then** it shows the trip cost, what they receive from riders, what they pay themselves (the
-   gap, if riders' total is less than the full cost — e.g. an empty seat), and "Goora is free for
-   drivers" with no deduction shown.
-4. **Given** a rider was charged a late-cancel or no-show fee tied to one of the driver's trips,
-   **When** the driver views activity, **Then** a row shows that fee reaching them, labelled by
-   which rider and trip.
+1. **Given** a rider with at least 129 EGP subscribes Monthly (or 1,290 Yearly), **Then** the
+   price leaves the wallet as a "Subscription" row and the plan is active for one month (or year).
+2. **Given** a subscriber's trip completes, **Then** exactly the contribution leaves the wallet and
+   price lines read "40 EGP · no fees (subscribed)".
+3. **Given** a rider without enough balance tries to subscribe, **Then** an inline message says
+   how much to top up first, and nothing is charged.
+4. **Given** "Through my company" is verified, **Then** the plan is Company: no fees, no charge.
+5. **Given** a subscription's paid period ends, **Then** the rider is back on pay-per-trip.
+
+---
+
+### User Story 4 - A new rider pays cash for their first 10 trips (Priority: P1)
+
+**Independent Test**: seed a cash rider with N completed trips and M "didn't pay" marks and check
+the counter, the banner and the switch-over against CashTrialPolicy's numbers.
+
+**Acceptance Scenarios**:
+
+1. **Given** a cash rider has completed 3 trips, **Then** the Wallet shows "7 cash trips left" and
+   no Goora fee is charged on those trips (activity rows read "Paid 40 EGP cash to the driver").
+2. **Given** a cash rider has completed 7 cash trips, **Then** the banner "Top up your wallet to
+   keep riding — get backup drivers, guaranteed seats and refunds." shows (and stays until cash
+   ends).
+3. **Given** a cash rider has completed 10 cash trips, **Then** cash is no longer available, price
+   lines switch to the wallet price, and a wallet balance below one trip shows "Top up to keep
+   riding".
+4. **Given** drivers have marked a rider "Didn't pay" twice, **Then** cash turns off at once, with
+   the same switch-over as scenario 3 and a blame-free note why.
+5. **Given** a late cancellation or no-show during the cash trial, **Then** nothing is charged; the
+   row reads "Not charged during the cash trial" and reliability still counts it (003).
+
+---
+
+### User Story 5 - A driver records cash and sees it apart from earnings (Priority: P2)
+
+**Independent Test**: as a driver whose car carries a cash rider, end the trip, tap "Received 40
+EGP cash", and check the Wallet's cash-received section.
+
+**Acceptance Scenarios**:
+
+1. **Given** a driver ends a trip that carried a cash rider who was picked up, **Then** that
+   rider's row shows "Received 40 EGP cash" and "Didn't pay".
+2. **Given** the driver taps either, **Then** the choice is recorded and shown as a status; the
+   buttons are gone.
+3. **Given** the driver's Wallet, **Then** "Cash received" shows the recorded cash total with
+   "Recorded only — not withdrawable", separate from "Recovered this week", and withdrawing never
+   includes it.
+4. **Given** v1's driver wallet (recovered balance, Thursday payout, withdraw, trip-cost
+   breakdown ending "Goora is free for drivers"), **Then** it is unchanged.
 
 ---
 
 ### Edge Cases
 
-- A rider's free trial ends with no payment method on file (no top-up ever made, company plan not
-  chosen): the plan card shows the plan as due, and the rider is prompted to top up or switch to
-  Through my company before their next trip is confirmed — they are not silently removed from the
-  group (that stays a reliability-rule outcome, not a billing one).
-- A top-up or withdrawal fails (FakePaymentProvider simulates this): the balance is unchanged, no
-  activity row is added, and an inline error explains it with a retry, matching the rest of the
-  app's blame-free error tone.
-- A rider switches plans mid-cycle: the new plan takes effect at the next billing date; the
-  current free-until or paid-until date is unaffected (Clarification above).
-- A rider on a Company plan loses company verification (e.g. leaves the company, out of scope to
-  simulate the trigger in this feature, but the state must exist): the plan card shows the plan as
-  needing a new choice, same treatment as a trial ending unpaid.
-- The "Covers about N trips" estimate when the balance is smaller than one leg-share: shows "0"
-  rather than a negative or fractional trip count.
+- A top-up, withdrawal or subscription payment fails: balance and activity unchanged, inline
+  blame-free error with retry (v1 SC-005 carries over).
+- The balance goes below zero after trips complete (no top-up yet): the Wallet shows the negative
+  balance and the "Top up to keep riding" state; "Covers about N trips" shows 0.
+- A cash rider is marked "Didn't pay" on their 10th trip: cash is over either way; one state, not
+  two notes.
+- Fee on a contribution not divisible by 10 (32–48 range): halves round up (45 → 5).
+- A rider subscribes mid-month after paying fees: the savings banner hides once subscribed.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: After a rider's first "Join this group" action, the system MUST show the plan
-  screen before the rider can use Today/Week for that group, with Monthly, Yearly and Through my
-  company options, and MUST skip this screen entirely for drivers.
-- **FR-002**: Choosing Monthly or Yearly MUST start a one-calendar-month free trial from that
-  moment, with no charge during the trial, and MUST record the plan's future price and billing
-  cadence for display.
-- **FR-003**: Choosing Through my company MUST route through the existing work-email verification
-  flow (reusing `needWorkEmail`/the 001 verification pattern) and, on confirmation, MUST mark the
-  plan as Company: free, with no trial date and no future charge recorded for the rider.
-- **FR-004**: The system MUST let a rider change plans at any time from the wallet's "Change"
-  link, applying the new plan at the next billing date without pro-rating or refunding the current
-  period.
-- **FR-005**: The rider wallet MUST show the active plan's name and status line ("Free until
-  {date} · then {price}/month" during trial, or the Company/paid equivalent), a balance, a
-  "Covers about {N} trips" estimate computed from the balance and the per-leg share, and a Top-up
-  action offering InstaPay, Vodafone Cash and Card at 200/400/800 EGP.
-- **FR-006**: A successful top-up MUST increase the rider's wallet balance by the chosen amount and
-  add a dated activity row for it; a failed top-up MUST change neither the balance nor the activity
-  list.
-- **FR-007**: The rider wallet's activity list MUST include every trip deduction, every late-cancel
-  half-charge, a zero-amount row for every free cancellation (never an omitted row), and every
-  top-up, each dated and labelled.
-- **FR-008**: The rider's "What you pay per trip" breakdown MUST show their fuel & tolls share as a
-  number, "Goora fees: in your plan" as a fixed label (never a separate fee amount), and a total
-  equal to the share.
-- **FR-009**: The driver wallet MUST show a "Recovered this week" total, the fixed line "Paid out
-  every Thursday · no fees taken from you", and a Withdraw-to-InstaPay action.
-- **FR-010**: A successful withdrawal MUST reset the driver's recoverable balance for the withdrawn
-  period and add a dated activity row for it; a failed withdrawal MUST change neither the balance
-  nor the activity list.
-- **FR-011**: The driver wallet's activity list MUST include every trip's income, and every
-  late-cancel or no-show fee that reaches the driver from a rider's charge, each dated and
-  labelled with the rider/trip it came from.
-- **FR-012**: The driver's "Your trip cost" breakdown for a trip MUST show the trip cost, what the
-  driver received from riders, the gap the driver covers themselves (if any — e.g. an empty seat),
-  and the fixed line "Goora is free for drivers" with no deduction line.
-- **FR-013**: All money movement in this feature MUST go through a `FakePaymentProvider` (no real
-  payment partner integration); the app MUST keep its own ledger of every balance change
-  independent of that provider, so the ledger is the single source of truth for what the UI shows.
-- **FR-014**: A rider whose trial or paid period has ended with no active payment arrangement (no
-  top-up, no Company verification) MUST be shown a due-plan state and prompted to resolve it
-  before their next trip is confirmed, without being removed from the group by this feature.
+- **FR-001**: After "Join this group", a rider without a payment arrangement (payment method,
+  subscription or company plan) MUST see the payment-method screen before Today/Week; drivers MUST
+  skip it.
+- **FR-002**: The payment-method screen MUST offer cash ("first 10 trips") and wallet, plus a
+  "Subscribe and pay no fees" link to the subscription screen.
+- **FR-003**: `PricingService.riderTotal(contribution, isSubscriber, isCashTrial)` MUST return
+  contribution + fee, where fee = 10% rounded half-up to whole EGP for wallet non-subscribers and 0
+  for subscribers, company-plan riders and cash trips.
+- **FR-004**: Every rider-facing trip price (match result, Today) MUST show
+  "{c} EGP to the driver + {fee} EGP service fee", "{c} EGP · no fees (subscribed)",
+  "{c} EGP · no fees (company)" (drafted, R13) or "Pay {c} EGP cash to the driver" according to
+  the rider's arrangement.
+- **FR-005**: On each completed trip (003's settled "kept" outcome for a rider), the wallet MUST
+  debit riderTotal for wallet riders, and record a cash trip (no wallet movement) for cash riders.
+- **FR-006**: Top-ups MUST credit exactly the amount (no fee).
+- **FR-007**: Late-cancel and no-show charges MUST debit only the charge amount (no fee) for
+  wallet riders, and MUST NOT be collected while the rider is in the cash trial.
+- **FR-008**: `CashTrialPolicy` MUST allow cash for the first 10 completed cash trips, turn cash
+  off at 2 "Didn't pay" marks, report trips left, and report the top-up banner once 7 cash trips
+  are completed.
+- **FR-009**: `FeeSavingsCalculator` MUST sum the service fees paid in a calendar month and report
+  the upsell when that sum exceeds 129 EGP, for pay-per-trip riders only.
+- **FR-010**: Subscribing MUST debit 129 (Monthly) or 1,290 (Yearly) from the wallet and activate
+  the plan for one month or one year; insufficient balance MUST charge nothing and say how much to
+  top up. Company verification MUST give a Company plan with no charge.
+- **FR-011**: The rider Wallet MUST show the plan card (Pay per trip / Subscribed / Company), the
+  balance card with top-up, the cash-trial counter while active, the cash top-up banner, the
+  fee-savings banner, "How paying works", the activity list with each trip's fee shown separately,
+  and the per-trip breakdown.
+- **FR-012**: After a trip ends, driver Today MUST show "Received {c} EGP cash" / "Didn't pay" for
+  each picked-up cash rider, and record the choice once.
+- **FR-013**: The driver Wallet MUST show recorded cash separately from recovered earnings, as not
+  withdrawable; withdrawals MUST never include it.
+- **FR-014**: All money movement MUST go through `FakePaymentProvider` and the app's own ledger
+  (v1 FR-013 unchanged). Drivers MUST never be charged a fee or subscription.
+- **FR-015**: The pricing rule MUST exist twice (Dart and `supabase/functions/_shared`) and pass
+  the same vectors (Constitution VIII / twin-implementation rule).
 
 ### Key Entities
 
-- **Plan**: belongs to one rider; has a type (Monthly, Yearly, Company), a price (0 for Company),
-  a status (trialing, active, due), and a relevant date (free-until or paid-until). Drivers do not
-  have a Plan.
-- **Wallet**: belongs to one rider or one driver; has a balance (rider: prepaid EGP; driver:
-  recoverable EGP awaiting the Thursday payout) and an ordered Activity list.
-- **Activity entry**: belongs to one Wallet; has a kind (top-up, trip deduction, late-cancel
-  charge, free-cancel zero-row, trip income, no-show fee received, withdrawal), an amount
-  (possibly zero), a date, and an optional reference to the trip/rider it came from.
-- **FakePaymentProvider**: a test double standing in for the licensed payment partner; accepts a
-  top-up or withdrawal request and returns success or a simulated failure; never itself the source
-  of truth for balances (the app's ledger is).
+- **PaymentMethod**: a rider's choice after joining — `cash` or `wallet`.
+- **Plan** (optional): `monthly`, `yearly` or `company`; status `active` or `due` (lapsed); paid
+  until a date (none for company). No trial.
+- **CashMark**: a driver's record for one cash rider on one ride — `received` or `didNotPay`, with
+  the amount.
+- **Activity entry**: v1 kinds plus `trip` (contribution + fee, both stored), `cashTrip`,
+  `subscription` and `cashReceived` (driver).
 
 ## Success Criteria *(mandatory)*
 
-### Measurable Outcomes
-
-- **SC-001**: A rider can go from "just joined a group" to an active free-trial plan in under 30
-  seconds (one screen, one choice, one tap).
-- **SC-002**: 100% of a rider's attendance-rule charges from feature 003 (late-cancel half charge,
-  no-show full charge, free cancellation) appear in the wallet activity list with the correct
-  amount, including the zero-amount rows for free cancellations.
-- **SC-003**: A driver can see their current week's recovered balance and next payout date without
-  navigating past the Wallet tab's first screen.
-- **SC-004**: A rider never sees a bare per-trip "Goora fee" number anywhere in the wallet or plan
-  screens — only "in your plan" or no fee line at all.
-- **SC-005**: A simulated top-up or withdrawal failure leaves the balance and activity list exactly
-  as they were before the attempt, verified by a unit test for each path.
+- **SC-001**: A rider goes from "Join this group" to Today in one screen and two taps.
+- **SC-002**: 100% of completed wallet trips show their fee as its own figure; 40 → 44 everywhere.
+- **SC-003**: Unit tests cover PricingService, CashTrialPolicy and FeeSavingsCalculator with the
+  brief's numbers (40/44, 10 trips, 2 strikes, trip 8, 129), and the Dart and TS pricing rules pass
+  the same vectors.
+- **SC-004**: A driver never sees a fee deducted from their contribution, and cash never appears
+  in their withdrawable balance.
+- **SC-005**: A simulated payment failure leaves balance and activity exactly as before.
 
 ## Assumptions
 
-- All money in this feature is simulated (`FakePaymentProvider`); no real InstaPay/Vodafone
-  Cash/Card integration is in scope — that is a later, non-speckit integration step once payment
-  partner keys exist (same posture as 001–003's fakes-first backend).
-- The demo trip cost (160 EGP total, 40 EGP per rider per leg) and the attendance charges it drives
-  (20 EGP half-charge, 40 EGP no-show) are reused unchanged from 002/003; this feature does not
-  change pricing, only how it is shown and settled.
-- Company-plan verification reuses the existing fake work-email check from onboarding (001); a
-  real company-domain or SSO check belongs to feature 006 (company network, explicitly deferred by
-  the brief).
-- "Covers about N trips" is a rough estimate for display only, not a reservation or hold on the
-  balance; it recomputes from the live balance each time the wallet is viewed.
-- Feature 005 (seat marketplace) will add its own one-off booking fee (40 to the driver + 5 EGP
-  booking fee for non-subscribers) as its own wallet activity kind later; this feature's activity
-  kinds cover only what 001–003 already produce (subscription trial/billing status, and 003's
-  attendance charges) plus top-ups and withdrawals.
+- All money is simulated (`FakePaymentProvider`); no real partner integration.
+- Booking enforcement ("needs a wallet balance") belongs to 005/server; this feature shows the
+  state only.
+- In the fakes, other people's cash status is seeded (`WalletSeed`), and the rider's own
+  "Didn't pay" marks can only come from seeded data or tests — drivers are fakes.
+- 005 (seat marketplace) will reuse PricingService for one-off seats (44 / 40 subscribed).

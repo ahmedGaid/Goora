@@ -108,3 +108,106 @@ review there.
 | withdraw / withdrawSheetTitle | اسحب على InstaPay (both keys, same copy) | Withdraw to InstaPay (both keys, same copy) |
 | withdrawConfirm / withdrawFailTitle / withdrawFailBody | أكّد السحب / السحب ملحقش يتم / مفيش حاجة تحرّكت — جرّب تاني. | Confirm withdrawal / Withdrawal didn't go through / Nothing moved — try again. |
 | driverBreakdownTitle / driverBreakdownCost / driverBreakdownReceived / driverBreakdownGap / driverBreakdownFree | تكلفة رحلتك / تكلفة الرحلة / بتستلم من الركاب / بتدفعه من جيبك / جورة مجانية للسواقين | Your trip cost / Trip cost / You receive from riders / What you pay yourself / Goora is free for drivers |
+
+**v2 note**: `planTitle`, `planSubline`, `planCtaStart`, `planFreeUntil`, `breakdownFees` and
+`howPayRule1` above belong to the v1 free-month model and are replaced in v2 (R13). Separately,
+several v1 strings use رحلة for a trip (`coversTrips`, `breakdownTitle`, `actTripDeduction`,
+`actTripIncome`), where the lexicon says مشوار. Not changed here (out of the payment-model scope);
+listed for the founder's copy review.
+
+# v2 — payment model (2026-10-08)
+
+## R6 — fee rounding
+
+- **Decision**: `fee = (contribution + 5) ~/ 10` for wallet non-subscribers — 10%, nearest whole
+  EGP, halves up. 40 → 4, 44 → 4, 45 → 5, 48 → 5, 32 → 3.
+- **Rationale**: integer-only (money is whole EGP everywhere in this codebase), deterministic in
+  both Dart and TS, matches the brief's "rounded to the nearest whole EGP".
+- **Alternatives considered**: `(c * 0.1).round()` — floating point, and Dart/JS disagree on
+  some halves; banker's rounding — surprising to riders.
+
+## R7 — where a trip is charged
+
+- **Decision**: derive it. A rider's completed trip is 003's settled `ReliabilityEvent(kept)` for
+  that person on a ride they did not drive. The wallet reads those events (≤ 60 days), prices each
+  with `PricingService`, and the rider's balance = own ledger (top-ups − subscriptions) − derived
+  debits (wallet trips + wallet-period charges).
+- **Rationale**: 003 already settles each ride exactly once (idempotent, and catches up on read
+  for trips that end without "End trip"). Writing a debit at `endTrip` would add a second writer
+  for the same fact and miss catch-up settlements. Same seam as R3.
+- **Alternatives considered**: debit inside 003's `_settle` (rejected — 003 would need to know
+  wallet, wrong dependency direction); debit from the Today controller (rejected — misses trips
+  settled on read and rides the person didn't open the app for).
+- **Side effect, intended**: v1 showed 003's charges in activity but never took them off the
+  balance. v2 deducts them (FR-007), which is what "How paying works" always said.
+
+## R8 — cash trial as a fold
+
+- **Decision**: walk the rider's completed trips and charges in date order. While the method is
+  `cash` and `CashTrialPolicy.cashAvailable(cashTripsDone, strikes)` holds, a trip is a cash trip
+  (no wallet movement, no fee) and a charge is not collected (zero row, reliability only); after
+  that, trips and charges hit the wallet.
+- **Rationale**: one pure rule, replayable, no stored "trial state" that can drift from history.
+  Strikes come from `CashMark`s against this rider and count from the moment they are recorded.
+
+## R9 — the guard
+
+- **Decision**: a rider passes the Today/Week guard when they have a payment method, or an active
+  subscription, or a company plan. Otherwise → `Routes.payMethod`. Match result's "Join" goes to
+  `Routes.payMethod` for riders.
+- **Rationale**: same per-route redirect idiom as v1 (R2); the arrangement replaces "has a plan".
+
+## R10 — paying for a subscription
+
+- **Decision**: subscribing debits the wallet ledger (kind `subscription`) and sets `paidUntil =
+  today + 1 month / 1 year` (`CalendarDate.addMonths`, R1). Not enough balance → nothing changes,
+  the screen says how much to top up. After `paidUntil` the plan is `due` and the rider pays per
+  trip again. Company: no debit, no date. Change between monthly/yearly keeps v1's "next billing
+  date" rule.
+- **Rationale**: one money source (the ledger); no recurring billing engine in the fakes.
+
+## R11 — cash marks and the seeded cash rider
+
+- **Decision**: `CashMark {rideId, riderId, driverId, outcome, amount, date}` stored by the wallet
+  repository. In the fakes, other riders' payment methods are seeded: Youssef (group `sz-0725`) is
+  a cash-trial rider, so a driver on that group sees the cash buttons. Driver Today's
+  PickupCheckIn shows them once the ride has ended, for each picked-up passenger whose method is
+  cash and who has no mark on that ride yet.
+- **Rationale**: drivers are fakes for a rider and riders are fakes for a driver; a seed is the
+  only way the driver-side flow is reachable on device (same posture as v1's driver income seed).
+
+## R12 — twin and vectors
+
+- **Decision**: `supabase/functions/_shared/pricing.ts` exports `serviceFee` and `riderTotal`;
+  `test/fixtures/pricing_vectors.json` (hand-written, small) is read by both
+  `pricing.test.ts` and `test/unit/pricing_service_test.dart`. The cash-trial and savings rules
+  stay app-only for now (no server consumer yet), documented as such.
+
+## R13 — copy
+
+Brief §7 strings are used verbatim. Drafted for founder review (not in §7):
+
+| key | ar | en |
+|---|---|---|
+| priceCompany | {price} ج · من غير رسوم (الشركة) | {price} EGP · no fees (company) |
+| payMethodSub | تقدر تشحن المحفظة أو تشترك في أي وقت. | You can top up or subscribe anytime. |
+| payCashSub | من غير رسوم خدمة على مشاوير الكاش. | No service fee on cash trips. |
+| payContinue | كمّل | Continue |
+| planTitle (replaced) / planSubline (replaced) | اشترك ومن غير رسوم / من غير رسوم خدمة على أي مشوار أو كرسي. | Subscribe and pay no fees / No service fee on any trip or seat. |
+| subscribeCta | اشترك · {price} ج | Subscribe · {price} EGP |
+| subNeedsTopUp | اشحن {gap} ج الأول — محفظتك فيها {balance} ج. | Top up {gap} EGP first — your wallet has {balance} EGP. |
+| planSubscribedLine | مشترك لحد {date} · من غير رسوم | Subscribed until {date} · no fees |
+| planPerTripLine | {fee} ج رسوم خدمة على كل مشوار | {fee} EGP service fee per trip |
+| planLapsedLine | الاشتراك خلص · رجعت بالمشوار | Subscription ended · back to pay per trip |
+| cashTripsLeft (plural) | فاضل مشوار كاش واحد / فاضل مشوارين كاش / فاضل {count} مشاوير كاش | 1 cash trip left / {count} cash trips left |
+| cashEnded | مشاوير الكاش خلصت — اشحن محفظتك عشان تكمّل. | Your cash trips are done — top up your wallet to keep riding. |
+| cashOff | الكاش اتقفل بعد ما مشوارين اتسجّلوا من غير دفع — اشحن محفظتك عشان تكمّل. | Cash is off after 2 trips were marked unpaid — top up your wallet to keep riding. |
+| needsTopUp | اشحن عشان تكمّل مشاويرك | Top up to keep riding |
+| actTrip / actCashTrip / actSubscription | مشوار / مشوار كاش / اشتراك | Trip / Cash trip / Subscription |
+| cashPaidLine | دفعت {price} ج كاش للسواق | Paid {price} EGP cash to the driver |
+| notChargedCash | مش محسوبة في فترة الكاش | Not charged during the cash trial |
+| howPayRule1 (replaced) | بتدفع نصيب السواق + 10% رسوم خدمة على كل مشوار. المشتركين من غير رسوم. | You pay the driver's share + a 10% service fee per trip. Subscribers pay no fee. |
+| howPayRule3 (replaced) | الإلغاء المتأخر والغياب بيروحوا للسواق من غير رسوم خدمة. | Late cancellations and no-shows go to the driver, with no service fee. |
+| breakdownShare / breakdownFee / breakdownNoFee | نصيب السواق / رسوم الخدمة (10%) / رسوم الخدمة: مفيش | Driver's share / Service fee (10%) / Service fee: none |
+| cashMarkedReceived / cashMarkedUnpaid | الكاش وصل / اتسجّل إنه مدفعش | Cash received / Marked unpaid |
+| cashReceivedTitle / cashReceivedNote | الكاش اللي استلمته / متسجّل بس — مش بيتسحب | Cash received / Recorded only — not withdrawable |

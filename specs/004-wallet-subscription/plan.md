@@ -1,134 +1,109 @@
-# Implementation Plan: Wallet and Subscription
+# Implementation Plan: Wallet and Payment Model
 
-**Branch**: `004-wallet-subscription` | **Date**: 2026-10-08 | **Spec**: [spec.md](spec.md)
+**Branch**: `004-wallet-subscription` | **Date**: 2026-10-08 (v1) · 2026-10-08 (v2 amendment) |
+**Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from `specs/004-wallet-subscription/spec.md`
 
 ## Summary
 
-Replace the `plan` placeholder route and the `Wallet` tab placeholder with real screens. A new
-`lib/features/wallet/` feature owns a pure-Dart `Plan` + `Wallet` + `ActivityEntry` model, the
-`WalletRules` that compute a one-calendar-month trial end date and the "covers about N trips"
-estimate, and a `PaymentProvider` interface with only a `FakePaymentProvider` implementation
-(constitution: real integration is out of scope). A rider who has just joined a group (002/003)
-is routed to the Plan screen and cannot reach Today/Week until a plan is chosen; a driver never
-sees it. The Wallet tab renders rider or driver content from the same `WalletRepository`,
-including top-up/withdraw sheets and the activity list that surfaces 003's attendance charges
-(late-cancel half-charge, no-show full charge, zero-amount free cancellations) for the first
-time. All data is a fake `WalletRepository` over `shared_preferences`, seeded so the independent
-tests in the spec (US2 AC4, US3 AC4) have charges to show without replaying 003's flows. No
-server component: this feature is app-side ledger only, no scheduled job and no new Supabase
-table.
+v1 (built, T001–T045) gave riders a mandatory plan screen with a free month, a rider/driver
+Wallet tab, top-up/withdraw/change-plan sheets, and an activity list read from 003's records.
+
+v2 changes only the payment model. Three pure-Dart rules carry it: `PricingService` (contribution
++ 10% fee, half-up, 0 for subscribers/company/cash), `CashTrialPolicy` (10 trips, 2 strikes,
+banner after 7) and `FeeSavingsCalculator` (month's fees vs 129). The rider's arrangement becomes
+a `PaymentMethod` (cash | wallet) plus an optional `Plan` (monthly | yearly | company, no trial).
+The router guard asks for a payment arrangement instead of a plan, and sends new riders to a new
+payment-method screen; the v1 plan screen becomes the subscription screen behind the "Subscribe
+and pay no fees" link. Per-trip charging is derived from 003's settled ride outcomes (the same
+read-don't-duplicate seam v1 used for charges), so the rider's balance becomes the ledger minus
+derived debits. Driver Today gains "Received cash" / "Didn't pay" after a trip ends; the driver
+Wallet gains a separate, non-withdrawable "Cash received" card. The fee rule gets a TypeScript
+twin and shared vectors.
 
 ## Technical Context
 
-**Language/Version**: Dart 3.12 / Flutter 3.44
+**Language/Version**: Dart 3.12 / Flutter 3.44; TypeScript on Node 24 for the twin rule
 
-**Primary Dependencies**: none new. `PaymentProvider`/`FakePaymentProvider` are plain Dart behind
-an app interface, no payment SDK (constitution: "a `PaymentProvider` interface with
-`FakePaymentProvider` only").
+**Primary Dependencies**: none new
 
-**Storage**: `shared_preferences` (plan, wallet balance, activity list, per person) — same store
-as 001–003's fake repositories.
+**Storage**: `shared_preferences` — v1 keys plus `wallet.method` (rider's payment method) and
+`wallet.cashMarks` (drivers' cash records)
 
-**Testing**: `flutter_test` — unit (`WalletRules` trial-date and trips-covered math at exact
-boundaries, `CalendarDate.addMonths` edge cases), widget (Plan screen, rider Wallet, driver
-Wallet, top-up sheet, withdraw sheet, change-plan sheet × ar/en).
+**Testing**: `flutter_test` unit (the three rules with the brief's numbers, the derived wallet),
+widget (payment-method screen, subscription screen, rider wallet states, driver cash buttons,
+driver cash card, price lines on match result/Today) × ar/en; goldens regenerated for changed
+screens; `node --test` for the pricing twin
 
-**Target Platform**: Android 7+ / iOS 14+ (app only; no server work this feature)
+**Target Platform**: Android 7+ / iOS 14+; server twin only (no deploy)
 
 **Project Type**: mobile-app
 
-**Performance Goals**: Plan and Wallet screens render from local fake data in < 1 s, matching
-003's Today/Week precedent; no network calls.
+**Performance Goals**: Wallet derives from ≤ 60 days of local records; < 1 s like v1
 
-**Constraints**: no real payment integration; card data never stored (there is none —
-`FakePaymentProvider` takes a method + amount, no card fields); no bare "Goora fee" number
-anywhere in Plan/Wallet copy (SC-004); no Goora fee line, ever.
+**Constraints**: Constitution II — drivers receive exactly the contribution, the fee never reaches
+them, charges carry no fee; no real payment integration
 
-**Scale/Scope**: 2 new screens (Plan, Wallet rider/driver variants of one tab) + 3 sheets
-(top-up, withdraw, change-plan), 1 feature folder, ~4 domain modules, 1 fake repository, 1 fake
-payment provider, seed extended with wallet/plan fixtures.
+**Scale/Scope**: 1 new screen (payment method), 1 repurposed screen (subscription), changes to
+rider/driver Wallet, PickupCheckIn, match result and rider Today price lines; 3 new domain rules;
+1 TS twin
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
-
 | Principle | Gate | Pre | Post |
 |---|---|---|---|
-| I Commute-first | Billing legibility for an existing commute relationship, not a new product | ✅ | ✅ |
-| II Cost-sharing | Driver never profits: riders' trip-leg charges are unchanged from 003; subscription price is Goora's fee, never added on top of the fuel share; "Goora fees: in your plan" never shown as a number | ✅ | ✅ |
-| III Arabic-first | All new copy in ARB (drafted, founder review before ship, same as 001–003); directional widgets; ar/en widget tests | ✅ | ✅ |
-| IV Privacy | No new personal data exposed; driver fee rows are labelled by rider/trip only to the driver who already sees that rider in Today/Week | ✅ | ✅ |
-| V Trust & safety | Not touched by this feature | ✅ | ✅ |
-| VI Design system | Plan/Wallet screens reuse `GooraRadioCard`, `GooraCard`, `GooraPill`, `GooraPrimaryButton`, `GooraStatTile`; any new piece (dark balance card) goes in `lib/core/widgets` with a golden | ✅ | ✅ |
-| VII Accessible | ≥ 44 px targets on radio cards/pills/CTAs; amount + method always shown as text, never colour alone | ✅ | ✅ |
-| VIII Testable | `WalletRules` pure Dart with the brief's exact numbers (129/1290/40/20/200/400/800 EGP) and boundary tests; widget tests ar + en | ✅ | ✅ |
-| IX Simplicity | No new packages; reuses 001's work-email verification pattern and 003's `AttendanceRules` charges instead of re-deriving them | ✅ | ✅ |
-| Secrets / open items | `FakePaymentProvider` only; payment partner integration stays behind the interface until keys exist | ✅ | ✅ |
+| I Commute-first | Payment serves the daily group; cash trial lowers the first-week barrier | ✅ | ✅ |
+| II Cost-sharing | Contributions to drivers unchanged and still capped; the 10% fee goes to Goora, never to the driver; no fee on late-cancel/no-show; drivers never pay. The cap is read as applying to contributions (spec "Constitution II reading"), pending the legal opinion in brief §8 — not an amendment | ✅ (flagged) | ✅ (flagged) |
+| III Arabic-first | All new copy in ARB both locales; brief §7 strings used verbatim; drafted rest listed in research R5/R6 | ✅ | ✅ |
+| IV Privacy | Cash buttons appear only after pick-up, when the driver already sees the rider's name (003 FR-016) | ✅ | ✅ |
+| V Trust & safety | Cash-trial charges skip money but still feed reliability (003 rules untouched) | ✅ | ✅ |
+| VI Design system | Reuses GooraRadioCard, GooraCard, GooraBanner, GooraGhostButton, GooraStatusChip, GooraBalanceCard; no new tokens | ✅ | ✅ |
+| VII Accessible | Every money state is text, never colour alone; ≥ 44 px targets | ✅ | ✅ |
+| VIII Testable | Three pure rules with exact-number unit tests; Dart/TS twin on shared vectors | ✅ | ✅ |
+| IX Simplicity | No new packages; derive, don't duplicate (R7); no booking engine (spec clarification) | ✅ | ✅ |
 
 ## Project Structure
 
-### Documentation (this feature)
-
 ```text
-specs/004-wallet-subscription/
-├── plan.md · research.md · data-model.md · quickstart.md
-├── contracts/repositories.md
-└── tasks.md
-```
-
-### Source Code
-
-```text
-lib/app/
-└── routes.dart                     # Routes.plan now points at a real screen, not a placeholder
-lib/app/router.dart                 # Routes.plan builder → PlanScreen; redirect guard added to
-                                     # the shell routes (today/week) for a rider with no active plan
-lib/core/time/calendar_date.dart
-└── + addMonths(int)                # one-calendar-month trial end (research R1)
-lib/core/widgets/
-└── goora_balance_card.dart         # dark balance card ("Covers about N trips" + Top up), shared
-                                     # by rider wallet; driver's weekly card reuses GooraStatTile
+specs/004-wallet-subscription/  spec · plan · research (R1–R4 v1, R5 copy, R6–R13 v2)
+                                data-model · contracts/repositories.md · quickstart · tasks
+lib/app/router.dart             guard: payment arrangement → Routes.payMethod
+lib/app/routes.dart             + payMethod; plan stays (subscription screen)
 lib/features/wallet/
-├── domain/   plan.dart · wallet.dart · activity_entry.dart · payment_provider.dart
-│             wallet_rules.dart · wallet_repository.dart
-├── data/     wallet_seed.dart · fake_wallet_repository.dart · fake_payment_provider.dart
-│             providers.dart
-└── presentation/
-    plan/     plan_screen.dart · plan_controller.dart · company_verify_sheet.dart
-    wallet/   wallet_tab.dart (role switch) · rider_wallet.dart · driver_wallet.dart
-              top_up_sheet.dart · withdraw_sheet.dart · change_plan_sheet.dart
-              wallet_controller.dart
-    labels.dart                     # activity-kind / plan-status → l10n
-lib/features/daily/presentation/wallet/wallet_tab.dart   # deleted (placeholder superseded)
-lib/features/placeholder/presentation/placeholder_screen.dart  # PlaceholderKind.plan removed
-lib/features/commute/presentation/match_result_screen.dart     # unchanged: still routes the
-                                     # rider to Routes.plan, which is now the real screen
-test/unit/  calendar_add_months_test · wallet_rules_test
-test/widget/ plan_screen_test · rider_wallet_test · driver_wallet_test · top_up_sheet_test
-             withdraw_sheet_test · change_plan_sheet_test
-test/golden/ wallet_widgets_golden_test.dart (+ goldens)
+  domain/  pricing_service.dart · cash_trial_policy.dart · fee_savings_calculator.dart   (new)
+           payment_method.dart · cash_mark.dart                                         (new)
+           plan.dart (no trialing) · activity_entry.dart (+ kinds, + fee) · wallet.dart (+ cash
+           trial, fees this month, cash received) · wallet_repository.dart (+ methods)
+           wallet_rules.dart (trialEndDate removed; tripsCovered takes the leg total)
+  data/    fake_wallet_repository.dart (derived debits, method, subscribe, cash marks)
+           wallet_seed.dart (+ cash rider, driver cash rows)
+  presentation/
+    pay_method/  pay_method_screen.dart                                                   (new)
+    plan/        plan_screen.dart → subscription screen copy + subscribe from wallet
+    wallet/      rider_wallet.dart · driver_wallet.dart · wallet_controller.dart · activity_row
+    price_line.dart  (one place that turns contribution + arrangement into the price string)
+lib/features/commute/presentation/match_result_screen.dart   price line; join → payMethod
+lib/features/daily/presentation/today/rider_today.dart       price line
+lib/features/daily/presentation/today/pickup_check_in.dart   cash buttons after the trip ends
+supabase/functions/_shared/pricing.ts + pricing.test.ts       twin
+test/fixtures/pricing_vectors.json                            shared vectors
 ```
 
-**Structure Decision**: a new `wallet` feature folder, sibling to `daily` and `commute`, because
-Plan and Wallet are their own domain (billing), not an extension of the daily commute rules —
-they only *read* 003's `Charge` records to render activity rows, they don't own them. The
-existing `daily/presentation/wallet/wallet_tab.dart` placeholder and the `plan` entry in
-`PlaceholderKind` are both removed in this feature, same lifecycle as 003 removing the `/today`
-placeholder in 002.
+**Structure Decision**: stay inside the v1 `wallet` feature. Daily's PickupCheckIn and the
+commute match screen read wallet providers at the presentation layer only; domain layers stay
+independent.
 
-## Phasing (maps to tasks.md)
+## Phasing (maps to tasks.md Phase 7+)
 
-- **P1 — US1**: `Plan`/`WalletRules`/`PaymentProvider` domain, `CalendarDate.addMonths`,
-  `FakeWalletRepository`, Plan screen (Monthly/Yearly/Company cards, trial start, company verify
-  reusing 001's work-email flow), router redirect guard, placeholder removal. Shippable alone —
-  proves the business-model entry point (brief §6.7).
-- **P2 — US2**: rider Wallet tab (plan card, balance card, top-up sheet, activity list sourced
-  from 003's `Charge` + new top-up rows, per-trip breakdown), change-plan sheet.
-- **P3 — US3**: driver Wallet tab (recovered-this-week, withdraw sheet, activity list, trip-cost
-  breakdown).
+- **P4 — rules**: PricingService, CashTrialPolicy, FeeSavingsCalculator + vectors + TS twin.
+- **P5 — model + repo**: PaymentMethod, CashMark, Plan without trial, derived wallet, subscribe.
+- **P6 — rider flow (US1, US3)**: payment-method screen, guard, subscription screen, price lines.
+- **P7 — rider wallet (US2, US4)**: plan card states, cash counter/banners, fee rows, savings.
+- **P8 — driver (US5)**: cash buttons in PickupCheckIn, cash-received card.
+- **P9 — polish**: goldens, copy list, gates, quickstart.
 
 ## Complexity Tracking
 
-*No violations — no new packages, no new server component.*
+*No violations. Constitution II is flagged for the legal opinion, not violated: contributions and
+their cap are unchanged.*
