@@ -61,7 +61,7 @@ void main() {
     testWidgets('[$code] AC3: trip-cost breakdown shows the gap for an empty seat', (tester) async {
       await _openWallet(tester, code);
       expect(find.text(l.driverBreakdownTitle), findsOneWidget);
-      // sz-0725: 4-seat capacity (2 riders + 2 free), 40 EGP/leg, round trip.
+      // sz-0725: 4-seat capacity (2 riders + 1 free), 40 EGP/leg, round trip.
       expect(find.text(l.egpAmount(320)), findsOneWidget, reason: 'trip cost at full capacity, round trip');
       expect(find.text(l.egpAmount(160)), findsWidgets, reason: 'received from 2 riders round trip, and the gap');
       expect(find.text(l.driverBreakdownFree), findsOneWidget);

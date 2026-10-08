@@ -274,6 +274,8 @@ void main() {
             price: 40,
             freeSeatsGoing: 2,
             freeSeatsReturn: 2,
+            tripCost: 160,
+            riderSeats: 3,
             detourMinutes: 6,
           ),
           CommuteGroup(
@@ -289,6 +291,8 @@ void main() {
             price: 40,
             freeSeatsGoing: 2,
             freeSeatsReturn: 2,
+            tripCost: 160,
+            riderSeats: 3,
             detourMinutes: 4,
           ),
         ]);

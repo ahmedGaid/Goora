@@ -36,6 +36,8 @@ CommuteGroup group({
       price: 40,
       freeSeatsGoing: free,
       freeSeatsReturn: free,
+      tripCost: 160,
+      riderSeats: 3,
       detourMinutes: detour,
     );
 
