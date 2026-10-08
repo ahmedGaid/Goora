@@ -163,7 +163,12 @@ class _PlanCard extends StatelessWidget {
       PricingMode.company => (l10n.planTypeTitle(PlanType.company), l10n.planCompanyActive),
       PricingMode.subscribed => (l10n.planTypeTitle(plan!.type), l10n.planSubscribedLine(l10n.shortDate(plan.untilDate!))),
       PricingMode.cash => (l10n.planPayPerTrip, l10n.priceCash(view.legShare)),
-      PricingMode.wallet => (l10n.planPayPerTrip, view.lapsed ? l10n.planLapsedLine : l10n.planPerTripLine(view.fee)),
+      PricingMode.wallet => (
+          l10n.planPayPerTrip,
+          view.lapsed
+              ? l10n.planLapsedLine
+              : (view.fee == 0 ? l10n.planPerTripNoFeeLine : l10n.planPerTripLine(view.fee)),
+        ),
     };
     return GooraCard(
       key: const Key('plan-card'),

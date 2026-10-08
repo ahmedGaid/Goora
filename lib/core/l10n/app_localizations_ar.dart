@@ -175,7 +175,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get howPayRule1 =>
-      'بتدفع نصيب السواق + 10% رسوم خدمة على كل مشوار. المشتركين من غير رسوم.';
+      'بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم.';
 
   @override
   String get howPayRule2 =>
@@ -1595,6 +1595,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String priceNoFee(int price) {
+    return '$price ج للسواق · من غير رسوم خدمة';
+  }
+
+  @override
   String priceSubscribed(int price) {
     return '$price ج · من غير رسوم (مشترك)';
   }
@@ -1647,6 +1652,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String planPerTripLine(int fee) {
     return '$fee ج رسوم خدمة على كل مشوار';
   }
+
+  @override
+  String get planPerTripNoFeeLine => 'من غير رسوم خدمة على مشاويرك';
 
   @override
   String planSubscribedLine(String date) {
@@ -1710,7 +1718,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get breakdownShare => 'نصيب السواق';
 
   @override
-  String get breakdownFee => 'رسوم الخدمة (10%)';
+  String get breakdownFee => 'رسوم الخدمة';
 
   @override
   String get breakdownNoFee => 'رسوم الخدمة: مفيش';

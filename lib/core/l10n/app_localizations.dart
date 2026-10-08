@@ -407,7 +407,7 @@ abstract class AppLocalizations {
   /// No description provided for @howPayRule1.
   ///
   /// In ar, this message translates to:
-  /// **'بتدفع نصيب السواق + 10% رسوم خدمة على كل مشوار. المشتركين من غير رسوم.'**
+  /// **'بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم.'**
   String get howPayRule1;
 
   /// No description provided for @howPayRule2.
@@ -2685,6 +2685,12 @@ abstract class AppLocalizations {
   /// **'{price} ج للسواق + {fee} ج رسوم خدمة'**
   String priceWithFee(int price, int fee);
 
+  /// No description provided for @priceNoFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج للسواق · من غير رسوم خدمة'**
+  String priceNoFee(int price);
+
   /// No description provided for @priceSubscribed.
   ///
   /// In ar, this message translates to:
@@ -2768,6 +2774,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{fee} ج رسوم خدمة على كل مشوار'**
   String planPerTripLine(int fee);
+
+  /// No description provided for @planPerTripNoFeeLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'من غير رسوم خدمة على مشاويرك'**
+  String get planPerTripNoFeeLine;
 
   /// No description provided for @planSubscribedLine.
   ///
@@ -2856,7 +2868,7 @@ abstract class AppLocalizations {
   /// No description provided for @breakdownFee.
   ///
   /// In ar, this message translates to:
-  /// **'رسوم الخدمة (10%)'**
+  /// **'رسوم الخدمة'**
   String get breakdownFee;
 
   /// No description provided for @breakdownNoFee.

@@ -65,7 +65,7 @@
   "planChange": "تغيير",
   "planCompanyActive": "مجانية · شركتك بتدفعها",
   "howPayTitle": "إزاي الدفع بيشتغل",
-  "howPayRule1": "بتدفع نصيب السواق + 10% رسوم خدمة على كل مشوار. المشتركين من غير رسوم.",
+  "howPayRule1": "بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم.",
   "howPayRule2": "البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.",
   "howPayRule3": "الإلغاء المتأخر والغياب بيروحوا للسواق من غير رسوم خدمة.",
   "topUpSheetTitle": "اشحن محفظتك",
@@ -1135,6 +1135,14 @@
       }
     }
   },
+  "priceNoFee": "{price} ج للسواق · من غير رسوم خدمة",
+  "@priceNoFee": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
   "priceSubscribed": "{price} ج · من غير رسوم (مشترك)",
   "@priceSubscribed": {
     "placeholders": {
@@ -1194,6 +1202,7 @@
       }
     }
   },
+  "planPerTripNoFeeLine": "من غير رسوم خدمة على مشاويرك",
   "planSubscribedLine": "مشترك لحد {date} · من غير رسوم",
   "@planSubscribedLine": {
     "placeholders": {
@@ -1236,7 +1245,7 @@
   },
   "notChargedCash": "مش محسوبة في فترة الكاش",
   "breakdownShare": "نصيب السواق",
-  "breakdownFee": "رسوم الخدمة (10%)",
+  "breakdownFee": "رسوم الخدمة",
   "breakdownNoFee": "رسوم الخدمة: مفيش",
   "cashReceived": "استلمت {price} ج كاش",
   "@cashReceived": {

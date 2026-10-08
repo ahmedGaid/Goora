@@ -72,7 +72,8 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
     final priceText = viewerIsDriver
         ? l10n.priceDriver(g.price)
         : l10n.priceLine(g.price, mode,
-            fee: PricingService.serviceFee(g.price, isSubscriber: false, isCashTrial: false));
+            fee: PricingService.serviceFee(g.price,
+                tripCost: g.tripCost, riderSeats: g.riderSeats, isSubscriber: false, isCashTrial: false));
 
     return OnboardingScaffold(
       header: GooraChip(key: const Key('match-chip'), label: l10n.matchPercent(main.score)),

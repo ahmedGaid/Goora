@@ -61,9 +61,11 @@ abstract final class PricingService {
   /// Positive = above suggested, negative = below, 0 = the suggested price.
   static int deltaFromSuggested(int price, PriceRange r) => price - r.suggested;
 
-  /// Goora's per-trip service fee (brief §6.7 A). The contribution still goes
-  /// to the driver in full; the fee is on top, never part of the trip cost the
-  /// cap above protects (004 spec "Constitution II reading").
+  /// Goora's per-trip service fee (brief §6.7 A), up to 10% of the
+  /// contribution. The contribution still goes to the driver in full; the fee
+  /// is trimmed so contribution + fee never exceeds the rider's equal share
+  /// of the full trip cost (004 v2.1 research R15/R17 — Constitution II read
+  /// as the cap covering the rider's total payment, fee included).
   static const feeRatePercent = 10;
 
   /// ⌊tripCost ÷ riderSeats⌋ (004 v2.1 research R15/R17).

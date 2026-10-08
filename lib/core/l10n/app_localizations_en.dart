@@ -175,7 +175,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get howPayRule1 =>
-      'You pay the driver\'s share + a 10% service fee per trip. Subscribers pay no fee.';
+      'You pay the driver\'s share + a service fee of up to 10% per trip. Subscribers pay no fee.';
 
   @override
   String get howPayRule2 =>
@@ -1565,6 +1565,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String priceNoFee(int price) {
+    return '$price EGP to the driver · no service fee';
+  }
+
+  @override
   String priceSubscribed(int price) {
     return '$price EGP · no fees (subscribed)';
   }
@@ -1617,6 +1622,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String planPerTripLine(int fee) {
     return '$fee EGP service fee per trip';
   }
+
+  @override
+  String get planPerTripNoFeeLine => 'No service fee on your trips';
 
   @override
   String planSubscribedLine(String date) {
@@ -1679,7 +1687,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get breakdownShare => 'Driver\'s share';
 
   @override
-  String get breakdownFee => 'Service fee (10%)';
+  String get breakdownFee => 'Service fee';
 
   @override
   String get breakdownNoFee => 'Service fee: none';

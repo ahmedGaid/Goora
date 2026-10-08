@@ -27,6 +27,8 @@ final class WalletView {
     this.legShare = 0,
     this.capacitySeats = 0,
     this.filledSeats = 0,
+    this.groupTripCost = 0,
+    this.riderSeats = 0,
   });
 
   final MemberRole role;
@@ -48,10 +50,18 @@ final class WalletView {
   /// Driver only: riders actually in the car for one leg.
   final int filledSeats;
 
+  /// `CommuteGroup.tripCost` — the full trip cost for one leg.
+  final int groupTripCost;
+
+  /// `CommuteGroup.riderSeats`.
+  final int riderSeats;
+
   /// The service fee on one trip for this rider now (0 unless paying per trip
   /// from the wallet).
   int get fee => PricingService.serviceFee(
         legShare,
+        tripCost: groupTripCost,
+        riderSeats: riderSeats,
         isSubscriber: mode == PricingMode.subscribed || mode == PricingMode.company,
         isCashTrial: mode == PricingMode.cash,
       );
@@ -75,13 +85,13 @@ final class WalletView {
       (mode == PricingMode.wallet || mode == PricingMode.subscribed) && legTotal > 0 && wallet.balance < legTotal;
 
   /// Driver only: what a full round-trip day would cost at capacity.
-  int get tripCost => legShare * capacitySeats * 2;
+  int get dayTripCost => groupTripCost * 2;
 
   /// Driver only: what the driver received from riders for a round-trip day.
   int get receivedFromRiders => legShare * filledSeats * 2;
 
   /// Driver only: the gap the driver covers themselves — e.g. an empty seat.
-  int get driverGap => tripCost - receivedFromRiders;
+  int get driverGap => dayTripCost - receivedFromRiders;
 }
 
 @riverpod
@@ -110,6 +120,8 @@ class WalletController extends _$WalletController {
       legShare: group?.price ?? 0,
       capacitySeats: (group?.riders.length ?? 0) + (group?.freeSeatsGoing ?? 0),
       filledSeats: group?.riders.length ?? 0,
+      groupTripCost: group?.tripCost ?? 0,
+      riderSeats: group?.riderSeats ?? 0,
     );
   }
 

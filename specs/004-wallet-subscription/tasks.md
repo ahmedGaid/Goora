@@ -435,29 +435,29 @@ higher, no existing test newly fails.
 **Independent test**: a 160/4-trip-cost rider at 38 EGP contribution shows "38 + 2" (not "38 + 4");
 a 96/4 rider at 24 EGP shows "Service fee: none"; both ar + en.
 
-- [ ] T091 [P] Pass `group.tripCost`/`group.riderSeats` into the price line's `serviceFee` call —
+- [x] T091 [P] Pass `group.tripCost`/`group.riderSeats` into the price line's `serviceFee` call —
   `lib/features/commute/presentation/match_result_screen.dart`
-- [ ] T092 [P] Pass `view.group.tripCost`/`riderSeats` into the price line's `serviceFee` call —
+- [x] T092 [P] Pass `view.group.tripCost`/`riderSeats` into the price line's `serviceFee` call —
   `lib/features/daily/presentation/today/rider_today.dart`
-- [ ] T093 Pass the ride's `group.tripCost`/`riderSeats` into `_riderTrips`'s `serviceFee` call —
+- [x] T093 Pass the ride's `group.tripCost`/`riderSeats` into `_riderTrips`'s `serviceFee` call —
   `lib/features/wallet/data/fake_wallet_repository.dart`
-- [ ] T094 [P] Add `groupTripCost`/`riderSeats` to the wallet-mode subtitle's `serviceFee` call (the
+- [x] T094 [P] Add `groupTripCost`/`riderSeats` to the wallet-mode subtitle's `serviceFee` call (the
   rider's wallet-mode price, not their current mode) — `lib/features/wallet/presentation/pay_method/pay_method_screen.dart`
-- [ ] T095 Add `groupTripCost`/`riderSeats` to `WalletView.fee`'s `serviceFee` call; driver
+- [x] T095 Add `groupTripCost`/`riderSeats` to `WalletView.fee`'s `serviceFee` call; driver
   `dayTripCost` reads `group.tripCost * 2` instead of `legShare * capacitySeats * 2` —
   `lib/features/wallet/presentation/wallet/wallet_controller.dart`
-- [ ] T096 ARB: add `priceNoFee`, `planPerTripNoFeeLine`; replace `howPayRule1`, `breakdownFee`
+- [x] T096 ARB: add `priceNoFee`, `planPerTripNoFeeLine`; replace `howPayRule1`, `breakdownFee`
   (R13 addendum, ar + en); wire `priceLine` (labels.dart) to pick `priceNoFee` for wallet mode
   when `fee == 0`, and the plan card to pick `planPerTripNoFeeLine` when `view.fee == 0` —
   `lib/core/l10n/app_ar.arb`, `lib/core/l10n/app_en.arb`, `lib/features/wallet/presentation/labels.dart`,
   run `flutter gen-l10n`
-- [ ] T097 [P] Widget test: a trimmed fee (160 trip cost, 4 rider seats, 38 EGP contribution →
+- [x] T097 [P] Widget test: a trimmed fee (160 trip cost, 4 rider seats, 38 EGP contribution →
   "38 + 2") ar + en — `test/widget/rider_wallet_test.dart` or the relevant price-line test
-- [ ] T098 [P] Widget test: a zero fee at the share (96 trip cost, 4 rider seats, 24 EGP
+- [x] T098 [P] Widget test: a zero fee at the share (96 trip cost, 4 rider seats, 24 EGP
   contribution → "Service fee: none") ar + en — same file as T097
-- [ ] T099 Regenerate goldens touched by the T096 copy changes —
+- [x] T099 Regenerate goldens touched by the T096 copy changes —
   `test/golden/wallet_widgets_golden_test.dart`
-- [ ] T100 Replace the stale "Constitution II reading" doc comment above
+- [x] T100 Replace the stale "Constitution II reading" doc comment above
   `PricingService.feeRatePercent` with the v2.1 rule per `contracts/pricing.md` —
   `lib/features/commute/domain/pricing_service.dart`
 

@@ -243,7 +243,8 @@ final class FakeWalletRepository implements WalletRepository {
             rideId: item.rideId,
           ));
         } else {
-          final fee = PricingService.serviceFee(group.price, isSubscriber: feeFree, isCashTrial: false);
+          final fee = PricingService.serviceFee(group.price,
+              tripCost: group.tripCost, riderSeats: group.riderSeats, isSubscriber: feeFree, isCashTrial: false);
           debits += group.price + fee;
           entries.add(ActivityEntry(
             id: 'trip:${item.rideId}',

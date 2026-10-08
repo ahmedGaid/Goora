@@ -23,7 +23,7 @@ extension WalletLabels on AppLocalizations {
 
   /// FR-004: the one price line for a trip, by the rider's arrangement.
   String priceLine(int contribution, PricingMode mode, {required int fee}) => switch (mode) {
-        PricingMode.wallet => priceWithFee(contribution, fee),
+        PricingMode.wallet => fee == 0 ? priceNoFee(contribution) : priceWithFee(contribution, fee),
         PricingMode.subscribed => priceSubscribed(contribution),
         PricingMode.company => priceCompany(contribution),
         PricingMode.cash => priceCash(contribution),

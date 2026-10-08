@@ -43,8 +43,12 @@ class _PayMethodScreenState extends ConsumerState<PayMethodScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final contribution = ref.watch(walletControllerProvider).value?.legShare ?? 0;
-    final fee = PricingService.serviceFee(contribution, isSubscriber: false, isCashTrial: false);
+    final view = ref.watch(walletControllerProvider).value;
+    final contribution = view?.legShare ?? 0;
+    final fee = view == null || view.riderSeats < 1
+        ? 0
+        : PricingService.serviceFee(contribution,
+            tripCost: view.groupTripCost, riderSeats: view.riderSeats, isSubscriber: false, isCashTrial: false);
     return OnboardingScaffold(
       title: l10n.payMethodTitle,
       subtitle: l10n.payMethodSub,

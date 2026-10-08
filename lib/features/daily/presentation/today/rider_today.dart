@@ -372,10 +372,12 @@ class _Tiles extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final price = view.group!.price;
+    final group = view.group!;
+    final price = group.price;
     final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
     final fee = mode == PricingMode.wallet
-        ? PricingService.serviceFee(price, isSubscriber: false, isCashTrial: false)
+        ? PricingService.serviceFee(price,
+            tripCost: group.tripCost, riderSeats: group.riderSeats, isSubscriber: false, isCashTrial: false)
         : 0;
     final ret = day.leg(Leg.ret);
     return IntrinsicHeight(

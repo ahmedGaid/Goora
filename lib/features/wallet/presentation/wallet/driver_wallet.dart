@@ -82,7 +82,7 @@ class DriverWallet extends StatelessWidget {
             children: [
               Text(l10n.driverBreakdownTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: AppSpacing.sm),
-              _BreakdownRow(label: l10n.driverBreakdownCost, value: l10n.egpAmount(view.tripCost)),
+              _BreakdownRow(label: l10n.driverBreakdownCost, value: l10n.egpAmount(view.dayTripCost)),
               const SizedBox(height: AppSpacing.xs),
               _BreakdownRow(label: l10n.driverBreakdownReceived, value: l10n.egpAmount(view.receivedFromRiders)),
               if (view.driverGap > 0) ...[

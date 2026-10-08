@@ -60,6 +60,39 @@ MatchOutcome _outcome({required bool driver, bool found = true}) {
   );
 }
 
+/// A single-group match using [_profile]'s own departure/return, for pricing
+/// tests that need a specific `tripCost`/`riderSeats` (004 v2.1).
+MatchResult _priceLineMatch({required int price, required int tripCost, required int riderSeats}) {
+  final template = CorridorSeed.groups.first;
+  final group = CommuteGroup(
+    id: 'price-line',
+    origin: template.origin,
+    destination: template.destination,
+    destinationPoint: template.destinationPoint,
+    pickupPoints: template.pickupPoints,
+    going: _profile.departure,
+    ret: _profile.ret,
+    days: _profile.days,
+    members: template.members,
+    price: price,
+    freeSeatsGoing: 2,
+    freeSeatsReturn: 2,
+    tripCost: tripCost,
+    riderSeats: riderSeats,
+    detourMinutes: 0,
+  );
+  final seeker = Seeker(
+    role: MemberRole.rider,
+    home: _profile.home!.point,
+    work: _profile.work!.point,
+    departure: _profile.departure,
+    ret: _profile.ret,
+    days: _profile.days,
+    legs: const {Leg.going, Leg.ret},
+  );
+  return MatchingService.match(seeker, [group]);
+}
+
 class _Seeded extends LastMatch {
   _Seeded(this.outcome);
 
@@ -310,6 +343,38 @@ void main() {
         );
         await _scrollTo(tester, find.byKey(const Key('return-leg')));
         expect(find.text(l.returnLeg(l.time(evening.ret))), findsOneWidget);
+      });
+
+      testWidgets('v2.1: a trimmed fee shows the room left under the equal share, not the full 10%', (tester) async {
+        final result = _priceLineMatch(price: 38, tripCost: 160, riderSeats: 4);
+        await pumpScreen(
+          tester,
+          const MatchResultScreen(),
+          locale: locale,
+          session: _session(Role.rider),
+          overrides: [
+            lastMatchProvider.overrideWith(
+              () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
+            ),
+          ],
+        );
+        expect(find.text(l.priceWithFee(38, 2)), findsOneWidget);
+      });
+
+      testWidgets('v2.1: a fee trimmed to zero reads as fee-free, not 0 EGP', (tester) async {
+        final result = _priceLineMatch(price: 24, tripCost: 96, riderSeats: 4);
+        await pumpScreen(
+          tester,
+          const MatchResultScreen(),
+          locale: locale,
+          session: _session(Role.rider),
+          overrides: [
+            lastMatchProvider.overrideWith(
+              () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
+            ),
+          ],
+        );
+        expect(find.text(l.priceNoFee(24)), findsOneWidget);
       });
 
       testWidgets('driver sees riders only as verified riders (no names)', (tester) async {
