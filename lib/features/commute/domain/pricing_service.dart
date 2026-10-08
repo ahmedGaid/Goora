@@ -66,14 +66,31 @@ abstract final class PricingService {
   /// cap above protects (004 spec "Constitution II reading").
   static const feeRatePercent = 10;
 
-  /// 10% of the contribution, nearest whole EGP, halves up (004 research R6);
-  /// 0 for subscribers, company-plan riders and cash trips.
-  static int serviceFee(int contribution, {required bool isSubscriber, required bool isCashTrial}) {
+  /// ⌊tripCost ÷ riderSeats⌋ (004 v2.1 research R15/R17).
+  static int equalShare(int tripCost, int riderSeats) {
+    if (riderSeats < 1) {
+      throw ArgumentError.value(riderSeats, 'riderSeats', 'must be >= 1');
+    }
+    return tripCost ~/ riderSeats;
+  }
+
+  /// 10% of the contribution, nearest whole EGP, halves up (004 research R6),
+  /// trimmed to the room left under the rider's equal share so the total never
+  /// exceeds it (004 v2.1 research R17); 0 for subscribers, company-plan riders
+  /// and cash trips.
+  static int serviceFee(int contribution,
+      {required int tripCost, required int riderSeats, required bool isSubscriber, required bool isCashTrial}) {
     if (isSubscriber || isCashTrial) return 0;
-    return (contribution * feeRatePercent + 50) ~/ 100;
+    final rounded = (contribution * feeRatePercent + 50) ~/ 100;
+    final room = equalShare(tripCost, riderSeats) - contribution;
+    final fee = rounded < room ? rounded : room;
+    return fee < 0 ? 0 : fee;
   }
 
   /// What the rider pays for one trip: 40 → 44, or 40 when fee-free.
-  static int riderTotal(int contribution, {required bool isSubscriber, required bool isCashTrial}) =>
-      contribution + serviceFee(contribution, isSubscriber: isSubscriber, isCashTrial: isCashTrial);
+  static int riderTotal(int contribution,
+      {required int tripCost, required int riderSeats, required bool isSubscriber, required bool isCashTrial}) =>
+      contribution +
+          serviceFee(contribution,
+              tripCost: tripCost, riderSeats: riderSeats, isSubscriber: isSubscriber, isCashTrial: isCashTrial);
 }

@@ -3,6 +3,8 @@
   {
    "name": "32 EGP, wallet",
    "contribution": 32,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 3,
@@ -11,6 +13,8 @@
   {
    "name": "32 EGP, subscriber",
    "contribution": 32,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -19,6 +23,8 @@
   {
    "name": "32 EGP, cash",
    "contribution": 32,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -27,6 +33,8 @@
   {
    "name": "34 EGP, wallet",
    "contribution": 34,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 3,
@@ -35,6 +43,8 @@
   {
    "name": "34 EGP, subscriber",
    "contribution": 34,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -43,6 +53,8 @@
   {
    "name": "34 EGP, cash",
    "contribution": 34,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -51,6 +63,8 @@
   {
    "name": "36 EGP, wallet",
    "contribution": 36,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 4,
@@ -59,6 +73,8 @@
   {
    "name": "36 EGP, subscriber",
    "contribution": 36,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -67,6 +83,8 @@
   {
    "name": "36 EGP, cash",
    "contribution": 36,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -75,6 +93,8 @@
   {
    "name": "38 EGP, wallet",
    "contribution": 38,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 4,
@@ -83,6 +103,8 @@
   {
    "name": "38 EGP, subscriber",
    "contribution": 38,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -91,6 +113,8 @@
   {
    "name": "38 EGP, cash",
    "contribution": 38,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -99,6 +123,8 @@
   {
    "name": "40 EGP, wallet",
    "contribution": 40,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 4,
@@ -107,6 +133,8 @@
   {
    "name": "40 EGP, subscriber",
    "contribution": 40,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -115,6 +143,8 @@
   {
    "name": "40 EGP, cash",
    "contribution": 40,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -123,6 +153,8 @@
   {
    "name": "42 EGP, wallet",
    "contribution": 42,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 4,
@@ -131,6 +163,8 @@
   {
    "name": "42 EGP, subscriber",
    "contribution": 42,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -139,6 +173,8 @@
   {
    "name": "42 EGP, cash",
    "contribution": 42,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -147,6 +183,8 @@
   {
    "name": "44 EGP, wallet",
    "contribution": 44,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 4,
@@ -155,6 +193,8 @@
   {
    "name": "44 EGP, subscriber",
    "contribution": 44,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -163,6 +203,8 @@
   {
    "name": "44 EGP, cash",
    "contribution": 44,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -171,6 +213,8 @@
   {
    "name": "46 EGP, wallet",
    "contribution": 46,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 5,
@@ -179,6 +223,8 @@
   {
    "name": "46 EGP, subscriber",
    "contribution": 46,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -187,6 +233,8 @@
   {
    "name": "46 EGP, cash",
    "contribution": 46,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -195,6 +243,8 @@
   {
    "name": "48 EGP, wallet",
    "contribution": 48,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 5,
@@ -203,6 +253,8 @@
   {
    "name": "48 EGP, subscriber",
    "contribution": 48,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -211,6 +263,8 @@
   {
    "name": "48 EGP, cash",
    "contribution": 48,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -219,6 +273,8 @@
   {
    "name": "25 EGP, wallet",
    "contribution": 25,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 3,
@@ -227,6 +283,8 @@
   {
    "name": "25 EGP, subscriber",
    "contribution": 25,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -235,6 +293,8 @@
   {
    "name": "25 EGP, cash",
    "contribution": 25,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -243,6 +303,8 @@
   {
    "name": "35 EGP, wallet",
    "contribution": 35,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 4,
@@ -251,6 +313,8 @@
   {
    "name": "35 EGP, subscriber",
    "contribution": 35,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -259,6 +323,8 @@
   {
    "name": "35 EGP, cash",
    "contribution": 35,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -267,6 +333,8 @@
   {
    "name": "45 EGP, wallet",
    "contribution": 45,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 5,
@@ -275,6 +343,8 @@
   {
    "name": "45 EGP, subscriber",
    "contribution": 45,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -283,6 +353,8 @@
   {
    "name": "45 EGP, cash",
    "contribution": 45,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -291,6 +363,8 @@
   {
    "name": "15 EGP, wallet",
    "contribution": 15,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 2,
@@ -299,6 +373,8 @@
   {
    "name": "15 EGP, subscriber",
    "contribution": 15,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -307,6 +383,8 @@
   {
    "name": "15 EGP, cash",
    "contribution": 15,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -315,6 +393,8 @@
   {
    "name": "5 EGP, wallet",
    "contribution": 5,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 1,
@@ -323,6 +403,8 @@
   {
    "name": "5 EGP, subscriber",
    "contribution": 5,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -331,6 +413,8 @@
   {
    "name": "5 EGP, cash",
    "contribution": 5,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
@@ -339,6 +423,8 @@
   {
    "name": "0 EGP, wallet",
    "contribution": 0,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": false,
    "fee": 0,
@@ -347,6 +433,8 @@
   {
    "name": "0 EGP, subscriber",
    "contribution": 0,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": true,
    "isCashTrial": false,
    "fee": 0,
@@ -355,10 +443,62 @@
   {
    "name": "0 EGP, cash",
    "contribution": 0,
+   "tripCost": 160,
+   "riderSeats": 3,
    "isSubscriber": false,
    "isCashTrial": true,
    "fee": 0,
    "total": 0
+  },
+  {
+   "name": "cap: 160/3 suggested",
+   "contribution": 40,
+   "tripCost": 160,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 4,
+   "total": 44
+  },
+  {
+   "name": "cap: 160/3 top of range",
+   "contribution": 48,
+   "tripCost": 160,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 5,
+   "total": 53
+  },
+  {
+   "name": "cap: 160/4 suggested",
+   "contribution": 32,
+   "tripCost": 160,
+   "riderSeats": 4,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 3,
+   "total": 35
+  },
+  {
+   "name": "cap: 160/4 top of range, trimmed",
+   "contribution": 38,
+   "tripCost": 160,
+   "riderSeats": 4,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 2,
+   "total": 40
+  },
+  {
+   "name": "cap: 96/4 at the share, no room",
+   "contribution": 24,
+   "tripCost": 96,
+   "riderSeats": 4,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 24
   }
  ]
 }

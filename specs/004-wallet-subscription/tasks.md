@@ -389,23 +389,23 @@ the wallet states, then the driver side. Commit after each phase; converge at th
 **Independent test**: `pricing_vectors.json`'s five "cap:" rows pass in both `rider_total_test.dart`
 and `pricing.test.ts`; the R17 sweep test is green in both twins.
 
-- [ ] T080 [P] `PricingService.equalShare(tripCost, riderSeats)` (floor division, throws
+- [X] T080 [P] `PricingService.equalShare(tripCost, riderSeats)` (floor division, throws
   `ArgumentError` when `riderSeats < 1`) and the new `serviceFee`/`riderTotal` signatures
   (`tripCost`, `riderSeats` required named params; fee trimmed to
   `max(0, min(feePercent, equalShare - contribution))`) per `contracts/pricing.md` —
   `lib/features/commute/domain/pricing_service.dart`
-- [ ] T081 [P] TS twin: `equalShare`, and the new `serviceFee`/`riderTotal` signatures (`tripCost`,
+- [X] T081 [P] TS twin: `equalShare`, and the new `serviceFee`/`riderTotal` signatures (`tripCost`,
   `riderSeats` positional params, throws `RangeError` when `riderSeats < 1`), mirroring T080 —
   `supabase/functions/_shared/pricing.ts`
-- [ ] T082 Add `tripCost: 160, riderSeats: 3` to all 45 existing cases and append the five
+- [X] T082 Add `tripCost: 160, riderSeats: 3` to all 45 existing cases and append the five
   spec-table "cap:" rows (contracts/pricing.md) — `test/fixtures/pricing_vectors.json`
-- [ ] T083 [P] Update the vector reader to pass `tripCost`/`riderSeats` through to
+- [X] T083 [P] Update the vector reader to pass `tripCost`/`riderSeats` through to
   `serviceFee`/`riderTotal` — `test/unit/rider_total_test.dart`
-- [ ] T084 [P] Update the vector reader the same way — `supabase/functions/_shared/pricing.test.ts`
-- [ ] T085 [P] R17 cap sweep test: trip cost 20–1,000 (step), rider seats 1–4, every contribution
+- [X] T084 [P] Update the vector reader the same way — `supabase/functions/_shared/pricing.test.ts`
+- [X] T085 [P] R17 cap sweep test: trip cost 20–1,000 (step), rider seats 1–4, every contribution
   in `PricingService.range(tripCost, riderSeats)` (2 EGP steps), non-subscriber/non-cash-trial,
   assert `riderSeats * riderTotal(...) <= tripCost` — new `test/unit/pricing_cap_sweep_test.dart`
-- [ ] T086 [P] Mirror T085 in TS with a local `range` helper (not exported — no server consumer
+- [X] T086 [P] Mirror T085 in TS with a local `range` helper (not exported — no server consumer
   needs it yet) — `supabase/functions/_shared/pricing.test.ts`
 
 **Checkpoint**: `flutter test test/unit/rider_total_test.dart test/unit/pricing_cap_sweep_test.dart`
