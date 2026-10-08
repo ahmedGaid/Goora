@@ -2,7 +2,8 @@
 
 **Feature Branch**: `004-wallet-subscription`
 
-**Created**: 2026-10-08 · **Amended**: 2026-10-08 (payment model v2, see "Amendment" below)
+**Created**: 2026-10-08 · **Amended**: 2026-10-08 (payment model v2, see "Amendment" below) ·
+2026-10-08 (v2.1: the service fee sits inside the Constitution II cap)
 
 **Status**: Draft
 
@@ -21,7 +22,8 @@ FeeSavingsCalculator with unit tests using the brief's numbers."
 
 **Carried over from 001–003 (decided, not re-asked)**: 40 EGP contribution per rider per trip
 (one leg); late cancellation owes half the leg share (20 EGP), a no-show the full share (40 EGP),
-both to the driver with no Goora fee; fakes-first backend; Constitution II (drivers never profit).
+both to the driver with no Goora fee; fakes-first backend; Constitution II (drivers never profit;
+riders' total, fees included, never above trip cost — v2.1).
 
 ## Amendment — payment model v2 (2026-10-08)
 
@@ -33,11 +35,30 @@ cards and company verification, the driver wallet's recovered balance and breakd
 "read 003's records, don't duplicate them" seam (research R3). What is removed: the free month,
 the trialing status, the "Start your free month" copy, and the redirect that forced a plan.
 
-**Constitution II reading**: the cap ("riders' total payments must not exceed the full trip
-cost") applies to the contributions drivers receive, which are unchanged. The service fee goes to
-Goora, is not trip cost and never reaches the driver — the same reading the brief already used
-for the old 5 EGP booking fee. The brief records this for the pending legal opinion (§8). This
-feature does not amend the constitution.
+## Amendment — the service fee sits inside the cap (2026-10-08, founder decision)
+
+Supersedes v2's "Constitution II reading", which treated the fee as outside the cap. Read
+literally, that cap ("riders' total payments must not exceed the full trip cost") was broken by a
+full car priced near the top of the range: 4 riders × (38 + 4) = 168 EGP on a 160 EGP trip. The
+founder chose to keep the per-trip fee and make it fit, rather than drop it or narrow the range.
+
+**Rule**: on every trip leg, each rider's contribution + service fee MUST NOT exceed that rider's
+equal share of the trip cost — trip cost ÷ the number of rider seats the price was set for, whole
+EGP, rounded down. The fee is 10% (halves up) or the room left under that share, whichever is
+smaller, and never below 0. Only Goora's fee is trimmed; the driver's contribution is never
+reduced. Because every rider stays within an equal share, riders' total payments, fees included,
+never exceed the trip cost — the constitution as written, with no amendment.
+
+| Trip cost | Rider seats | Contribution | Equal share | 10% | Fee charged | Rider pays |
+|---|---|---|---|---|---|---|
+| 160 | 3 | 40 (suggested) | 53 | 4 | 4 | 44 (unchanged) |
+| 160 | 3 | 48 (top of range) | 53 | 5 | 5 | 53 |
+| 160 | 4 | 32 (suggested) | 40 | 3 | 3 | 35 |
+| 160 | 4 | 38 (top of range) | 40 | 4 | **2** | 40 (was 42) |
+| 96 | 4 | 24 (top of range = share) | 24 | 2 | **0** | 24 |
+
+The legal question in brief §8 narrows to "is a per-trip service fee allowed at all"; the
+over-the-cap concern is gone.
 
 ## Clarifications
 
@@ -72,6 +93,24 @@ feature does not amend the constitution.
   company-plan rider never sees it. Blocking a seat is server/005 work.
 - Q: Do subscribers and company employees still pay the contribution? → A: Yes. "No fees" means no
   Goora service fee; the driver's contribution is always paid (it is the cost-sharing).
+
+### Session 2026-10-08 (v2.1 — fee inside the cap; rule decided by the founder, details by the implementer)
+
+- Q: Which rider count sets the equal share — the riders on board that day, or the seats the
+  price was set for? → A: The seats the price was set for (the same count the price range uses).
+  A rider's price then doesn't move with other people's absences; a lighter day only lowers the
+  car's total, which keeps it under the cap.
+- Q: Which comes first, rounding or trimming? → A: Round the 10% first (halves up), then cap it at
+  the room left: fee = min(round(10%), share − contribution), never below 0.
+- Q: What does a rider see when the fee is trimmed? → A: The real figure, in the same line: "38 EGP
+  to the driver + 2 EGP service fee". Trimmed to 0: "{c} EGP to the driver · no service fee"
+  (drafted copy, founder review). No "discount" message — nothing was promised.
+- Q: The rules list says "a 10% service fee" and the breakdown says "Service fee (10%)" — still
+  true? → A: Not always. The rules list says "a service fee of up to 10%"; the breakdown drops the
+  "(10%)" and shows the amount (drafted copy).
+- Q: Does the fee-savings banner use 10% or the fee actually charged? → A: The fee actually charged.
+- Q: Does the rule reach one-off seat bookings? → A: Yes, every rider-facing price uses it. Booking
+  itself is 005's; this feature provides the rule.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -199,6 +238,12 @@ EGP cash", and check the Wallet's cash-received section.
 - A cash rider is marked "Didn't pay" on their 10th trip: cash is over either way; one state, not
   two notes.
 - Fee on a contribution not divisible by 10 (32–48 range): halves round up (45 → 5).
+- A full car priced near the top of the range: the fee is trimmed to the room left under the equal
+  share (160 EGP, 4 seats, 38 → fee 2, not 4).
+- A contribution that already equals the equal share: no room, fee 0, the rider pays the
+  contribution only (96 EGP, 4 seats, 24 → 24).
+- A day with fewer riders than seats: each rider's price is unchanged (set by seats), and the car's
+  total falls further under the trip cost.
 - A rider subscribes mid-month after paying fees: the savings banner hides once subscribed.
 
 ## Requirements *(mandatory)*
@@ -210,13 +255,16 @@ EGP cash", and check the Wallet's cash-received section.
   skip it.
 - **FR-002**: The payment-method screen MUST offer cash ("first 10 trips") and wallet, plus a
   "Subscribe and pay no fees" link to the subscription screen.
-- **FR-003**: `PricingService.riderTotal(contribution, isSubscriber, isCashTrial)` MUST return
-  contribution + fee, where fee = 10% rounded half-up to whole EGP for wallet non-subscribers and 0
-  for subscribers, company-plan riders and cash trips.
-- **FR-004**: Every rider-facing trip price (match result, Today) MUST show
-  "{c} EGP to the driver + {fee} EGP service fee", "{c} EGP · no fees (subscribed)",
-  "{c} EGP · no fees (company)" (drafted, R13) or "Pay {c} EGP cash to the driver" according to
-  the rider's arrangement.
+- **FR-003** (v2.1): `PricingService.riderTotal` MUST return contribution + fee and
+  `serviceFee` the fee, both given the contribution, the trip cost, the number of rider seats the
+  price was set for, and the rider's arrangement. For wallet non-subscribers, fee = min(10% rounded
+  half-up to whole EGP, ⌊trip cost ÷ rider seats⌋ − contribution), never below 0; for subscribers,
+  company-plan riders and cash trips, fee = 0. The contribution is never reduced.
+- **FR-004** (v2.1): Every rider-facing trip price (match result, Today) MUST show
+  "{c} EGP to the driver + {fee} EGP service fee" with the fee actually charged,
+  "{c} EGP to the driver · no service fee" when the cap trims it to 0 (drafted),
+  "{c} EGP · no fees (subscribed)", "{c} EGP · no fees (company)" (drafted, R13) or
+  "Pay {c} EGP cash to the driver" according to the rider's arrangement.
 - **FR-005**: On each completed trip (003's settled "kept" outcome for a rider), the wallet MUST
   debit riderTotal for wallet riders, and record a cash trip (no wallet movement) for cash riders.
 - **FR-006**: Top-ups MUST credit exactly the amount (no fee).
@@ -241,7 +289,12 @@ EGP cash", and check the Wallet's cash-received section.
 - **FR-014**: All money movement MUST go through `FakePaymentProvider` and the app's own ledger
   (v1 FR-013 unchanged). Drivers MUST never be charged a fee or subscription.
 - **FR-015**: The pricing rule MUST exist twice (Dart and `supabase/functions/_shared`) and pass
-  the same vectors (Constitution VIII / twin-implementation rule).
+  the same vectors (Constitution VIII / twin-implementation rule). v2.1: the vectors MUST include
+  the five rows of the "fee sits inside the cap" table.
+- **FR-016** (v2.1): For every trip cost, rider-seat count and contribution the price range
+  allows, rider seats × riderTotal MUST NOT exceed the trip cost (Constitution II, fees included).
+- **FR-017** (v2.1): "How paying works" MUST describe the fee as "up to 10%", and the per-trip
+  breakdown MUST show the fee as an amount without a fixed percentage (drafted copy).
 
 ### Key Entities
 
@@ -256,7 +309,10 @@ EGP cash", and check the Wallet's cash-received section.
 ## Success Criteria *(mandatory)*
 
 - **SC-001**: A rider goes from "Join this group" to Today in one screen and two taps.
-- **SC-002**: 100% of completed wallet trips show their fee as its own figure; 40 → 44 everywhere.
+- **SC-002** (v2.1): 100% of completed wallet trips show their fee as its own figure, equal to what
+  was charged; on the demo corridor (160 EGP, 3 seats) 40 → 44 everywhere.
+- **SC-006** (v2.1): Across every allowed price for 1–4 rider seats, no trip's total rider
+  payments, fees included, exceed the trip cost — checked by tests, not by inspection.
 - **SC-003**: Unit tests cover PricingService, CashTrialPolicy and FeeSavingsCalculator with the
   brief's numbers (40/44, 10 trips, 2 strikes, trip 8, 129), and the Dart and TS pricing rules pass
   the same vectors.
