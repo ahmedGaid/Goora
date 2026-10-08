@@ -381,3 +381,108 @@ the wallet states, then the driver side. Commit after each phase; converge at th
 
 - [ ] T078 Decide (founder) whether an off-duty driver riding in another driver's car pays the contribution like a rider (003 FR-022a) — today the wallet bills only the rider role; then bill it with no fee or record the exemption in spec/research per FR-005 (partial)
 - [x] T079 Add widget tests for a lapsed subscription (plan card "Subscription ended · back to pay per trip", fee back on trips) and for the savings banner hiding once subscribed, ar + en, in `test/widget/rider_wallet_test.dart` per US3/AC5 and spec Edge Cases (partial)
+
+---
+
+## Phase 14: v2.1 — rule + twin (P10, riskiest first)
+
+**Independent test**: `pricing_vectors.json`'s five "cap:" rows pass in both `rider_total_test.dart`
+and `pricing.test.ts`; the R17 sweep test is green in both twins.
+
+- [ ] T080 [P] `PricingService.equalShare(tripCost, riderSeats)` (floor division, throws
+  `ArgumentError` when `riderSeats < 1`) and the new `serviceFee`/`riderTotal` signatures
+  (`tripCost`, `riderSeats` required named params; fee trimmed to
+  `max(0, min(feePercent, equalShare - contribution))`) per `contracts/pricing.md` —
+  `lib/features/commute/domain/pricing_service.dart`
+- [ ] T081 [P] TS twin: `equalShare`, and the new `serviceFee`/`riderTotal` signatures (`tripCost`,
+  `riderSeats` positional params, throws `RangeError` when `riderSeats < 1`), mirroring T080 —
+  `supabase/functions/_shared/pricing.ts`
+- [ ] T082 Add `tripCost: 160, riderSeats: 3` to all 45 existing cases and append the five
+  spec-table "cap:" rows (contracts/pricing.md) — `test/fixtures/pricing_vectors.json`
+- [ ] T083 [P] Update the vector reader to pass `tripCost`/`riderSeats` through to
+  `serviceFee`/`riderTotal` — `test/unit/rider_total_test.dart`
+- [ ] T084 [P] Update the vector reader the same way — `supabase/functions/_shared/pricing.test.ts`
+- [ ] T085 [P] R17 cap sweep test: trip cost 20–1,000 (step), rider seats 1–4, every contribution
+  in `PricingService.range(tripCost, riderSeats)` (2 EGP steps), non-subscriber/non-cash-trial,
+  assert `riderSeats * riderTotal(...) <= tripCost` — new `test/unit/pricing_cap_sweep_test.dart`
+- [ ] T086 [P] Mirror T085 in TS with a local `range` helper (not exported — no server consumer
+  needs it yet) — `supabase/functions/_shared/pricing.test.ts`
+
+**Checkpoint**: `flutter test test/unit/rider_total_test.dart test/unit/pricing_cap_sweep_test.dart`
+and `node --test supabase/functions/_shared/pricing.test.ts` both green before touching callers.
+
+## Phase 15: v2.1 — basis + seed (P11)
+
+**Independent test**: the new seed invariant test passes; `flutter test` count is unchanged or
+higher, no existing test newly fails.
+
+- [ ] T087 Add required `tripCost` (EGP per leg) and `riderSeats` (1–4) fields to `CommuteGroup` —
+  `lib/features/commute/domain/group.dart`
+- [ ] T088 Set every seeded group to `tripCost: 160, riderSeats: 3`; reduce `sz-0725`'s free seats
+  2 → 1 each leg and `sz-0720`'s 3 → 2 each leg (R16) — `lib/features/commute/data/corridor_seed.dart`
+- [ ] T089 [P] Seed invariant test: for every seeded group and both legs, `riders + freeSeats <=
+  riderSeats`, and `PricingService.range(tripCost, riderSeats).contains(price)` — new
+  `test/unit/corridor_seed_invariant_test.dart`
+- [ ] T090 Find and fix any 002/003 tests asserting `sz-0725`'s/`sz-0720`'s old free-seat counts
+  (seat-left copy, waitlist/backup scoring) broken by T088 (R16 knock-on) — grep
+  `test/unit/`, `test/widget/` for `sz-0725`/`sz-0720`, fix each hit in place
+
+**Checkpoint**: `flutter test --concurrency=1` green with the new seed; `sz-0725` no longer a
+4-rider car priced at 3-seat 40 EGP.
+
+## Phase 16: v2.1 — callers + copy (P12)
+
+**Independent test**: a 160/4-trip-cost rider at 38 EGP contribution shows "38 + 2" (not "38 + 4");
+a 96/4 rider at 24 EGP shows "Service fee: none"; both ar + en.
+
+- [ ] T091 [P] Pass `group.tripCost`/`group.riderSeats` into the price line's `serviceFee` call —
+  `lib/features/commute/presentation/match_result_screen.dart`
+- [ ] T092 [P] Pass `view.group.tripCost`/`riderSeats` into the price line's `serviceFee` call —
+  `lib/features/daily/presentation/today/rider_today.dart`
+- [ ] T093 Pass the ride's `group.tripCost`/`riderSeats` into `_riderTrips`'s `serviceFee` call —
+  `lib/features/wallet/data/fake_wallet_repository.dart`
+- [ ] T094 [P] Add `groupTripCost`/`riderSeats` to the wallet-mode subtitle's `serviceFee` call (the
+  rider's wallet-mode price, not their current mode) — `lib/features/wallet/presentation/pay_method/pay_method_screen.dart`
+- [ ] T095 Add `groupTripCost`/`riderSeats` to `WalletView.fee`'s `serviceFee` call; driver
+  `dayTripCost` reads `group.tripCost * 2` instead of `legShare * capacitySeats * 2` —
+  `lib/features/wallet/presentation/wallet/wallet_controller.dart`
+- [ ] T096 ARB: add `priceNoFee`, `planPerTripNoFeeLine`; replace `howPayRule1`, `breakdownFee`
+  (R13 addendum, ar + en); wire `priceLine` (labels.dart) to pick `priceNoFee` for wallet mode
+  when `fee == 0`, and the plan card to pick `planPerTripNoFeeLine` when `view.fee == 0` —
+  `lib/core/l10n/app_ar.arb`, `lib/core/l10n/app_en.arb`, `lib/features/wallet/presentation/labels.dart`,
+  run `flutter gen-l10n`
+- [ ] T097 [P] Widget test: a trimmed fee (160 trip cost, 4 rider seats, 38 EGP contribution →
+  "38 + 2") ar + en — `test/widget/rider_wallet_test.dart` or the relevant price-line test
+- [ ] T098 [P] Widget test: a zero fee at the share (96 trip cost, 4 rider seats, 24 EGP
+  contribution → "Service fee: none") ar + en — same file as T097
+- [ ] T099 Regenerate goldens touched by the T096 copy changes —
+  `test/golden/wallet_widgets_golden_test.dart`
+- [ ] T100 Replace the stale "Constitution II reading" doc comment above
+  `PricingService.feeRatePercent` with the v2.1 rule per `contracts/pricing.md` —
+  `lib/features/commute/domain/pricing_service.dart`
+
+## Phase 17: v2.1 Gate
+
+- [ ] T101 Gate: `flutter analyze` 0 issues, `flutter test --concurrency=1` all green,
+  `node --test "supabase/functions/_shared/*.test.ts"` all green
+- [ ] T102 Run quickstart.md Scenario 5 on device, ar + en
+
+## v2.1 Dependencies
+
+```text
+Phase 14 (T080–T086, rule+twin) → Phase 15 (T087–T090, basis+seed) → Phase 16 (T091–T100, callers+copy)
+  → Phase 17 (T101–T102, gate)
+```
+
+- T080/T081 are parallel (separate files); T082–T086 need both done.
+- T087 must land before T088 (seed needs the new fields to compile); T089/T090 need T088.
+- T091/T092/T094 are parallel (separate files); T093/T095 touch shared files with T096 — do T096
+  (ARB + labels.dart) after T091–T095 so the new keys exist before any caller is asked to use them.
+
+## v2.1 Implementation Strategy
+
+Rule + twin first (P10) because every other change is a caller of it — get the pricing math and
+its proof (R17) right and tested in isolation before anything on screen can use it. Then the seed
+(P11), since it's the one change that can silently break other features' tests. Callers + copy
+(P12) last, visible on device only once the first two are solid. Gate at the end, same as every
+other v2 phase.
