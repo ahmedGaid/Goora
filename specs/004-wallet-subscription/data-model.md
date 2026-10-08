@@ -1,7 +1,19 @@
 # Phase 1 Data Model: Wallet and Payment Model
 
 Pure Dart, serialised to `shared_preferences` as JSON by `FakeWalletRepository` (v1 pattern).
-v2 changes are marked **(v2)**.
+v2 changes are marked **(v2)**, v2.1 (fee inside the cap) **(v2.1)**.
+
+## CommuteGroup price basis (v2.1, 002's `commute/domain/group.dart`)
+
+| Field | Type | Notes |
+|---|---|---|
+| `price` | `int` | unchanged — the contribution, EGP per rider per leg, fixed for the month |
+| `tripCost` | `int` | **(v2.1)** EGP per leg; seed 160 |
+| `riderSeats` | `int` | **(v2.1)** the rider seats `price` was set for, 1–4; seed 3 |
+
+Invariants (seed test, research R16): for both legs, riders on the leg + `freeSeats(leg)` ≤
+`riderSeats`; `PricingService.range(tripCost, riderSeats).contains(price)`. No JSON form — groups
+are seed-only, so no migration (R15).
 
 ## PaymentMethod (v2)
 
@@ -71,9 +83,13 @@ v1 fields plus **(v2)**:
 
 ## Rules (pure, `lib/features/wallet/domain/`)
 
-- `PricingService.serviceFee(c, {isSubscriber, isCashTrial})` (002's commute PricingService) = `0` if either, else
-  `(c + 5) ~/ 10` (R6). `riderTotal(c, {isSubscriber, isCashTrial})` = `c + serviceFee(…)`.
-  `feeRatePercent = 10`.
+- `PricingService` (002's commute PricingService) — **(v2.1)** signatures in
+  [contracts/pricing.md](contracts/pricing.md):
+  `equalShare(tripCost, riderSeats)` = `tripCost ~/ riderSeats` (throws if `riderSeats < 1`);
+  `serviceFee(c, {tripCost, riderSeats, isSubscriber, isCashTrial})` = `0` if subscriber or cash,
+  else `max(0, min((c × 10 + 50) ~/ 100, equalShare − c))` — round first (R6), then trim;
+  `riderTotal(…)` = `c + serviceFee(…)`. The contribution is never reduced. `feeRatePercent = 10`
+  stays as the *ceiling*.
 - `CashTrialPolicy`: `tripLimit = 10`, `strikeLimit = 2`, `bannerAfter = 7`.
   `available(tripsDone, strikes)` = `tripsDone < 10 && strikes < 2`;
   `tripsLeft(tripsDone)` = `max(0, 10 − tripsDone)`;
@@ -84,6 +100,17 @@ v1 fields plus **(v2)**:
 - `WalletRules.tripsCovered(balance, legTotal)` = `max(0, balance ~/ (2 × legTotal))`
   (v2: `legTotal` is what one leg costs this rider, 44 or 40). `isPlanDue` unchanged.
   `trialEndDate` removed.
+
+## WalletView (presentation, v2.1)
+
+- `fee` passes the group's `tripCost`/`riderSeats` (new view fields `groupTripCost`,
+  `riderSeats`), so `legTotal`, `tripsCovered`, `needsTopUp` and the breakdown use the trimmed fee
+  with no other change.
+- Driver: the old `tripCost` getter (`legShare × capacitySeats × 2`) becomes `dayTripCost` =
+  `groupTripCost × 2`; `driverGap = dayTripCost − receivedFromRiders` (R16 — on a full 3-seat car
+  this is the driver's own share, 80).
+- `ActivityEntry.fee` already stores the fee charged; `FeeSavingsCalculator` already sums it — no
+  change.
 
 ## PaymentProvider
 

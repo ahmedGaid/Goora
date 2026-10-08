@@ -1,6 +1,8 @@
 # Contracts: WalletRepository
 
-App-internal interface (no network API in this feature). v2 changes marked **(v2)**.
+App-internal interface (no network API in this feature). v2 changes marked **(v2)**. v2.1 does
+not change this interface — the fee rule moves inside `PricingService` ([pricing.md](pricing.md)),
+and the repository passes the group's price basis to it.
 
 ```dart
 abstract interface class WalletRepository {

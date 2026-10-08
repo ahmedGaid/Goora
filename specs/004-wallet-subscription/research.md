@@ -279,3 +279,84 @@ uses مشوار/مشاوير for trips per the lexicon; the v1 رحلة drift no
 those would hit a brand-new rider with ~13 trips (−572 EGP) and use up a cash trial at once. The
 wallet only bills trips from the day the rider set up payment (`wallet.since.<id>`: the day they
 chose a method or a plan started).
+
+# v2.1 — the service fee sits inside the cap (2026-10-08)
+
+## R15 — where the price basis lives
+
+- **Decision**: `CommuteGroup` gains two required fields, `tripCost` (EGP per leg) and
+  `riderSeats` (the rider seats the price was set for, 1–4). Together with `price` they are the
+  group's *price basis*, fixed for the month like `price` already is. Every rider-facing fee reads
+  `PricingService.serviceFee(group.price, tripCost: group.tripCost, riderSeats: group.riderSeats,
+  …)`. The driver wallet's "Trip cost" reads `group.tripCost × 2` instead of
+  `legShare × capacitySeats × 2`.
+- **Rationale**: today a group stores only `price`. The other two inputs exist nowhere per group:
+  trip cost is a global config (`TripCostConfig.demoCorridorCost`, 160), and the only seat count is
+  the driver's `Member.seats` — which the seed sets to 4 while pricing at the 3-seat suggestion
+  (R16). Deriving them at each call site would give five call sites five chances to disagree, and
+  the server twin would have no way to see them. Stored on the group, they are plain numbers both
+  twins take as arguments.
+- **Alternatives considered**: (a) read `TripCostConfig` + the driver's `Member.seats` at call
+  time — rejected: wrong on the seed (share 40 → fee 0 on the demo group, SC-002 fails), and a
+  driver changing seats mid-month would move riders' prices, which the spec forbids; (b) count
+  `riders + freeSeats` — rejected: same seed problem, and it changes with every join and leave;
+  (c) store one `equalShare` int — rejected: hides the inputs the twin and FR-016's test need.
+- **Not changed**: `CommuteGroup` has no JSON form (groups are seed-only, not stored), so there is
+  no migration. 002's `TripCostConfig`/`PricingService.tripCost` stay the source a *new* group's
+  `tripCost` would be taken from once groups are created at runtime (005/server).
+
+## R16 — the seed already breaks the price range
+
+- **Finding**: `sz-0725` (the demo group every quickstart uses) carries 2 riders + 2 free seats
+  each way — a 4-rider car — at 40 EGP on a 160 EGP trip. For 4 seats, 002's range is 26–38
+  (suggested 32), so 40 is outside it: Constitution II's second bullet ("within a capped range")
+  is already broken by seed data. `sz-0720` (1 rider + 3 free) has the same problem. The other
+  three are 3-seat (`sz-0740`, `oct-0700`) or 2-seat (`sz-0715`) cars. 4 × 40 = 160 stays at the cap with no fee, which is why
+  nothing caught it; v2's 4 × 44 = 176 is the over-the-cap case the founder decision was about.
+- **Decision**: make every seeded group a 3-seat car priced at the 3-seat suggestion:
+  `tripCost: 160, riderSeats: 3, price: 40`; `sz-0725` free seats 2 → 1 each way; `sz-0720` 3 → 2.
+  Add a seed invariant test: for every seeded group and both legs, riders on the leg + free seats
+  on the leg ≤ `riderSeats`, and `PricingService.range(tripCost, riderSeats).contains(price)`.
+  `sz-0715` (2 seats) stays as it is: fewer seats than priced only keeps the car further under.
+- **Rationale**: no more riders may board than the seats the price was set for. Otherwise a full
+  car breaks the cap no matter how the fee is computed. "≤", not "=", because the cap needs only
+  the upper bound — the same reasoning as the spec's "fewer riders than seats" edge case. Keeping 40 (not repricing to 32) keeps the
+  brief's demo numbers (40 → 44) and every live-verified screen.
+- **Knock-on to check while implementing**: 002/003 tests or copy that assert `sz-0725`'s free
+  seats ("2 seats left" style text, waitlist/backup tests, matching scores that weigh free seats).
+  The seeded drivers' `Member.seats: 4` (`_ahmed`, `_mohamed`) is a separate field (what a driver
+  offers in 002's onboarding) and is left alone; the group's `riderSeats` is the price basis.
+- **Driver breakdown**: with a 3-seat car, `legShare × capacitySeats × 2` = 240 a day, not the real
+  320. Reading `group.tripCost × 2` shows 320; "What you pay yourself" then shows 80 on a full
+  car — the driver's own share, which is what cost-sharing means (suggested = cost ÷ (riders + 1)).
+
+## R17 — proving FR-016 / SC-006
+
+- **Decision**: one Dart unit test sweeps trip cost 20–1,000 EGP, rider seats 1–4 and every
+  contribution in `PricingService.range` (2 EGP steps), and asserts `seats × riderTotal ≤ tripCost`
+  for a wallet non-subscriber (the most expensive arrangement). The TS twin runs the same sweep.
+- **Evidence it is cheap and sound**: run as a throwaway script during planning — 129,309 allowed
+  prices, 0 over the cap with the v2.1 rule; 3,309 (2.6%) were over the cap under v2. All five
+  spec-table rows reproduce exactly.
+- **Why it always holds**: fee ≤ ⌊T ÷ n⌋ − c, so c + fee ≤ ⌊T ÷ n⌋ and n × (c + fee) ≤ T. Within
+  the range, c ≤ max ≤ 2⌊T ÷ 2n⌋ ≤ ⌊T ÷ n⌋, so the room is never negative; the `max(0, …)` only
+  guards prices outside the range (which the constitution already forbids).
+- **Guard**: `riderSeats < 1` throws (`ArgumentError` / `RangeError`) in both twins — a divide by
+  zero must not silently price a trip.
+
+## R13 addendum — v2.1 copy (drafted, founder review)
+
+| key | ar | en | why |
+|---|---|---|---|
+| howPayRule1 (replaced) | بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم. | You pay the driver's share + a service fee of up to 10% per trip. Subscribers pay no fee. | FR-017 |
+| breakdownFee (replaced) | رسوم الخدمة | Service fee | FR-017 — no fixed % |
+| priceNoFee (new) | {price} ج للسواق · من غير رسوم خدمة | {price} EGP to the driver · no service fee | FR-004 — trimmed to 0 |
+| planPerTripNoFeeLine (new) | من غير رسوم خدمة على مشاويرك | No service fee on your trips | plan card when the fee is 0 (else "0 EGP service fee per trip") |
+
+Where they land: `priceLine` (labels.dart) picks `priceNoFee` for wallet mode when `fee == 0`;
+the plan card picks `planPerTripNoFeeLine` when `view.fee == 0`. `activityCaption` is unchanged:
+a `trip` row with `fee == 0` already reads `breakdownNoFee` ("Service fee: none"), true whether the
+fee was trimmed or the rider subscribed, so the entry needs no "why" flag. The breakdown keeps
+`breakdownNoFee` for fee 0. `priceWithFee`, `planPerTripLine` and `feeSavings` are unchanged
+— they already print the amount actually charged, and `FeeSavingsCalculator` already sums the
+stored `fee`, so the savings banner uses the trimmed figure with no code change.

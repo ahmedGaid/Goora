@@ -1,4 +1,4 @@
-# Quickstart: Wallet and Payment Model (v2)
+# Quickstart: Wallet and Payment Model (v2, v2.1)
 
 Device validation. Run alongside `flutter analyze`, `flutter test` and
 `node --test "supabase/functions/_shared/*.test.ts"`.
@@ -66,7 +66,25 @@ The 7-trip banner, the 10-trip switch-over and the 2-strike switch-over need tri
 can't be produced in minutes on a device; they are covered by `cash_trial_policy_test.dart` and
 `rider_wallet_test.dart` (seeded histories), ar + en.
 
+## Scenario 5 — the fee inside the cap (v2.1) — mostly test-driven
+
+Every seeded group is a 3-seat car at 160 EGP (research R16), so on a device the fee is never
+trimmed: the device part only proves nothing moved. The trimmed and zero-fee cases are covered by
+the vectors ([contracts/pricing.md](contracts/pricing.md)), the cap sweep (R17) and widget tests.
+
+1. Re-run Scenario 2 steps 1–3. **Expect** exactly the same numbers: "40 EGP to the driver + 4 EGP
+   service fee", rows of −44, balance 112 (or 156).
+2. Match result for `sz-0725`: **Expect** one free seat fewer than before v2.1 (the car now has 3
+   rider seats, R16), and joining still works.
+3. Wallet → "How paying works": **Expect** "a service fee of up to 10%"; "What you pay per trip":
+   **Expect** "Service fee" with no "(10%)".
+4. As a driver (if Scenario 3's setup is available): "Trip cost" reads 320 for a round-trip day
+   (2 × 160), and "What you pay yourself" shows the driver's own share.
+5. Tests: `flutter test test/unit/rider_total_test.dart` and
+   `node --test supabase/functions/_shared/pricing.test.ts` — **Expect** the five "cap:" vectors
+   and the sweep pass in both.
+
 ## Done when
 
-Scenarios 1–3 pass in Arabic and English, the gates are green, and the Dart and TS pricing tests
-read the same `test/fixtures/pricing_vectors.json`.
+Scenarios 1–3 and 5 pass in Arabic and English, the gates are green, and the Dart and TS pricing
+tests read the same `test/fixtures/pricing_vectors.json` (now with `tripCost`/`riderSeats`).
