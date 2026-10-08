@@ -244,8 +244,30 @@ forward-looking pricing (today's Pay tile, the pay-method screen) where day gran
 correct. A new `coversTrip(WallTime)` is used only in `_riderTrips`, judging each trip's fee
 against its own settlement time. Two existing tests had unknowingly encoded the buggy behavior
 as expected and were corrected; a dedicated same-day-before/same-day-after regression test was
-added. `flutter test` 611 (was 608), `flutter analyze` 0, `node --test` 107 — all green. Not yet
-re-verified live on device (that still needs doing before merge, per goora-status).
+added. `flutter test` 611 (was 608), `flutter analyze` 0, `node --test` 107 — all green.
+
+**Verified live 2026-10-08** (`R5CNC0NK6ZT`, English + Arabic): joined Sun 7:15 AM (demo clock),
+top-up 200, "After 9 PM" → Sun 9:05 PM, both legs settled (two "Trip −44 EGP · 40 + 4 fee" rows,
+balance 112), top-up 200 (312), subscribed Monthly the same evening → balance 183, both trip rows
+still −44 with their 4 EGP fee; breakdown "Service fee: none / Total 40". Pre-fix this would have
+read 191. Step 5 also confirmed: subscribing with 0 EGP showed "Top up 129 EGP first — your wallet
+has 0 EGP." and charged nothing.
+
+### R14 addendum — found during the same device run (for the founder; nothing changed)
+
+1. **"First month free" is still on the onboarding screen** ("Every day · Best value · A fixed
+   group for your daily commute. First month free."). v2 has no free month and Scenario 1 says "No
+   free-month copy anywhere". The string is 002's onboarding copy, outside 004's own screens.
+2. **"Trip" means two things on the Wallet screen.** "Covers about N trips" counts round-trip days
+   (`WalletRules.tripsCovered` = balance ÷ 2 × leg, by data-model.md), while the activity rows and
+   "What you pay per trip" use "trip" for one leg (44 EGP). 200 EGP reads "about 2 trips" next to
+   rows of 44. Arabic has the same split plus "2 رحلات" (should agree: رحلتين / مشوارين) and the
+   known رحلة/مشوار drift. Copy decision: rename the caption ("about N days") or count legs.
+3. **The language pill is not exposed as a button** to screen readers (no `clickable`/button
+   semantics in the accessibility tree; its label "التبديل للعربية" / "Switch to English" is
+   there), so TalkBack reads it but doesn't announce it as tappable. Accessibility, not 004 scope.
+4. The quickstart's demo-clock recipe needed a fix (onboarding in the evening means no trip can
+   ever settle, and a Thursday ride day jumps to Saturday) — quickstart.md Prerequisites updated.
 
 `priceDriver` exists because a driver viewing the match result would otherwise read "+ 4 EGP
 service fee" as a fee on them (goora-brand check 4). Copy check for review: the cash-trial copy

@@ -12,8 +12,12 @@ Device validation. Run alongside `flutter analyze`, `flutter test` and
   joining stamps the demo clock's time. Onboard in a real-time evening and none of the demo-clock
   buttons can settle a trip: "After 9 PM" lands on that same evening (whose legs predate the join),
   and "Ride day" jumps back to that morning. Reset keeps the demo clock (`debug.demoNow`), so: while
-  still in a group, tap "Ride day · 7:15 AM", *then* "Reset demo data", then onboard. (Derived from
-  the code after a 2026-10-07 device run stalled here; not yet re-run on a phone.)
+  still in a group, tap "Ride day · 7:15 AM", *then* "Reset demo data", then onboard. Run this on a
+  ride day that is **not the last working day of the week** (Sun–Wed for a Sun–Thu group): "After
+  9 PM" lands on the evening before the *next* ride day, so from a Thursday it jumps to Saturday,
+  and step 4's subscribe then happens on a later day than the trips — which no longer exercises the
+  same-day case (R14). If "Ride day" lands on a Thursday, tap "After 9 PM" then "Ride day" again
+  to move on to Sunday before resetting. (Confirmed on a phone 2026-10-08.)
 - The top-up/withdraw failure path is test-only (research R4 addendum); it is not part of these
   scenarios.
 
@@ -36,9 +40,15 @@ Device validation. Run alongside `flutter analyze`, `flutter test` and
    (today still counts as the next ride day before its own legs have run), which moves the clock
    backward, not forward — don't use it for this step. This only settles anything if you joined
    before that day's first pickup (see Prerequisites). Reopen Wallet. **Expect** a "Trip" row of
-   44 EGP with "40 EGP to the driver + 4 EGP service fee", balance 156.
-4. Plan card → Change → Monthly → Subscribe. **Expect** balance 27, plan card "Subscribed until
-   {date}", price lines "40 EGP · no fees (subscribed)".
+   44 EGP with "40 EGP to the driver + 4 EGP service fee" for each leg that ran after you joined:
+   joined before both legs (the Prerequisites recipe) → two rows, balance 112; joined between the
+   legs → one row, balance 156.
+4. If the balance is under 129, top up another 200 first (112 → 312). Plan card → Change → Monthly
+   → Subscribe, the same evening. **Expect** balance = before − 129 (312 → 183, or 156 → 27), plan
+   card "Subscribed until {date}", price lines "40 EGP · no fees (subscribed)", "What you pay per
+   trip" now "Service fee: none / Total 40 EGP" —
+   and the earlier "Trip" rows **unchanged** at 44 EGP with their 4 EGP fee (R14: before the fix
+   they turned into 40 EGP rows and the fee came back, 191 / 31).
 5. With less than 129 EGP, subscribing shows "Top up {gap} EGP first" and charges nothing.
 
 ## Scenario 3 — driver cash (US5)
