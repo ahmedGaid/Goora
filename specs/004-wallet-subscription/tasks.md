@@ -416,14 +416,14 @@ and `node --test supabase/functions/_shared/pricing.test.ts` both green before t
 **Independent test**: the new seed invariant test passes; `flutter test` count is unchanged or
 higher, no existing test newly fails.
 
-- [ ] T087 Add required `tripCost` (EGP per leg) and `riderSeats` (1–4) fields to `CommuteGroup` —
+- [X] T087 Add required `tripCost` (EGP per leg) and `riderSeats` (1–4) fields to `CommuteGroup` —
   `lib/features/commute/domain/group.dart`
-- [ ] T088 Set every seeded group to `tripCost: 160, riderSeats: 3`; reduce `sz-0725`'s free seats
+- [X] T088 Set every seeded group to `tripCost: 160, riderSeats: 3`; reduce `sz-0725`'s free seats
   2 → 1 each leg and `sz-0720`'s 3 → 2 each leg (R16) — `lib/features/commute/data/corridor_seed.dart`
-- [ ] T089 [P] Seed invariant test: for every seeded group and both legs, `riders + freeSeats <=
+- [X] T089 [P] Seed invariant test: for every seeded group and both legs, `riders + freeSeats <=
   riderSeats`, and `PricingService.range(tripCost, riderSeats).contains(price)` — new
   `test/unit/corridor_seed_invariant_test.dart`
-- [ ] T090 Find and fix any 002/003 tests asserting `sz-0725`'s/`sz-0720`'s old free-seat counts
+- [X] T090 Find and fix any 002/003 tests asserting `sz-0725`'s/`sz-0720`'s old free-seat counts
   (seat-left copy, waitlist/backup scoring) broken by T088 (R16 knock-on) — grep
   `test/unit/`, `test/widget/` for `sz-0725`/`sz-0720`, fix each hit in place
 
