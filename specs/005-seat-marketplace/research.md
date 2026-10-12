@@ -40,20 +40,26 @@ the spec or brief that a founder may want to change; none blocks planning.
   1. `down = c − c % 5`, `up = down + 5` (when `c % 5 == 0`, `down == c`).
   2. `nearest = (c % 5 <= 2) ? down : up`. Ties can't happen because money is whole EGP and
      5 is odd.
-  3. If `nearest > equalShare(tripCost, riderSeats)`, use `down`.
-  4. If the result is `0`, return `null`: cash is not offered for that seat (wallet only).
+  3. `r = range(tripCost, riderSeats)` (002's ±20% range, top already capped at or below
+     `equalShare`). Start from `nearest`; if it is above `r.max`, use `down`; if the result is
+     below `r.min`, use `up`.
+  4. If the result is still outside `[r.min, r.max]`, or is `0`, return `null`: cash is not
+     offered for that seat (wallet only).
   
-  Worked rows (spec Edge Cases): 44→45, 42→40, 48→50 at 160/3 (share 53); 38 at 160/4 (share
-  40)→40; 38 at 156/4 (share 39)→35; 41→40; 2→`null`.
+  Worked rows (spec Edge Cases): at 160/3 (range 32–48, share 53) 44→45, 42→40, 41→40, 48→45,
+  32→35; at 160/4 (range 26–38) 38→35; at 156/4 (range 26–38) 38→35; at 8/4 (range 2–2) 2→`null`.
+- **Amended after /speckit-analyze (founder, 2026-10-12)**: steps 3–4 first checked only
+  `equalShare`, which let 48 become 50 above the range top 48 (Constitution II: prices stay inside
+  ±20%). The founder chose to keep cash inside the range rather than amend the constitution.
 - **Twin**: `cashAmount` joins `supabase/functions/_shared/pricing.ts`. Every case in
   `test/fixtures/pricing_vectors.json` gains a `cash` field (number or `null`), plus named
   `cash:` rows for the spec's examples. `gen_pricing_vectors.py` computes them independently.
 - **Sweep (SC-002)**: the existing cap sweep (`pricing_cap_sweep_test.dart`, `pricing.test.ts`)
   also asserts, for trip costs 20–1,000, rider seats 1–4 and every allowed contribution, that
-  `cash` is `null` or a positive multiple of 5 with `cash ≤ equalShare`.
+  `cash` is `null` or a positive multiple of 5 with `r.min ≤ cash ≤ r.max` and `cash ≤ equalShare`.
 - **Rationale**: these are the founder's words turned into integer arithmetic. Step 3 is what
-  keeps riders' cash total within the trip cost: at most `riderSeats` riders, each paying at most
-  `equalShare`.
+  keeps riders' cash total within the trip cost (at most `riderSeats` riders, each paying at most
+  `r.max ≤ equalShare`) and every cash price inside Constitution II's ±20%.
 - **Alternatives**: banker's rounding, or always rounding down. Rejected: the founder said
   nearest 5, and down only when the cap requires it.
 
@@ -118,6 +124,11 @@ the spec or brief that a founder may want to change; none blocks planning.
   because 003 derives rides only for the person's group. Offered trips use their own seats and
   bookings. Seats are counted against **`riderSeats`, the price basis, not the car's physical
   seats**.
+  - A booking whose rider already appears in that ride's passengers (they also became a member,
+    R10 "One ride, one charge") is counted once, not twice.
+  - **Subscriber view (US6 AC1, FR-004)**: for a subscriber, a one-off booking with
+    `reclaimable(now)` counts as free, so a full car still lists. Booking it runs the reclaim
+    (T093/T095). Non-subscribers never see it.
 - **Rationale (the FR-024 proof)**:
   - Every seat price is ≤ `equalShare = ⌊tripCost ÷ riderSeats⌋`. That holds for the wallet
     total (004 v2.1), for subscribers (the contribution is within the range cap) and for cash
@@ -185,6 +196,12 @@ the spec or brief that a founder may want to change; none blocks planning.
     `FakeDailyCommuteRepository`. The marketplace posts `seatBooked`, `seatReclaimed`,
     `requestAccepted`, `requestExpired` and `tripCancelledByDriver`. The bell/inbox and Today
     alerts from 003 show them unchanged (in-app only, spec Assumptions).
+    It also has `recordReliability(ReliabilityEvent)` (added after /speckit-analyze), which writes to
+    003's reliability event list, so a driver's cancel counts on reliability (FR-017). The marketplace
+    records one `ReliabilityEventKind.lateCantDrive` for the trip (rideId `offer:<tripId>`) only
+    when the cancel is after the 9 PM cut-off (`AttendanceRules.isLate(date, now)`) and the trip had
+    at least one booking. This matches 003, which records `lateCantDrive` only for a late can't-drive.
+    Same implementer, same store, so there is no second seam.
   - **`SeatLedger`** (`wallet/domain`): `debitSeat(personId, bookingId, total, fee)` and
     `refundSeat(personId, bookingId, amount)`, both returning `PaymentResult`, implemented by
     `FakeWalletRepository`. A simulated failure leaves the ledger unchanged (004 R4 debug
@@ -215,6 +232,20 @@ the spec or brief that a founder may want to change; none blocks planning.
   The person joins through `CommuteRepository.join(groupId)`. A driver's daily offer joins on its
   first booking, and a rider's daily request joins on acceptance, which then goes to the
   payment-method screen.
+- **One ride, one charge** (added after /speckit-analyze, FR-016): a daily offer's first booker
+  paid at booking and then becomes a member of the new group, whose schedule covers that same
+  ride. Without a rule, 004's fold would bill that ride again and Today would show it twice. The
+  rule:
+  - when an offer becomes a group, its bookings are re-keyed to `Ride.idFor(mk-<id>, date, leg)`
+    (group-seat bookings already carry 003's ride id);
+  - the 004 fold counts each rideId once per person. A group trip whose rideId has a `seatBooked`
+    debit is skipped, because it was paid at booking. A cash one-off with the same rideId as a
+    group trip counts as one cash trip, not two;
+  - Today shows that ride on the group card only, and the one-off section hides a booking whose
+    rideId is the person's group ride;
+  - free seats count that rider once (R6).
+  A daily request accepted into a group charges nothing at accept. Its trips are 004 group trips
+  from the start (spec US3 AC4, FR-013), so it needs no dedupe.
 - **Risk to check first in tasks**: a one-leg group must yield **no** schedule assignment for
   the other leg. `RotationPlanner` must not plan a "no driver" return leg, or 003 would post a
   no-cover notice. This needs a unit test before any UI work.

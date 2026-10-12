@@ -81,10 +81,15 @@ It has no name and no photo (FR-023).
 ```dart
 abstract interface class NoticeSink {
   Future<void> post(NoticeKind kind, Map<String, String> params);
+  /// Appends to 003's reliability events (FR-017). The marketplace calls it with
+  /// ReliabilityEventKind.lateCantDrive, rideId 'offer:<tripId>', only for a
+  /// driver cancel after the 9 PM cut-off on a trip with ≥ 1 booking (R9).
+  Future<void> recordReliability(ReliabilityEvent event);
 }
 ```
 
 `FakeDailyCommuteRepository` implements it. Posted notices reach 003's bell/inbox stream unchanged.
+Recorded events feed `ReliabilityRules.compute` like 003's own.
 
 ### SeatLedger — `lib/features/wallet/domain/wallet_repository.dart`
 
@@ -112,6 +117,9 @@ final Future<List<DoneOneOff>> Function() _oneOffs;
 
 - **Rider**: cash `DoneOneOff`s are interleaved into the 004 cash-trial fold, ordered by date and
   leg. Wallet and plan ones are already debited, so the fold skips them.
+- **One ride, one charge** (R10): the fold counts each rideId once per person. A group trip whose
+  rideId has a `seatBooked` debit is skipped. A cash one-off with the same rideId as a group trip
+  counts as one cash trip.
 - **Driver**: one `tripIncome` row per (trip, non-cash rider), written once, idempotent by id.
 
 ## GroupCatalog — `lib/features/commute/data/group_catalog.dart` (research R10)

@@ -13,8 +13,8 @@ your route" and subscriber reclaim with a full refund.
 
 Two pure rules carry the legal core and get TypeScript twins with shared vectors:
 `DriverDayRules.fit` (the 2-trip limit, one trip per direction, the ±30 min join, research R4)
-and `PricingService.cashAmount` (FR-029: every cash amount a multiple of 5, never above the equal
-share, R3). A third, `BookingRefund.amount`, joins the marketplace twin because it moves money
+and `PricingService.cashAmount` (FR-029: every cash amount a multiple of 5 inside the ±20% range,
+whose top is never above the equal share, R3). A third, `BookingRefund.amount`, joins the marketplace twin because it moves money
 (R7). One value object, `SeatPrice`, turns contribution + basis + plan into every price line and
 charge (R2). The four 004 call sites that print or record cash switch to it, which is the FR-029
 amendment to 004.
@@ -73,10 +73,10 @@ sites; about 60 new ARB keys (research R16).
 | Principle | Gate | Pre | Post |
 |---|---|---|---|
 | I Commute-first | One-off flows exist to feed daily groups: the booked confirmation upsells "make it your daily commute", and daily offers/requests become groups (R10) | ✅ | ✅ |
-| II Cost-sharing | ≤ 2 trips/day incl. group legs, one per direction, joins free (R4, R5; twin + vectors + scripted sequences, SC-003). Prices only from `PricingService.range`/`SeatPrice`; no input accepts a price (FR-022). Cap holds by construction: seats ≤ `riderSeats`, each price ≤ equal share, cash rounded down when needed (R3, R6; sweep, SC-002). Fee legality still open (brief §8, spec Open) | ✅ | ✅ |
+| II Cost-sharing | ≤ 2 trips/day incl. group legs, one per direction, joins free (R4, R5; twin + vectors + scripted sequences, SC-003). Prices only from `PricingService.range`/`SeatPrice`; no input accepts a price (FR-022). Cap holds by construction: seats ≤ `riderSeats`, each price ≤ equal share, cash kept inside the ±20% range (R3, amended after /speckit-analyze; R6; sweep, SC-002). One ride, one charge (R10). Fee legality still open (brief §8, spec Open) | ✅ | ✅ |
 | III Arabic-first | All copy in ARB both locales; brief strings verbatim; drafts listed in R16; directional layout; widget tests ar + en for every screen | ✅ | ✅ |
 | IV Privacy | Driver-facing models carry no name/photo (`AnonymousRider`) until departure, the boarding stand-in (R11, R15); pickup points only; SC-004 widget test | ✅ | ✅ |
-| V Trust & safety | Publish needs verified ID + license + vehicle (FR-014); Share + SOS on every one-off trip card; driver cancels count on reliability (FR-017) | ✅ | ✅ |
+| V Trust & safety | Publish needs verified ID + license + vehicle (FR-014); Share + SOS on every one-off trip card, rider and driver, and in the no-group Today (T060, T065, T071); late driver cancels count on reliability (FR-017, R9) | ✅ | ✅ |
 | VI Design system | Reuses GooraCard, GooraRadioCard, GooraStepper, GooraProgressBar, GooraDashedButton, GooraStatusChip, GooraBanner, GooraPill, GooraAvatar; no new tokens expected (if one is needed, it goes into `lib/core/theme` + `contrast_test.dart`) | ✅ | ✅ |
 | VII Accessible | Every limit/state is a word, never colour alone ("Daily limit reached", "Doesn't fit…"); ≥ 44 px; semantic labels on Accept/Book/SOS | ✅ | ✅ |
 | VIII Testable | Pure rules with the brief's numbers; Dart/TS twins on shared vectors; scripted limit sequences; fakes-first repository behind an interface | ✅ | ✅ |

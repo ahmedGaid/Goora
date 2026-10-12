@@ -75,7 +75,7 @@ trip cost (004 v2.1); fakes-first backend.
   boarding.
 - Q: Cash amounts like 41 or 44 need change and cause arguments at the car door. → A (founder):
   **every cash amount is a round number that needs no change: a multiple of 5 EGP** (41 → 40,
-  44 → 45, 48 → 50). Rule: take the contribution and round it to the nearest 5. If rounding up would
+  44 → 45; 48 → 50 was later changed to 45, see the next answer). Rule: take the contribution and round it to the nearest 5. If rounding up would
   take it above the rider's equal share of the trip cost (the 004 v2.1 cap), round down instead, so
   the cap still holds. Cash still carries no Goora fee. This applies to **every** cash payment, both
   one-off seats (this feature) and group trips under 004's cash trial, so it amends 004: the cash
@@ -83,6 +83,12 @@ trip cost (004 v2.1); fakes-first backend.
   rounded amount. Wallet and subscribed prices stay exact to the pound (no change needed on a
   screen). In the same car a cash rider may therefore pay a few pounds more or less than a wallet
   rider's contribution; the demo corridor (40) does not change.
+- Q (/speckit-analyze, Constitution II): rounding can leave the ±20% range (48 → 50 when the top of
+  the range is 48; 32 → 30 when the floor is 32). → A (founder): **the cash amount also stays inside
+  the group's ±20% range.** If the nearest 5 is above the range top, round down; if the result is
+  below the range floor, round up; if no multiple of 5 fits, cash is not offered for that seat
+  (wallet only). So 48 → 45 and 32 → 35 at 160 EGP / 3 rider seats. The range top is already at or
+  below the equal share, so the cap still holds.
 
 ### Open — recorded, not decided here (founder)
 
@@ -175,13 +181,15 @@ list and "Your car is full!". Publish a daily trip, book one seat, see it become
    have in that direction, **Then** they are told it joins that trip instead of creating a new one.
 6. **Given** a published trip, **Then** a live state shows a seat progress bar ("N of M seats
    booked"), the booked riders as "Verified rider" / "Verified rider (woman)" with a rating or "New",
-   and Cancel trip; when every seat is booked it shows "Your car is full!".
+   and Cancel trip; when every seat is booked it shows "Your car is full!". During the trip, Share and
+  SOS are one tap away on the driver's trip card (Constitution V).
 7. **Given** a daily trip, **When** its first rider books, **Then** it becomes a commute group with
    the driver as its driver and the booked riders as members, at the published contribution, and the
    driver's Today and Week show it like any group from 003.
 8. **Given** the driver cancels a published trip with booked riders, **Then** every booked rider is
    refunded in full and told calmly; the trip counts as one of the driver's trips that day, and the
-   cancellation counts on the driver's reliability as in 003.
+   cancellation counts on the driver's reliability as in 003: only when it is made after the 9 PM
+   cut-off (a late "can't drive"), never before it.
 
 ---
 
@@ -206,9 +214,12 @@ payment-method screen as a group member.
    whose route fits with a detour under 10 min), a progress indicator, and Cancel; Cancel removes the
    request at no cost.
 3. **Given** a driver accepts, **Then** the rider sees the accepted state: driver card, pickup point,
-   time and contribution (with the fee line for their plan); the booking is paid as in US1.
+   time and contribution (with the fee line for their plan); a "Just once" request becomes a booking
+   paid as in US1.
 4. **Given** a daily request is accepted, **Then** the rider sees "You're now a commute group" and
-   goes to 004's payment-method screen, then Today, as a member of the new group.
+   goes to 004's payment-method screen to choose how this group's trips are paid (as after any group
+   join), then Today, as a member of the new group. Nothing is charged at accept; the group's trips
+   are paid as 004 group trips.
 5. **Given** no driver accepts before the requested time, **Then** the request expires, the rider
    is told calmly and offered to post again or look at empty seats; nothing is charged.
 6. **Given** a rider who can't pay (US1 AC7), **When** they tap Post, **Then** they see "Top up N EGP
@@ -247,7 +258,8 @@ remaining request show "Daily limit reached".
    that trip and uses no extra trip.
 5. **Given** a request that fits no existing trip in a direction where the driver already has a
    trip, **Then** its card reads "Doesn't fit your trip" and can't be accepted; **given** 2 trips
-   already exist, **Then** every remaining request reads "Daily limit reached" and can't be accepted.
+   already exist, **Then** every remaining request that can't join one of them reads "Daily limit
+   reached" and can't be accepted.
 6. **Given** a trip that is full, **Then** requests that would join it read "Your car is full" and
    can't be accepted.
 7. **Given** any request card, **Then** it never shows the rider's name or photo, and there is no
@@ -294,9 +306,9 @@ refused.
 
 **Acceptance Scenarios**:
 
-1. **Given** a car with no free seat and a one-off booking made before the 9 PM cut-off, **When** a
-   subscriber books that car, **Then** the subscriber gets the seat and the one-off booker is
-   refunded in full.
+1. **Given** a car with no free seat and a one-off booking made before the 9 PM cut-off, **Then**
+   Empty seats lists that car to a subscriber (never to a non-subscriber); **When** the subscriber
+   books it, **Then** the subscriber gets the seat and the one-off booker is refunded in full.
 2. **Given** the refunded rider, **Then** their wallet shows the full amount back as one activity
    row, Today no longer shows the trip, and a notice offers "Empty seats" and "Post your trip".
 3. **Given** the booking is past 9 PM the evening before (or was made after it), **Then** it can't
@@ -332,10 +344,14 @@ refused.
 - The demo clock moves past a trip's departure: Empty seats and Find riders stop listing it.
 - A full 4-rider-seat car at the top of the price range: the seat shows "38 + 2", not "38 + 4" (004
   v2.1 trimming applies to one-off seats).
-- Cash rounding (FR-029): a 44 EGP contribution is paid as 45 cash, 42 as 40, 48 as 50. A 38 EGP
-  contribution in a 160 EGP / 4-seat car rounds up to 40, which equals the equal share, so it stays
-  40. A 38 EGP contribution where the equal share is 39 rounds down to 35, because 40 would pass the
-  cap. If rounding down would give 0, cash is not offered for that seat (wallet only).
+- Cash rounding (FR-029): at 160 EGP / 3 rider seats (range 32–48), a 44 EGP contribution is paid
+  as 45 cash, 42 as 40, 48 as 45 (50 would pass the range top), 32 as 35 (30 would fall below the
+  floor). A 38 EGP contribution in a 160 EGP / 4-seat car (range 26–38) is paid as 35, because 40
+  would pass the range top. If no multiple of 5 fits the range, cash is not offered for that seat
+  (wallet only).
+- One ride, one charge: a rider who booked a seat and is then a member of the group that runs that
+  same ride (a daily offer that became a group on their booking, or a later join) pays for that ride
+  once, at booking. The group billing skips it, Today shows it once, and the seat is counted once.
 
 ## Requirements *(mandatory)*
 
@@ -357,7 +373,9 @@ refused.
   not yet departed, in groups' cars and published offers whose route fits the rider's route with a
   driver detour under 10 min, filtered by the rider's privacy preference.
 - **FR-004**: A leg's free seats MUST equal the car's rider seats minus everyone riding that leg
-  (members, off-duty drivers, one-off bookers); a leg with 0 free seats MUST NOT be listed.
+  (members, off-duty drivers, one-off bookers; a booker who is also a member riding that leg counts
+  once); a leg with 0 free seats MUST NOT be listed, except to a subscriber, for whom a one-off
+  booking that can still be reclaimed (FR-025) counts as a free seat.
 - **FR-005**: The price shown and charged for a seat MUST come from the existing pricing rule: the
   group's (or offer's) contribution plus the service fee for the rider's plan, the fee trimmed so
   contribution + fee never exceeds the equal share of the trip cost. Subscribers and company-plan
@@ -379,11 +397,12 @@ refused.
 - **FR-010**: A cash one-off trip MUST count toward the 10 cash trips and get the driver's "Received
   cash" / "Didn't pay" step after drop-off, as in 004.
 - **FR-029**: Every cash amount, for one-off seats and for group trips under 004's cash trial, MUST
-  be a multiple of 5 EGP: the contribution rounded to the nearest 5, or rounded down to a multiple
-  of 5 when rounding up would exceed the rider's equal share of the trip cost. The rider's price
-  line, the driver's "Received N EGP cash" step and the recorded cash amount MUST all show the same
-  rounded amount. Cash MUST NOT be offered for a seat whose rounded amount would be 0. Wallet and
-  subscribed prices MUST NOT be rounded.
+  be a multiple of 5 EGP inside the group's (or offer's) ±20% price range: the contribution rounded
+  to the nearest 5; rounded down instead when that passes the range top; rounded up instead when
+  the result is below the range floor. The range top is never above the rider's equal share, so the
+  cap holds. The rider's price line, the driver's "Received N EGP cash" step and the recorded cash
+  amount MUST all show the same rounded amount. Cash MUST NOT be offered for a seat when no multiple
+  of 5 above 0 fits the range. Wallet and subscribed prices MUST NOT be rounded.
 
 **Post your trip (B)**
 
@@ -392,9 +411,10 @@ refused.
   whose privacy preference allows the rider.
 - **FR-012**: A posted request MUST show "Sent to N drivers on your route" and be cancellable at no
   cost until accepted; it MUST expire, uncharged, when its time passes with no driver.
-- **FR-013**: An accepted request MUST show the driver card, pickup point, time and price, and be
-  paid as in FR-006; an accepted daily request MUST create a commute group and send the rider to the
-  payment-method screen.
+- **FR-013**: An accepted request MUST show the driver card, pickup point, time and price. An
+  accepted "Just once" request MUST be paid as in FR-006. An accepted daily request MUST create a
+  commute group (or add the rider to the driver's group leg), charge nothing at accept, and send the
+  rider to the payment-method screen; its trips are paid as 004 group trips.
 
 **Offer a trip (C)**
 
@@ -405,9 +425,12 @@ refused.
   be no way to set any other price.
 - **FR-016**: A published trip MUST show booked seats as a progress bar and anonymous booked riders,
   and "Your car is full!" when full. A daily trip MUST become a commute group when its first rider
-  books; a driver who already leads a daily group MUST NOT publish a daily offer.
+  books; a driver who already leads a daily group MUST NOT publish a daily offer. A ride MUST be
+  charged once: a rider who paid for it at booking MUST NOT be billed for it again as a group trip,
+  and Today MUST show it once.
 - **FR-017**: A driver who cancels a published trip MUST refund every booked rider in full; the
-  cancellation MUST count on the driver's reliability as in 003.
+  cancellation MUST count on the driver's reliability as in 003, i.e. as a late "can't drive" only
+  when made after the 9 PM cut-off the evening before.
 
 **Find riders (D) and driver Today requests**
 
@@ -416,7 +439,8 @@ refused.
 - **FR-019**: Accepting a request MUST either join a trip the driver already has (same direction,
   same route, within ±30 min, a free seat left) using no extra trip, or create a new trip after an
   inline confirm that states the trips left after it. A request that fits neither MUST read "Doesn't
-  fit your trip"; with 2 trips existing, every remaining request MUST read "Daily limit reached"; a
+  fit your trip"; with 2 trips existing, every remaining request that can't join one of them MUST
+  read "Daily limit reached"; a
   request that would join a full trip MUST read "Your car is full". These requests MUST NOT be acceptable.
 - **FR-020**: Driver Today's "Requests on your route" MUST show a demand banner and request cards
   with detour minutes and Accept, with the same rules as FR-019, and "Accepted ✓" once accepted.
@@ -429,7 +453,9 @@ refused.
 - **FR-022**: Prices MUST always be system-set; there MUST be no bidding, counter-offer or tip field
   anywhere in this feature.
 - **FR-023**: Driver-facing lists MUST NOT show a rider's name or photo before that rider boards;
-  riders MUST appear as "Verified rider" or "Verified rider (woman)" with a rating or "New". Drivers
+  riders MUST appear as "Verified rider" or "Verified rider (woman)" with a rating or "New". For
+  one-off trips, which have no pickup check-in in this feature, the trip's departure time stands in
+  for boarding (stricter than Constitution IV's "accepted or boards"). Drivers
   MUST NOT be able to filter by anything except the existing privacy preference.
 - **FR-024**: Riders' total payments for any trip created or filled by this feature, fees included,
   MUST NOT exceed that trip's full cost.
@@ -438,7 +464,8 @@ refused.
 
 - **FR-025**: Until 9 PM the evening before a trip, a subscriber MUST be able to take a seat held by
   a one-off (non-subscriber) booking when the car has no free seat; the one-off booker MUST be
-  refunded in full (wallet) and notified with "Empty seats" and "Post your trip" options. After the
+  refunded in full (wallet) and notified with "Empty seats" and "Post your trip" options. Empty seats
+  MUST show such a seat to subscribers (FR-004). After the
   cut-off, a one-off booking MUST be final.
 
 **Cross-cutting**
@@ -472,13 +499,15 @@ refused.
   payment method is set and their balance covers the seat.
 - **SC-002**: Across every trip cost from 20 to 1,000 EGP, 1 to 4 rider seats and every allowed
   contribution, no seat price (any plan) makes riders' total exceed the trip cost: 0 cases; and
-  every cash amount in that sweep is a multiple of 5 and at or below the equal share: 0 exceptions.
+  every cash amount in that sweep is a multiple of 5, inside the price range and at or below the
+  equal share: 0 exceptions.
 - **SC-003**: No sequence of offers, accepts and joins gives a driver more than 2 trips in one day:
   0 cases across the scripted sequences in the tests.
 - **SC-004**: 100% of driver-facing request and booked-rider cards in this feature show no name or
   photo before boarding, in both languages.
-- **SC-005**: Every refund (reclaim, driver cancel, request expiry) returns exactly what was paid:
-  the wallet balance after equals the balance before booking, with one activity row each way.
+- **SC-005**: Every full refund (reclaim, driver cancel) returns exactly what was paid: the wallet
+  balance after equals the balance before booking, with one activity row each way. A request that
+  expires was never charged: balance and activity unchanged, no row.
 - **SC-006**: A failed payment or a seat taken mid-booking leaves balance, seats and activity exactly
   as before.
 - **SC-007**: Every main state of every screen in this feature passes the brand checklist in Arabic

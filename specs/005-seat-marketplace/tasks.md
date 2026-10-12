@@ -55,21 +55,23 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 - [ ] T002 [P] `test/fixtures/gen_pricing_vectors.py`: add a `cash` field (int or `None` → JSON
   `null`) to every case, computed with Python integers per R3 (down = c − c % 5; nearest = down if
-  c % 5 ≤ 2 else down + 5; if nearest > equalShare(tripCost, riderSeats) use down; 0 → null), plus
-  the seven named rows from contracts/pricing.md ("cash: 44 up to 45" … "cash: 2 rounds to 0, not
-  offered"). Regenerate `test/fixtures/pricing_vectors.json`
+  c % 5 ≤ 2 else down + 5; r = 002's range(tripCost, riderSeats), written in Python independently;
+  if nearest > r.max use down; if the result < r.min use up; outside [r.min, r.max] or 0 → null),
+  plus the eight named rows from contracts/pricing.md ("cash: 44 up to 45" … "cash: no multiple of 5
+  in range 2–2"). Regenerate `test/fixtures/pricing_vectors.json`
 - [ ] T003 `lib/features/commute/domain/pricing_service.dart`: add
   `static int? cashAmount(int contribution, {required int tripCost, required int riderSeats})`
-  exactly per R3, reusing `equalShare`; doc comment cites FR-029 (founder 2026-10-12)
-- [ ] T004 [P] `supabase/functions/_shared/pricing.ts`: export
-  `cashAmount(contribution, tripCost, riderSeats): number | null`, integer arithmetic only (`%`,
-  `Math.floor` on non-negative values)
+  exactly per R3, reusing `range`; doc comment cites FR-029 (founder 2026-10-12, range rule)
+- [ ] T004 [P] `supabase/functions/_shared/pricing.ts`: move `suggested`/`range` out of
+  `pricing.test.ts` into `pricing.ts` and export them (test imports them); export
+  `cashAmount(contribution, tripCost, riderSeats): number | null` per R3, integer arithmetic only
+  (`%`, `Math.floor` on non-negative values)
 - [ ] T005 `test/unit/rider_total_test.dart`: assert `cashAmount` against every vector's `cash`
   (null included)
 - [ ] T006 [P] `supabase/functions/_shared/pricing.test.ts`: assert `cashAmount` against every
   vector's `cash`; extend the sweep (trip cost 20–1,000 step 20, rider seats 1–4, every allowed
-  contribution in 2 EGP steps): `cash === null || (cash > 0 && cash % 5 === 0 && cash <= equalShare)`;
-  0 exceptions
+  contribution in 2 EGP steps): `cash === null || (cash > 0 && cash % 5 === 0 && r.min <= cash &&
+  cash <= r.max && cash <= equalShare)`; 0 exceptions
 - [ ] T007 [P] `test/unit/pricing_cap_sweep_test.dart`: same cash assertion as T006 alongside the
   existing `riderSeats × riderTotal ≤ tripCost` check (SC-002)
 
@@ -77,9 +79,9 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 - [ ] T008 [P] `test/unit/seat_price_test.dart`: `SeatPrice.of` at 160/3 — wallet 40 → fee 4,
   total 44, payable 44; subscribed and company 40 → fee 0, payable 40; cash 40 → fee 0, cash 40,
-  payable 40; cash at contribution 44 → cash 45, payable 45; wallet 44 → 48; 160/4 at 38 → fee 2
-  ("38 + 2", 004 v2.1 trim); cash at contribution 2 / 8 / 4 → `cash == null`, `cashOffered` false,
-  payable falls back to total
+  payable 40; cash at contribution 44 → cash 45, payable 45; cash at 48 → 45 and at 32 → 35 (range
+  32–48); wallet 44 → 48; 160/4 at 38 → fee 2 ("38 + 2", 004 v2.1 trim) and cash 35; cash at 2 / 8 / 4
+  (range 2–2) → `cash == null`, `cashOffered` false, payable falls back to total
 - [ ] T009 `lib/features/wallet/domain/seat_price.dart`: `SeatPrice` per contracts/pricing.md
   (`contribution`, `fee`, `cash`, `mode`, `total`, `cashOffered`, `payable`); `fee` =
   `PricingService.serviceFee(...)` with `isSubscriber: mode.isFeeFree && mode != cash`,
@@ -124,9 +126,12 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 - [ ] T019 [P] `lib/features/marketplace/domain/seat_math.dart` + `test/unit/seat_math_test.dart`:
   R6 — free = `riderSeats − riding − activeBookings`, floored at 0; own group: riding from 003
   `Ride.passengers` (riders + off-duty drivers, absences excluded); other seeded group:
-  `riderSeats − group.freeSeats(leg)`; offered trip: `seats − bookings`. Tests: sz-0725 160/3 with
-  its off-duty driver riding → 0 free (never the 4th place, T078); never counted against the car's
-  physical seats
+  `riderSeats − group.freeSeats(leg)`; offered trip: `seats − bookings`; a booking whose rider is
+  already in the ride's passengers counts once; for a subscriber viewer, reclaimable one-off
+  bookings count as free (US6 AC1). Tests: sz-0725 160/3 with its off-duty driver riding → 0 free
+  (never the 4th place, T078); never counted against the car's physical seats; booker-who-is-member
+  counted once; full car with one reclaimable booking → 1 free for a subscriber, 0 for a
+  non-subscriber
 - [ ] T020 Checkpoint P1: `flutter analyze` 0; `flutter test --concurrency=1 test/unit`;
   `node --test "supabase/functions/_shared/*.test.ts"`; `python test/fixtures/gen_pricing_vectors.py
   && python test/fixtures/gen_marketplace_vectors.py && git diff --exit-code test/fixtures`
@@ -221,17 +226,20 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   `Future<List<DoneOneOff>> Function() oneOffs` (`DoneOneOff = {rideId, date, leg, paidBy,
   contribution, tripCost, riderSeats, riderId, driverId}`); rider: cash ones interleaved into the 004
   cash-trial fold by date then leg (count toward the 10, banner after 7, "Didn't pay" strikes);
-  wallet/plan ones skipped (already debited); driver: one `tripIncome` row per (trip, non-cash rider),
+  wallet/plan ones skipped (already debited); one ride, one charge (R10): a group trip whose rideId
+  has a `seatBooked` debit for that person is not billed again, and a cash one-off sharing a group
+  trip's rideId counts as one cash trip; driver: one `tripIncome` row per (trip, non-cash rider),
   idempotent by id. Default `() async => []` so existing tests are untouched; new tests in
-  `test/unit/fake_wallet_repository_test.dart`
+  `test/unit/fake_wallet_repository_test.dart` (incl. seatBooked 44 + kept group trip on the same
+  rideId → balance −44 once)
 - [ ] T039 [P] `lib/features/wallet/presentation/labels.dart` (`activityLabel`): rows for
   `seatBooked` ("seat", 40 + 4 fee breakdown) and `seatRefund` ("Refund")
 - [ ] T040 `lib/features/daily/domain/notice.dart`: add `NoticeKind.seatBooked`, `seatReclaimed`,
   `requestAccepted`, `requestExpired`, `tripCancelledByDriver` and `abstract interface class
   NoticeSink { Future<void> post(NoticeKind kind, Map<String, String> params); Future<void>
-  recordReliability(ReliabilityEvent e); }` (the second method carries FR-017's driver-cancel
-  reliability — plan gap, uses the existing `ReliabilityEventKind.lateCantDrive`; confirm in
-  /speckit-analyze); `FakeDailyCommuteRepository` implements it, posted notices reach 003's
+  recordReliability(ReliabilityEvent e); }` per contracts/repositories.md (FR-017, R9: existing
+  `ReliabilityEventKind.lateCantDrive`, appended to 003's event list so `ReliabilityRules.compute`
+  counts it); `FakeDailyCommuteRepository` implements it, posted notices reach 003's
   bell/inbox stream unchanged; copy for the five kinds in `lib/features/daily/presentation/labels.dart`;
   `seatReclaimed` notice renders "Empty seats" / "Post your trip" actions like the no-cover notice;
   tests in `test/unit/fake_daily_repository_test.dart`
@@ -274,7 +282,8 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 - [ ] T046 [P] [US1] `test/unit/fake_marketplace_repository_test.dart` (US1 group): `seatOffers` —
   route fit (same from/to, detour < 10), women-only preference lists only women-driven cars/offers,
   departed legs gone, free 0 not listed, the rider's own leg hidden (`alreadyRiding`), a driver's own
-  offer not listed; `book` — wallet 44 debited once, seat drops by one, one booking per rider per
+  offer not listed, a full car with a reclaimable one-off booking listed to a subscriber only (FR-004,
+  US6 AC1); `book` — wallet 44 debited once, seat drops by one, one booking per rider per
   leg-date, `seatTaken` when the last seat goes between list and book (balance/seats/activity
   unchanged — SC-006), `paymentFailed` unchanged, `needsMethod`, `topUp(44)` at balance 0, company
   at negative balance not blocked, cash debits nothing; `cancelBooking` — before cut-off refund 44,
@@ -289,7 +298,9 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 - [ ] T048 [P] [US1] `test/widget/marketplace_navigation_test.dart`: rider Just one trip → Empty
   seats, Back → frequency; Today "Need an extra trip? Book a seat" → Empty seats on the group's leg,
   Back → Today; no-cover "Book an empty seat" → that day's leg; Book with no method → PayMethod →
-  back to the same seat (`seat=` kept); upsell → commute setup with Every day preselected
+  back to the same seat (`seat=` kept); upsell → commute setup with Every day preselected;
+  **SC-001**: a group member with a method and enough balance goes Today → booked in ≤ 3 taps
+  (count the taps in the test)
 
 ### Implementation
 
@@ -320,11 +331,13 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   frequency so the upsell opens it with "Every day" chosen
 - [ ] T059 [US1] `lib/features/marketplace/presentation/today/one_off_section.dart` (rider side) +
   `oneOffTodayProvider`: booked seat card (route, day/time, driver card, pickup, `SeatPrice` line,
-  Cancel booking with the 003 rule caption, Share, SOS); add the section to `rider_today.dart`
+  Cancel booking with the 003 rule caption, Share, SOS); a booking whose rideId is the person's own
+  group ride is not shown here (the group card shows it, R10); add the section to `rider_today.dart`
 - [ ] T060 [US1] No-group Today: split 003's `TodayView.removed` in
   `lib/features/daily/presentation/today/today_controller.dart` into `removed` (lost a group, 003
   copy unchanged) and `noGroupYet`; `today_screen.dart` shows the one-off section, entry points and a
-  calm `noGroupYet` empty state; tests in `test/widget/today_rider_test.dart`
+  calm `noGroupYet` empty state; while a one-off trip is running, Share and SOS stay one tap away in
+  the no-group state too (Constitution V); tests in `test/widget/today_rider_test.dart`
 - [ ] T061 [US1] `lib/features/onboarding/presentation/onboarding_routes.dart`: `routeForSession`
   sends a once user with any one-off booking / open offer / open request to Today (R12); test in
   `test/unit/onboarding_flow_test.dart`
@@ -344,25 +357,32 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   outside `PricingService.range` rejected; `live` — anonymous riders before departure, first names
   from departure; status open → full → (cancel booking) open → departed → done by the clock; daily
   offer's first booking → `mk-of-…` group in `GroupCatalog` (driver = me, one leg, price = contribution,
-  basis = offer) and status `grouped`; `cancelOffer` — every booking refunded in full (SC-005), each
-  rider gets `tripCancelledByDriver`, a `lateCantDrive` reliability event recorded, the trip still
-  counts in `driverDay`; `demoRiderBooks` books the latest open offer from the rider pool
+  basis = offer) and status `grouped`, its bookings re-keyed to `Ride.idFor(mk-of-…, date, leg)`,
+  and the first booker charged once for that ride (one `seatBooked`, no group-trip debit on the same
+  rideId, R10); `cancelOffer` — every booking refunded in full (SC-005), each rider gets
+  `tripCancelledByDriver`, one `lateCantDrive` reliability event recorded via
+  `NoticeSink.recordReliability` **only** when cancelled after the 9 PM cut-off with ≥ 1 booking
+  (before the cut-off → none; no bookings → none), the trip still counts in `driverDay`;
+  `demoRiderBooks` books the latest open offer from the rider pool
 - [ ] T064 [P] [US2] `test/widget/offer_trip_test.dart`, ar + en: chips (missing → "License not
   verified — verify", tap → Trust), From/To/Time + resolved day, seats, Just once/Every workday,
   stepper starts at 40, 2 EGP steps, stops at 32 and 48, label "Suggested price" / "2 EGP above
   suggested", rider price "44 EGP" under it; three rules with check icons; Publish off with
   `dailyLimitReached` / `joinsTripInstead` / `overlapTrip` / `oneGroupOnly` words; live state "0 of 3
-  seats booked" + GooraProgressBar + anonymous rows; full "Your car is full!"; no price input field
-  anywhere (FR-022)
+  seats booked" + GooraProgressBar + anonymous rows; full "Your car is full!"; live-state loading and
+  error + retry (FR-027); no price input field anywhere (FR-022)
 - [ ] T065 [P] [US2] `test/widget/today_driver_test.dart`: driver one-off section shows the offered
-  trip card (progress, anonymous riders, Cancel trip) and, after `done`, "Received 40 EGP cash" /
-  "Didn't pay" rows for cash riders writing `CashMark` with `rideId = offer:<id>`
+  trip card (progress, anonymous riders, Cancel trip; Share + SOS one tap away from departure to
+  done, Constitution V) and, after `done`, "Received 40 EGP cash" / "Didn't pay" rows for cash riders
+  writing `CashMark` with `rideId = offer:<id>`; a driver with no group and only a once trip still
+  sees Share + SOS during it
 
 ### Implementation
 
 - [ ] T066 [US2] `fake_marketplace_repository.dart`: `publish`, `offer`, `live`, `cancelOffer`,
   `demoRiderBooks` (daily first booking → `GroupCatalog.create` + `CommuteRepository.join` for the
-  driver); `book` on an offered trip uses the offer's basis
+  driver, bookings re-keyed to the group's ride ids, R10 one ride one charge); `book` on an offered
+  trip uses the offer's basis; `cancelOffer` records reliability per R9 (late only)
 - [ ] T067 [P] [US2] `lib/features/daily/data/fake_trust_repository.dart`: `demoVerifyDriver()`
   sets ID, license and vehicle verified (debug only); test in `test/widget/trust_test.dart` or
   `test/unit/` alongside
@@ -377,7 +397,8 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   `PlaceholderKind.offerTrip`; driver Just one trip → Offer a trip, Back → frequency; driver Today
   "Offer a trip" pushes, Back → Today
 - [ ] T071 [US2] `lib/features/marketplace/presentation/today/one_off_section.dart` (driver side):
-  offered trip card + after `done` the cash rows via `cash_received_row.dart`; add to
+  offered trip card with Share + SOS (fed by the once trip, `rideId = offer:<id>`, not by 003's
+  `TodayView`) + after `done` the cash rows via `cash_received_row.dart`; add to
   `lib/features/daily/presentation/today/driver_today.dart`
 - [ ] T072 [US2] `lib/features/settings/presentation/demo_section.dart`: "Verify my driver
   documents" and "A rider books your seat" (debug only, `kDebugMode`, snackbar result like the
@@ -399,13 +420,15 @@ unless booked. **Independent test**: quickstart §4.
   `driversOnRoute` counts drivers whose area detour < 10 and whose privacy allows the rider;
   `cancelRequest` free; `request` expires on read at date+time (no charge, `requestExpired` notice);
   `demoDriverAccepts` — once → `Booking` paid at accept (wallet −44), `requestAccepted` notice; daily →
-  `mk-rq-…` group created (or member added to a driver's group leg), rider joined; gate fails at
-  accept → `withdrawn`, nothing charged
+  `mk-rq-…` group created (or member added to a driver's group leg), rider joined, **nothing charged
+  at accept** (trips billed as 004 group trips, FR-013); gate fails at accept → `withdrawn`, nothing
+  charged; expired request → balance and activity unchanged, no row (SC-005)
 - [ ] T075 [P] [US3] `test/widget/post_trip_test.dart`, ar + en: form prefilled from the rider's
   route, three rules, Post; daily disabled with "You're already in a daily group"; top-up gate;
   posted "Sent to N drivers on your route" + progress + Cancel request; accepted (driver card,
   pickup, time, price line); daily accepted "You're now a commute group" → PayMethod `next=/today`;
-  expired "No driver took this trip in time. Nothing was charged." + Post again / See empty seats
+  expired "No driver took this trip in time. Nothing was charged." + Post again / See empty seats;
+  posted-state loading and error + retry (FR-027)
 - [ ] T076 [P] [US3] `test/widget/marketplace_navigation_test.dart`: Empty seats dashed card → Post
   your trip, Back → Empty seats; no-match "Post your trip" now `push`, Back → no-match; no-cover
   "Post your trip" → Back → Today
