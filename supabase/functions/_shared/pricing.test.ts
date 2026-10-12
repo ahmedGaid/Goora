@@ -2,7 +2,7 @@
 // Same vectors as test/unit/rider_total_test.dart.
 import { strictEqual } from "node:assert";
 import { test } from "node:test";
-import { riderTotal, serviceFee } from "./pricing.ts";
+import { cashAmount, equalShare, range, riderTotal, serviceFee } from "./pricing.ts";
 import { loadCases } from "./vectors.ts";
 
 interface Case {
@@ -14,12 +14,14 @@ interface Case {
   isCashTrial: boolean;
   fee: number;
   total: number;
+  cash: number | null;
 }
 
 for (const c of loadCases<Case>("pricing")) {
   test(c.name, () => {
     strictEqual(serviceFee(c.contribution, c.tripCost, c.riderSeats, c.isSubscriber, c.isCashTrial), c.fee);
     strictEqual(riderTotal(c.contribution, c.tripCost, c.riderSeats, c.isSubscriber, c.isCashTrial), c.total);
+    strictEqual(cashAmount(c.contribution, c.tripCost, c.riderSeats), c.cash);
   });
 }
 
@@ -28,26 +30,9 @@ test("brief example: 40 EGP trip → 44 (40 to the driver, 4 to Goora)", () => {
   strictEqual(riderTotal(40, 160, 3, false, false), 44);
 });
 
-// Mirrors lib/features/commute/domain/pricing_service.dart's PricingService.range
-// (002) — a local helper, not exported, since no server consumer needs it yet.
-const STEP = 2;
-const RANGE_PERCENT = 20;
-
-function suggested(tripCost: number, riders: number): number {
-  return Math.round(tripCost / ((riders + 1) * STEP)) * STEP;
-}
-
-function range(tripCost: number, riders: number): { min: number; max: number } {
-  const s = suggested(tripCost, riders);
-  const unit = 100 * STEP;
-  const min = Math.floor((s * (100 - RANGE_PERCENT) + unit - 1) / unit) * STEP;
-  const upper = Math.floor((s * (100 + RANGE_PERCENT)) / unit) * STEP;
-  const cap = Math.floor(tripCost / (riders * STEP)) * STEP;
-  return { min, max: Math.min(upper, cap) };
-}
-
 // 004 v2.1 research R17 — Constitution II's cap (FR-016, spec SC-006), proved by
-// sweep rather than inspection. Mirrors test/unit/pricing_cap_sweep_test.dart.
+// sweep rather than inspection; 005 adds the cash amount (FR-029, SC-002).
+// Mirrors test/unit/pricing_cap_sweep_test.dart.
 test("every allowed price keeps riders' total within the trip cost", () => {
   let checked = 0;
   for (let tripCost = 20; tripCost <= 1000; tripCost += 20) {
@@ -59,6 +44,13 @@ test("every allowed price keeps riders' total within the trip cost", () => {
           throw new Error(
             `tripCost=${tripCost} riderSeats=${riderSeats} contribution=${c} total=${total}`,
           );
+        }
+        const cash = cashAmount(c, tripCost, riderSeats);
+        const cashOk =
+          cash === null ||
+          (cash > 0 && cash % 5 === 0 && min <= cash && cash <= max && cash <= equalShare(tripCost, riderSeats));
+        if (!cashOk) {
+          throw new Error(`tripCost=${tripCost} riderSeats=${riderSeats} contribution=${c} cash=${cash}`);
         }
         checked++;
       }

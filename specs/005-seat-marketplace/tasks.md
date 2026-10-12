@@ -29,7 +29,7 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 ## Phase 1: Setup
 
-- [ ] T001 Add every 005 ARB key to `lib/core/l10n/app_en.arb` and `lib/core/l10n/app_ar.arb`: the
+- [X] T001 Add every 005 ARB key to `lib/core/l10n/app_en.arb` and `lib/core/l10n/app_ar.arb`: the
   research R16 table verbatim (en + drafted ar: `seatsLeft`, `bookSeat`, `seatRule`, `nothingFits`,
   `alreadyRiding`, `seatBookedTitle`, `upsellDaily`, `backToToday`, `lateBookingNote`, `topUpFirst`,
   `seatJustTaken`, `justOnce`, `everyWorkday`, `ruleNoBidding`, `ruleCostShare`, `ruleRoute`, `post`,
@@ -53,77 +53,77 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 **Cash amount (FR-029, R3)**
 
-- [ ] T002 [P] `test/fixtures/gen_pricing_vectors.py`: add a `cash` field (int or `None` → JSON
+- [X] T002 [P] `test/fixtures/gen_pricing_vectors.py`: add a `cash` field (int or `None` → JSON
   `null`) to every case, computed with Python integers per R3 (down = c − c % 5; nearest = down if
   c % 5 ≤ 2 else down + 5; r = 002's range(tripCost, riderSeats), written in Python independently;
   if nearest > r.max use down; if the result < r.min use up; outside [r.min, r.max] or 0 → null),
   plus the eight named rows from contracts/pricing.md ("cash: 44 up to 45" … "cash: no multiple of 5
   in range 2–2"). Regenerate `test/fixtures/pricing_vectors.json`
-- [ ] T003 `lib/features/commute/domain/pricing_service.dart`: add
+- [X] T003 `lib/features/commute/domain/pricing_service.dart`: add
   `static int? cashAmount(int contribution, {required int tripCost, required int riderSeats})`
   exactly per R3, reusing `range`; doc comment cites FR-029 (founder 2026-10-12, range rule)
-- [ ] T004 [P] `supabase/functions/_shared/pricing.ts`: move `suggested`/`range` out of
+- [X] T004 [P] `supabase/functions/_shared/pricing.ts`: move `suggested`/`range` out of
   `pricing.test.ts` into `pricing.ts` and export them (test imports them); export
   `cashAmount(contribution, tripCost, riderSeats): number | null` per R3, integer arithmetic only
   (`%`, `Math.floor` on non-negative values)
-- [ ] T005 `test/unit/rider_total_test.dart`: assert `cashAmount` against every vector's `cash`
+- [X] T005 `test/unit/rider_total_test.dart`: assert `cashAmount` against every vector's `cash`
   (null included)
-- [ ] T006 [P] `supabase/functions/_shared/pricing.test.ts`: assert `cashAmount` against every
+- [X] T006 [P] `supabase/functions/_shared/pricing.test.ts`: assert `cashAmount` against every
   vector's `cash`; extend the sweep (trip cost 20–1,000 step 20, rider seats 1–4, every allowed
   contribution in 2 EGP steps): `cash === null || (cash > 0 && cash % 5 === 0 && r.min <= cash &&
   cash <= r.max && cash <= equalShare)`; 0 exceptions
-- [ ] T007 [P] `test/unit/pricing_cap_sweep_test.dart`: same cash assertion as T006 alongside the
+- [X] T007 [P] `test/unit/pricing_cap_sweep_test.dart`: same cash assertion as T006 alongside the
   existing `riderSeats × riderTotal ≤ tripCost` check (SC-002)
 
 **SeatPrice (R2)**
 
-- [ ] T008 [P] `test/unit/seat_price_test.dart`: `SeatPrice.of` at 160/3 — wallet 40 → fee 4,
+- [X] T008 [P] `test/unit/seat_price_test.dart`: `SeatPrice.of` at 160/3 — wallet 40 → fee 4,
   total 44, payable 44; subscribed and company 40 → fee 0, payable 40; cash 40 → fee 0, cash 40,
   payable 40; cash at contribution 44 → cash 45, payable 45; cash at 48 → 45 and at 32 → 35 (range
   32–48); wallet 44 → 48; 160/4 at 38 → fee 2 ("38 + 2", 004 v2.1 trim) and cash 35; cash at 2 / 8 / 4
   (range 2–2) → `cash == null`, `cashOffered` false, payable falls back to total
-- [ ] T009 `lib/features/wallet/domain/seat_price.dart`: `SeatPrice` per contracts/pricing.md
+- [X] T009 `lib/features/wallet/domain/seat_price.dart`: `SeatPrice` per contracts/pricing.md
   (`contribution`, `fee`, `cash`, `mode`, `total`, `cashOffered`, `payable`); `fee` =
   `PricingService.serviceFee(...)` with `isSubscriber: mode.isFeeFree && mode != cash`,
   `isCashTrial: mode == cash`; `cash` = `PricingService.cashAmount(...)`
 
 **Driver day rules + refund (R4, R7) — twinned**
 
-- [ ] T010 [P] `test/fixtures/gen_marketplace_vectors.py` (new, independent of both twins): write
+- [X] T010 [P] `test/fixtures/gen_marketplace_vectors.py` (new, independent of both twins): write
   `test/fixtures/marketplace_vectors.json` with `fit` and `refund` arrays; every required row in
   contracts/marketplace-rules.md (13 `fit:` rows, 4 `refund:` rows) plus edge rows: join tie → nearest
   departure then lowest id; join exactly 30 min (inclusive); limitReached when 2 trips and candidate
   joinable but full → `full` (join/full come first); overlap half-open boundary
-- [ ] T011 `lib/features/marketplace/domain/driver_day_rules.dart`: `TripFitKind`, `DayTrip`,
+- [X] T011 `lib/features/marketplace/domain/driver_day_rules.dart`: `TripFitKind`, `DayTrip`,
   `Candidate`, `TripFit`, `DriverDayRules` (`maxTrips = 2`, `joinWindowMinutes = 30` inclusive,
   `tripsLeft = max(0, 2 − trips.length)`, `fit` in R4's order: join → full → limitReached →
   doesntFit → oneGroupOnly → overlap → create). Pure Dart, no Flutter imports
-- [ ] T012 [P] `lib/features/marketplace/domain/booking_refund.dart`:
+- [X] T012 [P] `lib/features/marketplace/domain/booking_refund.dart`:
   `BookingRefund.amount({paidTotal, fee, owed}) = max(0, min(paidTotal, paidTotal − owed))`
-- [ ] T013 [P] `supabase/functions/_shared/marketplace.ts`: `MAX_TRIPS`, `JOIN_WINDOW_MINUTES`,
+- [X] T013 [P] `supabase/functions/_shared/marketplace.ts`: `MAX_TRIPS`, `JOIN_WINDOW_MINUTES`,
   types and `tripsLeft`/`fit`/`refundAmount` exactly per contracts/marketplace-rules.md
-- [ ] T014 [P] `supabase/functions/_shared/marketplace.test.ts`: load
+- [X] T014 [P] `supabase/functions/_shared/marketplace.test.ts`: load
   `test/fixtures/marketplace_vectors.json` (via `vectors.ts`), assert every `fit` and `refund` row
-- [ ] T015 `test/unit/marketplace_vectors_test.dart`: Dart reader of the same file, every row
+- [X] T015 `test/unit/marketplace_vectors_test.dart`: Dart reader of the same file, every row
   (failure message = row name)
-- [ ] T016 `test/unit/driver_day_rules_test.dart`: hand cases for each `TripFitKind` with the brief's
+- [X] T016 `test/unit/driver_day_rules_test.dart`: hand cases for each `TripFitKind` with the brief's
   times, plus SC-003 scripted sequences — 10,000 sequences, fixed seed, random offers/accepts/joins
   (both legs, both routes, times 6:00–20:00, daily/once, leadsGroup on/off); apply `fit`, add a trip
   on `create` and a seat on `join`; after every step assert `trips.length ≤ 2` and ≤ 1 trip per leg
 
 **Gate, day, seats (R8, R13, R6)**
 
-- [ ] T017 [P] `lib/features/marketplace/domain/booking_gate.dart` + `test/unit/booking_gate_test.dart`:
+- [X] T017 [P] `lib/features/marketplace/domain/booking_gate.dart` + `test/unit/booking_gate_test.dart`:
   `BookingGate.check({hasArrangement, mode, cashOffered, balance, price})` → `ok | needsMethod |
   topUp(gap)` in R8's order; tests: no method → needsMethod; company at balance −50 → ok; cash with
   cash offered → ok; cash with `cash == null` and balance 0 → topUp(total); wallet 44 at balance 0 →
   topUp(44), at 30 → topUp(14), at 44 → ok; subscribed 40 at 39 → topUp(1)
-- [ ] T018 [P] `lib/features/marketplace/domain/market_day.dart` + `test/unit/market_day_test.dart`:
+- [X] T018 [P] `lib/features/marketplace/domain/market_day.dart` + `test/unit/market_day_test.dart`:
   R13 — `nextDeparture(days, departure, now)` (today if still ahead, else next running day within 7
   days); `nextWorkday(departure, now)` (Sun–Thu, today included if ahead); day label kind
   (today/tomorrow/weekday); `isExpired(date, departure, now)` (now ≥ date+time). Tests at Thu 21:00 →
   Sun, Fri/Sat skipped, exactly-at-departure counts as passed
-- [ ] T019 [P] `lib/features/marketplace/domain/seat_math.dart` + `test/unit/seat_math_test.dart`:
+- [X] T019 [P] `lib/features/marketplace/domain/seat_math.dart` + `test/unit/seat_math_test.dart`:
   R6 — free = `riderSeats − riding − activeBookings`, floored at 0; own group: riding from 003
   `Ride.passengers` (riders + off-duty drivers, absences excluded); other seeded group:
   `riderSeats − group.freeSeats(leg)`; offered trip: `seats − bookings`; a booking whose rider is
@@ -132,7 +132,7 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   (never the 4th place, T078); never counted against the car's physical seats; booker-who-is-member
   counted once; full car with one reclaimable booking → 1 free for a subscriber, 0 for a
   non-subscriber
-- [ ] T020 Checkpoint P1: `flutter analyze` 0; `flutter test --concurrency=1 test/unit`;
+- [X] T020 Checkpoint P1: `flutter analyze` 0; `flutter test --concurrency=1 test/unit`;
   `node --test "supabase/functions/_shared/*.test.ts"`; `python test/fixtures/gen_pricing_vectors.py
   && python test/fixtures/gen_marketplace_vectors.py && git diff --exit-code test/fixtures`
 

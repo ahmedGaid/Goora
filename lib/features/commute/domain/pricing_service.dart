@@ -54,6 +54,22 @@ abstract final class PricingService {
     return PriceRange(min: min, suggested: s, max: upper < cap ? upper : cap);
   }
 
+  /// FR-029 (founder 2026-10-12, range rule after /speckit-analyze): the
+  /// contribution rounded to the nearest 5 EGP, kept inside range(tripCost,
+  /// riderSeats) — down when the nearest passes r.max, up when the result is
+  /// below r.min; null when no multiple of 5 above 0 fits (cash not offered).
+  /// r.max ≤ equalShare, so the cap holds too (005 research R3).
+  static int? cashAmount(int contribution, {required int tripCost, required int riderSeats}) {
+    final down = contribution - contribution % 5;
+    final up = down + 5;
+    final r = range(tripCost, riderSeats);
+    var cash = contribution % 5 <= 2 ? down : up;
+    if (cash > r.max) cash = down;
+    if (cash < r.min) cash = up;
+    if (cash == 0 || !r.contains(cash)) return null;
+    return cash;
+  }
+
   static int snap(int price, PriceRange r) => price < r.min ? r.min : (price > r.max ? r.max : price);
 
   static int recoveryPerDay(int seats, int price, DrivenTrips trips) => seats * price * trips.tripsPerDay;

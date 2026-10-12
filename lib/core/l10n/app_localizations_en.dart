@@ -1721,4 +1721,239 @@ class AppLocalizationsEn extends AppLocalizations {
   String priceDriver(int price) {
     return '$price EGP to you per passenger · Goora is free for drivers';
   }
+
+  @override
+  String seatsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count seats left',
+      one: '1 seat left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookSeat => 'Book seat';
+
+  @override
+  String get seatRule =>
+      'Subscribers get priority on empty seats. If a subscriber takes your seat before 9 PM the evening before, you get back everything you paid.';
+
+  @override
+  String get nothingFits => 'Nothing fits your time? Post your trip';
+
+  @override
+  String get alreadyRiding => 'You already have a ride on this trip.';
+
+  @override
+  String get seatBookedTitle => 'Seat booked';
+
+  @override
+  String get upsellDaily => 'Liked it? Make it your daily commute';
+
+  @override
+  String get backToToday => 'Back to today';
+
+  @override
+  String get lateBookingNote =>
+      'It\'s past 9 PM the evening before, so cancelling now means paying half your share.';
+
+  @override
+  String topUpFirst(int gap) {
+    return 'Top up $gap EGP first';
+  }
+
+  @override
+  String get seatJustTaken =>
+      'That seat was just taken. Here\'s the updated list.';
+
+  @override
+  String get justOnce => 'Just once';
+
+  @override
+  String get everyWorkday => 'Every workday';
+
+  @override
+  String get ruleNoBidding => 'The price is set by Goora — no bargaining';
+
+  @override
+  String get ruleCostShare => 'Drivers share costs, they don\'t profit';
+
+  @override
+  String get ruleRoute => 'Only people on your route see it';
+
+  @override
+  String get post => 'Post';
+
+  @override
+  String sentToDrivers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sent to $count drivers on your route',
+      one: 'Sent to 1 driver on your route',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get waitingDriver => 'Waiting for a driver to accept';
+
+  @override
+  String get cancelRequest => 'Cancel request';
+
+  @override
+  String get requestAccepted => 'A driver accepted your trip';
+
+  @override
+  String get nowGroup => 'You\'re now a commute group';
+
+  @override
+  String get requestExpired =>
+      'No driver took this trip in time. Nothing was charged.';
+
+  @override
+  String get postAgain => 'Post again';
+
+  @override
+  String get seeEmptySeats => 'See empty seats';
+
+  @override
+  String get dailyNeedsNoGroup => 'You\'re already in a daily group';
+
+  @override
+  String verifyChip(String item) {
+    return '$item not verified — verify';
+  }
+
+  @override
+  String get publish => 'Publish';
+
+  @override
+  String get dailyLimitReached => 'Daily limit reached';
+
+  @override
+  String joinsTripInstead(String time) {
+    return 'This joins your trip at $time';
+  }
+
+  @override
+  String seatsBooked(int booked, int seats) {
+    return '$booked of $seats seats booked';
+  }
+
+  @override
+  String get carFull => 'Your car is full!';
+
+  @override
+  String get newRider => 'New';
+
+  @override
+  String get cancelTrip => 'Cancel trip';
+
+  @override
+  String tripCancelledRefund(String driver) {
+    return '$driver cancelled the trip. You got back everything you paid.';
+  }
+
+  @override
+  String get leavingFrom => 'Leaving from';
+
+  @override
+  String get allAreas => 'All';
+
+  @override
+  String get morning => 'Morning';
+
+  @override
+  String get evening => 'Evening';
+
+  @override
+  String createsTrip(String route, String time, int count) {
+    return 'This creates your trip: $route · $time. Trips left after this: $count';
+  }
+
+  @override
+  String get doesntFit => 'Doesn\'t fit your trip';
+
+  @override
+  String get yourCarFull => 'Your car is full';
+
+  @override
+  String get oneGroupOnly => 'You already drive a daily group';
+
+  @override
+  String get overlapTrip => 'You have another trip at that time';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get accepted => 'Accepted ✓';
+
+  @override
+  String demandBanner(int count, String route, String part) {
+    String _temp0 = intl.Intl.selectLogic(part, {
+      'morning': 'in the morning',
+      'evening': 'in the evening',
+      'other': '',
+    });
+    return '$count people want $route $_temp0';
+  }
+
+  @override
+  String detourMin(int min) {
+    return '+$min min detour';
+  }
+
+  @override
+  String get noRequests =>
+      'No requests on your route right now. We\'ll show them here as they come in.';
+
+  @override
+  String get privacyCaption => 'You\'ll see names when riders board.';
+
+  @override
+  String seatReclaimed(String day, int amount) {
+    return 'A subscriber took your seat on $day. You got back $amount EGP.';
+  }
+
+  @override
+  String get reclaimTooLate => 'Too late to reclaim — this booking is final.';
+
+  @override
+  String get oneOffTrips => 'One-off trips';
+
+  @override
+  String get cancelBooking => 'Cancel booking';
+
+  @override
+  String get noGroupYet => 'No daily group yet';
+
+  @override
+  String get demoAcceptRequest => 'A driver accepts your request';
+
+  @override
+  String get demoBookSeat => 'A rider books your seat';
+
+  @override
+  String get demoReclaim => 'A subscriber takes this seat';
+
+  @override
+  String get demoVerifyDriver => 'Verify my driver documents';
+
+  @override
+  String get nSeatBooked => 'A rider booked a seat on your trip.';
+
+  @override
+  String nRequestAccepted(String driver, String time) {
+    return '$driver accepted your trip at $time.';
+  }
+
+  @override
+  String get actSeatBooked => 'Seat';
+
+  @override
+  String get actSeatRefund => 'Refund';
 }

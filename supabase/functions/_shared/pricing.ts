@@ -1,11 +1,43 @@
 // Per-trip rider price (004 v2, brief §6.7, research R6). Mirror of
-// lib/features/commute/domain/pricing_service.dart (serviceFee, riderTotal) — both run
-// test/fixtures/pricing_vectors.json.
+// lib/features/commute/domain/pricing_service.dart (suggested, range, serviceFee,
+// riderTotal, cashAmount) — both run test/fixtures/pricing_vectors.json.
 //
 // The contribution goes to the driver in full; Goora's 10% service fee is
 // added on top (nearest whole EGP, halves up) and is 0 for subscribers,
 // company-plan riders and cash trips.
 export const FEE_RATE_PERCENT = 10;
+export const STEP = 2;
+export const RANGE_PERCENT = 20;
+
+// trip cost ÷ (riders + 1), rounded to the nearest 2 EGP (002, brief §6.2).
+export function suggested(tripCost: number, riders: number): number {
+  return Math.round(tripCost / ((riders + 1) * STEP)) * STEP;
+}
+
+// ±20% of the suggestion in 2 EGP steps, and never more than an equal share of
+// the whole trip cost (riders' total ≤ trip cost).
+export function range(tripCost: number, riders: number): { min: number; suggested: number; max: number } {
+  const s = suggested(tripCost, riders);
+  const unit = 100 * STEP;
+  const min = Math.floor((s * (100 - RANGE_PERCENT) + unit - 1) / unit) * STEP;
+  const upper = Math.floor((s * (100 + RANGE_PERCENT)) / unit) * STEP;
+  const cap = Math.floor(tripCost / (riders * STEP)) * STEP;
+  return { min, suggested: s, max: Math.min(upper, cap) };
+}
+
+// FR-029 (005 research R3): the contribution rounded to the nearest 5 EGP, kept
+// inside range(tripCost, riderSeats) — down when the nearest passes the top, up
+// when below the floor; null when no multiple of 5 above 0 fits (no cash).
+export function cashAmount(contribution: number, tripCost: number, riderSeats: number): number | null {
+  const down = contribution - (contribution % 5);
+  const up = down + 5;
+  const r = range(tripCost, riderSeats);
+  let cash = contribution % 5 <= 2 ? down : up;
+  if (cash > r.max) cash = down;
+  if (cash < r.min) cash = up;
+  if (cash === 0 || cash < r.min || cash > r.max) return null;
+  return cash;
+}
 
 // ⌊tripCost / riderSeats⌋ (004 v2.1 research R15/R17).
 export function equalShare(tripCost: number, riderSeats: number): number {

@@ -1752,4 +1752,258 @@ class AppLocalizationsAr extends AppLocalizations {
   String priceDriver(int price) {
     return '$price ج ليك من كل راكب · جورة مجانية للسواقين';
   }
+
+  @override
+  String seatsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'فاضي $count كرسي',
+      few: 'فاضي $count كراسي',
+      two: 'فاضي كرسيين',
+      one: 'فاضي كرسي واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bookSeat => 'احجز الكرسي';
+
+  @override
+  String get seatRule =>
+      'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل ٩ بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.';
+
+  @override
+  String get nothingFits => 'مفيش حاجة على ميعادك؟ انشر مشوارك';
+
+  @override
+  String get alreadyRiding => 'إنت عندك توصيلة في المشوار ده خلاص.';
+
+  @override
+  String get seatBookedTitle => 'الكرسي اتحجز';
+
+  @override
+  String get upsellDaily => 'عجبك؟ خليه مشوارك كل يوم';
+
+  @override
+  String get backToToday => 'ارجع للنهارده';
+
+  @override
+  String get lateBookingNote =>
+      'عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.';
+
+  @override
+  String topUpFirst(int gap) {
+    return 'اشحن $gap ج الأول';
+  }
+
+  @override
+  String get seatJustTaken =>
+      'الكرسي ده لسه محجوز حالًا. دي القايمة بعد التحديث.';
+
+  @override
+  String get justOnce => 'مرة واحدة';
+
+  @override
+  String get everyWorkday => 'كل يوم شغل';
+
+  @override
+  String get ruleNoBidding => 'السعر بتحدده جورة — مفيش فصال';
+
+  @override
+  String get ruleCostShare => 'السواق بيشارك في التكلفة، مش بيكسب';
+
+  @override
+  String get ruleRoute => 'اللي على خطك بس هيشوفوه';
+
+  @override
+  String get post => 'انشر';
+
+  @override
+  String sentToDrivers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'اتبعت لـ$count سواق على خطك',
+      few: 'اتبعت لـ$count سواقين على خطك',
+      two: 'اتبعت لسواقين على خطك',
+      one: 'اتبعت لسواق واحد على خطك',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get waitingDriver => 'مستنيين سواق يوافق';
+
+  @override
+  String get cancelRequest => 'الغي الطلب';
+
+  @override
+  String get requestAccepted => 'سواق وافق على مشوارك';
+
+  @override
+  String get nowGroup => 'بقيتوا مجموعة مشوار';
+
+  @override
+  String get requestExpired =>
+      'مفيش سواق أخد المشوار في ميعاده. محدش خصم منك حاجة.';
+
+  @override
+  String get postAgain => 'انشر تاني';
+
+  @override
+  String get seeEmptySeats => 'شوف الكراسي الفاضية';
+
+  @override
+  String get dailyNeedsNoGroup => 'إنت في مجموعة يومية خلاص';
+
+  @override
+  String verifyChip(String item) {
+    return '$item مش موثّق — وثّقه';
+  }
+
+  @override
+  String get publish => 'انشر المشوار';
+
+  @override
+  String get dailyLimitReached => 'خلصت مشاوير النهارده';
+
+  @override
+  String joinsTripInstead(String time) {
+    return 'ده هيدخل على مشوارك الساعة $time';
+  }
+
+  @override
+  String seatsBooked(int booked, int seats) {
+    return '$booked من $seats كراسي اتحجزوا';
+  }
+
+  @override
+  String get carFull => 'عربيتك اتملت!';
+
+  @override
+  String get newRider => 'جديد';
+
+  @override
+  String get cancelTrip => 'الغي المشوار';
+
+  @override
+  String tripCancelledRefund(String driver) {
+    return '$driver لغى المشوار. فلوسك كلها رجعتلك.';
+  }
+
+  @override
+  String get leavingFrom => 'طالع من';
+
+  @override
+  String get allAreas => 'الكل';
+
+  @override
+  String get morning => 'الصبح';
+
+  @override
+  String get evening => 'بالليل';
+
+  @override
+  String createsTrip(String route, String time, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'هيفضلك $count مشاوير بعده',
+      one: 'هيفضلك مشوار واحد بعده',
+      zero: 'مش هيفضلك مشاوير بعده',
+    );
+    return 'ده هيعمل مشوار جديد: $route · $time. $_temp0';
+  }
+
+  @override
+  String get doesntFit => 'مش على مشوارك';
+
+  @override
+  String get yourCarFull => 'عربيتك مليانة';
+
+  @override
+  String get oneGroupOnly => 'إنت سايق مجموعة يومية خلاص';
+
+  @override
+  String get overlapTrip => 'عندك مشوار تاني في نفس الوقت';
+
+  @override
+  String get accept => 'وافق';
+
+  @override
+  String get accepted => 'اتوافق ✓';
+
+  @override
+  String demandBanner(int count, String route, String part) {
+    String _temp0 = intl.Intl.selectLogic(part, {
+      'morning': 'الصبح',
+      'evening': 'بالليل',
+      'other': '',
+    });
+    return '$count واحد عايزين $route $_temp0';
+  }
+
+  @override
+  String detourMin(int min) {
+    String _temp0 = intl.Intl.pluralLogic(
+      min,
+      locale: localeName,
+      other: '+$min دقيقة لفّة',
+      few: '+$min دقايق لفّة',
+      two: '+دقيقتين لفّة',
+      one: '+دقيقة لفّة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get noRequests =>
+      'مفيش طلبات على خطك دلوقتي. هنعرضها هنا أول ما توصل.';
+
+  @override
+  String get privacyCaption => 'هتشوف الأسامي لما الركاب يركبوا.';
+
+  @override
+  String seatReclaimed(String day, int amount) {
+    return 'مشترك أخد كرسيك يوم $day. رجعلك $amount ج.';
+  }
+
+  @override
+  String get reclaimTooLate => 'فات الميعاد — الحجز ده نهائي.';
+
+  @override
+  String get oneOffTrips => 'مشاوير مرة واحدة';
+
+  @override
+  String get cancelBooking => 'الغي الحجز';
+
+  @override
+  String get noGroupYet => 'لسه مفيش مجموعة يومية';
+
+  @override
+  String get demoAcceptRequest => 'سواق يوافق على طلبك';
+
+  @override
+  String get demoBookSeat => 'راكب يحجز كرسي';
+
+  @override
+  String get demoReclaim => 'مشترك ياخد الكرسي ده';
+
+  @override
+  String get demoVerifyDriver => 'وثّق أوراق السواقة';
+
+  @override
+  String get nSeatBooked => 'راكب حجز كرسي في مشوارك.';
+
+  @override
+  String nRequestAccepted(String driver, String time) {
+    return '$driver وافق على مشوارك الساعة $time.';
+  }
+
+  @override
+  String get actSeatBooked => 'كرسي';
+
+  @override
+  String get actSeatRefund => 'مرتجع';
 }
