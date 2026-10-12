@@ -42,7 +42,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get extraTrip => 'Need an extra trip? Book a seat';
 
   @override
-  String get subNote => 'Included in your plan · no booking fee';
+  String get subNote => 'Included in your plan · no fees';
 
   @override
   String get whereGo => 'Where do you go every day?';
@@ -84,7 +84,211 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noShow => 'No-show';
 
   @override
-  String get planTitle => 'Start your free month';
+  String get planTitle => 'Subscribe and pay no fees';
+
+  @override
+  String get planSubline => 'No service fee on any trip or seat.';
+
+  @override
+  String get planMonthlyTitle => 'Monthly';
+
+  @override
+  String get planMonthlySub => '129 EGP/month';
+
+  @override
+  String get planYearlyTitle => 'Yearly';
+
+  @override
+  String get planYearlySub => '1,290 EGP/year';
+
+  @override
+  String get planYearlyChip => '2 months free';
+
+  @override
+  String get planCompanyTitle => 'Through my company';
+
+  @override
+  String get planCompanySub => 'Free — verify your work email';
+
+  @override
+  String get planIncludedTitle => 'What\'s included';
+
+  @override
+  String get planIncludedMatch => 'Matching with your daily group';
+
+  @override
+  String get planIncludedBackup => 'A backup driver when yours can\'t make it';
+
+  @override
+  String get planIncludedTrust => 'Reliability tracking and SOS safety tools';
+
+  @override
+  String get planFuelNote =>
+      'The fuel & tolls you pay each trip go straight to your driver, in full.';
+
+  @override
+  String get planCtaVerify => 'Verify work email';
+
+  @override
+  String get planFooter => 'Cancel anytime. Goora is free for drivers.';
+
+  @override
+  String get verifyEmailTitle => 'Verify your work email';
+
+  @override
+  String verifyEmailBody(String company) {
+    return '$company will cover your Goora plan once your work email is verified.';
+  }
+
+  @override
+  String get verifyConfirm => 'Confirm';
+
+  @override
+  String get verifyNotVerified => 'Verify your work email in Trust first.';
+
+  @override
+  String get balanceLabel => 'Wallet balance';
+
+  @override
+  String get topUp => 'Top up';
+
+  @override
+  String coversTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Covers about $count trips',
+      one: 'Covers about 1 trip',
+      zero: 'Covers no trips yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planChange => 'Change';
+
+  @override
+  String get planCompanyActive => 'Free · paid by your company';
+
+  @override
+  String get howPayTitle => 'How paying works';
+
+  @override
+  String get howPayRule1 =>
+      'You pay the driver\'s share + a service fee of up to 10% per trip. Subscribers pay no fee.';
+
+  @override
+  String get howPayRule2 =>
+      'Fuel & tolls go straight to your driver — Goora takes no cut.';
+
+  @override
+  String get howPayRule3 =>
+      'Late cancellations and no-shows go to the driver, with no service fee.';
+
+  @override
+  String get topUpSheetTitle => 'Top up your wallet';
+
+  @override
+  String get topUpMethodInstaPay => 'InstaPay';
+
+  @override
+  String get topUpMethodVodafone => 'Vodafone Cash';
+
+  @override
+  String get topUpMethodCard => 'Card';
+
+  @override
+  String get topUpConfirm => 'Confirm top-up';
+
+  @override
+  String get topUpFailTitle => 'Top-up didn\'t go through';
+
+  @override
+  String get topUpFailBody => 'Nothing was charged — try again.';
+
+  @override
+  String get changePlanTitle => 'Change your plan';
+
+  @override
+  String get changePlanNote =>
+      'Takes effect on your next billing date — nothing changes for your current period.';
+
+  @override
+  String get changePlanConfirm => 'Confirm change';
+
+  @override
+  String get breakdownTitle => 'What you pay per trip';
+
+  @override
+  String get breakdownFuel => 'Fuel & tolls';
+
+  @override
+  String get breakdownTotal => 'Total';
+
+  @override
+  String get activityTitle => 'Activity';
+
+  @override
+  String get activityEmpty => 'No activity yet';
+
+  @override
+  String get actTopUp => 'Top-up';
+
+  @override
+  String get actTripDeduction => 'Trip cost';
+
+  @override
+  String get actLateCancelCharge => 'Late cancel';
+
+  @override
+  String get actFreeCancelZero => 'Free cancellation';
+
+  @override
+  String get actTripIncome => 'Trip income';
+
+  @override
+  String actFeeReceivedFrom(String name) {
+    return '$name\'s fee';
+  }
+
+  @override
+  String get actWithdrawal => 'Withdrawal';
+
+  @override
+  String get recoveredTitle => 'Recovered this week';
+
+  @override
+  String get payoutNote => 'Paid out every Thursday · no fees taken from you';
+
+  @override
+  String get withdraw => 'Withdraw to InstaPay';
+
+  @override
+  String get withdrawSheetTitle => 'Withdraw to InstaPay';
+
+  @override
+  String get withdrawConfirm => 'Confirm withdrawal';
+
+  @override
+  String get withdrawFailTitle => 'Withdrawal didn\'t go through';
+
+  @override
+  String get withdrawFailBody => 'Nothing moved — try again.';
+
+  @override
+  String get driverBreakdownTitle => 'Your trip cost';
+
+  @override
+  String get driverBreakdownCost => 'Trip cost';
+
+  @override
+  String get driverBreakdownReceived => 'You receive from riders';
+
+  @override
+  String get driverBreakdownGap => 'What you pay yourself';
+
+  @override
+  String get driverBreakdownFree => 'Goora is free for drivers';
 
   @override
   String get postReq => 'Post your trip';
@@ -546,11 +750,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String perWeek(int count) {
     return '$count/wk';
-  }
-
-  @override
-  String feeLine(int price) {
-    return '$price EGP to the driver · no per-trip fees';
   }
 
   @override
@@ -1237,9 +1436,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'To drive, your license and vehicle need to be verified.';
 
   @override
-  String get walletSoon => 'Wallet is coming soon';
-
-  @override
   String get demoSection => 'Demo (developers)';
 
   @override
@@ -1362,4 +1558,167 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareNoTrip => 'No trip to share right now.';
+
+  @override
+  String priceWithFee(int price, int fee) {
+    return '$price EGP to the driver + $fee EGP service fee';
+  }
+
+  @override
+  String priceNoFee(int price) {
+    return '$price EGP to the driver · no service fee';
+  }
+
+  @override
+  String priceSubscribed(int price) {
+    return '$price EGP · no fees (subscribed)';
+  }
+
+  @override
+  String priceCompany(int price) {
+    return '$price EGP · no fees (company)';
+  }
+
+  @override
+  String priceCash(int price) {
+    return 'Pay $price EGP cash to the driver';
+  }
+
+  @override
+  String get payMethodTitle => 'How do you want to pay?';
+
+  @override
+  String get payMethodSub => 'You can top up or subscribe anytime.';
+
+  @override
+  String get payCash => 'Pay cash to the driver (first 10 trips)';
+
+  @override
+  String get payCashSub => 'No service fee on cash trips.';
+
+  @override
+  String get payWallet => 'Use wallet';
+
+  @override
+  String get subscribeLink => 'Subscribe and pay no fees';
+
+  @override
+  String subscribeCta(int price) {
+    return 'Subscribe · $price EGP';
+  }
+
+  @override
+  String subNeedsTopUp(int gap, int balance) {
+    return 'Top up $gap EGP first — your wallet has $balance EGP.';
+  }
+
+  @override
+  String get subscribe => 'Subscribe';
+
+  @override
+  String get planPayPerTrip => 'Pay per trip';
+
+  @override
+  String planPerTripLine(int fee) {
+    return '$fee EGP service fee per trip';
+  }
+
+  @override
+  String get planPerTripNoFeeLine => 'No service fee on your trips';
+
+  @override
+  String planSubscribedLine(String date) {
+    return 'Subscribed until $date · no fees';
+  }
+
+  @override
+  String get planLapsedLine => 'Subscription ended · back to pay per trip';
+
+  @override
+  String cashTripsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cash trips left',
+      one: '1 cash trip left',
+      zero: 'No cash trips left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cashTopUpBanner =>
+      'Top up your wallet to keep riding — get backup drivers, guaranteed seats and refunds.';
+
+  @override
+  String get cashEnded =>
+      'Your cash trips are done — top up your wallet to keep riding.';
+
+  @override
+  String get cashOff =>
+      'Cash is off after 2 trips were marked unpaid — top up your wallet to keep riding.';
+
+  @override
+  String get needsTopUp => 'Top up to keep riding';
+
+  @override
+  String feeSavings(int fees) {
+    return 'You paid $fees EGP in fees this month. With a subscription you\'d pay 129.';
+  }
+
+  @override
+  String get actTrip => 'Trip';
+
+  @override
+  String get actCashTrip => 'Cash trip';
+
+  @override
+  String get actSubscription => 'Subscription';
+
+  @override
+  String cashPaidLine(int price) {
+    return 'Paid $price EGP cash to the driver';
+  }
+
+  @override
+  String get notChargedCash => 'Not charged during the cash trial';
+
+  @override
+  String get breakdownShare => 'Driver\'s share';
+
+  @override
+  String get breakdownFee => 'Service fee';
+
+  @override
+  String get breakdownNoFee => 'Service fee: none';
+
+  @override
+  String cashReceived(int price) {
+    return 'Received $price EGP cash';
+  }
+
+  @override
+  String get didNotPay => 'Didn\'t pay';
+
+  @override
+  String get cashMarkedReceived => 'Cash received';
+
+  @override
+  String get cashMarkedUnpaid => 'Marked unpaid';
+
+  @override
+  String get cashReceivedTitle => 'Cash received';
+
+  @override
+  String get cashReceivedNote => 'Recorded only — not withdrawable';
+
+  @override
+  String needsTopUpBody(int total) {
+    return 'Your balance is below one trip ($total EGP).';
+  }
+
+  @override
+  String priceDriver(int price) {
+    return '$price EGP to you per passenger · Goora is free for drivers';
+  }
 }

@@ -60,4 +60,39 @@ abstract final class PricingService {
 
   /// Positive = above suggested, negative = below, 0 = the suggested price.
   static int deltaFromSuggested(int price, PriceRange r) => price - r.suggested;
+
+  /// Goora's per-trip service fee (brief §6.7 A), up to 10% of the
+  /// contribution. The contribution still goes to the driver in full; the fee
+  /// is trimmed so contribution + fee never exceeds the rider's equal share
+  /// of the full trip cost (004 v2.1 research R15/R17 — Constitution II read
+  /// as the cap covering the rider's total payment, fee included).
+  static const feeRatePercent = 10;
+
+  /// ⌊tripCost ÷ riderSeats⌋ (004 v2.1 research R15/R17).
+  static int equalShare(int tripCost, int riderSeats) {
+    if (riderSeats < 1) {
+      throw ArgumentError.value(riderSeats, 'riderSeats', 'must be >= 1');
+    }
+    return tripCost ~/ riderSeats;
+  }
+
+  /// 10% of the contribution, nearest whole EGP, halves up (004 research R6),
+  /// trimmed to the room left under the rider's equal share so the total never
+  /// exceeds it (004 v2.1 research R17); 0 for subscribers, company-plan riders
+  /// and cash trips.
+  static int serviceFee(int contribution,
+      {required int tripCost, required int riderSeats, required bool isSubscriber, required bool isCashTrial}) {
+    if (isSubscriber || isCashTrial) return 0;
+    final rounded = (contribution * feeRatePercent + 50) ~/ 100;
+    final room = equalShare(tripCost, riderSeats) - contribution;
+    final fee = rounded < room ? rounded : room;
+    return fee < 0 ? 0 : fee;
+  }
+
+  /// What the rider pays for one trip: 40 → 44, or 40 when fee-free.
+  static int riderTotal(int contribution,
+      {required int tripCost, required int riderSeats, required bool isSubscriber, required bool isCashTrial}) =>
+      contribution +
+          serviceFee(contribution,
+              tripCost: tripCost, riderSeats: riderSeats, isSubscriber: isSubscriber, isCashTrial: isCashTrial);
 }

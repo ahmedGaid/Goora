@@ -99,6 +99,8 @@ final class CommuteGroup {
     required this.freeSeatsGoing,
     required this.freeSeatsReturn,
     required this.detourMinutes,
+    required this.tripCost,
+    required this.riderSeats,
     this.womenOnly = false,
     this.sameCompanyOnly,
     this.sameCompoundOnly,
@@ -122,6 +124,12 @@ final class CommuteGroup {
   final int price;
   final int freeSeatsGoing;
   final int freeSeatsReturn;
+
+  /// EGP per leg for the whole car (004 v2.1 research R15).
+  final int tripCost;
+
+  /// Seats the car's fare is split across, 1–4 (004 v2.1 research R15).
+  final int riderSeats;
 
   /// Extra driving minutes to serve a new member's pickup point.
   final int detourMinutes;
@@ -162,6 +170,8 @@ final class CommuteGroup {
         price: price,
         freeSeatsGoing: freeSeatsGoing,
         freeSeatsReturn: freeSeatsReturn,
+        tripCost: tripCost,
+        riderSeats: riderSeats,
         detourMinutes: detourMinutes,
         womenOnly: womenOnly,
         sameCompanyOnly: sameCompanyOnly,

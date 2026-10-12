@@ -35,6 +35,8 @@ CommuteGroup _group(List<Member> drivers) => CommuteGroup(
       price: 40,
       freeSeatsGoing: 1,
       freeSeatsReturn: 1,
+      tripCost: 160,
+      riderSeats: 3,
       detourMinutes: 5,
       rotationStart: _start,
     );

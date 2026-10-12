@@ -46,6 +46,11 @@ void main() {
     ('dangerText / dangerBg (no-show chip)', AppColors.dangerText, AppColors.dangerBg),
     ('textSecondary / divider (off chip)', AppColors.textSecondary, AppColors.divider),
     ('greenText / background (live countdown pin, SOS sent)', AppColors.greenText, AppColors.background),
+    // 004: the dark balance/recovered hero cards reuse 002/003's
+    // onDark*/primary pairs (already listed above). The due-state plan
+    // card title is new: it shows warningTitle inline on the card's
+    // surface, not inside the warningBg banner below it.
+    ('warningTitle / surface (due title on plan card)', AppColors.warningTitle, AppColors.surface),
   ];
 
   // Non-text parts that carry meaning (WCAG 1.4.11): ≥ 3:1 against what is next to them.

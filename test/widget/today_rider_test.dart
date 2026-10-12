@@ -55,10 +55,10 @@ void main() {
       expect(find.text(l.stopCentralSt), findsOneWidget);
       expect(find.text(l.tlPassengers(4, ['Mohamed', 'Sara', 'Youssef', l.youWord].join(l.listSep))), findsOneWidget);
       expect(find.text(l.tlArrival(l.timeAm('8:05'))), findsOneWidget);
-      // Tiles: return time, price per trip with no fee (FR-004).
+      // Tiles: return time, price per trip — memberPrefs seeds a company plan, so no fee (004 v2 FR-004).
       expect(find.text(l.returnTime), findsOneWidget);
       expect(find.text(l.payPerTrip), findsOneWidget);
-      expect(find.text(l.feeLine(40)), findsOneWidget);
+      expect(find.text(l.priceCompany(40)), findsOneWidget);
       // Safety + cancel + extra trip.
       expect(find.text(l.shareTrip), findsOneWidget);
       expect(find.text(l.sos), findsOneWidget);
@@ -116,12 +116,13 @@ void main() {
     expect(find.text(l10nFor(en).emptySeatsTitle), findsWidgets);
   });
 
-  testWidgets('no fee text other than "no per-trip fees" (FR-004)', (tester) async {
+  testWidgets("the only fee text is the rider's own price line (004 v2 FR-004)", (tester) async {
     await pumpRider(tester, TestClock(at(rideTuesday, 7, 13)));
     final texts = tester.widgetList<Text>(find.byType(Text)).map((t) => t.data ?? '').toList();
     final fees = texts.where((t) => t.toLowerCase().contains('fee')).toList();
     expect(fees, isNotEmpty);
-    expect(fees.every((t) => t.contains('no per-trip fees')), isTrue, reason: '$fees');
+    // memberPrefs seeds a company plan: fee-free, said once on the pay tile.
+    expect(fees.every((t) => t.contains('no fees (company)')), isTrue, reason: '$fees');
   });
 
   testWidgets('screen fits at 1.3× text size', (tester) async {

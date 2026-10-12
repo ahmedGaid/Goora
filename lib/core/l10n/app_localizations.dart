@@ -167,7 +167,7 @@ abstract class AppLocalizations {
   /// No description provided for @subNote.
   ///
   /// In ar, this message translates to:
-  /// **'ضمن اشتراكك · من غير رسوم حجز'**
+  /// **'ضمن اشتراكك · من غير رسوم'**
   String get subNote;
 
   /// No description provided for @whereGo.
@@ -251,8 +251,380 @@ abstract class AppLocalizations {
   /// No description provided for @planTitle.
   ///
   /// In ar, this message translates to:
-  /// **'ابدأ أول شهر مجانًا'**
+  /// **'اشترك ومن غير رسوم'**
   String get planTitle;
+
+  /// No description provided for @planSubline.
+  ///
+  /// In ar, this message translates to:
+  /// **'من غير رسوم خدمة على أي مشوار أو كرسي.'**
+  String get planSubline;
+
+  /// No description provided for @planMonthlyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهري'**
+  String get planMonthlyTitle;
+
+  /// No description provided for @planMonthlySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'129 جنيه/الشهر'**
+  String get planMonthlySub;
+
+  /// No description provided for @planYearlyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنوي'**
+  String get planYearlyTitle;
+
+  /// No description provided for @planYearlySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'1,290 جنيه/السنة'**
+  String get planYearlySub;
+
+  /// No description provided for @planYearlyChip.
+  ///
+  /// In ar, this message translates to:
+  /// **'شهرين مجانًا'**
+  String get planYearlyChip;
+
+  /// No description provided for @planCompanyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عن طريق شركتي'**
+  String get planCompanyTitle;
+
+  /// No description provided for @planCompanySub.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجاني — أكّد إيميل الشغل'**
+  String get planCompanySub;
+
+  /// No description provided for @planIncludedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتحصل على'**
+  String get planIncludedTitle;
+
+  /// No description provided for @planIncludedMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'ترشيح يومي لجروب ركوبتك'**
+  String get planIncludedMatch;
+
+  /// No description provided for @planIncludedBackup.
+  ///
+  /// In ar, this message translates to:
+  /// **'سواق بدّل لو سواقك اتأخر'**
+  String get planIncludedBackup;
+
+  /// No description provided for @planIncludedTrust.
+  ///
+  /// In ar, this message translates to:
+  /// **'تتبّع الالتزام وأدوات أمان SOS'**
+  String get planIncludedTrust;
+
+  /// No description provided for @planFuelNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.'**
+  String get planFuelNote;
+
+  /// No description provided for @planCtaVerify.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد إيميل الشغل'**
+  String get planCtaVerify;
+
+  /// No description provided for @planFooter.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تلغي في أي وقت. جورة مجانية للسواقين.'**
+  String get planFooter;
+
+  /// No description provided for @verifyEmailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد إيميل شغلك'**
+  String get verifyEmailTitle;
+
+  /// No description provided for @verifyEmailBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'{company} هتدفع خطة جورة بتاعتك بعد تأكيد إيميل شغلك.'**
+  String verifyEmailBody(String company);
+
+  /// No description provided for @verifyConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد'**
+  String get verifyConfirm;
+
+  /// No description provided for @verifyNotVerified.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد إيميل شغلك من تبويب الموثوقية الأول.'**
+  String get verifyNotVerified;
+
+  /// No description provided for @balanceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيد المحفظة'**
+  String get balanceLabel;
+
+  /// No description provided for @topUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن'**
+  String get topUp;
+
+  /// No description provided for @coversTrips.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}}'**
+  String coversTrips(int count);
+
+  /// No description provided for @planChange.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير'**
+  String get planChange;
+
+  /// No description provided for @planCompanyActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجانية · شركتك بتدفعها'**
+  String get planCompanyActive;
+
+  /// No description provided for @howPayTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزاي الدفع بيشتغل'**
+  String get howPayTitle;
+
+  /// No description provided for @howPayRule1.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم.'**
+  String get howPayRule1;
+
+  /// No description provided for @howPayRule2.
+  ///
+  /// In ar, this message translates to:
+  /// **'البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.'**
+  String get howPayRule2;
+
+  /// No description provided for @howPayRule3.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإلغاء المتأخر والغياب بيروحوا للسواق من غير رسوم خدمة.'**
+  String get howPayRule3;
+
+  /// No description provided for @topUpSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن محفظتك'**
+  String get topUpSheetTitle;
+
+  /// No description provided for @topUpMethodInstaPay.
+  ///
+  /// In ar, this message translates to:
+  /// **'InstaPay'**
+  String get topUpMethodInstaPay;
+
+  /// No description provided for @topUpMethodVodafone.
+  ///
+  /// In ar, this message translates to:
+  /// **'فودافون كاش'**
+  String get topUpMethodVodafone;
+
+  /// No description provided for @topUpMethodCard.
+  ///
+  /// In ar, this message translates to:
+  /// **'كارت'**
+  String get topUpMethodCard;
+
+  /// No description provided for @topUpConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد الشحن'**
+  String get topUpConfirm;
+
+  /// No description provided for @topUpFailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشحن ملحقش يتم'**
+  String get topUpFailTitle;
+
+  /// No description provided for @topUpFailBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة اتحصلت — جرّب تاني.'**
+  String get topUpFailBody;
+
+  /// No description provided for @changePlanTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'غيّر خطتك'**
+  String get changePlanTitle;
+
+  /// No description provided for @changePlanNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطة الجديدة تتفعل من تاريخ الفوترة الجاي — مفيش تغيير في الفترة الحالية.'**
+  String get changePlanNote;
+
+  /// No description provided for @changePlanConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد التغيير'**
+  String get changePlanConfirm;
+
+  /// No description provided for @breakdownTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتدفع كام في الرحلة'**
+  String get breakdownTitle;
+
+  /// No description provided for @breakdownFuel.
+  ///
+  /// In ar, this message translates to:
+  /// **'البنزين والرسوم'**
+  String get breakdownFuel;
+
+  /// No description provided for @breakdownTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجمالي'**
+  String get breakdownTotal;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحركة'**
+  String get activityTitle;
+
+  /// No description provided for @activityEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مفيش حركة'**
+  String get activityEmpty;
+
+  /// No description provided for @actTopUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'شحن'**
+  String get actTopUp;
+
+  /// No description provided for @actTripDeduction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة رحلة'**
+  String get actTripDeduction;
+
+  /// No description provided for @actLateCancelCharge.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء متأخر'**
+  String get actLateCancelCharge;
+
+  /// No description provided for @actFreeCancelZero.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء مجاني'**
+  String get actFreeCancelZero;
+
+  /// No description provided for @actTripIncome.
+  ///
+  /// In ar, this message translates to:
+  /// **'دخل الرحلة'**
+  String get actTripIncome;
+
+  /// No description provided for @actFeeReceivedFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم {name}'**
+  String actFeeReceivedFrom(String name);
+
+  /// No description provided for @actWithdrawal.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب'**
+  String get actWithdrawal;
+
+  /// No description provided for @recoveredTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتجمّع الأسبوع ده'**
+  String get recoveredTitle;
+
+  /// No description provided for @payoutNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيتصرف كل خميس · من غير أي رسوم عليك'**
+  String get payoutNote;
+
+  /// No description provided for @withdraw.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب على InstaPay'**
+  String get withdraw;
+
+  /// No description provided for @withdrawSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب على InstaPay'**
+  String get withdrawSheetTitle;
+
+  /// No description provided for @withdrawConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكّد السحب'**
+  String get withdrawConfirm;
+
+  /// No description provided for @withdrawFailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'السحب ملحقش يتم'**
+  String get withdrawFailTitle;
+
+  /// No description provided for @withdrawFailBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة تحرّكت — جرّب تاني.'**
+  String get withdrawFailBody;
+
+  /// No description provided for @driverBreakdownTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة رحلتك'**
+  String get driverBreakdownTitle;
+
+  /// No description provided for @driverBreakdownCost.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة الرحلة'**
+  String get driverBreakdownCost;
+
+  /// No description provided for @driverBreakdownReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتستلم من الركاب'**
+  String get driverBreakdownReceived;
+
+  /// No description provided for @driverBreakdownGap.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتدفعه من جيبك'**
+  String get driverBreakdownGap;
+
+  /// No description provided for @driverBreakdownFree.
+  ///
+  /// In ar, this message translates to:
+  /// **'جورة مجانية للسواقين'**
+  String get driverBreakdownFree;
 
   /// No description provided for @postReq.
   ///
@@ -1093,12 +1465,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{count}/أسبوع'**
   String perWeek(int count);
-
-  /// No description provided for @feeLine.
-  ///
-  /// In ar, this message translates to:
-  /// **'{price} ج للسواق · من غير رسوم على المشوار'**
-  String feeLine(int price);
 
   /// No description provided for @reasonDestination.
   ///
@@ -2133,12 +2499,6 @@ abstract class AppLocalizations {
   /// **'عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.'**
   String get driverNeedsDocs;
 
-  /// No description provided for @walletSoon.
-  ///
-  /// In ar, this message translates to:
-  /// **'المحفظة جاية قريب'**
-  String get walletSoon;
-
   /// No description provided for @demoSection.
   ///
   /// In ar, this message translates to:
@@ -2318,6 +2678,252 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مفيش مشوار تشاركه دلوقتي.'**
   String get shareNoTrip;
+
+  /// No description provided for @priceWithFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج للسواق + {fee} ج رسوم خدمة'**
+  String priceWithFee(int price, int fee);
+
+  /// No description provided for @priceNoFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج للسواق · من غير رسوم خدمة'**
+  String priceNoFee(int price);
+
+  /// No description provided for @priceSubscribed.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج · من غير رسوم (مشترك)'**
+  String priceSubscribed(int price);
+
+  /// No description provided for @priceCompany.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج · من غير رسوم (الشركة)'**
+  String priceCompany(int price);
+
+  /// No description provided for @priceCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع {price} ج كاش للسواق'**
+  String priceCash(int price);
+
+  /// No description provided for @payMethodTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتدفع إزاي؟'**
+  String get payMethodTitle;
+
+  /// No description provided for @payMethodSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقدر تشحن المحفظة أو تشترك في أي وقت.'**
+  String get payMethodSub;
+
+  /// No description provided for @payCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع كاش للسواق (أول 10 مشاوير)'**
+  String get payCash;
+
+  /// No description provided for @payCashSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'من غير رسوم خدمة على مشاوير الكاش.'**
+  String get payCashSub;
+
+  /// No description provided for @payWallet.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع من المحفظة'**
+  String get payWallet;
+
+  /// No description provided for @subscribeLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترك ومن غير رسوم'**
+  String get subscribeLink;
+
+  /// No description provided for @subscribeCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترك · {price} ج'**
+  String subscribeCta(int price);
+
+  /// No description provided for @subNeedsTopUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن {gap} ج الأول — محفظتك فيها {balance} ج.'**
+  String subNeedsTopUp(int gap, int balance);
+
+  /// No description provided for @subscribe.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترك'**
+  String get subscribe;
+
+  /// No description provided for @planPayPerTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالمشوار'**
+  String get planPayPerTrip;
+
+  /// No description provided for @planPerTripLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{fee} ج رسوم خدمة على كل مشوار'**
+  String planPerTripLine(int fee);
+
+  /// No description provided for @planPerTripNoFeeLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'من غير رسوم خدمة على مشاويرك'**
+  String get planPerTripNoFeeLine;
+
+  /// No description provided for @planSubscribedLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشترك لحد {date} · من غير رسوم'**
+  String planSubscribedLine(String date);
+
+  /// No description provided for @planLapsedLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاشتراك خلص · رجعت بالمشوار'**
+  String get planLapsedLine;
+
+  /// No description provided for @cashTripsLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{خلصت مشاوير الكاش} =1{فاضل مشوار كاش واحد} =2{فاضل مشوارين كاش} few{فاضل {count} مشاوير كاش} other{فاضل {count} مشوار كاش}}'**
+  String cashTripsLeft(int count);
+
+  /// No description provided for @cashTopUpBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن محفظتك عشان تكمّل مشاويرك — سواق بديل وكرسي مضمون وفلوسك ترجعلك.'**
+  String get cashTopUpBanner;
+
+  /// No description provided for @cashEnded.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاوير الكاش خلصت — اشحن محفظتك عشان تكمّل.'**
+  String get cashEnded;
+
+  /// No description provided for @cashOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكاش اتقفل بعد ما مشوارين اتسجّلوا من غير دفع — اشحن محفظتك عشان تكمّل.'**
+  String get cashOff;
+
+  /// No description provided for @needsTopUp.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن عشان تكمّل مشاويرك'**
+  String get needsTopUp;
+
+  /// No description provided for @feeSavings.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس.'**
+  String feeSavings(int fees);
+
+  /// No description provided for @actTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشوار'**
+  String get actTrip;
+
+  /// No description provided for @actCashTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشوار كاش'**
+  String get actCashTrip;
+
+  /// No description provided for @actSubscription.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراك'**
+  String get actSubscription;
+
+  /// No description provided for @cashPaidLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعت {price} ج كاش للسواق'**
+  String cashPaidLine(int price);
+
+  /// No description provided for @notChargedCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش محسوبة في فترة الكاش'**
+  String get notChargedCash;
+
+  /// No description provided for @breakdownShare.
+  ///
+  /// In ar, this message translates to:
+  /// **'نصيب السواق'**
+  String get breakdownShare;
+
+  /// No description provided for @breakdownFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم الخدمة'**
+  String get breakdownFee;
+
+  /// No description provided for @breakdownNoFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم الخدمة: مفيش'**
+  String get breakdownNoFee;
+
+  /// No description provided for @cashReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلمت {price} ج كاش'**
+  String cashReceived(int price);
+
+  /// No description provided for @didNotPay.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدفعش'**
+  String get didNotPay;
+
+  /// No description provided for @cashMarkedReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكاش وصل'**
+  String get cashMarkedReceived;
+
+  /// No description provided for @cashMarkedUnpaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتسجّل إنه مدفعش'**
+  String get cashMarkedUnpaid;
+
+  /// No description provided for @cashReceivedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكاش اللي استلمته'**
+  String get cashReceivedTitle;
+
+  /// No description provided for @cashReceivedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'متسجّل بس — مش بيتسحب'**
+  String get cashReceivedNote;
+
+  /// No description provided for @needsTopUpBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيدك أقل من تمن مشوار واحد ({total} ج).'**
+  String needsTopUpBody(int total);
+
+  /// No description provided for @priceDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'{price} ج ليك من كل راكب · جورة مجانية للسواقين'**
+  String priceDriver(int price);
 }
 
 class _AppLocalizationsDelegate

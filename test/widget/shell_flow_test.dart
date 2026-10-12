@@ -31,7 +31,7 @@ void main() {
     expect(find.text(a.goodMorning('Omar')), findsOneWidget);
   });
 
-  testWidgets('rider: Join → plan placeholder → Continue → shell', (tester) async {
+  testWidgets('rider: Join → payment method → Continue → shell (004 v2 US1)', (tester) async {
     await pumpGooraApp(
       tester,
       prefs: memberPrefs(role: Role.rider, member: false),
@@ -41,8 +41,8 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('join-group')));
     await tester.pumpAndSettle();
-    expect(find.text(a.planTitle), findsWidgets);
-    await tester.tap(find.byKey(const Key('plan-continue')));
+    expect(find.text(a.payMethodTitle), findsWidgets);
+    await tester.tap(find.byKey(const Key('pay-continue')));
     await tester.pumpAndSettle();
     expect(selectedTab(tester), 0);
     expect(find.text(a.todaySub), findsOneWidget);
@@ -87,12 +87,13 @@ void main() {
     expect(find.text(a.scheduleTitle), findsOneWidget);
     await tester.tap(find.text(a.tabWallet));
     await tester.pumpAndSettle();
-    expect(find.text(a.walletSoon), findsOneWidget);
+    // 004: the Wallet tab is a real rider screen now, not the placeholder.
+    expect(find.text(a.balanceLabel), findsOneWidget);
 
     await c.read(localeControllerProvider.notifier).set(LocaleController.english);
     await tester.pumpAndSettle();
     expect(selectedTab(tester), 2);
-    expect(find.text(e.walletSoon), findsOneWidget);
+    expect(find.text(e.balanceLabel), findsOneWidget);
     expect(find.text(e.tabWallet), findsWidgets);
   });
 }

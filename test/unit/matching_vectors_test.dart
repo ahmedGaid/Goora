@@ -90,6 +90,8 @@ CommuteGroup groupFromJson(Map<String, dynamic> j) => CommuteGroup(
       price: j['price'] as int,
       freeSeatsGoing: j['freeSeatsGoing'] as int,
       freeSeatsReturn: j['freeSeatsReturn'] as int,
+      tripCost: 160,
+      riderSeats: 3,
       detourMinutes: j['detourMinutes'] as int,
       womenOnly: j['womenOnly'] as bool,
       sameCompanyOnly: j['sameCompanyOnly'] as String?,

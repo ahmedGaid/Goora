@@ -1,0 +1,393 @@
+# Phase 0 Research: Wallet and Subscription
+
+All three spec-level clarifications were already resolved in `spec.md`'s Clarifications section
+(trips-covered formula, company verification timing, mid-cycle plan change). What's left here is
+implementation-level: how to build what the spec already decided.
+
+## R1 — "one calendar month" trial end date
+
+- **Decision**: add `CalendarDate.addMonths(int months)` that keeps the day-of-month when the
+  target month has at least that many days, and clamps to the target month's last day otherwise
+  (e.g. 31 Jan + 1 month → 28/29 Feb, not an overflow into March).
+- **Rationale**: `DateTime.utc(y, m + 1, d)` in Dart silently rolls an out-of-range day into the
+  next month (31 Jan → 3 Mar), which would make a trial that starts on the 31st end on the wrong
+  date in short months. Clamping is the common "same date next month, or month-end" rule used by
+  subscription billing (Stripe, App Store) and matches founder intent ("free month" means a
+  month, not sometimes 32 days).
+- **Alternatives considered**: let it overflow (rejected — wrong date, and only the last 3 days of
+  a 31-day month would ever hit it, making it a rare, confusing bug); always use 30 days flat
+  (rejected — "free until {date}" would show a date that visibly isn't "a month" to a user
+  checking a calendar).
+
+## R2 — where the plan-required redirect lives
+
+- **Decision**: a redirect check added to the shell's `today`/`week` `GoRoute`s (next to the
+  existing `routeForSession` pattern from onboarding), not a new top-level guard. If the session
+  is a rider with no `Plan` (or a due/expired one) and no Company verification, redirect to
+  `Routes.plan`.
+- **Rationale**: `go_router`'s per-route `redirect` is the existing idiom in this codebase (see
+  `Routes.otp`'s redirect in `router.dart`); no new dependency or architecture needed. Wallet and
+  Trust tabs stay reachable even with a due plan (FR-014 says "prompted... before their next trip
+  is confirmed", not "locked out of the app"), so only Today/Week redirect; Wallet shows the due
+  state inline instead.
+- **Alternatives considered**: a global `GoRouter.redirect` callback (rejected — would need to
+  special-case every other route, including settings/gallery, for no benefit); blocking in the
+  shell's `build()` instead of routing (rejected — `today`/`week` are independent branches of one
+  `StatefulShellRoute`, so a route-level redirect is the only place that catches direct deep
+  links too).
+
+## R3 — reusing 003's `Charge` records for the rider's activity list
+
+- **Decision**: `WalletRepository` reads existing `Charge` records (via the daily feature's
+  `DailyCommuteRepository`) to build late-cancel/no-show activity rows, and reads a `Ride`'s
+  attendance outcome to add the zero-amount free-cancellation rows; it does not duplicate that
+  data into its own store.
+- **Rationale**: FR-013 makes the wallet's own ledger the source of truth for *balances*, but
+  003 already owns the source of truth for *why* a charge happened (`AttendanceRules`,
+  `Charge`). Duplicating those records into the wallet feature would create two copies that can
+  drift; reading across features (wallet → daily) keeps one writer per fact, the same seam 003
+  used when it read `PrivacyPreference` from 002 instead of copying it.
+- **Alternatives considered**: have 003 push a `WalletActivity` row whenever it creates a
+  `Charge` (rejected — adds a cross-feature write dependency in the wrong direction; 003 already
+  shipped and its tests shouldn't need to know wallet exists); copy+transform at seed time only
+  (rejected — would go stale the moment a live cancellation happens after the wallet is seeded).
+
+## R4 — top-up/withdrawal failure simulation
+
+- **Decision**: `FakePaymentProvider` takes an optional `shouldFail` hook (defaults to "never"),
+  settable from the debug Demo section (same pattern as 003's demo-clock override in Settings),
+  so SC-005's failure path is reachable without hand-editing code.
+  **As shipped (checked 2026-10-08): the hook exists but nothing wires it to a Settings control —
+  `paymentProvider` in `data/providers.dart` always constructs a plain `FakePaymentProvider()`.
+  Only widget tests (`top_up_sheet_test.dart`, `withdraw_sheet_test.dart`) exercise `shouldFail`
+  today via a provider override. quickstart.md Scenario 2/3's "force the next top-up/withdrawal to
+  fail" steps have no live UI path yet** — either add the Settings → Demo toggle this decision
+  describes, or update quickstart.md to say the failure path is test-only. Not decided this
+  session; flagging for the founder/next session.
+- **Rationale**: 003 already has precedent (research R11) for a debug-only way to force
+  demo-relevant edge cases; a widget test can also inject a provider that always fails without
+  touching the debug UI.
+- **Alternatives considered**: random failure chance (rejected — flaky, not testable
+  deterministically); no way to trigger a failure at all outside unit tests (rejected — SC-005's
+  "verified by a unit test for each path" still needs the widget-level inline error reachable for
+  manual device walkthroughs, same as every other feature's quickstart).
+
+## R5 Drafted copy (founder review) — not in the prototype dictionary
+
+Same pattern as 003's R14: everything else is taken from the existing dictionary and brief §6.7;
+these ~67 keys are new to this feature, Arabic in `lib/core/l10n/app_ar.arb`, English in
+`app_en.arb`. `shortDate` (`labels.dart`) is a Dart formatting helper, not an ARB key — no copy to
+review there.
+
+| key | ar | en |
+|---|---|---|
+| planSubline | تدفع لأول مرة بعد ما نلقى جروبك — ولقيناه. | You only pay once we find your group — and we did. |
+| planMonthlyTitle / planMonthlySub | شهري / 129 جنيه/الشهر | Monthly / 129 EGP/month |
+| planYearlyTitle / planYearlySub / planYearlyChip | سنوي / 1,290 جنيه/السنة / شهرين مجانًا | Yearly / 1,290 EGP/year / 2 months free |
+| planCompanyTitle / planCompanySub | عن طريق شركتي / مجاني — أكّد إيميل الشغل | Through my company / Free — verify your work email |
+| planIncludedTitle | هتحصل على | What's included |
+| planIncludedMatch | ترشيح يومي لجروب ركوبتك | Matching with your daily group |
+| planIncludedBackup | سواق بدّل لو سواقك اتأخر | A backup driver when yours can't make it |
+| planIncludedTrust | تتبّع الالتزام وأدوات أمان SOS | Reliability tracking and SOS safety tools |
+| planFuelNote | مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق. | The fuel & tolls you pay each trip go straight to your driver, in full. |
+| planCtaStart / planCtaVerify | ابدأ الشهر المجاني / أكّد إيميل الشغل | Start free month / Verify work email |
+| planFooter | تقدر تلغي في أي وقت. جورة مجانية للسواقين. | Cancel anytime. Goora is free for drivers. |
+| verifyEmailTitle / verifyEmailBody | أكّد إيميل شغلك / {company} هتدفع خطة جورة بتاعتك بعد تأكيد إيميل شغلك. | Verify your work email / {company} will cover your Goora plan once your work email is verified. |
+| verifyConfirm / verifyNotVerified | تأكيد / أكّد إيميل شغلك من تبويب الموثوقية الأول. | Confirm / Verify your work email in Trust first. |
+| balanceLabel / topUp / coversTrips | رصيد المحفظة / اشحن / {count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}} | Wallet balance / Top up / {count, plural, =0{Covers no trips yet} =1{Covers about 1 trip} other{Covers about {count} trips}} |
+| planChange / planFreeUntil / planActiveLine / planCompanyActive | تغيير / مجاني لحد {date} · بعدها {price} جنيه/الشهر / مفعّلة · {price} جنيه/الشهر / مجانية · شركتك بتدفعها | Change / Free until {date} · then {price} EGP/month / Active · {price} EGP/month / Free · paid by your company |
+| planDueTitle / planDueBody | خطتك محتاجة تجديد / اشحن محفظتك أو حوّل لخطة الشركة علشان مكانك يفضل متأكد. | Plan due / Top up your wallet or switch to Through my company to keep your seat confirmed. |
+| howPayTitle / howPayRule1-3 | إزاي الدفع بيشتغل / اشتراكك بيغطي ترشيح الجروب والسواق البديل وأدوات الأمان. / البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة. / الإلغاء المتأخر والغياب من غير اعتذار بتدفعهم من محفظتك. | How paying works / Your subscription covers matching, backup drivers and trust tools. / Fuel & tolls go straight to your driver — Goora takes no cut. / Late cancellations and no-shows are charged from your wallet. |
+| topUpSheetTitle / topUpMethodInstaPay / topUpMethodVodafone / topUpMethodCard | اشحن محفظتك / InstaPay / فودافون كاش / كارت | Top up your wallet / InstaPay / Vodafone Cash / Card |
+| topUpConfirm / topUpFailTitle / topUpFailBody | أكّد الشحن / الشحن ملحقش يتم / مفيش حاجة اتحصلت — جرّب تاني. | Confirm top-up / Top-up didn't go through / Nothing was charged — try again. |
+| changePlanTitle / changePlanNote / changePlanConfirm | غيّر خطتك / الخطة الجديدة تتفعل من تاريخ الفوترة الجاي — مفيش تغيير في الفترة الحالية. / أكّد التغيير | Change your plan / Takes effect on your next billing date — nothing changes for your current period. / Confirm change |
+| breakdownTitle / breakdownFuel / breakdownFees / breakdownTotal | بتدفع كام في الرحلة / البنزين والرسوم / رسوم جورة: ضمن اشتراكك / الإجمالي | What you pay per trip / Fuel & tolls / Goora fees: in your plan / Total |
+| activityTitle / activityEmpty | الحركة / لسه مفيش حركة | Activity / No activity yet |
+| actTopUp / actTripDeduction / actLateCancelCharge / actFreeCancelZero / actTripIncome / actFeeReceivedFrom / actWithdrawal | شحن / تكلفة رحلة / إلغاء متأخر / إلغاء مجاني / دخل الرحلة / رسوم {name} / سحب | Top-up / Trip cost / Late cancel / Free cancellation / Trip income / {name}'s fee / Withdrawal |
+| recoveredTitle / payoutNote | اتجمّع الأسبوع ده / بيتصرف كل خميس · من غير أي رسوم عليك | Recovered this week / Paid out every Thursday · no fees taken from you |
+| withdraw / withdrawSheetTitle | اسحب على InstaPay (both keys, same copy) | Withdraw to InstaPay (both keys, same copy) |
+| withdrawConfirm / withdrawFailTitle / withdrawFailBody | أكّد السحب / السحب ملحقش يتم / مفيش حاجة تحرّكت — جرّب تاني. | Confirm withdrawal / Withdrawal didn't go through / Nothing moved — try again. |
+| driverBreakdownTitle / driverBreakdownCost / driverBreakdownReceived / driverBreakdownGap / driverBreakdownFree | تكلفة رحلتك / تكلفة الرحلة / بتستلم من الركاب / بتدفعه من جيبك / جورة مجانية للسواقين | Your trip cost / Trip cost / You receive from riders / What you pay yourself / Goora is free for drivers |
+
+**v2 note**: `planTitle`, `planSubline`, `planCtaStart`, `planFreeUntil`, `breakdownFees` and
+`howPayRule1` above belong to the v1 free-month model and are replaced in v2 (R13). Separately,
+several v1 strings use رحلة for a trip (`coversTrips`, `breakdownTitle`, `actTripDeduction`,
+`actTripIncome`), where the lexicon says مشوار. Not changed here (out of the payment-model scope);
+listed for the founder's copy review.
+
+# v2 — payment model (2026-10-08)
+
+## R6 — fee rounding
+
+- **Decision**: `fee = (contribution + 5) ~/ 10` for wallet non-subscribers — 10%, nearest whole
+  EGP, halves up. 40 → 4, 44 → 4, 45 → 5, 48 → 5, 32 → 3.
+- **Rationale**: integer-only (money is whole EGP everywhere in this codebase), deterministic in
+  both Dart and TS, matches the brief's "rounded to the nearest whole EGP".
+- **Alternatives considered**: `(c * 0.1).round()` — floating point, and Dart/JS disagree on
+  some halves; banker's rounding — surprising to riders.
+
+## R7 — where a trip is charged
+
+- **Decision**: derive it. A rider's completed trip is 003's settled `ReliabilityEvent(kept)` for
+  that person on a ride they did not drive. The wallet reads those events (≤ 60 days), prices each
+  with `PricingService`, and the rider's balance = own ledger (top-ups − subscriptions) − derived
+  debits (wallet trips + wallet-period charges).
+- **Rationale**: 003 already settles each ride exactly once (idempotent, and catches up on read
+  for trips that end without "End trip"). Writing a debit at `endTrip` would add a second writer
+  for the same fact and miss catch-up settlements. Same seam as R3.
+- **Alternatives considered**: debit inside 003's `_settle` (rejected — 003 would need to know
+  wallet, wrong dependency direction); debit from the Today controller (rejected — misses trips
+  settled on read and rides the person didn't open the app for).
+- **Side effect, intended**: v1 showed 003's charges in activity but never took them off the
+  balance. v2 deducts them (FR-007), which is what "How paying works" always said.
+
+## R8 — cash trial as a fold
+
+- **Decision**: walk the rider's completed trips and charges in date order. While the method is
+  `cash` and `CashTrialPolicy.cashAvailable(cashTripsDone, strikes)` holds, a trip is a cash trip
+  (no wallet movement, no fee) and a charge is not collected (zero row, reliability only); after
+  that, trips and charges hit the wallet.
+- **Rationale**: one pure rule, replayable, no stored "trial state" that can drift from history.
+  Strikes come from `CashMark`s against this rider and count from the moment they are recorded.
+
+## R9 — the guard
+
+- **Decision**: a rider passes the Today/Week guard when they have a payment method, or an active
+  subscription, or a company plan. Otherwise → `Routes.payMethod`. Match result's "Join" goes to
+  `Routes.payMethod` for riders.
+- **Rationale**: same per-route redirect idiom as v1 (R2); the arrangement replaces "has a plan".
+
+## R10 — paying for a subscription
+
+- **Decision**: subscribing debits the wallet ledger (kind `subscription`) and sets `paidUntil =
+  today + 1 month / 1 year` (`CalendarDate.addMonths`, R1). Not enough balance → nothing changes,
+  the screen says how much to top up. After `paidUntil` the plan is `due` and the rider pays per
+  trip again. Company: no debit, no date. Change between monthly/yearly keeps v1's "next billing
+  date" rule.
+- **Rationale**: one money source (the ledger); no recurring billing engine in the fakes.
+
+## R11 — cash marks and the seeded cash rider
+
+- **Decision**: `CashMark {rideId, riderId, driverId, outcome, amount, date}` stored by the wallet
+  repository. In the fakes, other riders' payment methods are seeded: Youssef (group `sz-0725`) is
+  a cash-trial rider, so a driver on that group sees the cash buttons. Driver Today's
+  PickupCheckIn shows them once the ride has ended, for each picked-up passenger whose method is
+  cash and who has no mark on that ride yet.
+- **Rationale**: drivers are fakes for a rider and riders are fakes for a driver; a seed is the
+  only way the driver-side flow is reachable on device (same posture as v1's driver income seed).
+
+## R12 — twin and vectors
+
+- **Decision**: `supabase/functions/_shared/pricing.ts` exports `serviceFee` and `riderTotal`;
+  `test/fixtures/pricing_vectors.json` (hand-written, small) is read by both
+  `pricing.test.ts` and `test/unit/rider_total_test.dart`. The cash-trial and savings rules
+  stay app-only for now (no server consumer yet), documented as such.
+
+## R13 — copy
+
+Brief §7 strings are used verbatim. Drafted for founder review (not in §7):
+
+| key | ar | en |
+|---|---|---|
+| priceCompany | {price} ج · من غير رسوم (الشركة) | {price} EGP · no fees (company) |
+| payMethodSub | تقدر تشحن المحفظة أو تشترك في أي وقت. | You can top up or subscribe anytime. |
+| payCashSub | من غير رسوم خدمة على مشاوير الكاش. | No service fee on cash trips. |
+| payContinue | كمّل | Continue |
+| planTitle (replaced) / planSubline (replaced) | اشترك ومن غير رسوم / من غير رسوم خدمة على أي مشوار أو كرسي. | Subscribe and pay no fees / No service fee on any trip or seat. |
+| subscribeCta | اشترك · {price} ج | Subscribe · {price} EGP |
+| subNeedsTopUp | اشحن {gap} ج الأول — محفظتك فيها {balance} ج. | Top up {gap} EGP first — your wallet has {balance} EGP. |
+| planSubscribedLine | مشترك لحد {date} · من غير رسوم | Subscribed until {date} · no fees |
+| planPerTripLine | {fee} ج رسوم خدمة على كل مشوار | {fee} EGP service fee per trip |
+| planLapsedLine | الاشتراك خلص · رجعت بالمشوار | Subscription ended · back to pay per trip |
+| cashTripsLeft (plural) | فاضل مشوار كاش واحد / فاضل مشوارين كاش / فاضل {count} مشاوير كاش | 1 cash trip left / {count} cash trips left |
+| cashEnded | مشاوير الكاش خلصت — اشحن محفظتك عشان تكمّل. | Your cash trips are done — top up your wallet to keep riding. |
+| cashOff | الكاش اتقفل بعد ما مشوارين اتسجّلوا من غير دفع — اشحن محفظتك عشان تكمّل. | Cash is off after 2 trips were marked unpaid — top up your wallet to keep riding. |
+| needsTopUp | اشحن عشان تكمّل مشاويرك | Top up to keep riding |
+| actTrip / actCashTrip / actSubscription | مشوار / مشوار كاش / اشتراك | Trip / Cash trip / Subscription |
+| cashPaidLine | دفعت {price} ج كاش للسواق | Paid {price} EGP cash to the driver |
+| notChargedCash | مش محسوبة في فترة الكاش | Not charged during the cash trial |
+| howPayRule1 (replaced) | بتدفع نصيب السواق + 10% رسوم خدمة على كل مشوار. المشتركين من غير رسوم. | You pay the driver's share + a 10% service fee per trip. Subscribers pay no fee. |
+| howPayRule3 (replaced) | الإلغاء المتأخر والغياب بيروحوا للسواق من غير رسوم خدمة. | Late cancellations and no-shows go to the driver, with no service fee. |
+| breakdownShare / breakdownFee / breakdownNoFee | نصيب السواق / رسوم الخدمة (10%) / رسوم الخدمة: مفيش | Driver's share / Service fee (10%) / Service fee: none |
+| cashMarkedReceived / cashMarkedUnpaid | الكاش وصل / اتسجّل إنه مدفعش | Cash received / Marked unpaid |
+| cashReceivedTitle / cashReceivedNote | الكاش اللي استلمته / متسجّل بس — مش بيتسحب | Cash received / Recorded only — not withdrawable |
+| priceDriver | {price} ج ليك من كل راكب · جورة مجانية للسواقين | {price} EGP to you per passenger · Goora is free for drivers |
+| needsTopUpBody | رصيدك أقل من تمن مشوار واحد ({total} ج). | Your balance is below one trip ({total} EGP). |
+
+## R14 — a real bug: subscribing retroactively waived same-day fees already charged (found live T077, fixed `0636fda`)
+
+`_riderTrips` (`fake_wallet_repository.dart:229`) computes `feeFree = plan != null &&
+plan.coversDate(item.date)` for every historical trip in the lookback window, every time the
+wallet is read. `Plan.coversDate` only compares `CalendarDate`s (day granularity, no time of
+day), so once a rider subscribes, `plan.startDate` is today and `coversDate(today)` is true for
+the rest of that day's reads — including a trip that already settled, and was already correctly
+debited its 4 EGP service fee, *before* the rider subscribed that same day.
+
+Observed live on device: rider joined on wallet pay, let the return leg settle (wallet showed
+"Trip · 40 EGP to the driver + 4 EGP service fee · -44 EGP", balance 156 — correct), then
+subscribed Monthly (-129 EGP). The same trip's activity row silently changed to
+"Trip · Service fee: none · -40 EGP" and the balance came out to 31 EGP (200 − 40 − 129) instead
+of the expected 27 EGP (156 − 129) — the already-paid 4 EGP fee was credited back with no
+activity row explaining why. Reproduced identically in English.
+
+Because the derivation recomputes every entry from the live ride/charge records on every read
+instead of storing what was actually charged at the time, this is a day-granularity bug, not a
+one-off: any trip taken earlier the same day a rider subscribes gets its fee quietly refunded.
+Smallest fix is likely to use a timestamp (not just a date) for `plan.startDate`/`coversDate`, or
+to stop recomputing `feeFree` from the current plan for entries that already happened — a trip's
+fee should be fixed at settlement time, not recomputed against the rider's current plan every
+time the wallet is read.
+
+**Fixed (`0636fda`)**: `Plan.startDate` is now a `WallTime` (date + time), set from the wallet's
+`now()` at the moment of subscribing. `coversDate(CalendarDate)` is kept, unchanged, for
+forward-looking pricing (today's Pay tile, the pay-method screen) where day granularity is
+correct. A new `coversTrip(WallTime)` is used only in `_riderTrips`, judging each trip's fee
+against its own settlement time. Two existing tests had unknowingly encoded the buggy behavior
+as expected and were corrected; a dedicated same-day-before/same-day-after regression test was
+added. `flutter test` 611 (was 608), `flutter analyze` 0, `node --test` 107 — all green.
+
+**Verified live 2026-10-08** (`R5CNC0NK6ZT`, English + Arabic): joined Sun 7:15 AM (demo clock),
+top-up 200, "After 9 PM" → Sun 9:05 PM, both legs settled (two "Trip −44 EGP · 40 + 4 fee" rows,
+balance 112), top-up 200 (312), subscribed Monthly the same evening → balance 183, both trip rows
+still −44 with their 4 EGP fee; breakdown "Service fee: none / Total 40". Pre-fix this would have
+read 191. Step 5 also confirmed: subscribing with 0 EGP showed "Top up 129 EGP first — your wallet
+has 0 EGP." and charged nothing.
+
+### R14 addendum — found during the same device run (for the founder; nothing changed)
+
+1. **"First month free" is still on the onboarding screen** ("Every day · Best value · A fixed
+   group for your daily commute. First month free."). v2 has no free month and Scenario 1 says "No
+   free-month copy anywhere". The string is 002's onboarding copy, outside 004's own screens.
+2. **"Trip" means two things on the Wallet screen.** "Covers about N trips" counts round-trip days
+   (`WalletRules.tripsCovered` = balance ÷ 2 × leg, by data-model.md), while the activity rows and
+   "What you pay per trip" use "trip" for one leg (44 EGP). 200 EGP reads "about 2 trips" next to
+   rows of 44. Arabic has the same split plus "2 رحلات" (should agree: رحلتين / مشوارين) and the
+   known رحلة/مشوار drift. Copy decision: rename the caption ("about N days") or count legs.
+3. **The language pill is not exposed as a button** to screen readers (no `clickable`/button
+   semantics in the accessibility tree; its label "التبديل للعربية" / "Switch to English" is
+   there), so TalkBack reads it but doesn't announce it as tappable. Accessibility, not 004 scope.
+4. The quickstart's demo-clock recipe needed a fix (onboarding in the evening means no trip can
+   ever settle, and a Thursday ride day jumps to Saturday) — quickstart.md Prerequisites updated.
+
+`priceDriver` exists because a driver viewing the match result would otherwise read "+ 4 EGP
+service fee" as a fee on them (goora-brand check 4). Copy check for review: the cash-trial copy
+uses مشوار/مشاوير for trips per the lexicon; the v1 رحلة drift noted above is unchanged.
+
+### R7 addendum — trips before payment setup (found while implementing)
+
+003 seeds ~30 days of demo reliability history (`kept` events before the person joined). Billing
+those would hit a brand-new rider with ~13 trips (−572 EGP) and use up a cash trial at once. The
+wallet only bills trips from the day the rider set up payment (`wallet.since.<id>`: the day they
+chose a method or a plan started).
+
+# v2.1 — the service fee sits inside the cap (2026-10-08)
+
+## R15 — where the price basis lives
+
+- **Decision**: `CommuteGroup` gains two required fields, `tripCost` (EGP per leg) and
+  `riderSeats` (the rider seats the price was set for, 1–4). Together with `price` they are the
+  group's *price basis*, fixed for the month like `price` already is. Every rider-facing fee reads
+  `PricingService.serviceFee(group.price, tripCost: group.tripCost, riderSeats: group.riderSeats,
+  …)`. The driver wallet's "Trip cost" reads `group.tripCost × 2` instead of
+  `legShare × capacitySeats × 2`.
+- **Rationale**: today a group stores only `price`. The other two inputs exist nowhere per group:
+  trip cost is a global config (`TripCostConfig.demoCorridorCost`, 160), and the only seat count is
+  the driver's `Member.seats` — which the seed sets to 4 while pricing at the 3-seat suggestion
+  (R16). Deriving them at each call site would give five call sites five chances to disagree, and
+  the server twin would have no way to see them. Stored on the group, they are plain numbers both
+  twins take as arguments.
+- **Alternatives considered**: (a) read `TripCostConfig` + the driver's `Member.seats` at call
+  time — rejected: wrong on the seed (share 40 → fee 0 on the demo group, SC-002 fails), and a
+  driver changing seats mid-month would move riders' prices, which the spec forbids; (b) count
+  `riders + freeSeats` — rejected: same seed problem, and it changes with every join and leave;
+  (c) store one `equalShare` int — rejected: hides the inputs the twin and FR-016's test need.
+- **Not changed**: `CommuteGroup` has no JSON form (groups are seed-only, not stored), so there is
+  no migration. 002's `TripCostConfig`/`PricingService.tripCost` stay the source a *new* group's
+  `tripCost` would be taken from once groups are created at runtime (005/server).
+
+## R16 — the seed already breaks the price range
+
+- **Finding**: `sz-0725` (the demo group every quickstart uses) carries 2 riders + 2 free seats
+  each way — a 4-rider car — at 40 EGP on a 160 EGP trip. For 4 seats, 002's range is 26–38
+  (suggested 32), so 40 is outside it: Constitution II's second bullet ("within a capped range")
+  is already broken by seed data. `sz-0720` (1 rider + 3 free) has the same problem. The other
+  three are 3-seat (`sz-0740`, `oct-0700`) or 2-seat (`sz-0715`) cars. 4 × 40 = 160 stays at the cap with no fee, which is why
+  nothing caught it; v2's 4 × 44 = 176 is the over-the-cap case the founder decision was about.
+- **Decision**: make every seeded group a 3-seat car priced at the 3-seat suggestion:
+  `tripCost: 160, riderSeats: 3, price: 40`; `sz-0725` free seats 2 → 1 each way; `sz-0720` 3 → 2.
+  Add a seed invariant test: for every seeded group and both legs, riders on the leg + free seats
+  on the leg ≤ `riderSeats`, and `PricingService.range(tripCost, riderSeats).contains(price)`.
+  `sz-0715` (2 seats) stays as it is: fewer seats than priced only keeps the car further under.
+- **Rationale**: no more riders may board than the seats the price was set for. Otherwise a full
+  car breaks the cap no matter how the fee is computed. "≤", not "=", because the cap needs only
+  the upper bound — the same reasoning as the spec's "fewer riders than seats" edge case. Keeping 40 (not repricing to 32) keeps the
+  brief's demo numbers (40 → 44) and every live-verified screen.
+- **Knock-on to check while implementing**: 002/003 tests or copy that assert `sz-0725`'s free
+  seats ("2 seats left" style text, waitlist/backup tests, matching scores that weigh free seats).
+  The seeded drivers' `Member.seats: 4` (`_ahmed`, `_mohamed`) is a separate field (what a driver
+  offers in 002's onboarding) and is left alone; the group's `riderSeats` is the price basis.
+- **Driver breakdown**: with a 3-seat car, `legShare × capacitySeats × 2` = 240 a day, not the real
+  320. Reading `group.tripCost × 2` shows 320; "What you pay yourself" then shows 80 on a full
+  car — the driver's own share, which is what cost-sharing means (suggested = cost ÷ (riders + 1)).
+
+## R17 — proving FR-016 / SC-006
+
+- **Decision**: one Dart unit test sweeps trip cost 20–1,000 EGP, rider seats 1–4 and every
+  contribution in `PricingService.range` (2 EGP steps), and asserts `seats × riderTotal ≤ tripCost`
+  for a wallet non-subscriber (the most expensive arrangement). The TS twin runs the same sweep.
+- **Evidence it is cheap and sound**: run as a throwaway script during planning — 129,309 allowed
+  prices, 0 over the cap with the v2.1 rule; 3,309 (2.6%) were over the cap under v2. All five
+  spec-table rows reproduce exactly.
+- **Why it always holds**: fee ≤ ⌊T ÷ n⌋ − c, so c + fee ≤ ⌊T ÷ n⌋ and n × (c + fee) ≤ T. Within
+  the range, c ≤ max ≤ 2⌊T ÷ 2n⌋ ≤ ⌊T ÷ n⌋, so the room is never negative; the `max(0, …)` only
+  guards prices outside the range (which the constitution already forbids).
+- **Guard**: `riderSeats < 1` throws (`ArgumentError` / `RangeError`) in both twins — a divide by
+  zero must not silently price a trip.
+
+## R13 addendum — v2.1 copy (drafted, founder review)
+
+| key | ar | en | why |
+|---|---|---|---|
+| howPayRule1 (replaced) | بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم. | You pay the driver's share + a service fee of up to 10% per trip. Subscribers pay no fee. | FR-017 |
+| breakdownFee (replaced) | رسوم الخدمة | Service fee | FR-017 — no fixed % |
+| priceNoFee (new) | {price} ج للسواق · من غير رسوم خدمة | {price} EGP to the driver · no service fee | FR-004 — trimmed to 0 |
+| planPerTripNoFeeLine (new) | من غير رسوم خدمة على مشاويرك | No service fee on your trips | plan card when the fee is 0 (else "0 EGP service fee per trip") |
+
+Where they land: `priceLine` (labels.dart) picks `priceNoFee` for wallet mode when `fee == 0`;
+the plan card picks `planPerTripNoFeeLine` when `view.fee == 0`. `activityCaption` is unchanged:
+a `trip` row with `fee == 0` already reads `breakdownNoFee` ("Service fee: none"), true whether the
+fee was trimmed or the rider subscribed, so the entry needs no "why" flag. The breakdown keeps
+`breakdownNoFee` for fee 0. `priceWithFee`, `planPerTripLine` and `feeSavings` are unchanged
+— they already print the amount actually charged, and `FeeSavingsCalculator` already sums the
+stored `fee`, so the savings banner uses the trimmed figure with no code change.
+
+## v2.1 device run — T101/T102 (2026-10-12, phone `R5CNC0NK6ZT`, APK of `df257db`)
+
+Gate (T101): `flutter analyze` 0 issues · `flutter test --concurrency=1` 633 pass ·
+`node --test "supabase/functions/_shared/*.test.ts"` 113 pass.
+
+Scenario 5 (T102), fresh demo data, demo clock Mon 12 Oct 06:30, rider Sheikh Zayed → Smart Village:
+
+| step | ar | en |
+|---|---|---|
+| 1 match result (`sz-0725`) | "40 ج للسواق + 4 ج رسوم خدمة" ✓ | not re-seen live (already joined; widget tests cover en) |
+| 1 Today price tile | "44 ج · 40 ج للسواق + 4 ج رسوم خدمة" ✓ | "44 EGP · 40 EGP to the driver + 4 EGP service fee" ✓ |
+| 1 top-up 200 → After 9 PM | balance 200, then two −44 rows, balance 112 ✓ | same rows, 112 ✓ |
+| 2 `sz-0725` seats | joining works ✓ | — |
+| 3 "How paying works" | "رسوم خدمة لحد 10%" ✓ | "a service fee of up to 10%" ✓ |
+| 3 breakdown | "رسوم الخدمة · 4 ج" (no %) ✓ | "Service fee · 4 EGP" (no "(10%)") ✓ |
+| 4 driver | skipped — needs a verified driver (Scenario 3 blocker) | — |
+| 5 tests | green in T101 | — |
+
+No bug found. Notes for the founder (nothing changed):
+- **Step 2's free-seat count is not on screen.** The match card shows drivers / riders / days /
+  price, not free seats; the one-seat cut is proven by the seed (`freeSeatsGoing/Return: 1`) and
+  `corridor_seed_invariant_test.dart`, not by eye. On a device, step 2 can only check "joining works".
+- **Off-duty driver vs the cap (ties to T078).** After joining, Today reads "4 passengers ·
+  Ahmed/Mohamed, Sara, Youssef, You" in a car priced for 3 rider seats (160/3). Only the rider
+  role is billed today, so 3 × 44 = 132 ≤ 160. If T078 decides the off-duty driver pays too,
+  4 × 44 = 176 > 160 — over the Constitution II cap. Decide T078 with this in mind.
+- **Copy:** "Goora takes no cut" / "جورة مالهاش نسبة" sits right under the service-fee rule — true
+  for the driver's share, but may read as contradicting the fee. "Covers about 1 trip" /
+  "بيغطي حوالي 2 رحلات" counts round-trip days (the R14-addendum "trip" = leg vs day item), and
+  "2 رحلات" is odd Arabic. Onboarding still says "أول شهر مجاني" (R14 addendum).

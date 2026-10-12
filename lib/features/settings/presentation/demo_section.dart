@@ -27,6 +27,7 @@ import '../../daily/presentation/labels.dart';
 import '../../daily/presentation/today/today_controller.dart';
 import '../../onboarding/data/providers.dart';
 import '../../onboarding/presentation/session_controller.dart';
+import '../../wallet/data/fake_wallet_repository.dart';
 
 /// Debug builds only (research R11): move the demo clock to the moments the
 /// rules care about, or reset the fake daily data. Release builds never
@@ -133,6 +134,7 @@ class DemoSection extends ConsumerWidget {
     for (final key in [...FakeTrustRepository.allKeys, ...FakeCommuteRepository.allKeys]) {
       await prefs.remove(key);
     }
+    await FakeWalletRepository.clearAll(prefs);
     await ref.read(profileRepositoryProvider).clear();
     await ref.read(sessionControllerProvider.notifier).signOut();
     ref.invalidate(dailyCommuteRepositoryProvider);

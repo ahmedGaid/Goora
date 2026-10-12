@@ -186,7 +186,6 @@ void main() {
             PlaceholderKind.emptySeats => l10n.emptySeatsTitle,
             PlaceholderKind.offerTrip => l10n.offerTitle,
             PlaceholderKind.postTrip => l10n.postReq,
-            PlaceholderKind.plan => l10n.planTitle,
           };
           expect(find.text(title), findsWidgets);
           await _expectAccessible(tester);

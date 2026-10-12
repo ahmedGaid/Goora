@@ -64,6 +64,25 @@ driver arrive at your stop (live trip), simulates a driver who can't drive (with
 backup), and resets the fake data. Release builds always use real time. New packages in 003:
 `url_launcher` (Call driver, Call 122) and `share_plus` (Share trip).
 
+## Wallet and payment model (feature 004)
+
+After joining a group a rider picks how to pay: **cash to the driver** for their first 10 trips,
+or the **wallet** (40 EGP to the driver + a 10% service fee = 44 per trip). Subscribing (129/month,
+1,290/year, or a company plan) is optional and removes the fee. Drivers never pay anything. The
+rules are pure Dart — `PricingService.serviceFee/riderTotal` (commute domain), `CashTrialPolicy`,
+`FeeSavingsCalculator` (wallet domain) — and the fee rule has a TypeScript twin on shared vectors:
+
+```bash
+python test/fixtures/gen_pricing_vectors.py          # only when the fee rule changes
+```
+
+The wallet derives each rider's trips from 003's settled ride outcomes and prices them at read
+time (research R7), so a trip's fee is never stored twice. Trips before the rider set up payment
+aren't billed. In the fakes Youssef (group sz-0725) is a cash rider, so a driver on that group
+gets "Received cash" / "Didn't pay" after ending a trip. `FakePaymentProvider`'s `shouldFail`
+hook (top-up/withdrawal failure) is wired only in widget tests, not in Settings → Demo. No new
+packages.
+
 ## Code generation
 
 Riverpod providers and l10n are generated and committed. After changing a `@riverpod` provider or

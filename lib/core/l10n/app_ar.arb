@@ -11,7 +11,7 @@
   "fOnce": "مشوار واحد بس",
   "fTag": "الأوفر",
   "extraTrip": "عايز مشوار زيادة؟ احجز كرسي",
-  "subNote": "ضمن اشتراكك · من غير رسوم حجز",
+  "subNote": "ضمن اشتراكك · من غير رسوم",
   "whereGo": "بتروح فين كل يوم؟",
   "dirBoth": "رايح جاي",
   "dirGoing": "رايح بس",
@@ -25,7 +25,90 @@
   "arrivedBtn": "وصلت البوابة الرئيسية",
   "pickedUp": "ركب",
   "noShow": "مجاش",
-  "planTitle": "ابدأ أول شهر مجانًا",
+  "planTitle": "اشترك ومن غير رسوم",
+  "planSubline": "من غير رسوم خدمة على أي مشوار أو كرسي.",
+  "planMonthlyTitle": "شهري",
+  "planMonthlySub": "129 جنيه/الشهر",
+  "planYearlyTitle": "سنوي",
+  "planYearlySub": "1,290 جنيه/السنة",
+  "planYearlyChip": "شهرين مجانًا",
+  "planCompanyTitle": "عن طريق شركتي",
+  "planCompanySub": "مجاني — أكّد إيميل الشغل",
+  "planIncludedTitle": "هتحصل على",
+  "planIncludedMatch": "ترشيح يومي لجروب ركوبتك",
+  "planIncludedBackup": "سواق بدّل لو سواقك اتأخر",
+  "planIncludedTrust": "تتبّع الالتزام وأدوات أمان SOS",
+  "planFuelNote": "مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.",
+  "planCtaVerify": "أكّد إيميل الشغل",
+  "planFooter": "تقدر تلغي في أي وقت. جورة مجانية للسواقين.",
+  "verifyEmailTitle": "أكّد إيميل شغلك",
+  "verifyEmailBody": "{company} هتدفع خطة جورة بتاعتك بعد تأكيد إيميل شغلك.",
+  "@verifyEmailBody": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "verifyConfirm": "تأكيد",
+  "verifyNotVerified": "أكّد إيميل شغلك من تبويب الموثوقية الأول.",
+  "balanceLabel": "رصيد المحفظة",
+  "topUp": "اشحن",
+  "coversTrips": "{count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}}",
+  "@coversTrips": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "planChange": "تغيير",
+  "planCompanyActive": "مجانية · شركتك بتدفعها",
+  "howPayTitle": "إزاي الدفع بيشتغل",
+  "howPayRule1": "بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم.",
+  "howPayRule2": "البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.",
+  "howPayRule3": "الإلغاء المتأخر والغياب بيروحوا للسواق من غير رسوم خدمة.",
+  "topUpSheetTitle": "اشحن محفظتك",
+  "topUpMethodInstaPay": "InstaPay",
+  "topUpMethodVodafone": "فودافون كاش",
+  "topUpMethodCard": "كارت",
+  "topUpConfirm": "أكّد الشحن",
+  "topUpFailTitle": "الشحن ملحقش يتم",
+  "topUpFailBody": "مفيش حاجة اتحصلت — جرّب تاني.",
+  "changePlanTitle": "غيّر خطتك",
+  "changePlanNote": "الخطة الجديدة تتفعل من تاريخ الفوترة الجاي — مفيش تغيير في الفترة الحالية.",
+  "changePlanConfirm": "أكّد التغيير",
+  "breakdownTitle": "بتدفع كام في الرحلة",
+  "breakdownFuel": "البنزين والرسوم",
+  "breakdownTotal": "الإجمالي",
+  "activityTitle": "الحركة",
+  "activityEmpty": "لسه مفيش حركة",
+  "actTopUp": "شحن",
+  "actTripDeduction": "تكلفة رحلة",
+  "actLateCancelCharge": "إلغاء متأخر",
+  "actFreeCancelZero": "إلغاء مجاني",
+  "actTripIncome": "دخل الرحلة",
+  "actFeeReceivedFrom": "رسوم {name}",
+  "@actFeeReceivedFrom": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "actWithdrawal": "سحب",
+  "recoveredTitle": "اتجمّع الأسبوع ده",
+  "payoutNote": "بيتصرف كل خميس · من غير أي رسوم عليك",
+  "withdraw": "اسحب على InstaPay",
+  "withdrawSheetTitle": "اسحب على InstaPay",
+  "withdrawConfirm": "أكّد السحب",
+  "withdrawFailTitle": "السحب ملحقش يتم",
+  "withdrawFailBody": "مفيش حاجة تحرّكت — جرّب تاني.",
+  "driverBreakdownTitle": "تكلفة رحلتك",
+  "driverBreakdownCost": "تكلفة الرحلة",
+  "driverBreakdownReceived": "بتستلم من الركاب",
+  "driverBreakdownGap": "بتدفعه من جيبك",
+  "driverBreakdownFree": "جورة مجانية للسواقين",
   "postReq": "انشر مشوارك",
   "offerBtn": "اعرض مشوار",
   "reqsOnRoute": "طلبات على خطك",
@@ -256,14 +339,6 @@
   "@perWeek": {
     "placeholders": {
       "count": {
-        "type": "int"
-      }
-    }
-  },
-  "feeLine": "{price} ج للسواق · من غير رسوم على المشوار",
-  "@feeLine": {
-    "placeholders": {
-      "price": {
         "type": "int"
       }
     }
@@ -934,7 +1009,6 @@
   "needWorkEmail": "وثّق إيميل الشغل الأول",
   "needCompound": "ضيف اسم الكمبوند الأول",
   "driverNeedsDocs": "عشان تسوق، لازم الرخصة والعربية يكونوا موثّقين.",
-  "walletSoon": "المحفظة جاية قريب",
   "demoSection": "تجربة (للمطورين)",
   "demoNow": "الوقت دلوقتي: {time}",
   "@demoNow": {
@@ -1049,5 +1123,157 @@
   },
   "mapLiveAria": "خريطة المشوار · السواق في الطريق",
   "demoDriverArrives": "السواق وصل محطتي",
-  "shareNoTrip": "مفيش مشوار تشاركه دلوقتي."
+  "shareNoTrip": "مفيش مشوار تشاركه دلوقتي.",
+  "priceWithFee": "{price} ج للسواق + {fee} ج رسوم خدمة",
+  "@priceWithFee": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      },
+      "fee": {
+        "type": "int"
+      }
+    }
+  },
+  "priceNoFee": "{price} ج للسواق · من غير رسوم خدمة",
+  "@priceNoFee": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "priceSubscribed": "{price} ج · من غير رسوم (مشترك)",
+  "@priceSubscribed": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "priceCompany": "{price} ج · من غير رسوم (الشركة)",
+  "@priceCompany": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "priceCash": "ادفع {price} ج كاش للسواق",
+  "@priceCash": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "payMethodTitle": "هتدفع إزاي؟",
+  "payMethodSub": "تقدر تشحن المحفظة أو تشترك في أي وقت.",
+  "payCash": "ادفع كاش للسواق (أول 10 مشاوير)",
+  "payCashSub": "من غير رسوم خدمة على مشاوير الكاش.",
+  "payWallet": "ادفع من المحفظة",
+  "subscribeLink": "اشترك ومن غير رسوم",
+  "subscribeCta": "اشترك · {price} ج",
+  "@subscribeCta": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "subNeedsTopUp": "اشحن {gap} ج الأول — محفظتك فيها {balance} ج.",
+  "@subNeedsTopUp": {
+    "placeholders": {
+      "gap": {
+        "type": "int"
+      },
+      "balance": {
+        "type": "int"
+      }
+    }
+  },
+  "subscribe": "اشترك",
+  "planPayPerTrip": "بالمشوار",
+  "planPerTripLine": "{fee} ج رسوم خدمة على كل مشوار",
+  "@planPerTripLine": {
+    "placeholders": {
+      "fee": {
+        "type": "int"
+      }
+    }
+  },
+  "planPerTripNoFeeLine": "من غير رسوم خدمة على مشاويرك",
+  "planSubscribedLine": "مشترك لحد {date} · من غير رسوم",
+  "@planSubscribedLine": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "planLapsedLine": "الاشتراك خلص · رجعت بالمشوار",
+  "cashTripsLeft": "{count, plural, =0{خلصت مشاوير الكاش} =1{فاضل مشوار كاش واحد} =2{فاضل مشوارين كاش} few{فاضل {count} مشاوير كاش} other{فاضل {count} مشوار كاش}}",
+  "@cashTripsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cashTopUpBanner": "اشحن محفظتك عشان تكمّل مشاويرك — سواق بديل وكرسي مضمون وفلوسك ترجعلك.",
+  "cashEnded": "مشاوير الكاش خلصت — اشحن محفظتك عشان تكمّل.",
+  "cashOff": "الكاش اتقفل بعد ما مشوارين اتسجّلوا من غير دفع — اشحن محفظتك عشان تكمّل.",
+  "needsTopUp": "اشحن عشان تكمّل مشاويرك",
+  "feeSavings": "دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس.",
+  "@feeSavings": {
+    "placeholders": {
+      "fees": {
+        "type": "int"
+      }
+    }
+  },
+  "actTrip": "مشوار",
+  "actCashTrip": "مشوار كاش",
+  "actSubscription": "اشتراك",
+  "cashPaidLine": "دفعت {price} ج كاش للسواق",
+  "@cashPaidLine": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "notChargedCash": "مش محسوبة في فترة الكاش",
+  "breakdownShare": "نصيب السواق",
+  "breakdownFee": "رسوم الخدمة",
+  "breakdownNoFee": "رسوم الخدمة: مفيش",
+  "cashReceived": "استلمت {price} ج كاش",
+  "@cashReceived": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "didNotPay": "مدفعش",
+  "cashMarkedReceived": "الكاش وصل",
+  "cashMarkedUnpaid": "اتسجّل إنه مدفعش",
+  "cashReceivedTitle": "الكاش اللي استلمته",
+  "cashReceivedNote": "متسجّل بس — مش بيتسحب",
+  "needsTopUpBody": "رصيدك أقل من تمن مشوار واحد ({total} ج).",
+  "@needsTopUpBody": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "priceDriver": "{price} ج ليك من كل راكب · جورة مجانية للسواقين",
+  "@priceDriver": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  }
 }

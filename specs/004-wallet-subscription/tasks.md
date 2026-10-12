@@ -1,0 +1,488 @@
+---
+description: "Task list for feature 004: Wallet and Subscription"
+---
+
+# Tasks: Wallet and Subscription
+
+**Input**: `specs/004-wallet-subscription/` (plan, spec, research, data-model, contracts, quickstart)
+
+**Tests**: REQUIRED — constitution VIII: `WalletRules`/`CalendarDate.addMonths` unit tests at exact
+boundaries with the brief's exact numbers (129/1290/40/20/200/400/800 EGP), widget tests ar + en
+for every new screen/sheet, goldens RTL + LTR for new core widgets.
+
+**Order**: Setup → Foundational → US1 (P1, MVP) → US2 (P1) → US3 (P2) → Polish. Each checkpoint
+ends with green `flutter analyze` + `flutter test` and can be committed on its own.
+
+## Format: `[ID] [P?] [Story] Description`
+
+- **[P]**: can run in parallel (different files, no dependency on an unfinished task)
+- **[Story]**: US1/US2/US3 from spec.md
+- "R#" = section of research.md; "FR-###" = spec requirement
+
+---
+
+## Phase 1: Setup
+
+- [X] T001 [P] Add all 004 ARB keys (Plan screen title/subline/cards/CTA/footer, rider + driver
+  Wallet copy, "How paying works" rules, top-up/withdraw/change-plan sheet copy, activity-row
+  labels) to `lib/core/l10n/app_ar.arb` and `lib/core/l10n/app_en.arb` — drafted copy from
+  spec.md, founder review before ship (same pattern as 003); run `flutter gen-l10n`
+
+---
+
+## Phase 2: Foundational (blocks every story)
+
+**Time core**
+
+- [X] T002 [P] `lib/core/time/calendar_date.dart`: add `addMonths(int months)` — keeps
+  day-of-month, clamps to the target month's last day when it has fewer days (R1)
+- [X] T003 [P] `test/unit/calendar_add_months_test.dart`: 31 Jan + 1 → 28/29 Feb (leap + non-leap);
+  31 Mar + 1 → 30 Apr; Dec → Jan year rollover; a mid-month date unaffected
+
+**Domain model**
+
+- [X] T004 [P] `lib/features/wallet/domain/plan.dart`: `PlanType`, `PlanStatus`, `Plan` (fields +
+  `type == company ⇒ price == 0 && untilDate == null` invariant) per data-model
+- [X] T005 [P] `lib/features/wallet/domain/wallet.dart`: `Wallet` (ownerId, role, balance, activity)
+- [X] T006 [P] `lib/features/wallet/domain/activity_entry.dart`: `ActivityKind`, `ActivityEntry`
+  (id, kind, amount, date, rideId?, otherPersonId?)
+- [X] T007 [P] `lib/features/wallet/domain/payment_provider.dart`: `PaymentProvider` interface
+  (`topUp`, `withdraw`), `PaymentResult` enum
+- [X] T008 `lib/features/wallet/domain/wallet_rules.dart`: `trialEndDate` (uses `addMonths`,
+  depends on T002/T004), `tripsCovered` (`max(0, balance ~/ (2 * legShare))`), `isPlanDue`
+- [X] T009 [P] `test/unit/wallet_rules_test.dart`: trialEndDate = chosenAt.addMonths(1);
+  tripsCovered at 0 (balance < one leg-share), exact round-trip boundary (80 EGP = 1 trip, 79 = 0),
+  and the brief's numbers (40 EGP/leg ⇒ 80/round-trip); isPlanDue true only when `untilDate` is set
+  and in the past
+- [X] T010 `lib/features/wallet/domain/wallet_repository.dart`: `WalletRepository` interface per
+  `contracts/repositories.md`
+
+**Fake data and wiring**
+
+- [X] T011 [P] `lib/features/wallet/data/fake_payment_provider.dart`: `FakePaymentProvider`
+  implementing `PaymentProvider`, `shouldFail` hook defaulting to always-succeed (R4)
+- [X] T012 `lib/features/wallet/data/wallet_seed.dart`: seeded rider Plan (trialing) + Wallet
+  (top-up row, trip deduction, late-cancel charge, free-cancel zero-row) and seeded driver Wallet
+  (trip income rows, one fee-received row) so US2/US3 independent tests have activity without
+  replaying 003's flows live
+- [X] T013 `lib/features/wallet/data/fake_wallet_repository.dart`: implements
+  `WalletRepository` over `shared_preferences`; `getPlan`/`choosePlan`/`changePlan`/`getWallet`/
+  `topUp`/`withdraw`; `getWallet` merges this feature's own activity (top-up, withdrawal, fee
+  received) with rows read from `DailyCommuteRepository`'s `Charge`/`Ride` records for
+  `tripDeduction`/`lateCancelCharge`/`freeCancelZero` (R3, not duplicated/stored)
+- [X] T014 [P] `lib/features/wallet/data/providers.dart`: Riverpod providers for
+  `WalletRepository`/`PaymentProvider` (overridable, same pattern as `daily/data/providers.dart`)
+- [X] T015 [P] `test/unit/fake_wallet_repository_test.dart`: `choosePlan(monthly/yearly)` sets
+  `trialing` + `untilDate = today.addMonths(1)`; `choosePlan(company)` sets `active`-equivalent
+  free/no-trial-date; `changePlan` doesn't affect the current period; `topUp`/`withdraw` success
+  updates balance + adds a row; failure changes neither (SC-005); `getWallet` includes 003's
+  seeded `Charge` rows
+- [X] T016 [P] `lib/core/widgets/goora_balance_card.dart`: dark balance card (balance text,
+  "Covers about {N} trips", Top up action) per constitution VI
+- [X] T017 [P] `test/golden/wallet_widgets_golden_test.dart` + goldens RTL/LTR for
+  `goora_balance_card`
+
+**Checkpoint**: domain + fake repository + balance card ready; 003 suite still green.
+
+---
+
+## Phase 3: US1 — A rider starts their free month after joining a group (P1) 🎯 MVP
+
+**Goal**: rider sees the Plan screen once after joining, picks a plan, starts the free month;
+drivers never see it. **Independent test**: complete "Join this group" as a rider, land on Plan,
+choose Monthly, confirm the free-trial starts with no charge.
+
+- [X] T018 [US1] `lib/features/wallet/presentation/plan/plan_controller.dart`: load plan state;
+  `choosePlan(monthly/yearly)` using `nowProvider` for `today`; `choosePlan(company)` only after
+  the verify sheet confirms
+- [X] T019 [US1] `lib/features/wallet/presentation/plan/company_verify_sheet.dart`: reuses 001's
+  work-email verification pattern (`VerificationKind.workEmail`); on confirm calls
+  `choosePlan(company)` (FR-003)
+- [X] T020 [US1] `lib/features/wallet/presentation/plan/plan_screen.dart`: title "Start your free
+  month", subline, three `GooraRadioCard`s (Monthly 129 EGP / Yearly 1,290 EGP + "2 months free"
+  chip / Through my company: free), "What's included" list, fuel-to-driver note, CTA
+  ("Start free month" / "Verify work email"), footer "Cancel anytime. Goora is free for drivers."
+- [X] T021 [US1] `lib/features/wallet/presentation/labels.dart`: plan-type/plan-status → l10n
+  (start here; extended in US2/US3)
+- [X] T022 [US1] `lib/app/routes.dart`: `Routes.plan` → `PlanScreen`; `lib/app/router.dart`:
+  redirect guard on the shell's `today`/`week` routes — a rider with no `Plan`, or a due/expired
+  one and no Company verification, redirects to `Routes.plan` (R2); Wallet/Trust stay reachable
+- [X] T023 [US1] `lib/features/placeholder/presentation/placeholder_screen.dart`: remove
+  `PlaceholderKind.plan`
+- [X] T024 [P] [US1] `test/widget/plan_screen_test.dart` (ar + en): AC1 — all elements present;
+  AC2 — Monthly/Yearly → "Start free month" → plan active, free-until one month out, no charge;
+  AC3 — Through my company → verify sheet → Company plan, no trial date; AC4 — a driver never
+  sees this screen; AC5 — dismiss/back reappears until a plan is chosen
+
+**Checkpoint P1a**: US1 shippable alone — the business-model entry point exists. `flutter analyze`
++ `flutter test` green. Commit.
+
+---
+
+## Phase 4: US2 — A rider manages their wallet, plan and top-ups (P1)
+
+**Goal**: rider's Wallet tab shows plan, balance, top-up, "how paying works", and a running
+activity list. **Independent test**: open Wallet as the seeded rider (top-up, trip deduction,
+late-cancel charge, free cancellation already present) and confirm every row and the balance.
+
+- [X] T025 [US2] `lib/features/wallet/presentation/wallet/wallet_controller.dart`: rider wallet
+  view-model — plan status line ("Free until {date} · then 129 EGP/month" or the due state per
+  FR-014), balance, `tripsCovered`, merged activity (T013), "What you pay per trip" breakdown
+  (fuel & tolls share as a number, "Goora fees: in your plan" fixed label)
+- [X] T026 [US2] `lib/features/wallet/presentation/wallet/rider_wallet.dart`: plan card ("Change"
+  link) including the due-plan prompt state (FR-014); `goora_balance_card` with Top up (InstaPay /
+  Vodafone Cash / Card pills, 200/400/800 EGP); "How paying works" rules list; activity list
+  (zero-amount row for a free cancellation, never omitted); per-trip breakdown
+- [X] T027 [US2] `lib/features/wallet/presentation/wallet/top_up_sheet.dart`: method + amount →
+  `WalletRepository.topUp`; failure shows an inline, blame-free error with retry, balance/activity
+  unchanged (FR-006)
+- [X] T028 [US2] `lib/features/wallet/presentation/wallet/change_plan_sheet.dart`: switch
+  Monthly/Yearly/Company via `changePlan`; current period's card is unaffected until the next
+  billing date (FR-004, no pro-rating)
+- [X] T029 [US2] `lib/features/wallet/presentation/wallet/wallet_tab.dart`: role-switch entry
+  point (rider branch wired now, driver branch stubbed until US3); delete the superseded
+  `lib/features/daily/presentation/wallet/wallet_tab.dart` placeholder
+- [X] T030 [US2] `lib/features/wallet/presentation/labels.dart`: extend with rider activity-kind
+  labels (top-up, trip deduction, late-cancel charge, free-cancel zero)
+- [X] T031 [P] [US2] `test/widget/rider_wallet_test.dart` (ar + en): AC1 plan card text incl. due
+  state; AC2 balance card + "Covers about N trips" + pills + amounts; AC3 top-up success → balance
+  +amount, new row at top; AC4 late-cancel half-charge row vs. zero-amount free-cancel row,
+  distinct; AC5 breakdown ends "Goora fees: in your plan", never a number; top-up failure leaves
+  balance/activity unchanged with inline retry (SC-005)
+- [X] T032 [P] [US2] `test/widget/top_up_sheet_test.dart` (ar + en): method/amount selection,
+  success and forced-failure paths
+- [X] T033 [P] [US2] `test/widget/change_plan_sheet_test.dart` (ar + en): switching plan leaves
+  the current plan card unchanged until the next billing date
+
+**Checkpoint P1b**: US1 + US2 complete — rider side fully functional. `flutter analyze` +
+`flutter test` green. Commit.
+
+---
+
+## Phase 5: US3 — A driver sees what they're paid and withdraws it (P2)
+
+**Goal**: driver's Wallet tab shows recovered balance, payout day, withdrawal, and activity.
+**Independent test**: open Wallet as the seeded driver (trip income + one rider fee already
+present) and confirm the weekly balance, payout line and activity rows.
+
+- [X] T034 [US3] `lib/features/wallet/presentation/wallet/wallet_controller.dart`: extend with
+  driver view-model — "Recovered this week" total, merged activity (trip income + fee received),
+  "Your trip cost" breakdown (trip cost / received from riders / gap the driver covers / "Goora is
+  free for drivers")
+- [X] T035 [US3] `lib/features/wallet/presentation/wallet/driver_wallet.dart`: "Recovered this
+  week" + "Paid out every Thursday · no fees taken from you"; Withdraw to InstaPay; activity list
+  (trip income, fee-received rows labelled by rider/trip); trip-cost breakdown with no deduction
+  line
+- [X] T036 [US3] `lib/features/wallet/presentation/wallet/withdraw_sheet.dart`: `withdraw` call;
+  failure shows inline retry, balance/activity unchanged (FR-010)
+- [X] T037 [US3] `lib/features/wallet/presentation/wallet/wallet_tab.dart`: wire the driver branch
+  (role switch now complete for both roles)
+- [X] T038 [US3] `lib/features/wallet/presentation/labels.dart`: extend with driver activity-kind
+  labels (trip income, fee received, withdrawal)
+- [X] T039 [P] [US3] `test/widget/driver_wallet_test.dart` (ar + en): AC1 recovered total + payout
+  line; AC2 withdraw success → balance resets, new "Withdrawal" row; AC3 trip-cost breakdown shows
+  the gap when riders' total is less than full cost, and "Goora is free for drivers" with no
+  deduction when it isn't; AC4 a rider's late-cancel/no-show fee appears labelled by rider/trip
+- [X] T040 [P] [US3] `test/widget/withdraw_sheet_test.dart` (ar + en): success and forced-failure
+  paths
+
+**Checkpoint P2**: US1–US3 complete; `flutter analyze` + `flutter test` green. Commit.
+
+---
+
+## Phase 6: Polish
+
+- [x] T041 [P] Extend `test/golden/wallet_widgets_golden_test.dart` with goldens RTL/LTR for Plan
+  screen, rider/driver Wallet, and the three sheets
+- [x] T042 [P] Add the new dark-balance-card and due-state text/background pairs to
+  `test/unit/contrast_test.dart`
+- [x] T043 Confirm `test/architecture/no_hardcoded_values_test.dart` covers `lib/features/wallet`
+- [x] T044 List every drafted Plan/Wallet ARB key for founder review (same pattern as 003's
+  research R14) — append to `specs/004-wallet-subscription/research.md`
+- [x] T045 Gates: `flutter analyze` (0 issues), `flutter test` (493 pass); README: add a 004
+  section (new feature folder, no new packages). `quickstart.md` on device (`R5CNC0NK6ZT`,
+  `01010665106` rider, build `1d0c393`), ar: **Scenario 1 confirmed live** — Plan screen exact to
+  spec, Monthly chosen, lands on Today, Wallet plan card reads "مجاني لحد 18/11 · بعدها 129
+  جنيه/الشهر" (steps 5-7 driver-redirect already covered by passing `plan_screen_test.dart`
+  AC4/AC5). **Scenario 2 confirmed live** — balance/trips-caption/method+amount pills, top-up
+  InstaPay 200 → balance 200 + "شحن +200" row, Change → Yearly → plan card unchanged until next
+  billing date (step 5 late-cancel/free-cancel rows and steps 8-9 forced-failure rely on passing
+  `rider_wallet_test.dart`/`top_up_sheet_test.dart`, since a fresh rider has no 003 ride history to
+  seed those rows live). **Scenario 3 not run live** — driver mode needs 003's license+vehicle
+  Trust verification before matching unlocks, out of scope for a 004 walkthrough session; relies
+  on passing `driver_wallet_test.dart` AC1-AC4. **English (LTR) pass of all three not run** — do
+  before merge. Found+fixed in research.md R4: the "force next payment to fail" Settings control
+  this file's R4 describes was never actually wired — `providers.dart` always builds a plain
+  `FakePaymentProvider()`, so `shouldFail` is test-only today. README's claim corrected to match.
+
+---
+
+## Dependencies & Execution Order
+
+```text
+Setup (T001) → Foundational (T002–T017)
+  → US1 (T018–T024)                                            ← P1 MVP, commit
+  → US2 (T025–T033)                                             ← P1, commit
+  → US3 (T034–T040)                                             ← P2, commit
+  → Polish (T041–T045)
+```
+
+- US2's `wallet_tab.dart` role switch (T029) is extended by US3 (T037); US2 ships with the driver
+  branch stubbed so US1+US2 remain independently committable first.
+- US3 reuses `wallet_controller.dart` (T025) and `wallet_seed.dart` (T012) rather than duplicating
+  them — extend, don't fork.
+- Both US2 and US3 depend on the Foundational phase's `WalletRepository`/`WalletRules`/
+  `goora_balance_card`; neither depends on the other's screen code.
+
+## Parallel Examples
+
+- Foundational: T002, T004, T005, T006, T007 together; then T008 (needs T002/T004) + T011 + T016;
+  then T009/T015/T017 alongside T012/T013/T014.
+- US1: T018/T019/T020/T021 can proceed together once T010/T013 exist; T024 after T020/T022.
+- US2: T025 alongside T027/T028; T031/T032/T033 last, after their screens/sheets exist.
+- US3: T034 alongside T036; T039/T040 last.
+
+## Implementation Strategy
+
+1. **Session 1**: Setup + Foundational + US1 → MVP: a rider can start a free-trial plan; drivers
+   skip it entirely. Commit + converge.
+2. **Session 2**: US2 → rider Wallet tab fully functional (plan, balance, top-up, activity,
+   breakdown). Commit + converge.
+3. **Session 3**: US3 + Polish → driver Wallet tab, withdrawal, goldens, contrast, gates,
+   quickstart walkthrough.
+
+---
+
+# v2 — payment model (amendment 2026-10-08)
+
+Story labels below refer to the **v2** spec's US1–US5. Tests are requested (spec SC-003,
+Constitution VIII). Paths are repo-relative.
+
+## Phase 7: Foundational v2 (blocks every v2 story)
+
+**Purpose**: the three pure rules, the twin, and the reshaped model + repository.
+
+- [x] T046 [P] Create `PricingService` (`feeRatePercent`, `serviceFee`, `riderTotal`, half-up per
+  research R6) — added to 002's `lib/features/commute/domain/pricing_service.dart` (one PricingService)
+- [x] T047 [P] Create `CashTrialPolicy` (limit 10, strikes 2, banner after 7; `available`,
+  `tripsLeft`, `showTopUpBanner`) in `lib/features/wallet/domain/cash_trial_policy.dart`
+- [x] T048 [P] Create `FeeSavingsCalculator` (`subscriptionPrice` 129, `feesInMonth`,
+  `shouldUpsell`) in `lib/features/wallet/domain/fee_savings_calculator.dart`
+- [x] T049 [P] Write `test/fixtures/pricing_vectors.json` (contributions 32–48 × subscriber ×
+  cash, expected fee/total, from `gen_pricing_vectors.py`) and `test/unit/rider_total_test.dart` reading it, plus the brief's
+  40 → 44 example
+- [x] T050 [P] Write `test/unit/cash_trial_policy_test.dart` (0, 3, 6, 7, 9, 10 trips; 0/1/2
+  strikes; strike on the 10th) and `test/unit/fee_savings_calculator_test.dart` (fees 128/129/130,
+  other month ignored, fee-free never upsells)
+- [x] T051 [P] Create `supabase/functions/_shared/pricing.ts` + `pricing.test.ts` reading
+  `test/fixtures/pricing_vectors.json`
+- [x] T052 Create `PaymentMethod` (`lib/features/wallet/domain/payment_method.dart`) and
+  `CashMark`/`CashOutcome` (`lib/features/wallet/domain/cash_mark.dart`) with JSON
+- [x] T053 Reshape `Plan` (drop `trialing`), `ActivityEntry` (+ `trip`, `cashTrip`,
+  `subscription`, `cashReceived`; + `fee`, `notCollected`), `Wallet` (+ `method`, `cashTrial`,
+  `feesThisMonth`, `cashReceived`), `WalletRules` (drop `trialEndDate`; `tripsCovered` by leg
+  total) in `lib/features/wallet/domain/`
+- [x] T054 Update `WalletRepository` to the v2 contract (`subscribe`, `getMethod`, `setMethod`,
+  `methodOf`, `cashMarks`, `markCash`; drop `choosePlan`) in
+  `lib/features/wallet/domain/wallet_repository.dart`
+- [x] T055 Rewrite `FakeWalletRepository`: method/marks storage, subscribe from the ledger
+  (R10), derived wallet — the R8 fold over 003's kept rider events and charges using
+  PricingService/CashTrialPolicy, balance = ledger − derived debits, fees this month, driver cash
+  received — in `lib/features/wallet/data/fake_wallet_repository.dart`
+- [x] T056 Seed Youssef as a cash rider and a driver's demo cash rows in
+  `lib/features/wallet/data/wallet_seed.dart`; make Settings → "Reset demo data" clear the
+  wallet keys too
+- [x] T057 Add `riderPricingProvider` (the rider's `PricingMode`: cash / wallet / subscribed /
+  company) in `lib/features/wallet/data/providers.dart`
+- [x] T058 Update `test/unit/fake_wallet_repository_test.dart` for the derived wallet (44-EGP
+  trip, 200 top-up, charges without fee, cash fold, subscribe/needsTopUp, lapse) and
+  `test/helpers/daily_fakes.dart` (`withPlan` keeps seeding a company plan; add `method`)
+
+**Checkpoint**: rules + repo green in unit tests; UI not yet changed.
+
+## Phase 8: US1 — choose how to pay (P1) 🎯 MVP
+
+**Independent test**: join as a rider → payment-method screen → cash → Today shows the cash line.
+
+- [x] T059 [US1] Add `Routes.payMethod`; replace `_requirePlan` with an arrangement guard (R9);
+  match result's rider "Join" goes to `Routes.payMethod` — `lib/app/routes.dart`,
+  `lib/app/router.dart`, `lib/features/commute/presentation/match_result_screen.dart`
+- [x] T060 [US1] Build `PayMethodScreen` (cash / wallet radio cards, Continue, "Subscribe and pay
+  no fees" link) in `lib/features/wallet/presentation/pay_method/pay_method_screen.dart`
+- [x] T061 [US1] Add the price line (one function: contribution + PricingMode → string) as
+  `WalletLabels.priceLine` in `lib/features/wallet/presentation/labels.dart`; use it in
+  `lib/features/commute/presentation/match_result_screen.dart` and
+  `lib/features/daily/presentation/today/rider_today.dart`; retire `feeLine` (gallery too)
+- [x] T062 [US1] ARB: §7 strings + R13 drafted keys, both locales, `flutter gen-l10n` —
+  `lib/core/l10n/app_ar.arb`, `lib/core/l10n/app_en.arb`
+- [x] T063 [US1] Widget tests ar/en: `test/widget/pay_method_screen_test.dart` (AC1–6) and the
+  price lines in the existing match-result / Today tests
+
+## Phase 9: US3 — subscribe (P1)
+
+**Independent test**: 200-EGP wallet rider subscribes Monthly → balance 71, plan Subscribed.
+
+- [x] T064 [US3] Turn `PlanScreen` into the subscription screen (new title/subline, "Subscribe ·
+  {price}", needs-top-up message, company verify unchanged) and its controller to `subscribe` —
+  `lib/features/wallet/presentation/plan/`
+- [x] T065 [US3] Rewrite `test/widget/plan_screen_test.dart` for the subscription screen (AC1–5)
+
+## Phase 10: US2 + US4 — rider wallet with fees and cash trial (P1)
+
+**Independent test**: seeded histories show the 44-EGP rows, savings banner, cash counter and
+switch-overs with CashTrialPolicy's numbers.
+
+- [x] T066 [US2] Plan card states (Pay per trip / Subscribed until / Company / lapsed), Change →
+  subscription screen; drop the v1 due banner — `rider_wallet.dart`, `labels.dart`
+- [x] T067 [US2] Activity rows: trip shows total with the split caption; charges show
+  "Not charged during the cash trial" when skipped; subscription and cash-trip rows —
+  `lib/features/wallet/presentation/wallet/activity_row.dart`, `labels.dart`
+- [x] T068 [US2] Fee-savings banner with "Subscribe"; breakdown share / fee / total; updated
+  "How paying works" — `rider_wallet.dart`, `wallet_controller.dart`
+- [x] T069 [US4] Cash-trial counter card, the from-trip-8 banner, cash ended / cash off states,
+  "Top up to keep riding" (not for company) — `rider_wallet.dart`
+- [x] T070 [US2] [US4] Rewrite `test/widget/rider_wallet_test.dart` (US2 AC1–6, US4 AC1–5) ar/en
+
+## Phase 11: US5 — driver cash (P2)
+
+- [x] T071 [US5] Cash buttons for picked-up cash riders after the trip ends, status chip after —
+  a separate `CashAfterTrip` card (`lib/features/daily/presentation/today/cash_after_trip.dart`,
+  shown under the next leg's check-in so it isn't replaced by it) + `cashStatusProvider`
+- [x] T072 [US5] "Cash received" card, separate and not withdrawable —
+  `lib/features/wallet/presentation/wallet/driver_wallet.dart`
+- [x] T073 [US5] Tests: `test/widget/driver_cash_test.dart` (AC1–2) and
+  `test/widget/driver_wallet_test.dart` (AC3–4) ar/en
+
+## Phase 12: Polish v2
+
+- [x] T074 Regenerate goldens for changed screens and add `pay_method` screen goldens —
+  `test/golden/wallet_widgets_golden_test.dart`
+- [x] T075 Contrast: add any new text/background pair to `test/unit/contrast_test.dart`
+- [x] T076 Gates: `flutter analyze`, `flutter test`, `node --test
+  "supabase/functions/_shared/*.test.ts"`; README 004 section updated for v2
+- [ ] T077 quickstart.md scenarios 1–3 on device, ar + en — NOT run yet (gates only this session)
+
+## v2 Dependencies
+
+```text
+Phase 7 (T046–T058) → US1 (T059–T063) → US3 (T064–T065) → US2+US4 (T066–T070) → US5 (T071–T073)
+  → Polish (T074–T077)
+```
+
+- T046–T051 are parallel (separate files). T055 needs T046–T054.
+- US5 depends only on Phase 7 (marks + seed), not on the rider screens.
+
+## v2 Implementation Strategy
+
+MVP = Phase 7 + US1: riders can pick cash or wallet and see honest prices. Then subscribe, then
+the wallet states, then the driver side. Commit after each phase; converge at the end.
+
+## Phase 13: Convergence
+
+- [ ] T078 Decide (founder) whether an off-duty driver riding in another driver's car pays the contribution like a rider (003 FR-022a) — today the wallet bills only the rider role; then bill it with no fee or record the exemption in spec/research per FR-005 (partial)
+- [x] T079 Add widget tests for a lapsed subscription (plan card "Subscription ended · back to pay per trip", fee back on trips) and for the savings banner hiding once subscribed, ar + en, in `test/widget/rider_wallet_test.dart` per US3/AC5 and spec Edge Cases (partial)
+
+---
+
+## Phase 14: v2.1 — rule + twin (P10, riskiest first)
+
+**Independent test**: `pricing_vectors.json`'s five "cap:" rows pass in both `rider_total_test.dart`
+and `pricing.test.ts`; the R17 sweep test is green in both twins.
+
+- [X] T080 [P] `PricingService.equalShare(tripCost, riderSeats)` (floor division, throws
+  `ArgumentError` when `riderSeats < 1`) and the new `serviceFee`/`riderTotal` signatures
+  (`tripCost`, `riderSeats` required named params; fee trimmed to
+  `max(0, min(feePercent, equalShare - contribution))`) per `contracts/pricing.md` —
+  `lib/features/commute/domain/pricing_service.dart`
+- [X] T081 [P] TS twin: `equalShare`, and the new `serviceFee`/`riderTotal` signatures (`tripCost`,
+  `riderSeats` positional params, throws `RangeError` when `riderSeats < 1`), mirroring T080 —
+  `supabase/functions/_shared/pricing.ts`
+- [X] T082 Add `tripCost: 160, riderSeats: 3` to all 45 existing cases and append the five
+  spec-table "cap:" rows (contracts/pricing.md) — `test/fixtures/pricing_vectors.json`
+- [X] T083 [P] Update the vector reader to pass `tripCost`/`riderSeats` through to
+  `serviceFee`/`riderTotal` — `test/unit/rider_total_test.dart`
+- [X] T084 [P] Update the vector reader the same way — `supabase/functions/_shared/pricing.test.ts`
+- [X] T085 [P] R17 cap sweep test: trip cost 20–1,000 (step), rider seats 1–4, every contribution
+  in `PricingService.range(tripCost, riderSeats)` (2 EGP steps), non-subscriber/non-cash-trial,
+  assert `riderSeats * riderTotal(...) <= tripCost` — new `test/unit/pricing_cap_sweep_test.dart`
+- [X] T086 [P] Mirror T085 in TS with a local `range` helper (not exported — no server consumer
+  needs it yet) — `supabase/functions/_shared/pricing.test.ts`
+
+**Checkpoint**: `flutter test test/unit/rider_total_test.dart test/unit/pricing_cap_sweep_test.dart`
+and `node --test supabase/functions/_shared/pricing.test.ts` both green before touching callers.
+
+## Phase 15: v2.1 — basis + seed (P11)
+
+**Independent test**: the new seed invariant test passes; `flutter test` count is unchanged or
+higher, no existing test newly fails.
+
+- [X] T087 Add required `tripCost` (EGP per leg) and `riderSeats` (1–4) fields to `CommuteGroup` —
+  `lib/features/commute/domain/group.dart`
+- [X] T088 Set every seeded group to `tripCost: 160, riderSeats: 3`; reduce `sz-0725`'s free seats
+  2 → 1 each leg and `sz-0720`'s 3 → 2 each leg (R16) — `lib/features/commute/data/corridor_seed.dart`
+- [X] T089 [P] Seed invariant test: for every seeded group and both legs, `riders + freeSeats <=
+  riderSeats`, and `PricingService.range(tripCost, riderSeats).contains(price)` — new
+  `test/unit/corridor_seed_invariant_test.dart`
+- [X] T090 Find and fix any 002/003 tests asserting `sz-0725`'s/`sz-0720`'s old free-seat counts
+  (seat-left copy, waitlist/backup scoring) broken by T088 (R16 knock-on) — grep
+  `test/unit/`, `test/widget/` for `sz-0725`/`sz-0720`, fix each hit in place
+
+**Checkpoint**: `flutter test --concurrency=1` green with the new seed; `sz-0725` no longer a
+4-rider car priced at 3-seat 40 EGP.
+
+## Phase 16: v2.1 — callers + copy (P12)
+
+**Independent test**: a 160/4-trip-cost rider at 38 EGP contribution shows "38 + 2" (not "38 + 4");
+a 96/4 rider at 24 EGP shows "Service fee: none"; both ar + en.
+
+- [x] T091 [P] Pass `group.tripCost`/`group.riderSeats` into the price line's `serviceFee` call —
+  `lib/features/commute/presentation/match_result_screen.dart`
+- [x] T092 [P] Pass `view.group.tripCost`/`riderSeats` into the price line's `serviceFee` call —
+  `lib/features/daily/presentation/today/rider_today.dart`
+- [x] T093 Pass the ride's `group.tripCost`/`riderSeats` into `_riderTrips`'s `serviceFee` call —
+  `lib/features/wallet/data/fake_wallet_repository.dart`
+- [x] T094 [P] Add `groupTripCost`/`riderSeats` to the wallet-mode subtitle's `serviceFee` call (the
+  rider's wallet-mode price, not their current mode) — `lib/features/wallet/presentation/pay_method/pay_method_screen.dart`
+- [x] T095 Add `groupTripCost`/`riderSeats` to `WalletView.fee`'s `serviceFee` call; driver
+  `dayTripCost` reads `group.tripCost * 2` instead of `legShare * capacitySeats * 2` —
+  `lib/features/wallet/presentation/wallet/wallet_controller.dart`
+- [x] T096 ARB: add `priceNoFee`, `planPerTripNoFeeLine`; replace `howPayRule1`, `breakdownFee`
+  (R13 addendum, ar + en); wire `priceLine` (labels.dart) to pick `priceNoFee` for wallet mode
+  when `fee == 0`, and the plan card to pick `planPerTripNoFeeLine` when `view.fee == 0` —
+  `lib/core/l10n/app_ar.arb`, `lib/core/l10n/app_en.arb`, `lib/features/wallet/presentation/labels.dart`,
+  run `flutter gen-l10n`
+- [x] T097 [P] Widget test: a trimmed fee (160 trip cost, 4 rider seats, 38 EGP contribution →
+  "38 + 2") ar + en — `test/widget/rider_wallet_test.dart` or the relevant price-line test
+- [x] T098 [P] Widget test: a zero fee at the share (96 trip cost, 4 rider seats, 24 EGP
+  contribution → "Service fee: none") ar + en — same file as T097
+- [x] T099 Regenerate goldens touched by the T096 copy changes —
+  `test/golden/wallet_widgets_golden_test.dart`
+- [x] T100 Replace the stale "Constitution II reading" doc comment above
+  `PricingService.feeRatePercent` with the v2.1 rule per `contracts/pricing.md` —
+  `lib/features/commute/domain/pricing_service.dart`
+
+## Phase 17: v2.1 Gate
+
+- [x] T101 Gate: `flutter analyze` 0 issues, `flutter test --concurrency=1` all green,
+  `node --test "supabase/functions/_shared/*.test.ts"` all green
+- [x] T102 Run quickstart.md Scenario 5 on device, ar + en
+
+## v2.1 Dependencies
+
+```text
+Phase 14 (T080–T086, rule+twin) → Phase 15 (T087–T090, basis+seed) → Phase 16 (T091–T100, callers+copy)
+  → Phase 17 (T101–T102, gate)
+```
+
+- T080/T081 are parallel (separate files); T082–T086 need both done.
+- T087 must land before T088 (seed needs the new fields to compile); T089/T090 need T088.
+- T091/T092/T094 are parallel (separate files); T093/T095 touch shared files with T096 — do T096
+  (ARB + labels.dart) after T091–T095 so the new keys exist before any caller is asked to use them.
+
+## v2.1 Implementation Strategy
+
+Rule + twin first (P10) because every other change is a caller of it — get the pricing math and
+its proof (R17) right and tested in isolation before anything on screen can use it. Then the seed
+(P11), since it's the one change that can silently break other features' tests. Callers + copy
+(P12) last, visible on device only once the first two are solid. Gate at the end, same as every
+other v2 phase.
