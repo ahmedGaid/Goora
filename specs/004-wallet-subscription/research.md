@@ -360,3 +360,34 @@ fee was trimmed or the rider subscribed, so the entry needs no "why" flag. The b
 `breakdownNoFee` for fee 0. `priceWithFee`, `planPerTripLine` and `feeSavings` are unchanged
 — they already print the amount actually charged, and `FeeSavingsCalculator` already sums the
 stored `fee`, so the savings banner uses the trimmed figure with no code change.
+
+## v2.1 device run — T101/T102 (2026-10-12, phone `R5CNC0NK6ZT`, APK of `df257db`)
+
+Gate (T101): `flutter analyze` 0 issues · `flutter test --concurrency=1` 633 pass ·
+`node --test "supabase/functions/_shared/*.test.ts"` 113 pass.
+
+Scenario 5 (T102), fresh demo data, demo clock Mon 12 Oct 06:30, rider Sheikh Zayed → Smart Village:
+
+| step | ar | en |
+|---|---|---|
+| 1 match result (`sz-0725`) | "40 ج للسواق + 4 ج رسوم خدمة" ✓ | not re-seen live (already joined; widget tests cover en) |
+| 1 Today price tile | "44 ج · 40 ج للسواق + 4 ج رسوم خدمة" ✓ | "44 EGP · 40 EGP to the driver + 4 EGP service fee" ✓ |
+| 1 top-up 200 → After 9 PM | balance 200, then two −44 rows, balance 112 ✓ | same rows, 112 ✓ |
+| 2 `sz-0725` seats | joining works ✓ | — |
+| 3 "How paying works" | "رسوم خدمة لحد 10%" ✓ | "a service fee of up to 10%" ✓ |
+| 3 breakdown | "رسوم الخدمة · 4 ج" (no %) ✓ | "Service fee · 4 EGP" (no "(10%)") ✓ |
+| 4 driver | skipped — needs a verified driver (Scenario 3 blocker) | — |
+| 5 tests | green in T101 | — |
+
+No bug found. Notes for the founder (nothing changed):
+- **Step 2's free-seat count is not on screen.** The match card shows drivers / riders / days /
+  price, not free seats; the one-seat cut is proven by the seed (`freeSeatsGoing/Return: 1`) and
+  `corridor_seed_invariant_test.dart`, not by eye. On a device, step 2 can only check "joining works".
+- **Off-duty driver vs the cap (ties to T078).** After joining, Today reads "4 passengers ·
+  Ahmed/Mohamed, Sara, Youssef, You" in a car priced for 3 rider seats (160/3). Only the rider
+  role is billed today, so 3 × 44 = 132 ≤ 160. If T078 decides the off-duty driver pays too,
+  4 × 44 = 176 > 160 — over the Constitution II cap. Decide T078 with this in mind.
+- **Copy:** "Goora takes no cut" / "جورة مالهاش نسبة" sits right under the service-fee rule — true
+  for the driver's share, but may read as contradicting the fee. "Covers about 1 trip" /
+  "بيغطي حوالي 2 رحلات" counts round-trip days (the R14-addendum "trip" = leg vs day item), and
+  "2 رحلات" is odd Arabic. Onboarding still says "أول شهر مجاني" (R14 addendum).

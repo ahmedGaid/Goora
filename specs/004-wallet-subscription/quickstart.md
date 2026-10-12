@@ -74,8 +74,9 @@ the vectors ([contracts/pricing.md](contracts/pricing.md)), the cap sweep (R17) 
 
 1. Re-run Scenario 2 steps 1–3. **Expect** exactly the same numbers: "40 EGP to the driver + 4 EGP
    service fee", rows of −44, balance 112 (or 156).
-2. Match result for `sz-0725`: **Expect** one free seat fewer than before v2.1 (the car now has 3
-   rider seats, R16), and joining still works.
+2. Match result for `sz-0725`: **Expect** joining still works. The one-seat cut (the car now has 3
+   rider seats, R16) is not shown on screen — the match card has no free-seat count — so it is
+   proven by `corridor_seed_invariant_test.dart`, not by eye (confirmed on a phone 2026-10-12).
 3. Wallet → "How paying works": **Expect** "a service fee of up to 10%"; "What you pay per trip":
    **Expect** "Service fee" with no "(10%)".
 4. As a driver (if Scenario 3's setup is available): "Trip cost" reads 320 for a round-trip day

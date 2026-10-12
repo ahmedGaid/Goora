@@ -463,9 +463,9 @@ a 96/4 rider at 24 EGP shows "Service fee: none"; both ar + en.
 
 ## Phase 17: v2.1 Gate
 
-- [ ] T101 Gate: `flutter analyze` 0 issues, `flutter test --concurrency=1` all green,
+- [x] T101 Gate: `flutter analyze` 0 issues, `flutter test --concurrency=1` all green,
   `node --test "supabase/functions/_shared/*.test.ts"` all green
-- [ ] T102 Run quickstart.md Scenario 5 on device, ar + en
+- [x] T102 Run quickstart.md Scenario 5 on device, ar + en
 
 ## v2.1 Dependencies
 
