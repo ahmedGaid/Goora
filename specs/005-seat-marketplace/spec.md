@@ -68,6 +68,22 @@ trip cost (004 v2.1); fakes-first backend.
 - Q: How does an offered trip get booked in the demo? → A: By a real rider session using A, or by a
   Settings → Demo action "A rider books your seat".
 
+### Session 2026-10-12 (founder)
+
+- The implementer choices above are confirmed, including these three: group legs count toward the
+  2-trip limit; wallet and subscribed seats are paid at booking; identity stays hidden until
+  boarding.
+- Q: Cash amounts like 41 or 44 need change and cause arguments at the car door. → A (founder):
+  **every cash amount is a round number that needs no change: a multiple of 5 EGP** (41 → 40,
+  44 → 45, 48 → 50). Rule: take the contribution and round it to the nearest 5. If rounding up would
+  take it above the rider's equal share of the trip cost (the 004 v2.1 cap), round down instead, so
+  the cap still holds. Cash still carries no Goora fee. This applies to **every** cash payment, both
+  one-off seats (this feature) and group trips under 004's cash trial, so it amends 004: the cash
+  price line, the driver's "Received N EGP cash" button and the recorded cash amount all use the
+  rounded amount. Wallet and subscribed prices stay exact to the pound (no change needed on a
+  screen). In the same car a cash rider may therefore pay a few pounds more or less than a wallet
+  rider's contribution; the demo corridor (40) does not change.
+
 ### Open — recorded, not decided here (founder)
 
 - **T078 (carried from 004):** does an off-duty driver riding in another driver's car pay the
@@ -109,7 +125,8 @@ group member, book a seat, see the right price (44 for a wallet or new rider, 40
 4. **Given** a non-subscriber paying from the wallet (or with no payment method yet), **Then** each
    card reads "44 EGP · 40 to the driver + 4 service fee" on the demo corridor; **given** a
    subscriber, "40 EGP · no fees (subscribed)"; **given** a cash-trial rider, "Pay 40 EGP cash to the
-   driver". Every price comes from the same pricing rule as 004, cap included.
+   driver" (cash amounts are always a multiple of 5, FR-029). Every price comes from the same
+   pricing rule as 004, cap included.
 5. **Given** a non-subscriber, **When** they book, **Then** the confirmation shows the summary
    (driver, pickup, time, price) and an upsell card "Liked it? Make it your daily commute" that opens
    commute setup with "Every day" already chosen. **Given** a subscriber, **Then** the confirmation
@@ -315,6 +332,10 @@ refused.
 - The demo clock moves past a trip's departure: Empty seats and Find riders stop listing it.
 - A full 4-rider-seat car at the top of the price range: the seat shows "38 + 2", not "38 + 4" (004
   v2.1 trimming applies to one-off seats).
+- Cash rounding (FR-029): a 44 EGP contribution is paid as 45 cash, 42 as 40, 48 as 50. A 38 EGP
+  contribution in a 160 EGP / 4-seat car rounds up to 40, which equals the equal share, so it stays
+  40. A 38 EGP contribution where the equal share is 39 rounds down to 35, because 40 would pass the
+  cap. If rounding down would give 0, cash is not offered for that seat (wallet only).
 
 ## Requirements *(mandatory)*
 
@@ -357,6 +378,12 @@ refused.
   NOT be stopped.
 - **FR-010**: A cash one-off trip MUST count toward the 10 cash trips and get the driver's "Received
   cash" / "Didn't pay" step after drop-off, as in 004.
+- **FR-029**: Every cash amount, for one-off seats and for group trips under 004's cash trial, MUST
+  be a multiple of 5 EGP: the contribution rounded to the nearest 5, or rounded down to a multiple
+  of 5 when rounding up would exceed the rider's equal share of the trip cost. The rider's price
+  line, the driver's "Received N EGP cash" step and the recorded cash amount MUST all show the same
+  rounded amount. Cash MUST NOT be offered for a seat whose rounded amount would be 0. Wallet and
+  subscribed prices MUST NOT be rounded.
 
 **Post your trip (B)**
 
@@ -444,7 +471,8 @@ refused.
 - **SC-001**: A group member can go from Today to a booked seat in 3 taps or fewer when their
   payment method is set and their balance covers the seat.
 - **SC-002**: Across every trip cost from 20 to 1,000 EGP, 1 to 4 rider seats and every allowed
-  contribution, no seat price (any plan) makes riders' total exceed the trip cost: 0 cases.
+  contribution, no seat price (any plan) makes riders' total exceed the trip cost: 0 cases; and
+  every cash amount in that sweep is a multiple of 5 and at or below the equal share: 0 exceptions.
 - **SC-003**: No sequence of offers, accepts and joins gives a driver more than 2 trips in one day:
   0 cases across the scripted sequences in the tests.
 - **SC-004**: 100% of driver-facing request and booked-rider cards in this feature show no name or
