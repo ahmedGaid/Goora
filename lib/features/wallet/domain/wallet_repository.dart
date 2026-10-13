@@ -39,3 +39,21 @@ abstract interface class WalletRepository {
   /// Failure leaves balance/activity untouched; never includes cash received.
   Future<PaymentResult> withdraw(String ownerId, {required int amount});
 }
+
+/// How the marketplace moves money for a one-off seat (005 contracts/repositories.md
+/// "Seams", research R7, R9). Wallet and plan seats are paid at booking; cash
+/// seats never come here.
+abstract interface class SeatLedger {
+  /// Debits [total] ([fee] recorded); a simulated failure leaves balance and
+  /// activity untouched (SC-006). One debit per [bookingId].
+  Future<PaymentResult> debitSeat(String personId,
+      {required String bookingId,
+      required String rideId,
+      required int total,
+      required int fee,
+      required CalendarDate date});
+
+  /// One credit row per [bookingId]; an [amount] of 0 writes no row.
+  Future<void> refundSeat(String personId,
+      {required String bookingId, required String rideId, required int amount, required CalendarDate date});
+}

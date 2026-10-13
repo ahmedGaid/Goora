@@ -18,7 +18,12 @@ class ActivityRow extends StatelessWidget {
   /// The group's per-trip contribution, for a cash trip's "Paid N EGP cash".
   final int contribution;
 
-  static const _credit = {ActivityKind.topUp, ActivityKind.tripIncome, ActivityKind.feeReceived};
+  static const _credit = {
+    ActivityKind.topUp,
+    ActivityKind.tripIncome,
+    ActivityKind.feeReceived,
+    ActivityKind.seatRefund,
+  };
 
   @override
   Widget build(BuildContext context) {

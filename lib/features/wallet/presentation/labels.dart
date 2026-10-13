@@ -45,13 +45,16 @@ extension WalletLabels on AppLocalizations {
         ActivityKind.cashTrip => actCashTrip,
         ActivityKind.subscription => actSubscription,
         ActivityKind.cashReceived => cashMarkedReceived,
+        ActivityKind.seatBooked => actSeatBooked,
+        ActivityKind.seatRefund => actSeatRefund,
       };
 
   /// The second line under a row: each trip's fee on its own (FR-011).
   String? activityCaption(ActivityEntry entry, {required int contribution}) {
     if (entry.notCollected) return notChargedCash;
     return switch (entry.kind) {
-      ActivityKind.trip => entry.fee > 0 ? priceWithFee(entry.toDriver, entry.fee) : breakdownNoFee,
+      ActivityKind.trip || ActivityKind.seatBooked =>
+        entry.fee > 0 ? priceWithFee(entry.toDriver, entry.fee) : breakdownNoFee,
       ActivityKind.cashTrip => cashPaidLine(contribution),
       _ => null,
     };

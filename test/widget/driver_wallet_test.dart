@@ -101,4 +101,7 @@ final class _AlwaysFail implements PaymentProvider {
 
   @override
   Future<PaymentResult> withdraw({required int amount}) async => PaymentResult.failure;
+
+  @override
+  Future<PaymentResult> debit({required int amount}) async => PaymentResult.failure;
 }

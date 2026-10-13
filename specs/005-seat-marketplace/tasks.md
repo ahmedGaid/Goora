@@ -231,15 +231,15 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 **Seams (R9)**
 
-- [ ] T036 [P] `lib/features/wallet/domain/activity_entry.dart`: `ActivityKind.seatBooked` (amount =
+- [X] T036 [P] `lib/features/wallet/domain/activity_entry.dart`: `ActivityKind.seatBooked` (amount =
   paid, fee, `rideId`) and `seatRefund` (credit, `rideId`); `lib/features/wallet/domain/wallet_repository.dart`:
   `SeatLedger` interface per contracts/repositories.md
-- [ ] T037 `lib/features/wallet/data/fake_wallet_repository.dart` implements `SeatLedger`:
+- [X] T037 `lib/features/wallet/data/fake_wallet_repository.dart` implements `SeatLedger`:
   `debitSeat` writes one `seatBooked` row (fee recorded); a simulated `FakePaymentProvider` failure
   leaves balance and activity untouched; `refundSeat` writes one `seatRefund` row, none when amount
   is 0. Tests in `test/unit/fake_wallet_repository_test.dart` (44 debit → balance −44; refund 44 →
   balance back, one row each way — SC-005; failure → unchanged — SC-006)
-- [ ] T038 `lib/features/wallet/data/fake_wallet_repository.dart`: constructor callback
+- [X] T038 `lib/features/wallet/data/fake_wallet_repository.dart`: constructor callback
   `Future<List<DoneOneOff>> Function() oneOffs` (`DoneOneOff = {rideId, date, leg, paidBy,
   contribution, tripCost, riderSeats, riderId, driverId}`); rider: cash ones interleaved into the 004
   cash-trial fold by date then leg (count toward the 10, banner after 7, "Didn't pay" strikes);
@@ -249,7 +249,17 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   idempotent by id. Default `() async => []` so existing tests are untouched; new tests in
   `test/unit/fake_wallet_repository_test.dart` (incl. seatBooked 44 + kept group trip on the same
   rideId → balance −44 once)
-- [ ] T039 [P] `lib/features/wallet/presentation/labels.dart` (`activityLabel`): rows for
+  - Built with choices the contract left open: `PaidBy` moved to `wallet/domain/done_one_off.dart`
+    (beside `DoneOneOff`; `booking.dart` re-exports it) so the wallet never imports the marketplace
+    (R9); `PaymentProvider` gained `debit({amount})` so a seat debit can fail like a top-up (SC-006);
+    `debitSeat`/`refundSeat` are idempotent by `bookingId`; a 003 `Charge` on a ride paid at booking
+    is skipped too (same one-ride rule; the booking refund already nets what is owed — R7); a cash
+    one-off past the trial is a wallet trip at its own basis, fee-free only if a plan started before
+    that day (a one-off has no group time; avoids 004 R14 re-pricing); a once user with no group
+    gets cash one-offs folded (003 charges/absences still need a group).
+  - Gap, not in T036–T039: `FeeSavingsCalculator.feesInMonth` counts `trip` rows only, so seat fees
+    don't feed the "you paid X in fees" upsell yet (refunds return the fee in full — R7).
+- [X] T039 [P] `lib/features/wallet/presentation/labels.dart` (`activityLabel`): rows for
   `seatBooked` ("seat", 40 + 4 fee breakdown) and `seatRefund` ("Refund")
 - [ ] T040 `lib/features/daily/domain/notice.dart`: add `NoticeKind.seatBooked`, `seatReclaimed`,
   `requestAccepted`, `requestExpired`, `tripCancelledByDriver` and `abstract interface class

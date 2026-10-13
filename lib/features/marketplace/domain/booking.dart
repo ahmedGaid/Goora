@@ -2,9 +2,12 @@ import '../../../core/time/calendar_date.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../daily/domain/attendance_rules.dart';
+import '../../wallet/domain/done_one_off.dart';
 import '../../wallet/domain/seat_price.dart';
 import 'anonymous_rider.dart';
 import 'seat_math.dart';
+
+export '../../wallet/domain/done_one_off.dart' show PaidBy;
 
 enum BookingSourceKind { groupSeat, offer, request }
 
@@ -36,9 +39,6 @@ final class BookingSource {
   @override
   String toString() => 'BookingSource(${kind.name}, $id)';
 }
-
-/// `plan` = subscribed or company.
-enum PaidBy { wallet, cash, plan }
 
 /// booked → done (trip end passed) · booked → cancelled (rider; refund =
 /// BookingRefund.amount) · booked → reclaimed (a subscriber took it before the
