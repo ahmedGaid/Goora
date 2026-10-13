@@ -4,9 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
 import 'package:goora/app/routes.dart';
 import 'package:goora/core/widgets/goora_status_chip.dart';
+import 'package:goora/features/commute/data/corridor_seed.dart';
+import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/daily/domain/ride.dart';
+import 'package:goora/features/daily/presentation/today/cash_received_row.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/cash_mark.dart';
+import 'package:goora/features/wallet/domain/payment_method.dart';
+import 'package:goora/features/wallet/domain/seat_price.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -91,6 +97,36 @@ void main() {
       await tester.tap(find.byKey(const Key('withdraw-confirm')));
       await tester.pumpAndSettle();
       expect(find.descendant(of: card, matching: find.text(l.egpAmount(80))), findsOneWidget);
+    });
+
+    testWidgets('[$code] 005 FR-029: at 44 the button and the stored amount both read the cash amount, 45',
+        (tester) async {
+      final group = CorridorSeed.groups.firstWhere((g) => g.id == 'sz-0725');
+      final ride = Ride(
+        groupId: group.id,
+        date: _thu,
+        leg: Leg.going,
+        driverId: 'me',
+        passengers: const [],
+        stops: const [],
+      );
+      final c = await pumpScreen(
+        tester,
+        Scaffold(
+          body: CashReceivedRow(
+            ride: ride,
+            member: group.member('youssef')!,
+            price: SeatPrice.of(44, tripCost: 160, riderSeats: 3, mode: PricingMode.cash),
+          ),
+        ),
+        locale: locale,
+        overrides: dailyOverrides(TestClock(at(_thu, 8, 5))),
+      );
+      expect(find.text(l.cashReceived(45)), findsOneWidget);
+      await tester.tap(find.byKey(const Key('cash-received-youssef')));
+      await tester.pumpAndSettle();
+      final marks = await c.read(walletRepositoryProvider).cashMarks(ride.id);
+      expect(marks.single.amount, 45);
     });
   }
 }

@@ -140,25 +140,29 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 ## Phase 3: 004 cash amendment — FR-029 (plan P2; ships value alone, could merge first)
 
-- [ ] T021 `lib/features/wallet/presentation/labels.dart`: `priceLine` takes a `SeatPrice`; cash
+- [X] T021 `lib/features/wallet/presentation/labels.dart`: `priceLine` takes a `SeatPrice`; cash
   mode → `priceCash(price.cash!)`; cash mode with `cash == null` → the wallet line; other modes
   unchanged (fee 0 → `priceNoFee`)
-- [ ] T022 Switch the price-line callers to `priceLine(SeatPrice.of(contribution, tripCost:,
+- [X] T022 Switch the price-line callers to `priceLine(SeatPrice.of(contribution, tripCost:,
   riderSeats:, mode:))` using the group's basis: `lib/features/commute/presentation/match_result_screen.dart`,
   `lib/features/daily/presentation/today/rider_today.dart`,
   `lib/features/wallet/presentation/pay_method/pay_method_screen.dart` (keep its loading-frame guard:
   no quote while `view == null || view.riderSeats < 1`)
-- [ ] T023 `lib/features/wallet/presentation/wallet/rider_wallet.dart`: cash plan card uses
+- [X] T023 `lib/features/wallet/presentation/wallet/rider_wallet.dart`: cash plan card uses
   `priceCash` of `SeatPrice.of(view.legShare, …basis, mode: cash).cash`
-- [ ] T024 `lib/features/daily/presentation/today/cash_after_trip.dart`: extract the cash row into
+- [X] T024 `lib/features/daily/presentation/today/cash_after_trip.dart`: extract the cash row into
   `lib/features/daily/presentation/today/cash_received_row.dart` (fed by a `SeatPrice` + rideId +
   rider), label "Received N EGP cash" and recorded `CashMark.amount` both = `SeatPrice.cash`
-- [ ] T025 Widget tests at contribution 44 (160/3), ar + en: `test/widget/commute_screens_test.dart`
+- [X] T025 Widget tests at contribution 44 (160/3), ar + en: `test/widget/commute_screens_test.dart`
   ("Pay 45 EGP cash" on the match result), `test/widget/driver_cash_test.dart` ("Received 45 EGP
   cash" and stored `CashMark.amount == 45`), `test/widget/rider_wallet_test.dart` (cash plan card
   45); the demo corridor (40) still reads 40 everywhere
-- [ ] T026 Checkpoint P2: gates green; regenerate only goldens whose image actually changed (check
+- [X] T026 Checkpoint P2: gates green; regenerate only goldens whose image actually changed (check
   `git status` after `--update-goldens`)
+  - Found while building: the cash activity row (`labels.dart` `cashPaidLine(contribution)`, a
+    `cashTrip` entry's breakdown) still prints the contribution, not the cash amount — not one of
+    contracts/pricing.md's four callers. Same on the demo corridor (40 = 40); diverges only off it.
+    Pick up when Phase 4+ gives cash trips a `SeatPrice` (or `CashMark.amount`) to read.
 
 ---
 

@@ -18,11 +18,11 @@ import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../wallet/data/providers.dart';
 import '../../wallet/domain/payment_method.dart';
+import '../../wallet/domain/seat_price.dart';
 import '../../wallet/presentation/labels.dart';
 import '../data/providers.dart';
 import '../domain/group.dart';
 import '../domain/matching_service.dart';
-import '../domain/pricing_service.dart';
 import 'commute_controller.dart';
 import 'labels.dart';
 
@@ -71,9 +71,7 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
     final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
     final priceText = viewerIsDriver
         ? l10n.priceDriver(g.price)
-        : l10n.priceLine(g.price, mode,
-            fee: PricingService.serviceFee(g.price,
-                tripCost: g.tripCost, riderSeats: g.riderSeats, isSubscriber: false, isCashTrial: false));
+        : l10n.priceLine(SeatPrice.of(g.price, tripCost: g.tripCost, riderSeats: g.riderSeats, mode: mode));
 
     return OnboardingScaffold(
       header: GooraChip(key: const Key('match-chip'), label: l10n.matchPercent(main.score)),

@@ -3,6 +3,7 @@ import '../../../core/time/calendar_date.dart';
 import '../domain/activity_entry.dart';
 import '../domain/payment_method.dart';
 import '../domain/plan.dart';
+import '../domain/seat_price.dart';
 
 /// Turns wallet/plan domain values into localized text.
 extension WalletLabels on AppLocalizations {
@@ -22,11 +23,14 @@ extension WalletLabels on AppLocalizations {
   String shortDate(CalendarDate d) => '${d.day}/${d.month}';
 
   /// FR-004: the one price line for a trip, by the rider's arrangement.
-  String priceLine(int contribution, PricingMode mode, {required int fee}) => switch (mode) {
-        PricingMode.wallet => fee == 0 ? priceNoFee(contribution) : priceWithFee(contribution, fee),
-        PricingMode.subscribed => priceSubscribed(contribution),
-        PricingMode.company => priceCompany(contribution),
-        PricingMode.cash => priceCash(contribution),
+  /// Cash reads the rounded cash amount (005 FR-029); when no cash amount
+  /// fits, the quote is the wallet price and so is the line.
+  String priceLine(SeatPrice price) => switch (price.mode) {
+        PricingMode.cash when price.cashOffered => priceCash(price.cash!),
+        PricingMode.wallet || PricingMode.cash =>
+          price.fee == 0 ? priceNoFee(price.contribution) : priceWithFee(price.contribution, price.fee),
+        PricingMode.subscribed => priceSubscribed(price.contribution),
+        PricingMode.company => priceCompany(price.contribution),
       };
 
   String activityLabel(ActivityEntry entry) => switch (entry.kind) {

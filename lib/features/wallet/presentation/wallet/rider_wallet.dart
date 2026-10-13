@@ -13,6 +13,7 @@ import '../../../../core/widgets/goora_icons.dart';
 import '../../domain/cash_trial_policy.dart';
 import '../../domain/payment_method.dart';
 import '../../domain/plan.dart';
+import '../../domain/seat_price.dart';
 import '../labels.dart';
 import 'activity_row.dart';
 import 'change_plan_sheet.dart';
@@ -162,7 +163,13 @@ class _PlanCard extends StatelessWidget {
     final (String title, String line) = switch (view.mode) {
       PricingMode.company => (l10n.planTypeTitle(PlanType.company), l10n.planCompanyActive),
       PricingMode.subscribed => (l10n.planTypeTitle(plan!.type), l10n.planSubscribedLine(l10n.shortDate(plan.untilDate!))),
-      PricingMode.cash => (l10n.planPayPerTrip, l10n.priceCash(view.legShare)),
+      PricingMode.cash => (
+          l10n.planPayPerTrip,
+          view.riderSeats < 1
+              ? l10n.priceCash(view.legShare)
+              : l10n.priceLine(SeatPrice.of(view.legShare,
+                  tripCost: view.groupTripCost, riderSeats: view.riderSeats, mode: PricingMode.cash)),
+        ),
       PricingMode.wallet => (
           l10n.planPayPerTrip,
           view.lapsed
