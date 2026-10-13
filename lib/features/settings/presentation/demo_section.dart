@@ -25,6 +25,8 @@ import '../../daily/data/providers.dart';
 import '../../daily/domain/schedule.dart';
 import '../../daily/presentation/labels.dart';
 import '../../daily/presentation/today/today_controller.dart';
+import '../../marketplace/data/fake_marketplace_repository.dart';
+import '../../marketplace/data/providers.dart';
 import '../../onboarding/data/providers.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../wallet/data/fake_wallet_repository.dart';
@@ -135,8 +137,12 @@ class DemoSection extends ConsumerWidget {
       await prefs.remove(key);
     }
     await FakeWalletRepository.clearAll(prefs);
+    // Every market.* key: offers, requests, bookings, and the groups and members the catalog keeps.
+    await FakeMarketplaceRepository.clearAll(prefs);
     await ref.read(profileRepositoryProvider).clear();
     await ref.read(sessionControllerProvider.notifier).signOut();
+    ref.invalidate(groupCatalogProvider);
+    ref.invalidate(marketplaceRepositoryProvider);
     ref.invalidate(dailyCommuteRepositoryProvider);
     ref.invalidate(commuteRepositoryProvider);
     // Signed out now — go back to the very start, not just show a message.

@@ -278,12 +278,12 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 **Store**
 
-- [ ] T041 `lib/features/marketplace/data/market_seed.dart` (R14): 12 open morning requests SZ→SV
+- [x] T041 `lib/features/marketplace/data/market_seed.dart` (R14): 12 open morning requests SZ→SV
   going 7:00–8:00 (mixed women/men, once/daily, rating or `null` = New, `detourFrom` per area); 4
   evening requests; offers `of-seed-tarek` (once, SZ→SV going 7:30, 3 seats, contribution **44**) and
   `of-seed-heba` (daily, return 17:10, 3 seats, 40); a fake rider pool and a fake driver pool for the
   demo actions
-- [ ] T042 `lib/features/marketplace/data/fake_marketplace_repository.dart`: constructor takes
+- [x] T042 `lib/features/marketplace/data/fake_marketplace_repository.dart`: constructor takes
   prefs, `GroupCatalog`, `DailyCommuteRepository`, `NoticeSink`, `SeatLedger`, wallet/plan reader,
   `TrustRepository`, session/person id; storage keys `market.offers`, `market.requests`,
   `market.bookings`, `market.groups`, `market.members.<groupId>`, `market.seedCursor`; seeded items
@@ -291,15 +291,27 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   the person actually drives — backup-covered or driverless legs excluded; offered trips open / full /
   done / cancelled-with-riders; trips created by accepting; `leadsGroup`); `doneOneOffs()` for T038;
   `clear()` removes every `market.*` key. Story methods throw `UnimplementedError` until their phase
-- [ ] T043 `test/unit/fake_marketplace_repository_test.dart` (driver day): group leg counts; a leg
+- [x] T043 `test/unit/fake_marketplace_repository_test.dart` (driver day): group leg counts; a leg
   covered by a backup doesn't; offer cancelled with no bookings is dropped (R5), cancelled with a
   booking counts; `leadsGroup` true for sz-0725's driver
-- [ ] T044 `lib/features/marketplace/data/providers.dart`: `marketplaceRepositoryProvider` wiring
+- [x] T044 `lib/features/marketplace/data/providers.dart`: `marketplaceRepositoryProvider` wiring
   the seams; pass `FakeMarketplaceRepository.doneOneOffs` into the wallet repository provider's
   `oneOffs`; `lib/features/settings/presentation/demo_section.dart` `_reset` also clears `market.*`
   and `GroupCatalog.clear()` (test in `test/unit/fake_marketplace_repository_test.dart`: reset leaves
   no `market.*` key)
-- [ ] T045 Checkpoint P3: gates green (all 003/004 tests untouched and passing)
+- [x] T045 Checkpoint P3: gates green (all 003/004 tests untouched and passing)
+  - Choices, not in the contract (T041–T045): `MarketSeed.requests/offers(now)` take the demo clock, so every
+    seeded request/offer is dated its next workday and the corridor never goes stale; stored copies overlay the
+    seed by id. `doneOneOffs()` was added to `MarketplaceRepository` (the provider hands the wallet the interface).
+    `FakeMarketplaceRepository` takes the wallet/ledger as functions and keeps `notices`/`ledger`/`wallet`/`trust`
+    as public fields until a story uses them: `walletRepository` reads this repo's trips and this repo reads the
+    wallet back, and Riverpod throws `CircularDependencyError` on even a lazy `ref.read` when the other side `watch`es
+    it. `driverDay`: a group leg's `taken` = `riderSeats − free` (capped, so sz-0725's 4 passengers show 3 of 3);
+    a cancelled offer with riders counts as full (`taken = seats`) so a request can't join a trip that isn't
+    running; a `grouped` daily offer is skipped (its group leg already counts). `doneOneOffs` resolves a
+    request-source booking through `request.tripId` (offer id, or `<groupId>:<date>:<leg>`); an unknown trip is
+    left out. Reset = `FakeMarketplaceRepository.clearAll` (every `market.*` key, groups and members included).
+    Story methods throw `UnimplementedError('Phase N (US…)')`. Gates: analyze 0 · test 803 (+27) · node 148.
 
 ---
 

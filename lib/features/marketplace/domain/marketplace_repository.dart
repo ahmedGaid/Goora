@@ -5,6 +5,7 @@ import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/domain/place.dart';
 import '../../daily/domain/trust.dart';
+import '../../wallet/domain/done_one_off.dart';
 import '../../wallet/domain/seat_price.dart';
 import 'anonymous_rider.dart';
 import 'booking.dart';
@@ -324,6 +325,10 @@ abstract interface class MarketplaceRepository {
 
   // US6 — a subscriber takes the seat
   Future<ReclaimResult> reclaim(String bookingId, {required WallTime now});
+
+  /// Every finished one-off seat, for the wallet's cash trial and the
+  /// driver's income (research R9, T038). Not a screen's call.
+  Future<List<DoneOneOff>> doneOneOffs();
 
   // Demo (debug only, FR-028)
   Future<DemoResult> demoDriverAccepts({required WallTime now});
