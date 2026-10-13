@@ -261,7 +261,7 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
     don't feed the "you paid X in fees" upsell yet (refunds return the fee in full — R7).
 - [X] T039 [P] `lib/features/wallet/presentation/labels.dart` (`activityLabel`): rows for
   `seatBooked` ("seat", 40 + 4 fee breakdown) and `seatRefund` ("Refund")
-- [ ] T040 `lib/features/daily/domain/notice.dart`: add `NoticeKind.seatBooked`, `seatReclaimed`,
+- [X] T040 `lib/features/daily/domain/notice.dart`: add `NoticeKind.seatBooked`, `seatReclaimed`,
   `requestAccepted`, `requestExpired`, `tripCancelledByDriver` and `abstract interface class
   NoticeSink { Future<void> post(NoticeKind kind, Map<String, String> params); Future<void>
   recordReliability(ReliabilityEvent e); }` per contracts/repositories.md (FR-017, R9: existing
@@ -270,6 +270,11 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   bell/inbox stream unchanged; copy for the five kinds in `lib/features/daily/presentation/labels.dart`;
   `seatReclaimed` notice renders "Empty seats" / "Post your trip" actions like the no-cover notice;
   tests in `test/unit/fake_daily_repository_test.dart`
+  - Choices, not in the contract: `seatBooked` notice reuses `seatBookedTitle` (no day param); the
+    `seatReclaimed` actions use `seeEmptySeats` ("See empty seats") + `postReq` ("Post your trip"),
+    shown in the inbox row (`notice-empty-seats`, `notice-post-trip`), close the sheet, then push the
+    route. `recordReliability` is idempotent per (person, ride, kind) and does not check the 9 PM /
+    ≥ 1 booking rule — the caller (marketplace, T05x) does. `post` always posts `toMe: true`.
 
 **Store**
 

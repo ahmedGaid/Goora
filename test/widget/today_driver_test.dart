@@ -6,7 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/widgets/goora_status_chip.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
+import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/domain/absence.dart';
+import 'package:goora/features/daily/domain/notice.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 
 import '../helpers/daily_fakes.dart';
@@ -59,6 +61,21 @@ void main() {
       expect(find.text(l.reqsOnRoute), findsOneWidget);
       expect(find.text(l.reqPrivacy), findsOneWidget);
       expect(find.text(l.sos), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('[$code] inbox: seat reclaimed shows its text and the two actions (T040)', (tester) async {
+      final c = await _pump(tester, TestClock(at(_wed, 12, 0)), code);
+      await (c.read(dailyCommuteRepositoryProvider) as NoticeSink)
+          .post(NoticeKind.seatReclaimed, {'day': _thu.toIso(), 'amount': '44'});
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('inbox')));
+      await tester.pumpAndSettle();
+      expect(find.text(l.seatReclaimed(l.dayThu, 44)), findsOneWidget);
+      expect(find.byKey(const Key('notice-empty-seats')), findsOneWidget);
+      expect(find.byKey(const Key('notice-post-trip')), findsOneWidget);
+      expect(find.text(l.seeEmptySeats), findsOneWidget);
+      expect(find.text(l.postReq), findsWidgets);
       expect(tester.takeException(), isNull);
     });
 

@@ -35,7 +35,7 @@ import 'daily_seed.dart';
 /// Daily commute on fake data over shared_preferences (data-model "Fake
 /// storage keys"). The person joins the seeded group as member [meId] with
 /// the role and legs from their 001/002 profiles.
-final class FakeDailyCommuteRepository implements DailyCommuteRepository {
+final class FakeDailyCommuteRepository implements DailyCommuteRepository, NoticeSink {
   FakeDailyCommuteRepository(
     this._prefs, {
     required this._commute,
@@ -804,6 +804,17 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
     list.add(Notice(id: 'n${list.length + 1}', kind: kind, createdAt: _now(), params: params, toMe: toMe));
     await _writeList(noticesKey, list, (n) => n.toJson());
     _noticeUpdates.add(_notices());
+  }
+
+  @override
+  Future<void> post(NoticeKind kind, Map<String, String> params) => _notify(kind, params);
+
+  @override
+  Future<void> recordReliability(ReliabilityEvent event) async {
+    final events = _events();
+    final seen = events.any((e) => e.personId == event.personId && e.rideId == event.rideId && e.kind == event.kind);
+    if (seen) return;
+    await _writeList(eventsKey, [...events, event], (e) => e.toJson());
   }
 
   /// Debug "Reset demo data" (research R11).
