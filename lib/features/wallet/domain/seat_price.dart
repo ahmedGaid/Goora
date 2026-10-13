@@ -40,4 +40,26 @@ final class SeatPrice {
 
   /// What actually moves: the cash amount (cash mode, when offered) or [total].
   int get payable => mode == PricingMode.cash && cash != null ? cash! : total;
+
+  /// Stored as quoted: a request's or booking's price is fixed (FR-022), so it
+  /// is never re-derived on read.
+  Map<String, Object?> toJson() => {'contribution': contribution, 'fee': fee, 'cash': cash, 'mode': mode.name};
+
+  static SeatPrice fromJson(Map<String, Object?> j) => SeatPrice(
+        contribution: j['contribution']! as int,
+        fee: j['fee']! as int,
+        cash: j['cash'] as int?,
+        mode: PricingMode.values.byName(j['mode']! as String),
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is SeatPrice &&
+      other.contribution == contribution &&
+      other.fee == fee &&
+      other.cash == cash &&
+      other.mode == mode;
+
+  @override
+  int get hashCode => Object.hash(contribution, fee, cash, mode);
 }

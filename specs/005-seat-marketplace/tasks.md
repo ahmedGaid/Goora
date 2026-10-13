@@ -201,26 +201,33 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 **Marketplace domain (data-model.md)**
 
-- [ ] T031 [P] `lib/features/marketplace/domain/anonymous_rider.dart` (`isWoman`, `rating?`; no name,
+- [X] T031 [P] `lib/features/marketplace/domain/anonymous_rider.dart` (`isWoman`, `rating?`; no name,
   initials, photo or member id) and `offered_trip.dart` (`OfferedTrip` all data-model fields; enums
   `Repeat {once, daily}`, `OfferStatus {open, full, departed, done, cancelled, grouped}`,
   `OfferOrigin {published, fromRequest}`; `seats` 1–4 and ≤ `riderSeats`; JSON)
-- [ ] T032 [P] `lib/features/marketplace/domain/trip_request.dart` (`TripRequest`, `RequestStatus
+- [X] T032 [P] `lib/features/marketplace/domain/trip_request.dart` (`TripRequest`, `RequestStatus
   {posted, accepted, withdrawn, cancelled, expired}`, `detourFrom: Map<Area,int>`, fixed `SeatPrice`;
   JSON) and `booking.dart` (`Booking`, `BookingSource {groupSeat, offer, request}` with ids,
   `PaidBy {wallet, cash, plan}`, `BookingStatus {booked, done, cancelled, reclaimed, refunded}`,
   `rideId` = 003 `Ride.idFor` for group seats / `offer:<tripId>`; `reclaimable(now)` =
   `!isSubscriber && !AttendanceRules.isLate(date, bookedAt) && !AttendanceRules.isLate(date, now)`;
   JSON)
-- [ ] T033 [P] `lib/features/marketplace/domain/seat_offer.dart` (derived, never stored) and
+- [X] T033 [P] `lib/features/marketplace/domain/seat_offer.dart` (derived, never stored) and
   `driver_day.dart` (`DriverDay {date, trips: List<DayTrip>, leadsGroup}`)
-- [ ] T034 `test/unit/marketplace_models_test.dart`: JSON round trip for `OfferedTrip`,
+- [X] T034 `test/unit/marketplace_models_test.dart`: JSON round trip for `OfferedTrip`,
   `TripRequest`, `Booking`; `reclaimable` at 20:59 / 21:00 / 21:01 the evening before and for a
   same-day booking; subscriber never reclaimable
-- [ ] T035 `lib/features/marketplace/domain/marketplace_repository.dart`: the interface exactly as
+- [X] T035 `lib/features/marketplace/domain/marketplace_repository.dart`: the interface exactly as
   contracts/repositories.md, sealed results `BookResult`, `PublishResult`, `AcceptResult`,
   `PostResult`, `ReclaimResult`, `CancelResult`, `DemoResult`; `TripDraft`, `OfferDraft`,
   `OfferLive`, `RequestCard` (no name, no photo — FR-023), `PartOfDay {morning, evening}`
+  - Built with choices the contract left open: `reclaimable` also needs `status == booked` (a
+    cancelled/done booking holds no seat); `CancelResult` = `BookingCancelled(refund)` |
+    `NotCancellable`; `DemoResult` = `DemoDone` | `DemoNothing` | `DemoTooLate` (US6 "Too late to
+    reclaim"); `TripDraft`/`OfferDraft` carry leg, from, to, time, repeat (+ seats, contribution) —
+    no day (R13) and no free price (FR-022); `OfferLive.riders` = `LiveRider {AnonymousRider,
+    firstName?}`; `SeatOffer.driver` = `SeatDriver {id, firstName, initials, rating}`. `SeatPrice`
+    gained `toJson`/`fromJson` + value equality (stored quotes are fixed).
 
 **Seams (R9)**
 
