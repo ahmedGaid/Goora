@@ -23,6 +23,7 @@ DailyCommuteRepository dailyCommuteRepository(Ref ref) => FakeDailyCommuteReposi
       commute: ref.watch(commuteRepositoryProvider),
       person: () => ref.read(sessionControllerProvider).profile,
       now: ref.watch(nowProvider),
+      catalog: ref.watch(groupCatalogProvider),
     );
 
 @Riverpod(keepAlive: true)

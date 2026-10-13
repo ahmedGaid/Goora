@@ -7,9 +7,10 @@ import '../domain/commute_repository.dart';
 import '../domain/group.dart';
 import '../domain/place.dart';
 import 'corridor_seed.dart';
+import 'group_catalog.dart';
 
 final class FakeCommuteRepository implements CommuteRepository {
-  FakeCommuteRepository(this._prefs, {List<CommuteGroup>? groups}) : _groups = groups ?? CorridorSeed.groups;
+  FakeCommuteRepository(this._prefs, {GroupCatalog? catalog}) : _catalog = catalog ?? GroupCatalog(_prefs);
 
   static const _profileKey = 'commute.profile';
   /// Read synchronously at start-up to resume members at Today (research R1).
@@ -22,7 +23,9 @@ final class FakeCommuteRepository implements CommuteRepository {
   static const allKeys = [_profileKey, membershipKey, _waitlistKey];
 
   final SharedPreferences _prefs;
-  final List<CommuteGroup> _groups;
+
+  /// Seeded corridor groups plus groups the marketplace created (005 R10).
+  final GroupCatalog _catalog;
 
   @override
   List<Place> homePlaces() => CorridorSeed.homePlaces;
@@ -42,7 +45,7 @@ final class FakeCommuteRepository implements CommuteRepository {
 
   @override
   Future<List<CommuteGroup>> groupsFor(Area origin, Area destination) async =>
-      _groups.where((g) => g.origin == origin && g.destination == destination).toList();
+      _catalog.all().where((g) => g.origin == origin && g.destination == destination).toList();
 
   @override
   Future<int> joinWaitlist(Area origin, Area destination) async {
@@ -51,7 +54,10 @@ final class FakeCommuteRepository implements CommuteRepository {
   }
 
   @override
-  Future<void> join(String groupId) => _prefs.setString(membershipKey, groupId);
+  Future<void> join(String groupId) {
+    if (_catalog.byId(groupId) == null) throw ArgumentError.value(groupId, 'groupId', 'no such group');
+    return _prefs.setString(membershipKey, groupId);
+  }
 
   @override
   Future<String?> joinedGroupId() async => _prefs.getString(membershipKey);

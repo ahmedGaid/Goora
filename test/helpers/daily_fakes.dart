@@ -7,8 +7,10 @@ import 'package:goora/core/time/now_provider.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
 import 'package:goora/features/commute/data/fake_commute_repository.dart';
+import 'package:goora/features/commute/data/group_catalog.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/daily/data/daily_seed.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/domain/phone_dialer.dart';
@@ -63,13 +65,20 @@ CommuteProfile corridorProfile({Clock ret = CommuteProfile.defaultReturn, Driver
       driver: driver,
     );
 
-/// Signed in, onboarded for every-day commuting, joined to sz-0725.
+/// Groups the marketplace created, as `GroupCatalog` stores them (005 R10).
+/// Spread into [memberPrefs] and pass the group's id as `groupId` to join one.
+Map<String, Object> createdGroupsPrefs(List<CommuteGroup> groups) =>
+    {GroupCatalog.groupsKey: jsonEncode([for (final g in groups) g.toJson()])};
+
+/// Signed in, onboarded for every-day commuting, joined to [groupId]
+/// (sz-0725 by default).
 Map<String, Object> memberPrefs({
   required Role role,
   String locale = 'ar',
   Gender gender = Gender.male,
   CommuteProfile? commute,
   bool member = true,
+  String groupId = 'sz-0725',
   bool withPlan = true,
   PaymentMethod? method,
 }) =>
@@ -96,7 +105,7 @@ Map<String, Object> memberPrefs({
                 ))
             .toJson(),
       ),
-      if (member) FakeCommuteRepository.membershipKey: 'sz-0725',
+      if (member) FakeCommuteRepository.membershipKey: groupId,
       // 004: a rider needs a payment arrangement to reach Today/Week; a
       // Company plan (fee-free, never lapses) is seeded so pre-004 tests keep
       // their 40 EGP numbers. Tests of the payment flow pass withPlan: false

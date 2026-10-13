@@ -9,6 +9,7 @@ import '../../../core/time/now_provider.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/data/corridor_seed.dart';
 import '../../commute/data/fake_commute_repository.dart';
+import '../../commute/data/group_catalog.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/commute_repository.dart';
@@ -40,9 +41,9 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
     required this._commute,
     required this._person,
     required this._now,
-    List<CommuteGroup>? groups,
+    GroupCatalog? catalog,
     this.waitlistAhead = CorridorSeed.waitlistAhead,
-  }) : _groups = groups ?? CorridorSeed.groups;
+  }) : _catalog = catalog ?? GroupCatalog(_prefs);
 
   static const absencesKey = 'daily.absences';
   static const checkInsKey = 'daily.checkIns';
@@ -77,7 +78,9 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   final CommuteRepository _commute;
   final Profile? Function() _person;
   final Now _now;
-  final List<CommuteGroup> _groups;
+
+  /// Seeded corridor groups plus groups the marketplace created (005 R10).
+  final GroupCatalog _catalog;
   static final _random = Random.secure();
 
   /// People waiting for a seat on the corridor; a free cancellation's seat
@@ -95,7 +98,7 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   Future<CommuteGroup?> myGroup() async {
     final groupId = await _commute.joinedGroupId();
     if (groupId == null) return null;
-    final seed = _groups.where((g) => g.id == groupId).firstOrNull;
+    final seed = _catalog.byId(groupId);
     final person = _person();
     if (seed == null || person == null) return null;
     final group = seed.withMembers([...seed.members, _me(seed, person, await _commute.loadProfile())]);
@@ -108,11 +111,11 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
 
   Member _me(CommuteGroup g, Profile person, CommuteProfile? commute) {
     final driver = person.role == Role.driver;
-    final Set<Leg> legs;
+    final Set<Leg> wanted;
     if (driver) {
-      legs = commute?.driver?.trips.legs ?? const {Leg.going, Leg.ret};
+      wanted = commute?.driver?.trips.legs ?? const {Leg.going, Leg.ret};
     } else if (commute == null) {
-      legs = const {Leg.going, Leg.ret};
+      wanted = const {Leg.going, Leg.ret};
     } else {
       // A rider rides the legs whose time fits this group (002 time limit);
       // another group covers the rest (US1/AC3).
@@ -121,8 +124,13 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
         if (commute.departure.diff(g.going) <= limit) Leg.going,
         if (commute.ret.diff(g.ret) <= limit) Leg.ret,
       };
-      legs = fit.isEmpty ? const {Leg.going, Leg.ret} : fit;
+      wanted = fit.isEmpty ? const {Leg.going, Leg.ret} : fit;
     }
+    // Never a leg the group doesn't run: a marketplace group runs one, and a
+    // second leg would get planned with no car behind it (005 research R10).
+    final runs = g.members.isEmpty ? wanted : g.legs;
+    final mine = wanted.intersection(runs);
+    final legs = mine.isEmpty ? runs : mine;
     final days = commute?.days.intersection(g.days);
     return Member(
       id: meId,
@@ -157,7 +165,7 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
   /// and network drivers.
   Member? _known(CommuteGroup g, String id) =>
       g.member(id) ??
-      _groups.expand((o) => o.members).where((m) => m.id == id).firstOrNull ??
+      _catalog.all().expand((o) => o.members).where((m) => m.id == id).firstOrNull ??
       DailySeed.networkDrivers.map((n) => n.member).where((m) => m.id == id).firstOrNull;
 
   /// The going stop a member boards at.
@@ -542,7 +550,7 @@ final class FakeDailyCommuteRepository implements DailyCommuteRepository {
             available: !away.contains(m.id),
           ),
       // 2. Drivers of other corridor groups on duty that leg and day.
-      for (final other in _groups)
+      for (final other in _catalog.all())
         if (other.id != g.id)
           for (final d in RotationPlanner.plan(other, date, date))
             if (d.assignment(ride.leg)?.planned case final id? when !inGroup.contains(id))

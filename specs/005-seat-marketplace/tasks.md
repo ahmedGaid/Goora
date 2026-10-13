@@ -170,15 +170,15 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 **Groups become data (R10)**
 
-- [ ] T027 [P] `lib/features/commute/domain/group.dart`: `toJson`/`fromJson` on `CommuteGroup`,
+- [x] T027 [P] `lib/features/commute/domain/group.dart`: `toJson`/`fromJson` on `CommuteGroup`,
   `Member`, `Stop`, `Vehicle` (every field, incl. `tripCost`, `riderSeats`, per-member `legs`);
   `test/unit/group_json_test.dart` round-trips all seeded groups in `CorridorSeed.groups` (equality
   field by field)
-- [ ] T028 `lib/features/commute/data/group_catalog.dart` + `test/unit/group_catalog_test.dart`:
+- [x] T028 `lib/features/commute/data/group_catalog.dart` + `test/unit/group_catalog_test.dart`:
   `GroupCatalog(prefs, {seed = CorridorSeed.groups})` with `all()` (seed + `market.groups` + extra
   members from `market.members.<groupId>` merged), `byId`, `create` (id MUST start with `mk-`, else
   throws), `addMember`, `clear`; survives a new instance on the same prefs
-- [ ] T029 **R10 risk, before any UI** — `test/unit/one_leg_group_schedule_test.dart`: a created
+- [x] T029 **R10 risk, before any UI** — `test/unit/one_leg_group_schedule_test.dart`: a created
   `mk-` group whose members all have `legs = {going}` only → `RotationPlanner.plan` (and
   `FakeDailyCommuteRepository.schedule`/`ride`) yield **no** return-leg assignment, no "no driver"
   day and no `noCover` notice over a full 28-day period; same for return-only. If red, fix
@@ -186,7 +186,13 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   planned, and re-run `test/unit/rotation_planner_test.dart` + `test/unit/daily_vectors_test.dart`
   (the TS `rotation.ts` twin MUST stay in step — update it and its vectors in the same task if the
   rule changes)
-- [ ] T030 Wire the catalog: `lib/features/commute/data/fake_commute_repository.dart` (`groupsFor`,
+  - **Done 2026-10-13**: red, but not in the planner — `RotationPlanner` already returns no
+    assignment for a leg no driver drives (Dart and TS agree; `rotation.ts` + vectors unchanged).
+    The hole was `FakeDailyCommuteRepository._me`: the joining person got legs from their own
+    profile (a driver of both legs, or a rider whose return time fits), so a one-leg group planned
+    a second leg with no car. Fix: the person's legs stay inside `CommuteGroup.legs` (legs any
+    member rides or drives).
+- [x] T030 Wire the catalog: `lib/features/commute/data/fake_commute_repository.dart` (`groupsFor`,
   `join` read `GroupCatalog`), `lib/features/daily/data/fake_daily_commute_repository.dart` (replace
   the `groups` constructor list), one `groupCatalogProvider` in
   `lib/features/commute/data/providers.dart` whose invalidation invalidates the commute and daily
