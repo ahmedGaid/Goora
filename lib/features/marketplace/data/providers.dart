@@ -26,6 +26,7 @@ MarketplaceRepository marketplaceRepository(Ref ref) {
     ref.watch(sharedPreferencesProvider),
     catalog: ref.watch(groupCatalogProvider),
     daily: daily,
+    commute: ref.watch(commuteRepositoryProvider),
     // The fake daily repository is both the schedule and the notice sink.
     notices: daily as NoticeSink,
     // Looked up when a story needs them: the wallet reads this provider for

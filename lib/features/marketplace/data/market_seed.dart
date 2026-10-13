@@ -151,9 +151,9 @@ abstract final class MarketSeed {
   /// your request" takes the next one in turn.
   static const drivers = <SeatDriver>[
     SeatDriver(id: 'tarek', firstName: 'Tarek', initials: 'TR', rating: 4.8),
-    SeatDriver(id: 'heba', firstName: 'Heba', initials: 'HB', rating: 4.9),
+    SeatDriver(id: 'heba', firstName: 'Heba', initials: 'HB', rating: 4.9, isWoman: true),
     SeatDriver(id: 'khaled', firstName: 'Khaled', initials: 'KH', rating: 4.7),
-    SeatDriver(id: 'mariam', firstName: 'Mariam', initials: 'MR', rating: 4.8),
+    SeatDriver(id: 'mariam', firstName: 'Mariam', initials: 'MR', rating: 4.8, isWoman: true),
   ];
 
   /// Fake riders; "A rider books your seat" takes the next one in turn.

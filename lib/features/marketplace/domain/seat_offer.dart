@@ -7,7 +7,13 @@ import 'booking.dart';
 
 /// The driver as riders see them on a seat — riders may see drivers (R15).
 final class SeatDriver {
-  const SeatDriver({required this.id, required this.firstName, required this.initials, required this.rating});
+  const SeatDriver({
+    required this.id,
+    required this.firstName,
+    required this.initials,
+    required this.rating,
+    this.isWoman = false,
+  });
 
   final String id;
   final String firstName;
@@ -17,6 +23,9 @@ final class SeatDriver {
 
   /// 0–5 stars.
   final double rating;
+
+  /// For the rider's privacy preference (women only).
+  final bool isWoman;
 }
 
 /// One free seat a rider can book on Empty seats (005 data-model.md). Derived

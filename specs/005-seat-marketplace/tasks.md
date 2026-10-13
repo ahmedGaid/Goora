@@ -323,7 +323,7 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 ### Tests (write first, see them fail)
 
-- [ ] T046 [P] [US1] `test/unit/fake_marketplace_repository_test.dart` (US1 group): `seatOffers` —
+- [x] T046 [P] [US1] `test/unit/fake_marketplace_repository_test.dart` (US1 group): `seatOffers` —
   route fit (same from/to, detour < 10), women-only preference lists only women-driven cars/offers,
   departed legs gone, free 0 not listed, the rider's own leg hidden (`alreadyRiding`), a driver's own
   offer not listed, a full car with a reclaimable one-off booking listed to a subscriber only (FR-004,
@@ -348,11 +348,21 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 ### Implementation
 
-- [ ] T049 [US1] `fake_marketplace_repository.dart`: `seatOffers`, `book` (re-check free seats +
+- [x] T049 [US1] `fake_marketplace_repository.dart`: `seatOffers`, `book` (re-check free seats +
   `BookingGate` inside the write; `SeatLedger.debitSeat` for wallet/subscribed/company; notice
   `seatBooked` to the driver), `cancelBooking` (`BookingRefund.amount`, owed via
   `AttendanceRules.cancelCharge` on the contribution only → driver `Charge`), `myBookings`; women-only
   via `lib/features/daily/domain/privacy.dart`
+  - Choices, not in the contract (T046, T049): the fake takes a `CommuteRepository` (the rider's route comes from their
+    group, else their saved commute; no route = no seats). A seat is hidden on any leg-date the rider already rides
+    (own booking, own group ride, or a leg they drive) — one rule for `AlreadyRiding` and the list. Other groups are
+    listed by `detourMinutes < 10`, next departure only, their pickup = nearest stop to home (going) / work stop (return).
+    `SeatDriver.isWoman` was added for the women-only filter (Heba, Mariam). Subscriber = `subscribed` or `company`
+    mode. Offer status flips to `full` on the last physical seat and back to `open` on cancel. A late-cancel charge is
+    stored under `market.charges` (public `charges()`); it is NOT yet in 003's `chargesOwed` / the driver's wallet —
+    gap for the driver-side phase. No notice on rider cancel (no `NoticeKind` for it). A daily offer's first booking
+    does not make a group yet (US2). Gates: analyze 0 · test 826 (+23) · node 148; two mutations (no re-check,
+    no `full`) turn tests red.
 - [ ] T050 [P] [US1] `lib/features/marketplace/presentation/labels.dart`: day label
   (Today/Tomorrow/weekday), route line, price line delegating to `WalletLabels.priceLine(SeatPrice)`
 - [ ] T051 [US1] `lib/features/marketplace/presentation/empty_seats/empty_seats_controller.dart`

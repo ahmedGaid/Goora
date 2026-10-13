@@ -10,21 +10,28 @@ import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/commute/domain/place.dart';
 import 'package:goora/features/commute/domain/pricing_service.dart';
+import 'package:goora/features/daily/data/daily_seed.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/fake_trust_repository.dart';
+import 'package:goora/features/daily/domain/charge.dart';
+import 'package:goora/features/daily/domain/privacy.dart';
 import 'package:goora/features/daily/domain/ride.dart';
 import 'package:goora/features/marketplace/data/fake_marketplace_repository.dart';
 import 'package:goora/features/marketplace/data/market_seed.dart';
 import 'package:goora/features/marketplace/domain/anonymous_rider.dart';
 import 'package:goora/features/marketplace/domain/booking.dart';
 import 'package:goora/features/marketplace/domain/market_day.dart';
+import 'package:goora/features/marketplace/domain/marketplace_repository.dart';
 import 'package:goora/features/marketplace/domain/offered_trip.dart';
+import 'package:goora/features/marketplace/domain/seat_offer.dart';
 import 'package:goora/features/marketplace/domain/trip_request.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/data/fake_payment_provider.dart';
 import 'package:goora/features/wallet/data/fake_wallet_repository.dart';
+import 'package:goora/features/wallet/domain/activity_entry.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
+import 'package:goora/features/wallet/domain/plan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/daily_fakes.dart';
@@ -37,12 +44,25 @@ final _tue = rideTuesday;
 final _thu = _tue.addDays(2);
 
 final class _World {
-  _World(this.repo, this.daily, this.prefs, this.clock);
+  _World(this.repo, this.daily, this.prefs, this.clock, this.wallet, this.trust, this._pay);
 
   final FakeMarketplaceRepository repo;
   final FakeDailyCommuteRepository daily;
   final SharedPreferences prefs;
   final TestClock clock;
+  final FakeWalletRepository wallet;
+  final FakeTrustRepository trust;
+  final _PayFlag _pay;
+
+  /// The next payment (top-up or debit) fails.
+  set payFails(bool v) => _pay.fails = v;
+
+  Future<int> balance() async => (await wallet.getWallet('me')).balance;
+  Future<List<ActivityEntry>> activity() async => (await wallet.getWallet('me')).activity;
+}
+
+final class _PayFlag {
+  bool fails = false;
 }
 
 Future<_World> _make({
@@ -50,11 +70,18 @@ Future<_World> _make({
   bool member = true,
   Map<String, Object> extra = const {},
   WallTime? start,
+  Gender gender = Gender.male,
+  bool withPlan = true,
+  PaymentMethod? method,
 }) async {
-  SharedPreferences.setMockInitialValues({...memberPrefs(role: role, member: member), ...extra});
+  SharedPreferences.setMockInitialValues({
+    ...memberPrefs(role: role, member: member, gender: gender, withPlan: withPlan, method: method),
+    ...extra,
+  });
   final prefs = await SharedPreferences.getInstance();
   final clock = TestClock(start ?? at(_tue, 20, 0));
-  final person = Profile(phone: testPhone, firstName: 'Omar', lastName: 'Khaled', gender: Gender.male, role: role);
+  final person = Profile(phone: testPhone, firstName: 'Omar', lastName: 'Khaled', gender: gender, role: role);
+  final pay = _PayFlag();
   final catalog = GroupCatalog(prefs);
   final daily = FakeDailyCommuteRepository(
     prefs,
@@ -68,19 +95,21 @@ Future<_World> _make({
     daily: daily,
     role: () => role == Role.driver ? MemberRole.driver : MemberRole.rider,
     now: clock.call,
-    provider: FakePaymentProvider(),
+    provider: FakePaymentProvider(shouldFail: () => pay.fails),
   );
+  final trust = FakeTrustRepository(prefs, person: () => person, now: clock.call);
   final repo = FakeMarketplaceRepository(
     prefs,
     catalog: catalog,
     daily: daily,
+    commute: FakeCommuteRepository(prefs, catalog: catalog),
     notices: daily,
     ledger: () => wallet,
     wallet: () => wallet,
-    trust: FakeTrustRepository(prefs, person: () => person, now: clock.call),
+    trust: trust,
     now: clock.call,
   );
-  return _World(repo, daily, prefs, clock);
+  return _World(repo, daily, prefs, clock, wallet, trust, pay);
 }
 
 OfferedTrip _offer(
@@ -92,11 +121,12 @@ OfferedTrip _offer(
   bool cancelledWithRiders = false,
   String driverId = 'me',
   int seats = 3,
+  Area? from,
 }) => OfferedTrip(
   id: id,
   driverId: driverId,
   leg: leg,
-  from: leg == Leg.going ? Area.sheikhZayed : Area.smartVillage,
+  from: from ?? (leg == Leg.going ? Area.sheikhZayed : Area.smartVillage),
   to: leg == Leg.going ? Area.smartVillage : Area.sheikhZayed,
   date: date,
   departure: departure,
@@ -509,6 +539,386 @@ void main() {
       ).setMethod('me', PaymentMethod.cash);
       await w.repo.clear();
       expect(w.prefs.getString(FakeWalletRepository.methodKey('me')), isNotNull);
+    });
+  });
+
+  group('Empty seats (T046, US1)', () {
+    final wed = _tue.addDays(1);
+    final thu = _tue.addDays(2);
+
+    Map<String, Object> offers(List<OfferedTrip> trips) =>
+        _stored(FakeMarketplaceRepository.offersKey, [for (final t in trips) t.toJson()]);
+    Map<String, Object> bookings(List<Booking> items) =>
+        _stored(FakeMarketplaceRepository.bookingsKey, [for (final b in items) b.toJson()]);
+
+    /// A once rider on the corridor: no group, no plan.
+    Future<_World> once({
+      PaymentMethod? method = PaymentMethod.wallet,
+      int balance = 0,
+      Map<String, Object> extra = const {},
+      WallTime? start,
+      Gender gender = Gender.male,
+      bool company = false,
+    }) async {
+      final w = await _make(
+        role: Role.rider,
+        member: false,
+        method: method,
+        gender: gender,
+        start: start,
+        extra: {
+          if (company)
+            FakeWalletRepository.planKey: jsonEncode(
+              const Plan(personId: DailySeed.meId, type: PlanType.company, status: PlanStatus.active, price: 0)
+                  .toJson(),
+            ),
+          ...extra,
+        },
+      );
+      if (balance > 0) await w.wallet.topUp('me', method: 'card', amount: balance);
+      return w;
+    }
+
+    SeatOffer fromOffer(List<SeatOffer> all, String tripId) =>
+        all.firstWhere((o) => o.source == BookingSource.offer(tripId));
+
+    Future<List<SeatOffer>> going(_World w) => w.repo.seatOffers(Leg.going, now: w.clock.now);
+
+    group('seatOffers', () {
+      test("prices follow the viewer: 48 wallet, 45 cash, fee-free company — Tarek's 44", () async {
+        final wallet = await once();
+        final a = fromOffer(await going(wallet), MarketSeed.tarekId);
+        expect((a.price.contribution, a.price.fee, a.price.total), (44, 4, 48));
+        expect(a.driver.firstName, 'Tarek');
+        expect((a.leg, a.date, a.departure, a.freeSeats), (Leg.going, wed, const Clock.hm(7, 30), 3));
+
+        final cash = await once(method: PaymentMethod.cash);
+        final b = fromOffer(await going(cash), MarketSeed.tarekId);
+        expect((b.price.cash, b.price.payable), (45, 45));
+
+        final company = await once(method: null, company: true);
+        final c = fromOffer(await going(company), MarketSeed.tarekId);
+        expect((c.price.fee, c.price.total), (0, 44));
+      });
+
+      test('route fit: same from/to for the leg — another area and the other leg are left out', () async {
+        final w = await once(extra: offers([_offer('of-oct', date: wed, driverId: 'khaled', from: Area.october)]));
+        final out = await w.repo.seatOffers(Leg.going, now: w.clock.now);
+        final ids = out.where((o) => o.source.kind == BookingSourceKind.offer).map((o) => o.source.id);
+        expect(ids, [MarketSeed.tarekId]);
+
+        final back = await w.repo.seatOffers(Leg.ret, now: w.clock.now);
+        expect(back.every((o) => o.leg == Leg.ret), isTrue);
+        expect(back.map((o) => o.source.id), contains(MarketSeed.hebaId));
+        expect(back.map((o) => o.source.id), isNot(contains(MarketSeed.tarekId)));
+      });
+
+      test('a group seat is listed for a non-member with the group price, its free seat and a pickup', () async {
+        final w = await once();
+        final seat = (await going(w)).firstWhere((o) => o.source == const BookingSource.groupSeat('sz-0725'));
+        expect(seat.freeSeats, 1);
+        expect((seat.price.contribution, seat.price.total), (40, 44));
+        expect(seat.date, wed);
+      });
+
+      test('women-only lists only women-driven cars and offers', () async {
+        final w = await once(gender: Gender.female);
+        await w.trust.setPrivacy(PrivacyPreference.womenOnly);
+        final all = [...await going(w), ...await w.repo.seatOffers(Leg.ret, now: w.clock.now)];
+        expect(all, isNotEmpty);
+        expect(all.every((o) => o.driver.isWoman), isTrue);
+        expect(all.map((o) => o.source.id), contains(MarketSeed.hebaId));
+        expect(all.map((o) => o.source.id), isNot(contains(MarketSeed.tarekId)));
+      });
+
+      test('departed legs are gone: exactly at departure counts as passed', () async {
+        final trips = offers([
+          _offer('of-at', date: _tue, driverId: 'khaled'),
+          _offer('of-after', date: _tue, driverId: 'khaled', departure: const Clock.hm(9, 1)),
+        ]);
+        final w = await once(extra: trips, start: at(_tue, 9, 0));
+        final ids = (await going(w)).where((o) => o.date == _tue).map((o) => o.source.id);
+        expect(ids, contains('of-after'));
+        expect(ids, isNot(contains('of-at')));
+      });
+
+      test('a full car is not listed; one seat left is', () async {
+        final w = await once(
+          extra: {
+            ...offers([
+              _offer('of-full', date: wed, driverId: 'khaled', seats: 1),
+              _offer('of-one', date: wed, driverId: 'khaled', seats: 2),
+            ]),
+            ...bookings([
+              _booking('bk-1', source: const BookingSource.offer('of-full'), date: wed),
+              _booking('bk-2', source: const BookingSource.offer('of-one'), date: wed, riderId: 'seed-rider-omar'),
+            ]),
+          },
+        );
+        final all = await going(w);
+        expect(all.map((o) => o.source.id), isNot(contains('of-full')));
+        expect(fromOffer(all, 'of-one').freeSeats, 1);
+      });
+
+      test("a driver's own offer is not listed", () async {
+        final w = await once(extra: offers([_offer('of-mine', date: wed)]));
+        expect((await going(w)).map((o) => o.source.id), isNot(contains('of-mine')));
+      });
+
+      test("the rider's own leg is hidden (alreadyRiding): a booked leg-date and a group ride they are on", () async {
+        final booked = await once(balance: 100);
+        final tarek = fromOffer(await going(booked), MarketSeed.tarekId);
+        expect(await booked.repo.book(tarek, now: booked.clock.now), isA<Booked>());
+        expect((await going(booked)).where((o) => o.date == wed), isEmpty);
+
+        final member = await _make(role: Role.rider, start: at(_tue, 20, 0));
+        expect((await member.daily.ride(wed, Leg.going))!.passengers.map((p) => p.memberId), contains('me'));
+        final seats = await going(member);
+        expect(seats.where((o) => o.date == wed), isEmpty);
+        expect(seats.map((o) => o.source), isNot(contains(const BookingSource.groupSeat('sz-0725'))));
+      });
+
+      test('a full car with a reclaimable booking is listed to a subscriber only (FR-004, US6 AC1)', () async {
+        final extra = {
+          ...offers([_offer('of-full', date: wed, driverId: 'khaled', seats: 1)]),
+          ...bookings([_booking('bk-1', source: const BookingSource.offer('of-full'), date: wed)]),
+        };
+        final payer = await once(extra: extra);
+        expect((await going(payer)).map((o) => o.source.id), isNot(contains('of-full')));
+
+        final subscriber = await once(method: null, company: true, extra: extra);
+        expect(fromOffer(await going(subscriber), 'of-full').freeSeats, 1);
+
+        // Past the cut-off the one-off booking is final: nobody can take it.
+        final late = await once(method: null, company: true, extra: extra, start: at(_tue, 21, 30));
+        expect((await going(late)).map((o) => o.source.id), isNot(contains('of-full')));
+      });
+    });
+
+    group('book', () {
+      OfferedTrip trip({int seats = 3}) => _offer('of-1', date: wed, driverId: 'khaled', seats: seats);
+
+      Future<_World> world({
+        PaymentMethod? method = PaymentMethod.wallet,
+        int balance = 100,
+        bool company = false,
+        int seats = 3,
+        List<Booking> others = const [],
+        WallTime? start,
+      }) => once(
+        method: method,
+        balance: balance,
+        company: company,
+        start: start,
+        extra: {...offers([trip(seats: seats)]), if (others.isNotEmpty) ...bookings(others)},
+      );
+
+      Future<SeatOffer> seat(_World w) async => fromOffer(await going(w), 'of-1');
+
+      Booking taken(String riderId) =>
+          _booking('bk-9', source: const BookingSource.offer('of-1'), date: wed, riderId: riderId);
+
+      test("wallet 44 is debited once, the seat is kept, and the booking is the rider's", () async {
+        final w = await world();
+        final offer = await seat(w);
+        expect(offer.price.total, 44);
+
+        final result = await w.repo.book(offer, now: w.clock.now);
+
+        final booked = (result as Booked).booking;
+        expect((booked.paid, booked.paidBy, booked.status, booked.riderId), (44, PaidBy.wallet, BookingStatus.booked, 'me'));
+        expect((booked.date, booked.leg, booked.source), (wed, Leg.going, const BookingSource.offer('of-1')));
+        expect(booked.rideId, Booking.offerRideId('of-1'));
+        expect(await w.balance(), 56);
+        final rows = (await w.activity()).where((e) => e.kind == ActivityKind.seatBooked);
+        expect(rows, hasLength(1));
+        expect((rows.single.amount, rows.single.fee), (44, 4));
+        expect(await w.repo.myBookings(now: w.clock.now), hasLength(1));
+      });
+
+      test('the seat count drops by one and the last seat marks the offer full', () async {
+        final w = await world(seats: 2, others: [taken('seed-rider-omar')]);
+        final offer = await seat(w);
+        expect(offer.freeSeats, 1);
+        await w.repo.book(offer, now: w.clock.now);
+
+        final stored = jsonDecode(w.prefs.getString(FakeMarketplaceRepository.offersKey)!) as List;
+        expect(stored.cast<Map<String, Object?>>().single['status'], OfferStatus.full.name);
+        final all = jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List;
+        expect(all, hasLength(2));
+      });
+
+      test('one booking per rider per leg-date', () async {
+        final w = await world();
+        final offer = await seat(w);
+        expect(await w.repo.book(offer, now: w.clock.now), isA<Booked>());
+        expect(await w.repo.book(offer, now: w.clock.now), isA<AlreadyRiding>());
+        expect(await w.balance(), 56, reason: 'charged once');
+        expect(await w.repo.myBookings(now: w.clock.now), hasLength(1));
+      });
+
+      test('seatTaken when the last seat goes between the list and the book — nothing changes (SC-006)', () async {
+        final w = await world(seats: 1);
+        final offer = await seat(w);
+        // Another rider takes it after the list was shown.
+        await w.prefs.setString(
+          FakeMarketplaceRepository.bookingsKey,
+          jsonEncode([taken('seed-rider-omar').toJson()]),
+        );
+
+        expect(await w.repo.book(offer, now: w.clock.now), isA<SeatTaken>());
+
+        expect(await w.balance(), 100);
+        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatBooked), isEmpty);
+        expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
+        final all = jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List;
+        expect(all, hasLength(1));
+      });
+
+      test('paymentFailed changes nothing', () async {
+        final w = await world();
+        final offer = await seat(w);
+        w.payFails = true;
+
+        expect(await w.repo.book(offer, now: w.clock.now), isA<PaymentFailed>());
+
+        expect(await w.balance(), 100);
+        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatBooked), isEmpty);
+        expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
+      });
+
+      test('needsMethod without a method or plan; nothing changes', () async {
+        final w = await world(method: null, balance: 0);
+        expect(await w.repo.book(await seat(w), now: w.clock.now), isA<BookNeedsMethod>());
+        expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
+      });
+
+      test('topUp(44) at balance 0, and the booking goes through once the gap is paid', () async {
+        final w = await world(balance: 0);
+        final offer = await seat(w);
+        final blocked = await w.repo.book(offer, now: w.clock.now);
+        expect((blocked as BookTopUp).gap, 44);
+        expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
+
+        await w.wallet.topUp('me', method: 'card', amount: 44);
+        expect(await w.repo.book(offer, now: w.clock.now), isA<Booked>());
+        expect(await w.balance(), 0);
+      });
+
+      test('a company rider at a negative balance is not blocked; no fee', () async {
+        final w = await world(method: null, company: true, balance: 0);
+        final offer = await seat(w);
+        expect((offer.price.fee, offer.price.total), (0, 40));
+
+        final booked = (await w.repo.book(offer, now: w.clock.now) as Booked).booking;
+
+        expect((booked.paidBy, booked.paid, booked.isSubscriber), (PaidBy.plan, 40, true));
+        expect(await w.balance(), -40);
+      });
+
+      test('cash debits nothing', () async {
+        final w = await world(method: PaymentMethod.cash, balance: 0);
+        final offer = await seat(w);
+        expect(offer.price.payable, offer.price.cash);
+
+        final booked = (await w.repo.book(offer, now: w.clock.now) as Booked).booking;
+
+        expect((booked.paidBy, booked.paid), (PaidBy.cash, 0));
+        expect(await w.balance(), 0);
+        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatBooked), isEmpty);
+      });
+    });
+
+    group('cancelBooking', () {
+      Future<(_World, Booking)> booked({
+        WallTime? start,
+        PaymentMethod method = PaymentMethod.wallet,
+        int balance = 100,
+        int seats = 3,
+      }) async {
+        final w = await once(
+          method: method,
+          balance: balance,
+          start: start,
+          extra: offers([_offer('of-1', date: wed, driverId: 'khaled', seats: seats)]),
+        );
+        final offer = fromOffer(await going(w), 'of-1');
+        return (w, (await w.repo.book(offer, now: w.clock.now) as Booked).booking);
+      }
+
+      test('before the cut-off the whole 44 comes back, one refund row, and the seat is free again', () async {
+        final (w, b) = await booked(seats: 1);
+        w.clock.now = at(_tue, 20, 30);
+
+        final result = await w.repo.cancelBooking(b.id, now: w.clock.now);
+
+        expect((result as BookingCancelled).refund, 44);
+        expect(await w.balance(), 100);
+        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatRefund), hasLength(1));
+        expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
+        expect(w.repo.charges(), isEmpty);
+        // The car was full with that one seat; it is listed again.
+        expect(fromOffer(await going(w), 'of-1').freeSeats, 1);
+      });
+
+      test('after the cut-off 24 comes back; owed 20 is a lateCancel charge to the driver, the fee goes back', () async {
+        final (w, b) = await booked(start: at(_tue, 21, 30));
+        w.clock.now = at(_tue, 21, 45);
+
+        final result = await w.repo.cancelBooking(b.id, now: w.clock.now);
+
+        expect((result as BookingCancelled).refund, 24);
+        expect(await w.balance(), 100 - 44 + 24);
+        final charge = w.repo.charges().single;
+        expect((charge.amount, charge.reason, charge.personId, charge.owedTo), (20, ChargeReason.lateCancel, 'me', 'khaled'));
+        expect(charge.rideId, b.rideId);
+      });
+
+      test('a cash booking: nothing to refund; owed half after the cut-off, nothing before', () async {
+        final (early, e) = await booked(method: PaymentMethod.cash, balance: 0);
+        expect(((await early.repo.cancelBooking(e.id, now: early.clock.now)) as BookingCancelled).refund, 0);
+        expect(early.repo.charges(), isEmpty);
+
+        final (late, l) = await booked(method: PaymentMethod.cash, balance: 0, start: at(_tue, 21, 30));
+        expect(((await late.repo.cancelBooking(l.id, now: late.clock.now)) as BookingCancelled).refund, 0);
+        expect(late.repo.charges().single.amount, 20);
+        expect(await late.balance(), 0);
+      });
+
+      test('twice, unknown, or after pickup is NotCancellable', () async {
+        final (w, b) = await booked();
+        expect(await w.repo.cancelBooking(b.id, now: w.clock.now), isA<BookingCancelled>());
+        expect(await w.repo.cancelBooking(b.id, now: w.clock.now), isA<NotCancellable>());
+        expect(await w.repo.cancelBooking('bk-nope', now: w.clock.now), isA<NotCancellable>());
+        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatRefund), hasLength(1));
+
+        final (v, c) = await booked();
+        v.clock.now = at(wed, 9, 0);
+        expect(await v.repo.cancelBooking(c.id, now: v.clock.now), isA<NotCancellable>());
+      });
+    });
+
+    group('myBookings', () {
+      test('booked and not ended, oldest first — cancelled and finished ones are left out', () async {
+        final w = await once(
+          extra: {
+            ...offers([
+              _offer('of-old', date: _tue.addDays(-1), driverId: 'khaled'),
+              _offer('of-wed', date: wed, driverId: 'khaled'),
+              _offer('of-thu', date: thu, driverId: 'khaled'),
+            ]),
+            ...bookings([
+              _booking('bk-3', source: const BookingSource.offer('of-thu'), date: thu, riderId: 'me'),
+              _booking('bk-1', source: const BookingSource.offer('of-wed'), date: wed, riderId: 'me'),
+              _booking('bk-2', source: const BookingSource.offer('of-wed'), date: wed, riderId: 'me', status: BookingStatus.cancelled),
+              _booking('bk-0', source: const BookingSource.offer('of-old'), date: _tue.addDays(-1), riderId: 'me'),
+              _booking('bk-8', source: const BookingSource.offer('of-wed'), date: wed, riderId: 'seed-rider-omar'),
+            ]),
+          },
+        );
+        final mine = await w.repo.myBookings(now: w.clock.now);
+        expect(mine.map((b) => b.id), ['bk-1', 'bk-3']);
+      });
     });
   });
 }

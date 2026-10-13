@@ -6,18 +6,32 @@ import '../../../core/time/calendar_date.dart';
 import '../../../core/time/now_provider.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/data/group_catalog.dart';
+import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
+import '../../commute/domain/commute_repository.dart';
+import '../../commute/domain/geo.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/domain/place.dart';
+import '../../daily/domain/attendance_rules.dart';
+import '../../daily/domain/charge.dart';
 import '../../daily/domain/daily_commute_repository.dart';
 import '../../daily/domain/notice.dart';
+import '../../daily/domain/privacy.dart';
 import '../../daily/domain/ride.dart';
+import '../../daily/domain/trust.dart';
 import '../../daily/domain/trust_repository.dart';
 import '../../wallet/domain/done_one_off.dart';
+import '../../wallet/domain/payment_method.dart';
+import '../../wallet/domain/payment_provider.dart';
+import '../../wallet/domain/seat_price.dart';
 import '../../wallet/domain/wallet_repository.dart';
+import '../domain/anonymous_rider.dart';
 import '../domain/booking.dart';
+import '../domain/booking_gate.dart';
+import '../domain/booking_refund.dart';
 import '../domain/driver_day.dart';
 import '../domain/driver_day_rules.dart';
+import '../domain/market_day.dart';
 import '../domain/marketplace_repository.dart';
 import '../domain/offered_trip.dart';
 import '../domain/seat_math.dart';
@@ -30,15 +44,17 @@ import 'market_seed.dart';
 /// [MarketSeed] and are overlaid with whatever was stored for the same id, so
 /// the corridor is never empty and a status change survives a restart.
 ///
-/// Phase 4 builds the data layer: [driverDay] (research R5), [doneOneOffs]
-/// (the wallet's seam, T038) and [clear]. The story methods throw
-/// [UnimplementedError] until the phase that builds their story (tasks.md:
-/// US1 Phase 5, US2 Phase 6, US3 Phase 7, US4 Phase 8, US6 Phase 10).
+/// Phase 4 built the data layer: [driverDay] (research R5), [doneOneOffs]
+/// (the wallet's seam, T038) and [clear]. Phase 5 adds the rider's side of
+/// US1 (Empty seats). The other story methods throw [UnimplementedError]
+/// until the phase that builds their story (tasks.md: US2 Phase 6, US3
+/// Phase 7, US4 Phase 8, US6 Phase 10).
 final class FakeMarketplaceRepository implements MarketplaceRepository {
   FakeMarketplaceRepository(
     this._prefs, {
     required this._catalog,
     required this._daily,
+    required this._commute,
     required this.notices,
     required this.ledger,
     required this.wallet,
@@ -50,6 +66,9 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   static const requestsKey = 'market.requests';
   static const bookingsKey = 'market.bookings';
 
+  /// Late-cancel charges owed to drivers (a 003-style `Charge`).
+  static const chargesKey = 'market.charges';
+
   /// Next index into the fake rider / driver pools for the demo actions.
   static const seedCursorKey = 'market.seedCursor';
 
@@ -59,6 +78,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   final SharedPreferences _prefs;
   final GroupCatalog _catalog;
   final DailyCommuteRepository _daily;
+  final CommuteRepository _commute;
   final Now _now;
 
   /// The seams the story methods use from Phase 5 on: notices and reliability
@@ -214,7 +234,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
 
   /// What a booking rides on: an offered trip, a group's leg, or the trip an
   /// accepted request was seated in.
-  ({String driverId, int tripCost, int riderSeats, WallTime end})? _tripOf(Booking b) {
+  _TripInfo? _tripOf(Booking b) {
     switch (b.source.kind) {
       case BookingSourceKind.offer:
         return _offerTrip(b.source.id);
@@ -228,42 +248,401 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     }
   }
 
-  ({String driverId, int tripCost, int riderSeats, WallTime end})? _offerTrip(String tripId) {
+  _TripInfo? _offerTrip(String tripId) {
     final o = _offers().where((o) => o.id == tripId).firstOrNull;
     if (o == null) return null;
     return (
       driverId: o.driverId,
       tripCost: o.tripCost,
       riderSeats: o.riderSeats,
+      start: WallTime(o.date, o.departure),
       end: WallTime(o.date, o.departure).plusMinutes(o.durationMinutes),
     );
   }
 
-  ({String driverId, int tripCost, int riderSeats, WallTime end})? _groupTrip(String groupId, Booking b) {
+  _TripInfo? _groupTrip(String groupId, Booking b) {
     final g = _catalog.byId(groupId);
     if (g == null) return null;
     return (
       driverId: g.driverFor(b.leg)?.id ?? '',
       tripCost: g.tripCost,
       riderSeats: g.riderSeats,
+      start: WallTime(b.date, g.timeFor(b.leg)),
       end: WallTime(b.date, g.endFor(b.leg)),
     );
   }
 
+  // ------------------------------------------------------ A: Empty seats
+
+  /// The signed-in rider as the marketplace prices and filters them.
+  Future<_Rider> _rider(WallTime now) async {
+    final me = _daily.meId;
+    final profile = await trust.profile();
+    final w = wallet();
+    final data = await w.getWallet(me);
+    final plan = await w.getPlan(me);
+    final covered = plan != null && plan.coversDate(now.date);
+    final mode = PricingMode.of(
+      method: data.method,
+      plan: plan,
+      today: now.date,
+      cashAvailable: data.cashTrial?.available ?? false,
+    );
+    return _Rider(
+      profile: profile,
+      mode: mode,
+      hasArrangement: data.method != null || covered,
+      balance: data.balance,
+      // A paid-up plan or a company one: may take a seat a one-off booker could still lose (US6).
+      subscriber: mode == PricingMode.subscribed || mode == PricingMode.company,
+    );
+  }
+
+  /// The rider's route for [leg] — their group's, else their saved commute.
+  /// Null when nothing says where they go.
+  Future<({Area from, Area to, GeoPoint? home})?> _route(Leg leg) async {
+    final group = await _daily.myGroup();
+    final profile = await _commute.loadProfile();
+    final Area? home = group?.origin ?? profile?.home?.area;
+    final Area? work = group?.destination ?? profile?.work?.area;
+    if (home == null || work == null) return null;
+    final going = leg == Leg.going;
+    return (from: going ? home : work, to: going ? work : home, home: profile?.home?.point);
+  }
+
+  /// A leg-date the person already rides: a booked seat on it, their own
+  /// group's ride, or one they drive. Nothing else is bookable on it.
+  Future<bool> _ridesLeg(CalendarDate date, Leg leg, List<Booking> mine) async {
+    if (mine.any((b) => b.date == date && b.leg == leg && _holdsSeat(b))) return true;
+    final me = _daily.meId;
+    final ride = await _daily.ride(date, leg);
+    return ride != null && (ride.driverId == me || ride.passengers.any((p) => p.memberId == me));
+  }
+
+  /// Holds on [source]'s leg-date, as seat math needs them.
+  List<SeatHold> _holds(BookingSource source, CalendarDate date, Leg leg, WallTime now, List<Booking> all) => [
+    for (final b in all)
+      if (_holdsSeat(b) && b.source == source && b.date == date && b.leg == leg) b.holdAt(now),
+  ];
+
+  static SeatDriver _driverOf(Member m) =>
+      SeatDriver(id: m.id, firstName: m.firstName, initials: m.initials, rating: m.rating, isWoman: m.isWoman);
+
+  @override
+  Future<List<SeatOffer>> seatOffers(Leg leg, {required WallTime now}) async {
+    final route = await _route(leg);
+    if (route == null) return [];
+    final me = _daily.meId;
+    final rider = await _rider(now);
+    final privacy = rider.profile.privacy;
+    final facts = rider.profile.facts;
+    final all = _bookings();
+    final mine = [for (final b in all) if (b.riderId == me) b];
+    final myGroup = await _daily.myGroup();
+    final riding = <CalendarDate, bool>{};
+    Future<bool> ridesOn(CalendarDate d) async => riding[d] ??= await _ridesLeg(d, leg, mine);
+
+    final seats = <SeatOffer>[];
+
+    for (final o in _offers()) {
+      if (o.leg != leg || o.driverId == me || o.from != route.from || o.to != route.to) continue;
+      if (o.status != OfferStatus.open && o.status != OfferStatus.full) continue;
+      if (MarketDay.isExpired(o.date, o.departure, now)) continue;
+      final driver = MarketSeed.driverById(o.driverId) ?? _unknownDriver(o.driverId);
+      if (!PrivacyRules.accepts(privacy, facts, PersonFacts(isWoman: driver.isWoman))) continue;
+      if (await ridesOn(o.date)) continue;
+      final source = BookingSource.offer(o.id);
+      final free = SeatMath.offeredTrip(
+        seats: o.seats,
+        bookings: _holds(source, o.date, o.leg, now, all),
+        subscriberView: rider.subscriber,
+      );
+      if (free <= 0) continue;
+      seats.add(SeatOffer(
+        source: source,
+        driver: driver,
+        pickup: o.pickup,
+        date: o.date,
+        leg: o.leg,
+        departure: o.departure,
+        freeSeats: free,
+        price: SeatPrice.of(o.contribution, tripCost: o.tripCost, riderSeats: o.riderSeats, mode: rider.mode),
+      ));
+    }
+
+    final going = leg == Leg.going;
+    for (final g in _catalog.all()) {
+      if (g.id == myGroup?.id) continue;
+      if ((going ? g.origin : g.destination) != route.from || (going ? g.destination : g.origin) != route.to) continue;
+      if (g.detourMinutes >= _maxDetour) continue;
+      final driver = g.driverFor(leg);
+      if (driver == null) continue;
+      if (g.womenOnly && !facts.isWoman) continue;
+      if (g.sameCompanyOnly != null && g.sameCompanyOnly != facts.company) continue;
+      if (g.sameCompoundOnly != null && g.sameCompoundOnly != facts.compound) continue;
+      if (!PrivacyRules.accepts(
+        privacy,
+        facts,
+        PersonFacts(isWoman: driver.isWoman, company: driver.company, compound: driver.compound),
+      )) {
+        continue;
+      }
+      final date = MarketDay.nextDeparture(g.days, g.timeFor(leg), now);
+      if (date == null || await ridesOn(date)) continue;
+      final source = BookingSource.groupSeat(g.id);
+      final free = SeatMath.otherGroupLeg(
+        g,
+        leg,
+        bookings: _holds(source, date, leg, now, all),
+        subscriberView: rider.subscriber,
+      );
+      if (free <= 0) continue;
+      seats.add(SeatOffer(
+        source: source,
+        driver: _driverOf(driver),
+        pickup: going && route.home != null ? g.nearestStop(route.home!) : (going ? g.goingStops.first : g.workStop),
+        date: date,
+        leg: leg,
+        departure: g.timeFor(leg),
+        freeSeats: free,
+        price: SeatPrice.of(g.price, tripCost: g.tripCost, riderSeats: g.riderSeats, mode: rider.mode),
+      ));
+    }
+
+    seats.sort((a, b) {
+      final byDate = a.date.compareTo(b.date);
+      if (byDate != 0) return byDate;
+      final byTime = a.departure.compareTo(b.departure);
+      return byTime != 0 ? byTime : a.source.id.compareTo(b.source.id);
+    });
+    return seats;
+  }
+
+  /// A detour of this many minutes or more is not on the way (R14).
+  static const _maxDetour = 10;
+
+  static SeatDriver _unknownDriver(String id) => SeatDriver(
+    id: id,
+    firstName: id,
+    initials: id.isEmpty ? '' : id.substring(0, id.length < 2 ? id.length : 2).toUpperCase(),
+    rating: 0,
+  );
+
+  /// What [source] rides on right now, re-read for a write: null when it is
+  /// gone, cancelled or has already left.
+  ({String driverId, int tripCost, int riderSeats, int free, String rideId, OfferedTrip? trip})? _seatSource(
+    BookingSource source,
+    CalendarDate date,
+    Leg leg,
+    WallTime now,
+    List<Booking> all, {
+    required bool subscriber,
+  }) {
+    final holds = _holds(source, date, leg, now, all);
+    switch (source.kind) {
+      case BookingSourceKind.offer:
+        final o = _offers().where((o) => o.id == source.id).firstOrNull;
+        if (o == null || o.date != date || o.leg != leg) return null;
+        if (o.status != OfferStatus.open && o.status != OfferStatus.full) return null;
+        if (MarketDay.isExpired(o.date, o.departure, now)) return null;
+        return (
+          driverId: o.driverId,
+          tripCost: o.tripCost,
+          riderSeats: o.riderSeats,
+          free: SeatMath.offeredTrip(seats: o.seats, bookings: holds, subscriberView: subscriber),
+          rideId: Booking.offerRideId(o.id),
+          trip: o,
+        );
+      case BookingSourceKind.groupSeat:
+        final g = _catalog.byId(source.id);
+        if (g == null || MarketDay.isExpired(date, g.timeFor(leg), now)) return null;
+        return (
+          driverId: g.driverFor(leg)?.id ?? '',
+          tripCost: g.tripCost,
+          riderSeats: g.riderSeats,
+          free: SeatMath.otherGroupLeg(g, leg, bookings: holds, subscriberView: subscriber),
+          rideId: Ride.idFor(g.id, date, leg),
+          trip: null,
+        );
+      case BookingSourceKind.request:
+        return null;
+    }
+  }
+
+  @override
+  Future<BookResult> book(SeatOffer offer, {required WallTime now}) async {
+    final me = _daily.meId;
+    final all = _bookings();
+    if (await _ridesLeg(offer.date, offer.leg, [for (final b in all) if (b.riderId == me) b])) {
+      return const AlreadyRiding();
+    }
+    final rider = await _rider(now);
+
+    // Re-check inside the write: the list may be stale (SC-006).
+    final basis = _seatSource(offer.source, offer.date, offer.leg, now, all, subscriber: rider.subscriber);
+    if (basis == null || basis.free <= 0) return const SeatTaken();
+
+    final price = SeatPrice.of(
+      offer.price.contribution,
+      tripCost: basis.tripCost,
+      riderSeats: basis.riderSeats,
+      mode: rider.mode,
+    );
+    final check = BookingGate.check(
+      hasArrangement: rider.hasArrangement,
+      mode: rider.mode,
+      cashOffered: price.cashOffered,
+      balance: rider.balance,
+      price: price,
+    );
+    switch (check.kind) {
+      case BookingCheckKind.needsMethod:
+        return const BookNeedsMethod();
+      case BookingCheckKind.topUp:
+        return BookTopUp(check.gap);
+      case BookingCheckKind.ok:
+        break;
+    }
+
+    final id = _nextBookingId(all);
+    final cash = rider.mode == PricingMode.cash && price.cashOffered;
+    if (!cash) {
+      final paid = await ledger().debitSeat(
+        me,
+        bookingId: id,
+        rideId: basis.rideId,
+        total: price.total,
+        fee: price.fee,
+        date: offer.date,
+      );
+      if (paid == PaymentResult.failure) return const PaymentFailed();
+    }
+
+    final booking = Booking(
+      id: id,
+      riderId: me,
+      riderName: rider.profile.firstName,
+      rider: AnonymousRider(
+        isWoman: rider.profile.isWoman,
+        rating: rider.profile.rating > 0 ? rider.profile.rating : null,
+      ),
+      source: offer.source,
+      date: offer.date,
+      leg: offer.leg,
+      rideId: basis.rideId,
+      price: price,
+      paidBy: cash ? PaidBy.cash : (rider.subscriber ? PaidBy.plan : PaidBy.wallet),
+      paid: cash ? 0 : price.total,
+      bookedAt: now,
+      isSubscriber: rider.subscriber,
+    );
+    await _writeList(bookingsKey, [...all, booking], (b) => b.toJson());
+
+    // The last physical seat marks the offer full (a subscriber's view may still list it).
+    final trip = basis.trip;
+    if (trip != null) {
+      final taken = SeatMath.offeredTrip(
+        seats: trip.seats,
+        bookings: _holds(offer.source, offer.date, offer.leg, now, [...all, booking]),
+      );
+      if (taken <= 0) await _saveOffer(trip.copyWith(status: OfferStatus.full));
+    }
+
+    await notices.post(NoticeKind.seatBooked, {'day': offer.date.toIso(), 'driver': offer.driver.firstName});
+    return Booked(booking);
+  }
+
+  @override
+  Future<CancelResult> cancelBooking(String bookingId, {required WallTime now}) async {
+    final me = _daily.meId;
+    final all = _bookings();
+    final b = all.where((b) => b.id == bookingId && b.riderId == me).firstOrNull;
+    if (b == null || b.status != BookingStatus.booked) return const NotCancellable();
+    final trip = _tripOf(b);
+    if (trip == null || !AttendanceRules.canCancel(trip.start, now)) return const NotCancellable();
+
+    // 003's rule on the contribution only; the fee always goes back (R7).
+    final owed = AttendanceRules.cancelCharge(b.date, now, b.price.contribution);
+    final refund = BookingRefund.amount(paidTotal: b.paid, fee: b.price.fee, owed: owed);
+    if (refund > 0) {
+      await ledger().refundSeat(me, bookingId: b.id, rideId: b.rideId, amount: refund, date: b.date);
+    }
+    if (owed > 0) {
+      await _writeList(
+        chargesKey,
+        [
+          ...charges(),
+          Charge(
+            id: 'ch-${b.id}',
+            personId: me,
+            rideId: b.rideId,
+            reason: ChargeReason.lateCancel,
+            amount: owed,
+            owedTo: trip.driverId,
+          ),
+        ],
+        (c) => c.toJson(),
+      );
+    }
+    await _writeList(
+      bookingsKey,
+      [for (final x in all) x.id == b.id ? x.copyWith(status: BookingStatus.cancelled) : x],
+      (x) => x.toJson(),
+    );
+
+    // A full car has a seat again.
+    if (b.source.kind == BookingSourceKind.offer) {
+      final o = _offers().where((o) => o.id == b.source.id).firstOrNull;
+      if (o != null && o.status == OfferStatus.full) await _saveOffer(o.copyWith(status: OfferStatus.open));
+    }
+    return BookingCancelled(refund);
+  }
+
+  /// Late-cancel charges the marketplace owes drivers (a 003-style [Charge],
+  /// no Goora fee).
+  List<Charge> charges() => _read(chargesKey, Charge.fromJson);
+
+  @override
+  Future<List<Booking>> myBookings({required WallTime now}) async {
+    final me = _daily.meId;
+    final live = <(WallTime, Booking)>[];
+    for (final b in _bookings()) {
+      if (b.riderId != me || b.status != BookingStatus.booked) continue;
+      final trip = _tripOf(b);
+      if (trip != null && !now.isBefore(trip.end)) continue;
+      live.add((trip?.start ?? WallTime(b.date, const Clock.hm(0, 0)), b));
+    }
+    live.sort((a, b) {
+      final byStart = a.$1.compareTo(b.$1);
+      return byStart != 0 ? byStart : a.$2.id.compareTo(b.$2.id);
+    });
+    return [for (final e in live) e.$2];
+  }
+
+  // --------------------------------------------------------------- writes
+
+  static String _nextBookingId(List<Booking> all) {
+    var top = 0;
+    for (final b in all) {
+      final n = int.tryParse(b.id.startsWith('bk-') ? b.id.substring(3) : '');
+      if (n != null && n > top) top = n;
+    }
+    return 'bk-${top + 1}';
+  }
+
+  /// Writes [trip] over its stored copy (or appends it): a seeded offer is
+  /// only ever stored once it changes.
+  Future<void> _saveOffer(OfferedTrip trip) async {
+    final stored = _read(offersKey, OfferedTrip.fromJson);
+    final next = [for (final o in stored) o.id == trip.id ? trip : o];
+    if (!next.any((o) => o.id == trip.id)) next.add(trip);
+    await _writeList(offersKey, next, (o) => o.toJson());
+  }
+
+  Future<void> _writeList<T>(String key, List<T> items, Map<String, Object?> Function(T) toJson) =>
+      _prefs.setString(key, jsonEncode([for (final i in items) toJson(i)]));
+
   // --------------------------------------------- stories (later phases)
-
-  @override
-  Future<List<SeatOffer>> seatOffers(Leg leg, {required WallTime now}) => throw UnimplementedError('Phase 5 (US1)');
-
-  @override
-  Future<BookResult> book(SeatOffer offer, {required WallTime now}) => throw UnimplementedError('Phase 5 (US1)');
-
-  @override
-  Future<CancelResult> cancelBooking(String bookingId, {required WallTime now}) =>
-      throw UnimplementedError('Phase 5 (US1)');
-
-  @override
-  Future<List<Booking>> myBookings({required WallTime now}) => throw UnimplementedError('Phase 5 (US1)');
 
   @override
   Future<PostResult> post(TripDraft draft, {required WallTime now}) => throw UnimplementedError('Phase 7 (US3)');
@@ -310,4 +689,23 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
 
   @override
   Future<DemoResult> demoSubscriberTakes({required WallTime now}) => throw UnimplementedError('its story (debug demo, FR-028)');
+}
+
+typedef _TripInfo = ({String driverId, int tripCost, int riderSeats, WallTime start, WallTime end});
+
+/// The signed-in rider as the marketplace prices and gates them.
+final class _Rider {
+  const _Rider({
+    required this.profile,
+    required this.mode,
+    required this.hasArrangement,
+    required this.balance,
+    required this.subscriber,
+  });
+
+  final TrustProfile profile;
+  final PricingMode mode;
+  final bool hasArrangement;
+  final int balance;
+  final bool subscriber;
 }
