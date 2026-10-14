@@ -1,8 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/app/router.dart';
+import 'package:goora/app/routes.dart';
 import 'package:goora/core/widgets/goora_status_chip.dart';
 import 'package:goora/features/commute/domain/clock.dart';
+import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/daily/data/daily_seed.dart';
+import 'package:goora/features/daily/presentation/safety/sos_sheet.dart';
+import 'package:goora/features/marketplace/data/market_seed.dart';
+import 'package:goora/features/marketplace/data/providers.dart';
+import 'package:goora/features/marketplace/domain/seat_offer.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
+import 'package:goora/features/onboarding/domain/profile.dart';
+import 'package:goora/features/wallet/data/providers.dart';
+import 'package:goora/features/wallet/domain/payment_method.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -25,6 +39,7 @@ Future<void> pumpRider(
 }
 
 void main() {
+  noGroupTodayTests();
   for (final locale in locales) {
     final l = l10nFor(locale);
     final code = locale.languageCode;
@@ -133,4 +148,81 @@ void main() {
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
   });
+}
+
+/// 005 T060: Today for someone with no daily group.
+Map<String, Object> _oncePrefs(String locale) => {
+      ...memberPrefs(role: Role.rider, locale: locale, member: false, withPlan: false, method: PaymentMethod.wallet),
+      'profile': jsonEncode(
+        Profile(
+          phone: testPhone,
+          firstName: 'Omar',
+          lastName: 'Khaled',
+          gender: Gender.male,
+          role: Role.rider,
+          frequency: Frequency.once,
+        ).toJson(),
+      ),
+    };
+
+Future<ProviderContainer> _openNoGroupToday(WidgetTester tester, String locale, {RecordingSharer? sharer, bool book = false}) async {
+  final clock = TestClock(at(rideTuesday.addDays(-1), 18, 0));
+  final c = await pumpGooraApp(tester, prefs: _oncePrefs(locale), overrides: dailyOverrides(clock, sharer: sharer));
+  tester.view.physicalSize = const Size(390, 2600);
+  if (book) {
+    await c.read(walletRepositoryProvider).topUp(DailySeed.meId, method: 'card', amount: 200);
+    final repo = c.read(marketplaceRepositoryProvider);
+    final SeatOffer tarek = (await repo.seatOffers(Leg.going, now: clock.now)).firstWhere((o) => o.source.id == MarketSeed.tarekId);
+    await repo.book(tarek, now: clock.now);
+  }
+  c.read(routerProvider).go(Routes.today);
+  await tester.pumpAndSettle();
+  return c;
+}
+
+void noGroupTodayTests() {
+  for (final locale in locales) {
+    final l = l10nFor(locale);
+    final code = locale.languageCode;
+
+    testWidgets('[$code] no group yet: a calm card and the two ways in, not the removed notice', (tester) async {
+      await _openNoGroupToday(tester, code);
+      expect(find.byKey(const Key('no-group-yet')), findsOneWidget);
+      expect(find.text(l.fOnceRider), findsOneWidget);
+      expect(find.text(l.removedTitle), findsNothing, reason: 'never in a group is not the same as being removed');
+      expect(find.byKey(const Key('find-new-group')), findsNothing);
+      expect(find.byKey(const Key('one-off-section')), findsNothing);
+      await tester.tap(find.byKey(const Key('no-group-action')));
+      await tester.pumpAndSettle();
+      expect(find.text(l.emptySeatsTitle), findsWidgets);
+    });
+
+    testWidgets('[$code] a booked seat shows on Today with driver, pickup, price, cancel rule, Share and SOS', (tester) async {
+      final sharer = RecordingSharer();
+      await _openNoGroupToday(tester, code, sharer: sharer, book: true);
+      expect(find.byKey(const Key('one-off-section')), findsOneWidget);
+      expect(find.text(l.oneOffTrips), findsOneWidget);
+      expect(find.text(l.priceWithFee(44, 4)), findsOneWidget);
+      expect(find.text(l.cancelBooking), findsOneWidget);
+      expect(find.text(l.cancelFreeNote), findsOneWidget);
+      // Constitution V: Share and SOS are one tap away on a one-off trip.
+      await tester.tap(find.textContaining(l.shareTrip).first);
+      await tester.pumpAndSettle();
+      expect(sharer.shared, hasLength(1));
+      expect(sharer.shared.single, contains(l.areaSheikhZayed));
+      await tester.tap(find.text(l.sos).first);
+      await tester.pumpAndSettle();
+      expect(find.byType(SosSheet), findsOneWidget);
+    });
+
+    testWidgets('[$code] cancelling before 9 PM gives everything back and clears the card', (tester) async {
+      final c = await _openNoGroupToday(tester, code, book: true);
+      final wallet = c.read(walletRepositoryProvider);
+      expect((await wallet.getWallet(DailySeed.meId)).balance, 152);
+      await tester.tap(find.text(l.cancelBooking));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('one-off-section')), findsNothing);
+      expect((await wallet.getWallet(DailySeed.meId)).balance, 200);
+    });
+  }
 }

@@ -2015,4 +2015,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get seatChosen => 'اختيارك';
+
+  @override
+  String get cancelFreeNote =>
+      'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.';
 }

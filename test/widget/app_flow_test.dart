@@ -118,7 +118,8 @@ void main() {
   });
 
   testWidgets('settings from a placeholder: switching role changes frequency sublines', (tester) async {
-    await pumpGooraApp(tester, prefs: _signedIn(role: Role.rider, frequency: Frequency.once));
+    // Offer a trip is still a placeholder (005 US2); Empty seats is a real screen now.
+    await pumpGooraApp(tester, prefs: _signedIn(role: Role.driver, frequency: Frequency.once));
     await tester.tap(find.byKey(const Key('open-settings')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('switch-role')));
@@ -127,7 +128,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(a.back));
     await tester.pumpAndSettle();
-    expect(find.text(a.fRegDriver), findsOneWidget);
+    expect(find.text(a.fRegRider), findsOneWidget);
   });
 
   testWidgets('debug: long-press the welcome logo opens the Design gallery', (tester) async {

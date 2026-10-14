@@ -2,6 +2,7 @@ import '../../../core/time/calendar_date.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
+import '../../commute/domain/place.dart';
 import '../../wallet/domain/seat_price.dart';
 import 'booking.dart';
 
@@ -40,6 +41,9 @@ final class SeatOffer {
     required this.departure,
     required this.freeSeats,
     required this.price,
+    this.from,
+    this.to,
+    this.arrival,
   });
 
   /// A group seat or an offered trip.
@@ -55,4 +59,10 @@ final class SeatOffer {
 
   /// Quoted for the viewing rider.
   final SeatPrice price;
+
+  /// The route as the rider rides it, and when it ends. Set on a booked
+  /// seat (`MarketplaceRepository.seatOf`) for Share; null on a listing.
+  final Area? from;
+  final Area? to;
+  final Clock? arrival;
 }

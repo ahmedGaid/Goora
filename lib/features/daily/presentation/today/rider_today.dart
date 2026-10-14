@@ -20,6 +20,7 @@ import '../../../../core/widgets/goora_timeline_row.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/domain/group.dart';
 import '../../../commute/presentation/labels.dart';
+import '../../../marketplace/presentation/today/one_off_section.dart';
 import '../../../wallet/data/providers.dart';
 import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
@@ -76,6 +77,7 @@ class RiderToday extends StatelessWidget {
           label: l10n.extraTrip,
           onPressed: () => context.push(Routes.emptySeatsOn(next?.leg ?? Leg.going)),
         ),
+        const OneOffSection(),
       ],
     );
   }

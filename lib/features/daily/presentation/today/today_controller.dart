@@ -86,8 +86,9 @@ final class TodayView {
     required this.standing,
     this.otherLegs = const {},
     this.alerts = const [],
-  });
+  }) : neverInGroup = false;
 
+  /// Lost a group (removed after no-shows).
   const TodayView.removed(this.now)
       : group = null,
         me = null,
@@ -96,9 +97,25 @@ final class TodayView {
         drive = null,
         standing = NoShowStanding.removal,
         otherLegs = const {},
-        alerts = const [];
+        alerts = const [],
+        neverInGroup = false;
+
+  /// Never joined a daily group: one-off seats and trips only (005).
+  const TodayView.noGroupYet(this.now)
+      : group = null,
+        me = null,
+        display = null,
+        target = null,
+        drive = null,
+        standing = NoShowStanding.removal,
+        otherLegs = const {},
+        alerts = const [],
+        neverInGroup = true;
 
   final WallTime now;
+
+  /// True only for [TodayView.noGroupYet].
+  final bool neverInGroup;
   final CommuteGroup? group;
   final Member? me;
 
@@ -125,7 +142,8 @@ final class TodayView {
           m.id: m,
       };
 
-  bool get removed => group == null;
+  bool get removed => group == null && !neverInGroup;
+  bool get noGroupYet => group == null && neverInGroup;
   bool get isDriver => me?.role == MemberRole.driver;
 
   /// The trip Share and SOS refer to: my next leg on [display] that is not
@@ -149,7 +167,10 @@ class TodayController extends _$TodayController {
     final now = ref.watch(nowProvider)();
     final repo = ref.watch(dailyCommuteRepositoryProvider);
     final g = await repo.myGroup();
-    if (g == null) return TodayView.removed(now);
+    if (g == null) {
+      final lost = (await repo.notices().first).any((n) => n.kind == NoticeKind.removed);
+      return lost ? TodayView.removed(now) : TodayView.noGroupYet(now);
+    }
     final me = g.member(repo.meId)!;
     final profile = await ref.read(commuteRepositoryProvider).loadProfile();
     final home = profile?.home?.point;

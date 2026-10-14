@@ -8,7 +8,6 @@ import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/presentation/today/today_controller.dart';
 import 'package:goora/features/daily/presentation/today/today_screen.dart';
-import 'package:goora/features/marketplace/presentation/empty_seats/empty_seats_controller.dart';
 import 'package:goora/features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';

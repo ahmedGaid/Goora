@@ -332,14 +332,14 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   unchanged — SC-006), `paymentFailed` unchanged, `needsMethod`, `topUp(44)` at balance 0, company
   at negative balance not blocked, cash debits nothing; `cancelBooking` — before cut-off refund 44,
   after cut-off 24 (owed 20 → driver `Charge`, fee back); `myBookings` oldest first
-- [ ] T047 [P] [US1] `test/widget/empty_seats_test.dart`, ar + en: loading; list (Going/Return
+- [x] T047 [P] [US1] `test/widget/empty_seats_test.dart`, ar + en: loading; list (Going/Return
   toggle, route line, card: avatar, name, rating, pickup, time + day label, seats left, price line,
   Book seat); price per mode ("44 EGP · 40 to the driver + 4 service fee", "40 EGP · no fees
   (subscribed)", "Pay 40 EGP cash to the driver", Tarek "48 … 44 + 4" / "Pay 45 EGP cash"); caption
   `seatRule`; dashed `nothingFits` card; empty state; already riding; error + retry; booked summary
   with upsell (non-subscriber) / "Back to today" (subscriber); top-up gate "Top up 44 EGP first";
   seat just taken banner + refreshed list; late-booking note shown before confirm after 9 PM
-- [ ] T048 [P] [US1] `test/widget/marketplace_navigation_test.dart`: rider Just one trip → Empty
+- [x] T048 [P] [US1] `test/widget/marketplace_navigation_test.dart`: rider Just one trip → Empty
   seats, Back → frequency; Today "Need an extra trip? Book a seat" → Empty seats on the group's leg,
   Back → Today; no-cover "Book an empty seat" → that day's leg; Book with no method → PayMethod →
   back to the same seat (`seat=` kept); upsell → commute setup with Every day preselected;
@@ -363,39 +363,49 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
     gap for the driver-side phase. No notice on rider cancel (no `NoticeKind` for it). A daily offer's first booking
     does not make a group yet (US2). Gates: analyze 0 · test 826 (+23) · node 148; two mutations (no re-check,
     no `full`) turn tests red.
-- [ ] T050 [P] [US1] `lib/features/marketplace/presentation/labels.dart`: day label
+- [x] T050 [P] [US1] `lib/features/marketplace/presentation/labels.dart`: day label
   (Today/Tomorrow/weekday), route line, price line delegating to `WalletLabels.priceLine(SeatPrice)`
-- [ ] T051 [US1] `lib/features/marketplace/presentation/empty_seats/empty_seats_controller.dart`
+- [x] T051 [US1] `lib/features/marketplace/presentation/empty_seats/empty_seats_controller.dart`
   (Riverpod, `@riverpod`): leg, offers, book → result state; run `dart run build_runner build`
-- [ ] T052 [P] [US1] `lib/features/marketplace/presentation/empty_seats/seat_card.dart`
+- [x] T052 [P] [US1] `lib/features/marketplace/presentation/empty_seats/seat_card.dart`
   (GooraCard/GooraAvatar/GooraPill; Book seat ≥ 44 px with a semantic label)
-- [ ] T053 [P] [US1] `lib/features/marketplace/presentation/empty_seats/booked_view.dart` (summary;
+- [x] T053 [P] [US1] `lib/features/marketplace/presentation/empty_seats/booked_view.dart` (summary;
   upsell card for non-subscribers, "Back to today" for subscribers)
-- [ ] T054 [US1] `lib/features/marketplace/presentation/empty_seats/empty_seats_screen.dart`: every
+- [x] T054 [US1] `lib/features/marketplace/presentation/empty_seats/empty_seats_screen.dart`: every
   state in contracts/navigation.md "Empty seats"; Back = `canPop() ? pop() : go(Routes.frequency)`
-- [ ] T055 [US1] `lib/app/routes.dart` + `lib/app/router.dart`: real `/empty-seats` route with
+- [x] T055 [US1] `lib/app/routes.dart` + `lib/app/router.dart`: real `/empty-seats` route with
   `leg` and `seat` query params (drop `PlaceholderKind.emptySeats` from the placeholder loop)
-- [ ] T056 [US1] `lib/features/wallet/presentation/pay_method/pay_method_screen.dart` + router:
+- [x] T056 [US1] `lib/features/wallet/presentation/pay_method/pay_method_screen.dart` + router:
   optional `next` location; after choosing, `go(next)` instead of Today; test in
   `test/widget/pay_method_screen_test.dart`
-- [ ] T057 [US1] Entry points: `lib/features/daily/presentation/today/rider_today.dart` ("Need an
+- [x] T057 [US1] Entry points: `lib/features/daily/presentation/today/rider_today.dart` ("Need an
   extra trip?" pushes Empty seats with the group's next leg), `today_widgets.dart` no-cover card
   ("Book an empty seat" pushes Empty seats for that day's leg)
-- [ ] T058 [US1] `lib/features/commute/presentation/commute_setup_screen.dart`: accept a preset
+- [x] T058 [US1] `lib/features/commute/presentation/commute_setup_screen.dart`: accept a preset
   frequency so the upsell opens it with "Every day" chosen
-- [ ] T059 [US1] `lib/features/marketplace/presentation/today/one_off_section.dart` (rider side) +
+- [x] T059 [US1] `lib/features/marketplace/presentation/today/one_off_section.dart` (rider side) +
   `oneOffTodayProvider`: booked seat card (route, day/time, driver card, pickup, `SeatPrice` line,
   Cancel booking with the 003 rule caption, Share, SOS); a booking whose rideId is the person's own
   group ride is not shown here (the group card shows it, R10); add the section to `rider_today.dart`
-- [ ] T060 [US1] No-group Today: split 003's `TodayView.removed` in
+- [x] T060 [US1] No-group Today: split 003's `TodayView.removed` in
   `lib/features/daily/presentation/today/today_controller.dart` into `removed` (lost a group, 003
   copy unchanged) and `noGroupYet`; `today_screen.dart` shows the one-off section, entry points and a
   calm `noGroupYet` empty state; while a one-off trip is running, Share and SOS stay one tap away in
   the no-group state too (Constitution V); tests in `test/widget/today_rider_test.dart`
-- [ ] T061 [US1] `lib/features/onboarding/presentation/onboarding_routes.dart`: `routeForSession`
+- [x] T061 [US1] `lib/features/onboarding/presentation/onboarding_routes.dart`: `routeForSession`
   sends a once user with any one-off booking / open offer / open request to Today (R12); test in
   `test/unit/onboarding_flow_test.dart`
-- [ ] T062 [US1] Checkpoint P4: gates green; quickstart §1–§2 reachable on the demo seed
+- [x] T062 [US1] Checkpoint P4: gates green; quickstart §1–§2 reachable on the demo seed
+- Choices, not in the contract (T047–T062): `SeatOffer` gained optional `from/to/arrival` (set only by the new
+  `MarketplaceRepository.seatOf(Booking)`, which the rider's Today card needs for driver + pickup + Share). Riding rule
+  fixed: a leg the rider cancelled, or a ride nobody drives, is not one they ride, so its seats list (the no-cover
+  entry was empty without this). "Already riding this leg" shows after a Book, not on load. `seat=` keeps the picked
+  seat first and marked "Your pick" after PayMethod; it does not auto-book. Top-up gate opens the 004 TopUpSheet.
+  Empty seats has no Settings link (the placeholder had one). New ARB: `noSeatsOnRoute`, `seatPayFailed`, `seatChosen`,
+  `cancelFreeNote`. Upsell opens commute setup with `?frequency=everyDay`, saved only when the rider asks for a match.
+  Today: `TodayView.noGroupYet` (never in a group) vs `removed` (has a `removed` notice). Router + OTP send a once user
+  with a live one-off to Today (`FakeMarketplaceRepository.hasOneOff`). One-off Share text = areas + driver first
+  name + `/t/<booking id>`. T062 reached by widget tests on the demo seed; NOT walked on a phone.
 
 ---
 

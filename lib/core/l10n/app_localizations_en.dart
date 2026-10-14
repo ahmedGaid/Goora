@@ -1966,4 +1966,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seatChosen => 'Your pick';
+
+  @override
+  String get cancelFreeNote =>
+      'Cancel free until 9 PM the evening before. After that you pay half your share.';
 }

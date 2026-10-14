@@ -298,6 +298,10 @@ abstract interface class MarketplaceRepository {
   /// Booked, not done or ended, oldest first.
   Future<List<Booking>> myBookings({required WallTime now});
 
+  /// The seat a booking rides on — driver, pickup and time — for the rider's
+  /// Today. Null when its source is gone.
+  Future<SeatOffer?> seatOf(Booking booking);
+
   // B — Post your trip
   Future<PostResult> post(TripDraft draft, {required WallTime now});
   Future<void> cancelRequest(String requestId);

@@ -3320,6 +3320,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اختيارك'**
   String get seatChosen;
+
+  /// No description provided for @cancelFreeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.'**
+  String get cancelFreeNote;
 }
 
 class _AppLocalizationsDelegate

@@ -10,12 +10,14 @@ import '../features/commute/domain/commute_profile.dart';
 import '../features/commute/presentation/commute_setup_screen.dart';
 import '../features/commute/presentation/match_result_screen.dart';
 import '../features/commute/presentation/no_match_screen.dart';
+import '../features/daily/data/daily_seed.dart';
 import '../features/daily/data/providers.dart';
 import '../features/daily/presentation/shell/app_shell.dart';
 import '../features/daily/presentation/today/today_screen.dart';
 import '../features/daily/presentation/trust/trust_screen.dart';
 import '../features/daily/presentation/week/week_screen.dart';
 import '../features/design_gallery/presentation/design_gallery_screen.dart';
+import '../features/marketplace/data/fake_marketplace_repository.dart';
 import '../features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
 import '../features/onboarding/domain/choices.dart';
 import '../features/onboarding/domain/phone_number.dart';
@@ -63,6 +65,7 @@ GoRouter router(Ref ref) {
     initialLocation: routeForSession(
       ref.read(sessionControllerProvider),
       isMember: FakeCommuteRepository.hasMembership(ref.read(sharedPreferencesProvider)),
+      hasOneOff: FakeMarketplaceRepository.hasOneOff(ref.read(sharedPreferencesProvider), DailySeed.meId),
     ),
     routes: [
       GoRoute(path: Routes.welcome, builder: (_, _) => const WelcomeScreen()),

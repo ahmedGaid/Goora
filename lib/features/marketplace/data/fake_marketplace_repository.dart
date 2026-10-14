@@ -75,6 +75,26 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   /// Every key the marketplace owns, groups and added members included.
   static const keyPrefix = 'market.';
 
+  /// Synchronous check for the router's first location (R12): the person has
+  /// a live one-off booking, an open offer or an open request.
+  static bool hasOneOff(SharedPreferences prefs, String meId) {
+    bool any(String key, String who, Set<String> live) {
+      final raw = prefs.getString(key);
+      if (raw == null) return false;
+      try {
+        return (jsonDecode(raw) as List<dynamic>).cast<Map<String, dynamic>>().any(
+              (m) => m[who] == meId && live.contains(m['status']),
+            );
+      } on Object {
+        return false;
+      }
+    }
+
+    return any(bookingsKey, 'riderId', {BookingStatus.booked.name}) ||
+        any(offersKey, 'driverId', {OfferStatus.open.name, OfferStatus.full.name}) ||
+        any(requestsKey, 'riderId', {RequestStatus.posted.name});
+  }
+
   final SharedPreferences _prefs;
   final GroupCatalog _catalog;
   final DailyCommuteRepository _daily;
@@ -608,6 +628,50 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   /// Late-cancel charges the marketplace owes drivers (a 003-style [Charge],
   /// no Goora fee).
   List<Charge> charges() => _read(chargesKey, Charge.fromJson);
+
+  @override
+  Future<SeatOffer?> seatOf(Booking b) async {
+    switch (b.source.kind) {
+      case BookingSourceKind.offer:
+        final o = _offers().where((o) => o.id == b.source.id).firstOrNull;
+        if (o == null) return null;
+        return SeatOffer(
+          source: b.source,
+          driver: MarketSeed.driverById(o.driverId) ?? _unknownDriver(o.driverId),
+          pickup: o.pickup,
+          date: b.date,
+          leg: b.leg,
+          departure: o.departure,
+          freeSeats: 0,
+          price: b.price,
+          from: o.from,
+          to: o.to,
+          arrival: _tripOf(b)?.end.time,
+        );
+      case BookingSourceKind.groupSeat:
+        final g = _catalog.byId(b.source.id);
+        final driver = g?.driverFor(b.leg);
+        if (g == null || driver == null) return null;
+        final home = (await _route(b.leg))?.home;
+        final going = b.leg == Leg.going;
+        return SeatOffer(
+          source: b.source,
+          driver: _driverOf(driver),
+          pickup: going && home != null ? g.nearestStop(home) : (going ? g.goingStops.first : g.workStop),
+          date: b.date,
+          leg: b.leg,
+          departure: g.timeFor(b.leg),
+          freeSeats: 0,
+          price: b.price,
+          from: going ? g.origin : g.destination,
+          to: going ? g.destination : g.origin,
+          arrival: g.endFor(b.leg),
+        );
+      case BookingSourceKind.request:
+        // An accepted request rides the driver's own trip; US2 gives it a face.
+        return null;
+    }
+  }
 
   @override
   Future<List<Booking>> myBookings({required WallTime now}) async {

@@ -542,5 +542,6 @@
   "actSeatRefund": "Refund",
   "noSeatsOnRoute": "No seats on your route right now",
   "seatPayFailed": "The payment didn't go through. Nothing was charged.",
-  "seatChosen": "Your pick"
+  "seatChosen": "Your pick",
+  "cancelFreeNote": "Cancel free until 9 PM the evening before. After that you pay half your share."
 }
