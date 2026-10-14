@@ -489,7 +489,7 @@ unless booked. **Independent test**: quickstart §4.
 
 ### Tests
 
-- [ ] T074 [P] [US3] `test/unit/fake_marketplace_repository_test.dart` (US3 group): `post` —
+- [x] T074 [P] [US3] `test/unit/fake_marketplace_repository_test.dart` (US3 group): `post` —
   `needsMethod`, `topUp(gap)` against the route's price, `dailyNotAllowed` for a rider already in a
   group, `posted` with a fixed `SeatPrice` (contribution = suggestion 40 at the 3-seat basis);
   `driversOnRoute` counts drivers whose area detour < 10 and whose privacy allows the rider;
@@ -498,30 +498,30 @@ unless booked. **Independent test**: quickstart §4.
   `mk-rq-…` group created (or member added to a driver's group leg), rider joined, **nothing charged
   at accept** (trips billed as 004 group trips, FR-013); gate fails at accept → `withdrawn`, nothing
   charged; expired request → balance and activity unchanged, no row (SC-005)
-- [ ] T075 [P] [US3] `test/widget/post_trip_test.dart`, ar + en: form prefilled from the rider's
+- [x] T075 [P] [US3] `test/widget/post_trip_test.dart`, ar + en: form prefilled from the rider's
   route, three rules, Post; daily disabled with "You're already in a daily group"; top-up gate;
   posted "Sent to N drivers on your route" + progress + Cancel request; accepted (driver card,
   pickup, time, price line); daily accepted "You're now a commute group" → PayMethod `next=/today`;
   expired "No driver took this trip in time. Nothing was charged." + Post again / See empty seats;
   posted-state loading and error + retry (FR-027)
-- [ ] T076 [P] [US3] `test/widget/marketplace_navigation_test.dart`: Empty seats dashed card → Post
+- [x] T076 [P] [US3] `test/widget/marketplace_navigation_test.dart`: Empty seats dashed card → Post
   your trip, Back → Empty seats; no-match "Post your trip" now `push`, Back → no-match; no-cover
   "Post your trip" → Back → Today
 
 ### Implementation
 
-- [ ] T077 [US3] `fake_marketplace_repository.dart`: `post`, `cancelRequest`, `request`,
+- [x] T077 [US3] `fake_marketplace_repository.dart`: `post`, `cancelRequest`, `request`,
   `driversOnRoute`, `demoDriverAccepts` (shares the accept path T085 builds on)
-- [ ] T078 [US3] `lib/features/marketplace/presentation/post_trip/post_trip_controller.dart` +
+- [x] T078 [US3] `lib/features/marketplace/presentation/post_trip/post_trip_controller.dart` +
   `post_trip_screen.dart`: form · daily disabled · top-up gate · posted · accepted · expired
   (contracts/navigation.md "Post your trip"); `?id=` re-entry; Back rule
-- [ ] T079 [US3] Entry points: `lib/features/commute/presentation/no_match_screen.dart` `go` → `push`;
+- [x] T079 [US3] Entry points: `lib/features/commute/presentation/no_match_screen.dart` `go` → `push`;
   Empty seats dashed card; no-cover card already pushes
-- [ ] T080 [US3] Remove placeholders (FR-002): real `/post-trip` (+ `id`) in `lib/app/router.dart`;
+- [x] T080 [US3] Remove placeholders (FR-002): real `/post-trip` (+ `id`) in `lib/app/router.dart`;
   delete `lib/features/placeholder/`, `PlaceholderKind`, `_placeholderPaths` and the router loop; fix
   any test that referenced them
-- [ ] T081 [US3] `demo_section.dart`: "A driver accepts your request"
-- [ ] T082 [US3] Checkpoint P6: gates green; quickstart §4 reachable
+- [x] T081 [US3] `demo_section.dart`: "A driver accepts your request"
+- [x] T082 [US3] Checkpoint P6: gates green; quickstart §4 reachable
 
 ---
 
@@ -532,14 +532,14 @@ unless booked. **Independent test**: quickstart §4.
 
 ### Tests
 
-- [ ] T083 [P] [US4] `test/unit/fake_marketplace_repository_test.dart` (US4 group):
+- [x] T083 [P] [US4] `test/unit/fake_marketplace_repository_test.dart` (US4 group):
   `requestsForMe` — only detour < 10 from the driver's area, driver's own privacy preference applied,
   women-only requests only to women drivers, `leavingFrom` and part-of-day filters, each card's `fit`
   from `DriverDayRules`; `accept` — create (`OfferedTrip` origin `fromRequest`, basis riderSeats 3,
   seats = min(car seats, 3), contribution = request price) → `created(1)`; join within ±30 →
   `joined(7:30)`, tripsLeft unchanged; other direction → `created(0)`; `refused(doesntFit | full |
   limitReached)`; `riderCantPay` → request withdrawn; the quickstart §5 sequence as one test
-- [ ] T084 [P] [US4] `test/widget/find_riders_test.dart`, ar + en: "Leaving from" filter (All + each
+- [x] T084 [P] [US4] `test/widget/find_riders_test.dart`, ar + en: "Leaving from" filter (All + each
   corridor area), Morning/Evening, "Trips left today 2"; card (route, Verified rider / (woman),
   pickup, time, once/daily, rating or New, fixed price) in every state — inline confirm "This
   creates your trip: … · 7:30 AM. Trips left after this: 1", "This joins your trip at 7:30 AM",
@@ -549,18 +549,18 @@ unless booked. **Independent test**: quickstart §4.
 
 ### Implementation
 
-- [ ] T085 [US4] `fake_marketplace_repository.dart`: `requestsForMe`, `accept` (gate re-check;
+- [x] T085 [US4] `fake_marketplace_repository.dart`: `requestsForMe`, `accept` (gate re-check;
   create/join; daily request joining one of the driver's group legs → `GroupCatalog.addMember`;
   `requestAccepted` notice to the rider)
-- [ ] T086 [P] [US4] `lib/features/marketplace/presentation/find_riders/request_card.dart`: every
+- [x] T086 [P] [US4] `lib/features/marketplace/presentation/find_riders/request_card.dart`: every
   `TripFit` state as words (never colour alone), Accept ≥ 44 px with a semantic label, inline confirm
   for `create`; takes `RequestCard` only (no name/photo reachable)
-- [ ] T087 [US4] `lib/features/marketplace/presentation/find_riders/find_riders_controller.dart` +
+- [x] T087 [US4] `lib/features/marketplace/presentation/find_riders/find_riders_controller.dart` +
   `find_riders_screen.dart` ("Requests near you"; loading/list/empty/error)
-- [ ] T088 [US4] `lib/app/routes.dart` + `router.dart`: new `Routes.findRiders = '/find-riders'`;
+- [x] T088 [US4] `lib/app/routes.dart` + `router.dart`: new `Routes.findRiders = '/find-riders'`;
   driver Today "Find riders" pushes it (today it pushes `offerTrip`); Offer a trip gains the text link
   "Or find riders who already posted" (`offer_trip_screen.dart`)
-- [ ] T089 [US4] Checkpoint P7: gates green; quickstart §5 reachable
+- [x] T089 [US4] Checkpoint P7: gates green; quickstart §5 reachable
 
 ---
 
@@ -569,16 +569,16 @@ unless booked. **Independent test**: quickstart §4.
 **Goal**: driver Today's placeholder becomes live demand with US4's rules.
 **Independent test**: quickstart §6.
 
-- [ ] T090 [P] [US5] `test/widget/today_driver_test.dart`, ar + en: banner "12 people want Sheikh
+- [x] T090 [P] [US5] `test/widget/today_driver_test.dart`, ar + en: banner "12 people want Sheikh
   Zayed → Smart Village in the morning"; up to 3 cards with "+N min detour" and Accept; "See all" →
   Find riders; sz-0725's driver on a day driving both legs → cards near 7:25 read "Your car is full",
   the rest "Daily limit reached", no Accept; off-duty day → Accept → "Accepted ✓", counter drops;
   no matching requests → `noRequests` + privacy caption, not the old placeholder; SC-004 names check
-- [ ] T091 [US5] `lib/features/marketplace/presentation/today/requests_section.dart`: banner
+- [x] T091 [US5] `lib/features/marketplace/presentation/today/requests_section.dart`: banner
   (`demandBanner`, count = open requests on the driver's route in that part of day), cards via
   `request_card.dart` + detour, Accepted ✓, See all, empty state; replace the `reqsOnRoute`
   placeholder in `lib/features/daily/presentation/today/driver_today.dart`
-- [ ] T092 [US5] Checkpoint P8: gates green; quickstart §6 reachable
+- [x] T092 [US5] Checkpoint P8: gates green; quickstart §6 reachable
 
 ---
 
@@ -587,43 +587,52 @@ unless booked. **Independent test**: quickstart §4.
 **Goal**: a subscriber takes a one-off seat before the 9 PM cut-off; the booker gets everything back.
 **Independent test**: quickstart §7.
 
-- [ ] T093 [P] [US6] `test/unit/fake_marketplace_repository_test.dart` (US6 group): `reclaim`
+- [x] T093 [P] [US6] `test/unit/fake_marketplace_repository_test.dart` (US6 group): `reclaim`
   before cut-off → booking `reclaimed`, one `seatRefund` of 44, balance = pre-booking value (SC-005),
   `seatReclaimed` notice with day + amount; at/after 21:00 → `tooLate`; booking made after the
   cut-off → `notReclaimable`; subscriber booking → `notReclaimable`; cash booking → nothing moves and
   it never appears in `doneOneOffs` (does not count toward the 10); a subscriber `book` on a full car
   takes the newest reclaimable seat (US6 AC1); `demoSubscriberTakes` picks the latest reclaimable
   booking
-- [ ] T094 [P] [US6] `test/widget/empty_seats_test.dart` + `test/widget/rider_wallet_test.dart`: the
+- [x] T094 [P] [US6] `test/widget/empty_seats_test.dart` + `test/widget/rider_wallet_test.dart`: the
   refunded rider's Today no longer shows the trip, Wallet shows one "Refund" row, the notice offers
   Empty seats / Post your trip (both navigate); demo after 9 PM shows "Too late to reclaim — this
   booking is final."
-- [ ] T095 [US6] `fake_marketplace_repository.dart`: `reclaim`, subscriber take-over inside `book`,
+- [x] T095 [US6] `fake_marketplace_repository.dart`: `reclaim`, subscriber take-over inside `book`,
   `demoSubscriberTakes`
-- [ ] T096 [US6] `demo_section.dart`: "A subscriber takes this seat"
-- [ ] T097 [US6] Checkpoint P9: gates green; quickstart §7 reachable
+- [x] T096 [US6] `demo_section.dart`: "A subscriber takes this seat"
+- [x] T097 [US6] Checkpoint P9: gates green; quickstart §7 reachable
 
 ---
 
 ## Phase 11: Polish + gate (plan P10)
 
-- [ ] T098 [P] `supabase/migrations/20261012000000_marketplace.sql` (R17, droppable if the feature
+- [x] T098 [P] `supabase/migrations/20261012000000_marketplace.sql` (R17, droppable if the feature
   runs long): `offered_trips`, `trip_requests`, `bookings` with RLS on each; view
   `driver_request_cards` exposing `is_woman` and `rating`, never name or photo; not deployed
-- [ ] T099 [P] `test/golden/marketplace_golden_test.dart`, RTL + LTR: seat card, booked view, request
+- [x] T099 [P] `test/golden/marketplace_golden_test.dart`, RTL + LTR: seat card, booked view, request
   card (create/join/limit), offered-trip live card, one-off Today card, requests banner
-- [ ] T100 [P] `test/widget/daily_accessibility_test.dart` (or a new
+- [x] T100 [P] `test/widget/daily_accessibility_test.dart` (or a new
   `test/widget/marketplace_accessibility_test.dart`): Book seat / Accept / Publish / SOS have
   semantic labels and ≥ 44 px; every limit state readable as text; if any new colour token was added,
   pair it in `test/unit/contrast_test.dart`
-- [ ] T101 [P] Confirm `test/architecture/no_hardcoded_values_test.dart` covers
+- [x] T101 [P] Confirm `test/architecture/no_hardcoded_values_test.dart` covers
   `lib/features/marketplace` (it scans `lib/features` recursively); fix any hit
-- [ ] T102 [P] `specs/005-seat-marketplace/research.md` R16: list every 005 ARB key actually shipped
+- [x] T102 [P] `specs/005-seat-marketplace/research.md` R16: list every 005 ARB key actually shipped
   (en + ar) for founder review; README section "Seat marketplace (feature 005)"
-- [ ] T103 Gate: `flutter analyze` 0 issues · `flutter test --concurrency=1` all green ·
+- [x] T103 Gate: `flutter analyze` 0 issues · `flutter test --concurrency=1` all green ·
   `node --test "supabase/functions/_shared/*.test.ts"` · both vector generators re-run with no
   `git diff` in `test/fixtures`; `goora-brand` review checklist on every main state, ar + en (SC-007)
 - [ ] T104 Quickstart §1–§8 on a device (`R5CNC0NK6ZT` or an emulator), Arabic and English — on the
+  **Not done (2026-10-14):** no phone was connected at the end of the build, so quickstart §1–§8 were not
+  walked on a device in this build. The US1–US2 part was walked in Arabic earlier the same day (publish → live state).
+  **T063–T103 choices:** Post trip uses the suggested price (40) at the corridor's 3-seat basis; a request is priced for
+  the rider's arrangement and fixed. A daily request accepted becomes an `mk-rq-` group and charges nothing at accept.
+  "Leaving from: All" shows each request's smallest detour. Accepted requests book on the offered trip (source offer) so
+  live, cancel and the driver's day count them. Today shows a posted request card; `myRequests` was added to the
+  repository. `PlaceholderKind`/`lib/features/placeholder/` are deleted. Daily accepted → Today (the rider already has a
+  payment method), not PayMethod. Wallet tab crash for a once rider (riderSeats 0) fixed in `WalletView.fee`.
+  Gates: analyze 0 · flutter test 1040 · node 148 · vector generators leave no diff.
   founder's personal phone check `mCurrentFocus` and no systemui before every tap
   (`flutter-lessons` #15); record results in research.md; no device connected → say so, don't block
 
