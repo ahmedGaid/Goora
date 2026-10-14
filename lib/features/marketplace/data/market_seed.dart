@@ -37,6 +37,7 @@ abstract final class MarketSeed {
 
   static const _pickupSz = GeoPoint(30.0427, 30.98);
   static const _pickupSv = GeoPoint(30.0719, 31.017);
+  static const _pickupOct = GeoPoint(30.0131, 30.9512);
 
   // ------------------------------------------------------------ requests
 
@@ -163,6 +164,21 @@ abstract final class MarketSeed {
     SeedRider(id: 'seed-rider-salma', firstName: 'Salma', rider: AnonymousRider(isWoman: true)),
     SeedRider(id: 'seed-rider-hassan', firstName: 'Hassan', rider: AnonymousRider(isWoman: false, rating: 4.4)),
   ];
+
+  /// The public meeting point a driver leaving [area] uses when they publish
+  /// (never a home, FR-023): one fixed gate per area.
+  static Stop pickupIn(Area area, String id, Clock time) => switch (area) {
+    Area.sheikhZayed => Stop(id: id, name: StopName.mainGate, point: _pickupSz, time: time),
+    Area.october => Stop(id: id, name: StopName.centralSt, point: _pickupOct, time: time),
+    Area.smartVillage => Stop(id: id, name: StopName.smartVillageGate2, point: _pickupSv, time: time),
+  };
+
+  /// A public point in [area], where a trip into it ends.
+  static GeoPoint pointIn(Area area) => switch (area) {
+    Area.sheikhZayed => _pickupSz,
+    Area.october => _pickupOct,
+    Area.smartVillage => _pickupSv,
+  };
 
   static SeatDriver? driverById(String id) => drivers.where((d) => d.id == id).firstOrNull;
 

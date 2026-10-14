@@ -416,7 +416,7 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 ### Tests
 
-- [ ] T063 [P] [US2] `test/unit/fake_marketplace_repository_test.dart` (US2 group): `publish` —
+- [x] T063 [P] [US2] `test/unit/fake_marketplace_repository_test.dart` (US2 group): `publish` —
   `notVerified([license, vehicle])`, `limit(TripFit)` for every non-create kind, contribution
   outside `PricingService.range` rejected; `live` — anonymous riders before departure, first names
   from departure; status open → full → (cancel booking) open → departed → done by the clock; daily
@@ -443,11 +443,11 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 
 ### Implementation
 
-- [ ] T066 [US2] `fake_marketplace_repository.dart`: `publish`, `offer`, `live`, `cancelOffer`,
+- [x] T066 [US2] `fake_marketplace_repository.dart`: `publish`, `offer`, `live`, `cancelOffer`,
   `demoRiderBooks` (daily first booking → `GroupCatalog.create` + `CommuteRepository.join` for the
   driver, bookings re-keyed to the group's ride ids, R10 one ride one charge); `book` on an offered
   trip uses the offer's basis; `cancelOffer` records reliability per R9 (late only)
-- [ ] T067 [P] [US2] `lib/features/daily/data/fake_trust_repository.dart`: `demoVerifyDriver()`
+- [x] T067 [P] [US2] `lib/features/daily/data/fake_trust_repository.dart`: `demoVerifyDriver()`
   sets ID, license and vehicle verified (debug only); test in `test/widget/trust_test.dart` or
   `test/unit/` alongside
 - [ ] T068 [P] [US2] `lib/features/marketplace/presentation/route_form.dart`: shared From / To /

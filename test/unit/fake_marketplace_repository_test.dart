@@ -15,11 +15,14 @@ import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/fake_trust_repository.dart';
 import 'package:goora/features/daily/domain/charge.dart';
 import 'package:goora/features/daily/domain/privacy.dart';
+import 'package:goora/features/daily/domain/notice.dart';
 import 'package:goora/features/daily/domain/ride.dart';
+import 'package:goora/features/daily/domain/trust.dart';
 import 'package:goora/features/marketplace/data/fake_marketplace_repository.dart';
 import 'package:goora/features/marketplace/data/market_seed.dart';
 import 'package:goora/features/marketplace/domain/anonymous_rider.dart';
 import 'package:goora/features/marketplace/domain/booking.dart';
+import 'package:goora/features/marketplace/domain/driver_day_rules.dart';
 import 'package:goora/features/marketplace/domain/market_day.dart';
 import 'package:goora/features/marketplace/domain/marketplace_repository.dart';
 import 'package:goora/features/marketplace/domain/offered_trip.dart';
@@ -149,6 +152,7 @@ Booking _booking(
   BookingStatus status = BookingStatus.booked,
   PaidBy paidBy = PaidBy.wallet,
   String riderId = 'seed-rider-nadia',
+  WallTime? bookedAt,
 }) => Booking(
   id: id,
   riderId: riderId,
@@ -161,7 +165,7 @@ Booking _booking(
   price: MarketSeed.quote(40),
   paidBy: paidBy,
   paid: paidBy == PaidBy.cash ? 0 : 44,
-  bookedAt: at(date.addDays(-2), 12, 0),
+  bookedAt: bookedAt ?? at(date.addDays(-2), 12, 0),
   isSubscriber: false,
   status: status,
 );
@@ -928,6 +932,282 @@ void main() {
         );
         final mine = await w.repo.myBookings(now: w.clock.now);
         expect(mine.map((b) => b.id), ['bk-1', 'bk-3']);
+      });
+    });
+  });
+
+  group('Offer a trip (T063, US2)', () {
+    final wed = _tue.addDays(1);
+
+    Map<String, Object> offers(List<OfferedTrip> trips) =>
+        _stored(FakeMarketplaceRepository.offersKey, [for (final t in trips) t.toJson()]);
+    Map<String, Object> bookings(List<Booking> items) =>
+        _stored(FakeMarketplaceRepository.bookingsKey, [for (final b in items) b.toJson()]);
+
+    /// A verified driver with no group.
+    Future<_World> driver({WallTime? start, Map<String, Object> extra = const {}, bool member = false}) =>
+        _make(role: Role.driver, member: member, start: start, extra: extra);
+
+    OfferDraft draft({
+      Leg leg = Leg.going,
+      Clock departure = const Clock.hm(7, 30),
+      int seats = 3,
+      int contribution = 40,
+      Repeat repeat = Repeat.once,
+    }) => OfferDraft(
+      leg: leg,
+      from: leg == Leg.going ? Area.sheikhZayed : Area.smartVillage,
+      to: leg == Leg.going ? Area.smartVillage : Area.sheikhZayed,
+      departure: departure,
+      seats: seats,
+      contribution: contribution,
+      repeat: repeat,
+    );
+
+    group('publish', () {
+      test('a driver with unverified documents is told which, and publishes after the demo verify', () async {
+        final w = await driver();
+        await w.trust.startDriverVerification();
+        final refused = await w.repo.publish(draft(), now: w.clock.now);
+        expect(refused, isA<NotVerified>());
+        expect((refused as NotVerified).missing, [VerificationKind.license, VerificationKind.vehicle]);
+
+        await w.trust.demoVerifyDriver();
+        expect(await w.repo.publish(draft(), now: w.clock.now), isA<Published>());
+      });
+
+      test('publishes on the next workday at the chosen time with the corridor basis and a public pickup', () async {
+        final w = await driver(); // Tue 20:00 — 7:30 is tomorrow
+        final result = await w.repo.publish(draft(), now: w.clock.now) as Published;
+        final t = result.trip;
+        expect((t.id, t.driverId, t.date, t.departure, t.seats, t.riderSeats, t.tripCost, t.contribution), (
+          'of-1',
+          'me',
+          wed,
+          const Clock.hm(7, 30),
+          3,
+          3,
+          160,
+          40,
+        ));
+        expect((t.status, t.repeat, t.origin), (OfferStatus.open, Repeat.once, OfferOrigin.published));
+        expect(t.pickup.name, StopName.mainGate);
+        expect((await w.repo.offer('of-1', now: w.clock.now))?.id, 'of-1');
+        expect((await w.repo.driverDay(wed)).trips.map((x) => x.id), ['of-1']);
+      });
+
+      test('ids count up past the seeded and stored ones', () async {
+        final w = await driver(extra: offers([_offer('of-7', date: wed, driverId: 'khaled')]));
+        final t = (await w.repo.publish(draft(), now: w.clock.now) as Published).trip;
+        expect(t.id, 'of-8');
+      });
+
+      test('a price outside the range is a bug, not a result — 32 and 48 are the ends at 160 / 3 seats', () async {
+        final w = await driver();
+        expect(() => w.repo.publish(draft(contribution: 30), now: w.clock.now), throwsArgumentError);
+        expect(() => w.repo.publish(draft(contribution: 50), now: w.clock.now), throwsArgumentError);
+        expect(await w.repo.publish(draft(contribution: 32), now: w.clock.now), isA<Published>());
+        final w2 = await driver();
+        expect(await w2.repo.publish(draft(contribution: 48), now: w2.clock.now), isA<Published>());
+      });
+
+      test("the daily limit: join, doesn't fit, create, then limit reached — every refusal is OverLimit", () async {
+        final w = await driver();
+        expect(await w.repo.publish(draft(), now: w.clock.now), isA<Published>());
+
+        // 15 min from the first, same route and leg, seats left → joins it.
+        var r = await w.repo.publish(draft(departure: const Clock.hm(7, 45)), now: w.clock.now) as OverLimit;
+        expect((r.fit.kind, r.fit.tripId), (TripFitKind.join, 'of-1'));
+
+        // Same leg, far from the first → doesn't fit.
+        r = await w.repo.publish(draft(departure: const Clock.hm(11, 0)), now: w.clock.now) as OverLimit;
+        expect(r.fit.kind, TripFitKind.doesntFit);
+
+        // The other leg is the second trip.
+        expect(
+          await w.repo.publish(draft(leg: Leg.ret, departure: const Clock.hm(17, 0)), now: w.clock.now),
+          isA<Published>(),
+        );
+
+        // A third trip is over the day's two.
+        r = await w.repo.publish(draft(departure: const Clock.hm(12, 0)), now: w.clock.now) as OverLimit;
+        expect(r.fit.kind, TripFitKind.limitReached);
+      });
+
+      test('a driver who leads a daily group cannot publish Every workday on a day they do not drive', () async {
+        final w = await driver(member: true); // sz-0725: their turn is Thursday, not Wednesday
+        final r = await w.repo.publish(draft(repeat: Repeat.daily), now: w.clock.now) as OverLimit;
+        expect(r.fit.kind, TripFitKind.oneGroupOnly);
+        expect(await w.repo.publish(draft(), now: w.clock.now), isA<Published>(), reason: 'Just once is fine');
+      });
+    });
+
+    group('live', () {
+      test('anonymous riders before departure, first names from departure, oldest first', () async {
+        final trip = _offer('of-9', date: wed, departure: const Clock.hm(9, 0));
+        final w = await driver(
+          extra: {
+            ...offers([trip]),
+            ...bookings([
+              _booking(
+                'bk-2',
+                source: const BookingSource.offer('of-9'),
+                date: wed,
+                riderId: 'seed-rider-omar',
+                bookedAt: at(_tue, 11, 0),
+              ),
+              _booking(
+                'bk-1',
+                source: const BookingSource.offer('of-9'),
+                date: wed,
+                riderId: 'seed-rider-nadia',
+                bookedAt: at(_tue, 10, 0),
+              ),
+              _booking('bk-3', source: const BookingSource.offer('of-9'), date: wed, status: BookingStatus.cancelled),
+            ]),
+          },
+        );
+        var live = await w.repo.live('of-9', now: w.clock.now);
+        expect((live.taken, live.isFull, live.trip.seats), (2, false, 3));
+        expect(live.riders.map((r) => r.firstName), [null, null]);
+
+        w.clock.now = at(wed, 9, 0);
+        live = await w.repo.live('of-9', now: w.clock.now);
+        expect(live.riders.map((r) => r.firstName), ['Nadia', 'Nadia']);
+      });
+
+      test('status follows the clock: open → departed → done; a full car is full', () async {
+        final trip = _offer('of-9', date: wed, departure: const Clock.hm(9, 0), seats: 2);
+        final w = await driver(
+          extra: {
+            ...offers([trip]),
+            ...bookings([
+              _booking('bk-1', source: const BookingSource.offer('of-9'), date: wed, riderId: 'seed-rider-nadia'),
+              _booking('bk-2', source: const BookingSource.offer('of-9'), date: wed, riderId: 'seed-rider-omar'),
+            ]),
+          },
+        );
+        expect((await w.repo.live('of-9', now: w.clock.now)).isFull, isTrue);
+        expect((await w.repo.offer('of-9', now: at(wed, 8, 59)))?.status, OfferStatus.open);
+        expect((await w.repo.offer('of-9', now: at(wed, 9, 0)))?.status, OfferStatus.departed);
+        expect((await w.repo.offer('of-9', now: at(wed, 9, 40)))?.status, OfferStatus.done);
+        expect(await w.repo.offer('nope', now: w.clock.now), isNull);
+      });
+    });
+
+    group('demoRiderBooks', () {
+      test('nothing to book when the driver has no open offer', () async {
+        final w = await driver();
+        expect(await w.repo.demoRiderBooks(now: w.clock.now), isA<DemoNothing>());
+      });
+
+      test('books the latest open offer from the rider pool, one rider at a time, until full', () async {
+        final w = await driver();
+        await w.repo.publish(draft(seats: 2, contribution: 44), now: w.clock.now);
+        expect(await w.repo.demoRiderBooks(now: w.clock.now), isA<DemoDone>());
+        var live = await w.repo.live('of-1', now: w.clock.now);
+        expect(live.taken, 1);
+        expect(await w.repo.demoRiderBooks(now: w.clock.now), isA<DemoDone>());
+        live = await w.repo.live('of-1', now: w.clock.now);
+        expect((live.taken, live.isFull), (2, true));
+        expect((await w.repo.offer('of-1', now: w.clock.now))?.status, OfferStatus.full);
+        expect(await w.repo.demoRiderBooks(now: w.clock.now), isA<DemoNothing>());
+      });
+
+      test("a daily offer's first booking becomes a one-leg mk- group the driver joins, booking re-keyed (R10)", () async {
+        final w = await driver();
+        await w.repo.publish(draft(repeat: Repeat.daily), now: w.clock.now);
+        expect(await w.repo.demoRiderBooks(now: w.clock.now), isA<DemoDone>());
+
+        final g = GroupCatalog(w.prefs).byId('mk-of-1')!;
+        expect((g.origin, g.destination, g.price, g.tripCost, g.riderSeats), (
+          Area.sheikhZayed,
+          Area.smartVillage,
+          40,
+          160,
+          3,
+        ));
+        expect(g.legs, {Leg.going});
+        expect(g.members.map((m) => m.id), ['seed-rider-nadia']);
+        expect(g.days, MarketDay.workdays);
+        expect(g.rotationStart, _tue.addDays(-2), reason: 'the Sunday of the offer week');
+
+        expect((await w.repo.offer('of-1', now: w.clock.now))?.status, OfferStatus.grouped);
+        expect((await w.repo.offer('of-1', now: w.clock.now))?.groupId, 'mk-of-1');
+        expect(await FakeCommuteRepository(w.prefs, catalog: GroupCatalog(w.prefs)).joinedGroupId(), 'mk-of-1');
+
+        final stored = jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List;
+        expect(stored.map((b) => (b as Map)['rideId']), [Ride.idFor('mk-of-1', wed, Leg.going)]);
+        // Counted once on the driver's day: as the group's leg, not also as an offer.
+        expect((await w.repo.driverDay(wed)).trips, hasLength(1));
+        // The driver is in the group, so the group is theirs.
+        expect((await w.daily.myGroup())?.id, 'mk-of-1');
+      });
+
+      test('a once offer stays an offer', () async {
+        final w = await driver();
+        await w.repo.publish(draft(), now: w.clock.now);
+        await w.repo.demoRiderBooks(now: w.clock.now);
+        expect(GroupCatalog(w.prefs).byId('mk-of-1'), isNull);
+        final stored = jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List;
+        expect(stored.map((b) => (b as Map)['rideId']), [Booking.offerRideId('of-1')]);
+      });
+    });
+
+    group('cancelOffer', () {
+      Future<_World> withRiders({WallTime? start}) => driver(
+        start: start,
+        extra: {
+          ...offers([_offer('of-9', date: wed, departure: const Clock.hm(9, 0))]),
+          ...bookings([
+            _booking('bk-1', source: const BookingSource.offer('of-9'), date: wed, riderId: 'seed-rider-nadia'),
+            _booking('bk-2', source: const BookingSource.offer('of-9'), date: wed, riderId: 'seed-rider-omar'),
+          ]),
+        },
+      );
+
+      Future<int> notices(_World w, NoticeKind kind) async =>
+          (await w.daily.notices().first).where((n) => n.kind == kind).length;
+
+      test('every booking is refunded, each rider is told, and the trip still counts on the day (SC-005)', () async {
+        final w = await withRiders();
+        await w.repo.cancelOffer('of-9', now: w.clock.now);
+
+        final stored = (jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List).cast<Map>();
+        expect(stored.map((b) => b['status']), everyElement(BookingStatus.refunded.name));
+        expect((await w.repo.offer('of-9', now: w.clock.now))?.status, OfferStatus.cancelled);
+        expect(await notices(w, NoticeKind.tripCancelledByDriver), 2);
+        expect((await w.repo.driverDay(wed)).trips.map((t) => (t.id, t.taken)), [('of-9', 3)]);
+      });
+
+      test('a rider with money paid gets all of it back, fee included', () async {
+        final w = await driver(
+          extra: {
+            ...offers([_offer('of-9', date: wed, driverId: 'khaled')]),
+            ...bookings([_booking('bk-1', source: const BookingSource.offer('of-9'), date: wed, riderId: 'me')]),
+          },
+        );
+        await w.wallet.topUp('me', method: 'card', amount: 200);
+        await w.repo.cancelOffer('of-9', now: w.clock.now);
+        expect(await w.balance(), 244);
+      });
+
+      test('a late cancel with riders counts once on reliability; an early or empty one does not', () async {
+        final late = await withRiders(start: at(_tue, 21, 30));
+        await late.repo.cancelOffer('of-9', now: late.clock.now);
+        await late.repo.cancelOffer('of-9', now: late.clock.now); // a second call changes nothing
+        var events = await late.daily.events(_tue, wed);
+        expect(events.map((e) => (e.kind, e.rideId)), [(ReliabilityEventKind.lateCantDrive, 'offer:of-9')]);
+
+        final early = await withRiders(start: at(_tue, 20, 0));
+        await early.repo.cancelOffer('of-9', now: early.clock.now);
+        expect(await early.daily.events(_tue, wed), isEmpty);
+
+        final empty = await driver(start: at(_tue, 21, 30), extra: offers([_offer('of-9', date: wed)]));
+        await empty.repo.cancelOffer('of-9', now: empty.clock.now);
+        events = await empty.daily.events(_tue, wed);
+        expect(events, isEmpty);
+        expect((await empty.repo.driverDay(wed)).trips, isEmpty, reason: 'no riders: the day is free again');
       });
     });
   });
