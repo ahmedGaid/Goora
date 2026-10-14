@@ -3302,6 +3302,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مرتجع'**
   String get actSeatRefund;
+
+  /// No description provided for @noSeatsOnRoute.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش كراسي فاضية على طريقك دلوقتي'**
+  String get noSeatsOnRoute;
+
+  /// No description provided for @seatPayFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع ماتمّش. ومخدناش منك حاجة.'**
+  String get seatPayFailed;
+
+  /// No description provided for @seatChosen.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيارك'**
+  String get seatChosen;
 }
 
 class _AppLocalizationsDelegate

@@ -1443,5 +1443,8 @@
     }
   },
   "actSeatBooked": "كرسي",
-  "actSeatRefund": "مرتجع"
+  "actSeatRefund": "مرتجع",
+  "noSeatsOnRoute": "مفيش كراسي فاضية على طريقك دلوقتي",
+  "seatPayFailed": "الدفع ماتمّش. ومخدناش منك حاجة.",
+  "seatChosen": "اختيارك"
 }

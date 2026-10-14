@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../core/storage/preferences.dart';
 import '../core/time/now_provider.dart';
 import '../features/commute/data/fake_commute_repository.dart';
+import '../features/commute/domain/commute_profile.dart';
 import '../features/commute/presentation/commute_setup_screen.dart';
 import '../features/commute/presentation/match_result_screen.dart';
 import '../features/commute/presentation/no_match_screen.dart';
@@ -15,6 +16,7 @@ import '../features/daily/presentation/today/today_screen.dart';
 import '../features/daily/presentation/trust/trust_screen.dart';
 import '../features/daily/presentation/week/week_screen.dart';
 import '../features/design_gallery/presentation/design_gallery_screen.dart';
+import '../features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
 import '../features/onboarding/domain/choices.dart';
 import '../features/onboarding/domain/phone_number.dart';
 import '../features/onboarding/presentation/frequency_screen.dart';
@@ -36,7 +38,6 @@ import 'routes.dart';
 part 'router.g.dart';
 
 const _placeholderPaths = {
-  PlaceholderKind.emptySeats: Routes.emptySeats,
   PlaceholderKind.offerTrip: Routes.offerTrip,
   PlaceholderKind.postTrip: Routes.postTrip,
 };
@@ -83,6 +84,13 @@ GoRouter router(Ref ref) {
       GoRoute(path: Routes.noMatch, builder: (_, _) => const NoMatchScreen()),
       GoRoute(path: Routes.plan, builder: (_, _) => const PlanScreen()),
       GoRoute(path: Routes.payMethod, builder: (_, _) => const PayMethodScreen()),
+      GoRoute(
+        path: Routes.emptySeats,
+        builder: (_, state) => EmptySeatsScreen(
+          leg: state.uri.queryParameters['leg'] == 'return' ? Leg.ret : Leg.going,
+          seat: state.uri.queryParameters['seat'],
+        ),
+      ),
       for (final kind in PlaceholderKind.values)
         GoRoute(path: _placeholderPaths[kind]!, builder: (_, _) => PlaceholderScreen(kind: kind)),
       StatefulShellRoute.indexedStack(

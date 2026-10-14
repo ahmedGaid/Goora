@@ -2006,4 +2006,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get actSeatRefund => 'مرتجع';
+
+  @override
+  String get noSeatsOnRoute => 'مفيش كراسي فاضية على طريقك دلوقتي';
+
+  @override
+  String get seatPayFailed => 'الدفع ماتمّش. ومخدناش منك حاجة.';
+
+  @override
+  String get seatChosen => 'اختيارك';
 }

@@ -13,8 +13,8 @@ part of 'providers.dart';
 /// from the wallet, the verification check from Trust.
 ///
 /// The wallet in turn reads this one's finished one-off trips (see
-/// `walletRepository`), but only inside a callback, so the two providers don't
-/// depend on each other while they build.
+/// `walletRepository`). Each side reads the other only inside a callback, so
+/// the two providers never depend on each other while they build.
 
 @ProviderFor(marketplaceRepository)
 final marketplaceRepositoryProvider = MarketplaceRepositoryProvider._();
@@ -24,8 +24,8 @@ final marketplaceRepositoryProvider = MarketplaceRepositoryProvider._();
 /// from the wallet, the verification check from Trust.
 ///
 /// The wallet in turn reads this one's finished one-off trips (see
-/// `walletRepository`), but only inside a callback, so the two providers don't
-/// depend on each other while they build.
+/// `walletRepository`). Each side reads the other only inside a callback, so
+/// the two providers never depend on each other while they build.
 
 final class MarketplaceRepositoryProvider
     extends
@@ -40,8 +40,8 @@ final class MarketplaceRepositoryProvider
   /// from the wallet, the verification check from Trust.
   ///
   /// The wallet in turn reads this one's finished one-off trips (see
-  /// `walletRepository`), but only inside a callback, so the two providers don't
-  /// depend on each other while they build.
+  /// `walletRepository`). Each side reads the other only inside a callback, so
+  /// the two providers never depend on each other while they build.
   MarketplaceRepositoryProvider._()
     : super(
         from: null,
@@ -77,4 +77,4 @@ final class MarketplaceRepositoryProvider
 }
 
 String _$marketplaceRepositoryHash() =>
-    r'db629185c66b68e08680b15e443a43fb0156ea5f';
+    r'1aff4db9cf7f591693ae909b4a6d7ef1e3505af8';

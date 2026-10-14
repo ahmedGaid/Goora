@@ -1956,4 +1956,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actSeatRefund => 'Refund';
+
+  @override
+  String get noSeatsOnRoute => 'No seats on your route right now';
+
+  @override
+  String get seatPayFailed =>
+      'The payment didn\'t go through. Nothing was charged.';
+
+  @override
+  String get seatChosen => 'Your pick';
 }
