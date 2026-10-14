@@ -19,8 +19,8 @@ import 'package:goora/features/marketplace/presentation/empty_seats/empty_seats_
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
-import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/data/fake_wallet_repository.dart';
+import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
 

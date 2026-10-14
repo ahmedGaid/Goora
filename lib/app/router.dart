@@ -79,11 +79,19 @@ GoRouter router(Ref ref) {
       GoRoute(path: Routes.profile, builder: (_, _) => const ProfileScreen()),
       GoRoute(path: Routes.role, builder: (_, _) => const RoleScreen()),
       GoRoute(path: Routes.frequency, builder: (_, _) => const FrequencyScreen()),
-      GoRoute(path: Routes.commuteSetup, builder: (_, _) => const CommuteSetupScreen()),
+      GoRoute(
+        path: Routes.commuteSetup,
+        builder: (_, state) => CommuteSetupScreen(
+          presetFrequency: state.uri.queryParameters['frequency'] == 'everyDay' ? Frequency.everyDay : null,
+        ),
+      ),
       GoRoute(path: Routes.match, builder: (_, _) => const MatchResultScreen()),
       GoRoute(path: Routes.noMatch, builder: (_, _) => const NoMatchScreen()),
       GoRoute(path: Routes.plan, builder: (_, _) => const PlanScreen()),
-      GoRoute(path: Routes.payMethod, builder: (_, _) => const PayMethodScreen()),
+      GoRoute(
+        path: Routes.payMethod,
+        builder: (_, state) => PayMethodScreen(next: state.uri.queryParameters['next']),
+      ),
       GoRoute(
         path: Routes.emptySeats,
         builder: (_, state) => EmptySeatsScreen(

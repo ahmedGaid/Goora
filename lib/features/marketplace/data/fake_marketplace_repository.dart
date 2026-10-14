@@ -316,7 +316,14 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     if (mine.any((b) => b.date == date && b.leg == leg && _holdsSeat(b))) return true;
     final me = _daily.meId;
     final ride = await _daily.ride(date, leg);
-    return ride != null && (ride.driverId == me || ride.passengers.any((p) => p.memberId == me));
+    // A ride nobody drives (no cover) carries no one; a leg the rider cancelled
+    // is not one they ride either — its seat is free to book elsewhere. Their
+    // own driving absence is not that.
+    if (ride == null || !(ride.driverId == me || (ride.driverId != null && ride.passengers.any((p) => p.memberId == me)))) {
+      return false;
+    }
+    final away = await _daily.absences(date, date);
+    return !away.any((a) => a.personId == me && a.leg == leg && !a.driving);
   }
 
   /// Holds on [source]'s leg-date, as seat math needs them.

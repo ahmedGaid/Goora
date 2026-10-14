@@ -678,6 +678,16 @@ void main() {
         expect(seats.map((o) => o.source), isNot(contains(const BookingSource.groupSeat('sz-0725'))));
       });
 
+      test('a leg the member cancelled is not one they ride: its seats are listed (no-cover entry)', () async {
+        final member = await _make(role: Role.rider, start: at(_tue, 18, 0));
+        expect((await going(member)).where((o) => o.date == wed), isEmpty, reason: 'rides it');
+        await member.daily.cancel(wed, {Leg.going}, member.clock.now);
+        final seats = await going(member);
+        expect(seats.where((o) => o.date == wed && o.source.id == MarketSeed.tarekId), hasLength(1));
+        final tarek = fromOffer(seats, MarketSeed.tarekId);
+        expect(await member.repo.book(tarek, now: member.clock.now), isNot(isA<AlreadyRiding>()));
+      });
+
       test('a full car with a reclaimable booking is listed to a subscriber only (FR-004, US6 AC1)', () async {
         final extra = {
           ...offers([_offer('of-full', date: wed, driverId: 'khaled', seats: 1)]),

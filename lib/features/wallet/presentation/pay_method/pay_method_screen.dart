@@ -21,7 +21,10 @@ import '../wallet/wallet_controller.dart';
 /// or the wallet; subscribing is a small link, never a required step.
 /// Drivers never route here (router.dart only sends riders).
 class PayMethodScreen extends ConsumerStatefulWidget {
-  const PayMethodScreen({super.key});
+  const PayMethodScreen({super.key, this.next});
+
+  /// Where to go after choosing (a seat the rider picked); Today when null.
+  final String? next;
 
   @override
   ConsumerState<PayMethodScreen> createState() => _PayMethodScreenState();
@@ -38,7 +41,7 @@ class _PayMethodScreenState extends ConsumerState<PayMethodScreen> {
     ref
       ..invalidate(riderPricingProvider)
       ..invalidate(walletControllerProvider);
-    if (mounted) context.go(Routes.today);
+    if (mounted) context.go(widget.next ?? Routes.today);
   }
 
   @override

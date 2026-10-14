@@ -74,7 +74,7 @@ class RiderToday extends StatelessWidget {
         GooraDashedButton(
           key: const Key('extra-trip'),
           label: l10n.extraTrip,
-          onPressed: () => context.push(Routes.emptySeats),
+          onPressed: () => context.push(Routes.emptySeatsOn(next?.leg ?? Leg.going)),
         ),
       ],
     );
