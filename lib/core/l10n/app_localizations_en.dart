@@ -2012,4 +2012,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoNothingToDo => 'Nothing to do yet. Publish a trip first.';
+
+  @override
+  String get seeAll => 'See all';
+
+  @override
+  String get acceptConfirm => 'Yes, accept';
+
+  @override
+  String get requestWithdrawn =>
+      'Your balance was too low when a driver accepted, so the request was withdrawn. Nothing was charged.';
+
+  @override
+  String get requestGone =>
+      'That request is no longer open. Here\'s the updated list.';
+
+  @override
+  String get dailyBlockedNote =>
+      'Every workday is off while you ride in a daily group.';
+
+  @override
+  String get findRidersLink => 'Or find riders who already posted';
 }

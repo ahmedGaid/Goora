@@ -1033,6 +1033,24 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   }
 
   @override
+  Future<List<TripRequest>> myRequests({required WallTime now}) async {
+    final me = _daily.meId;
+    final live = <TripRequest>[];
+    for (final r in _requests()) {
+      if (r.riderId != me) continue;
+      final fresh = await request(r.id, now: now);
+      if (fresh != null && fresh.status == RequestStatus.posted) live.add(fresh);
+    }
+    live.sort((a, b) {
+      final byDate = a.date.compareTo(b.date);
+      if (byDate != 0) return byDate;
+      final byTime = a.departure.compareTo(b.departure);
+      return byTime != 0 ? byTime : a.id.compareTo(b.id);
+    });
+    return live;
+  }
+
+  @override
   Future<TripRequest?> request(String requestId, {required WallTime now}) async {
     final r = _requests().where((r) => r.id == requestId).firstOrNull;
     if (r == null) return null;
@@ -1072,6 +1090,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
           : (r.detourFrom.values.isEmpty ? null : r.detourFrom.values.reduce((a, b) => a < b ? a : b));
       if (detour == null || detour >= _maxDetour) continue;
       final day = days[r.date] ??= await driverDay(r.date);
+      final fit = DriverDayRules.fit(day.trips, _candidate(r, day.leadsGroup));
       cards.add(RequestCard(
         requestId: r.id,
         leg: r.leg,
@@ -1084,7 +1103,8 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         repeat: r.repeat,
         price: r.price,
         detourMinutes: detour,
-        fit: DriverDayRules.fit(day.trips, _candidate(r, day.leadsGroup)),
+        fit: fit,
+        joinTime: fit.kind == TripFitKind.join ? Clock(day.trips.firstWhere((t) => t.id == fit.tripId).departure) : null,
       ));
     }
     cards.sort((a, b) {

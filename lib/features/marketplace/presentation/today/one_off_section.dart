@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../../app/routes.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -16,6 +18,7 @@ import '../../../../core/widgets/goora_status_chip.dart';
 import '../../../commute/presentation/labels.dart';
 import '../../../daily/data/providers.dart';
 import '../../../daily/domain/attendance_rules.dart';
+import '../../../daily/presentation/labels.dart';
 import '../../../daily/presentation/safety/sos_sheet.dart';
 import '../../../daily/presentation/today/today_widgets.dart';
 import '../../../onboarding/presentation/session_controller.dart';
@@ -28,10 +31,12 @@ import '../../domain/booking.dart';
 import '../../domain/marketplace_repository.dart';
 import '../../domain/offered_trip.dart';
 import '../../domain/seat_offer.dart';
+import '../../domain/trip_request.dart';
 import '../empty_seats/empty_seats_controller.dart';
 import '../labels.dart';
 import '../offer_trip/live_parts.dart';
 import '../offer_trip/offer_trip_controller.dart';
+import '../post_trip/post_trip_controller.dart';
 
 part 'one_off_section.g.dart';
 
@@ -69,12 +74,17 @@ class OneOffSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final trips = ref.watch(oneOffTodayProvider).value ?? const <OneOffSeat>[];
-    if (trips.isEmpty) return const SizedBox.shrink();
+    final posted = ref.watch(myPostedRequestsProvider).value ?? const <TripRequest>[];
+    if (trips.isEmpty && posted.isEmpty) return const SizedBox.shrink();
     return Column(
       key: const Key('one-off-section'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SectionTitle(l10n.oneOffTrips),
+        for (final r in posted) ...[
+          _PostedCard(request: r),
+          const SizedBox(height: AppSpacing.gap),
+        ],
         for (final t in trips) ...[
           _OneOffCard(trip: t),
           const SizedBox(height: AppSpacing.gap),
@@ -420,6 +430,43 @@ class _OfferCashRow extends ConsumerWidget {
                 ),
               ],
             ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A trip the rider posted that no driver has taken yet: tap to open it.
+class _PostedCard extends ConsumerWidget {
+  const _PostedCard({required this.request});
+
+  final TripRequest request;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final today = ref.watch(nowProvider)().date;
+    return GooraCard(
+      key: Key('posted-${request.id}'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.routeLine(l10n.area(request.from), l10n.area(request.to)),
+            style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+          ),
+          Text(
+            '${l10n.heroWhen(request.date, today)} · ${l10n.time(request.departure)}',
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(l10n.waitingDriver, style: AppTypography.body.copyWith(color: AppColors.textBody)),
+          const SizedBox(height: AppSpacing.md),
+          GooraGhostButton(
+            key: Key('open-posted-${request.id}'),
+            label: l10n.postReq,
+            onPressed: () => context.push('${Routes.postTrip}?id=${request.id}'),
+          ),
         ],
       ),
     );

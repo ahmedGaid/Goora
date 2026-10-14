@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_status_chip.dart';
@@ -12,11 +13,16 @@ import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/domain/absence.dart';
 import 'package:goora/features/daily/domain/notice.dart';
+import 'package:goora/features/daily/presentation/today/pickup_check_in.dart';
+import 'package:goora/features/daily/presentation/today/today_screen.dart';
 import 'package:goora/features/marketplace/data/fake_marketplace_repository.dart';
 import 'package:goora/features/marketplace/data/market_seed.dart';
 import 'package:goora/features/marketplace/domain/anonymous_rider.dart';
 import 'package:goora/features/marketplace/domain/booking.dart';
+import 'package:goora/features/marketplace/domain/marketplace_repository.dart';
 import 'package:goora/features/marketplace/domain/offered_trip.dart';
+import 'package:goora/features/marketplace/presentation/find_riders/find_riders_controller.dart';
+import 'package:goora/features/marketplace/presentation/find_riders/find_riders_screen.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/data/providers.dart';
@@ -132,8 +138,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text(l.arrivedNote), findsOneWidget);
       // Main Gate: Ahmed (off duty) and Sara, both anonymous.
-      expect(find.text(l.verifiedRider), findsOneWidget);
-      expect(find.text(l.verifiedRiderWoman), findsOneWidget);
+      final checkIn = find.byType(PickupCheckIn);
+      expect(find.descendant(of: checkIn, matching: find.text(l.verifiedRider)), findsOneWidget);
+      expect(find.descendant(of: checkIn, matching: find.text(l.verifiedRiderWoman)), findsOneWidget);
       expect(find.text('Sara'), findsNothing);
       expect(find.text(l.stWaiting('5:00')), findsNWidgets(2));
 
@@ -264,7 +271,8 @@ void main() {
       expect(find.byKey(const Key('driver-offer-of-9')), findsOneWidget);
       expect(find.text(l.oneOffTrips), findsOneWidget);
       expect(find.text(l.seatsBooked(1, 3)), findsOneWidget);
-      expect(find.text(l.verifiedRiderWoman), findsOneWidget);
+      final card = find.byKey(const Key('driver-offer-of-9'));
+      expect(find.descendant(of: card, matching: find.text(l.verifiedRiderWoman)), findsOneWidget);
       expect(find.text('Nadia'), findsNothing, reason: 'no name before departure (FR-023)');
       expect(find.byKey(const Key('cancel-trip-of-9')), findsOneWidget);
       expect(find.byKey(const Key('offer-share-of-9')), findsNothing);
@@ -326,6 +334,85 @@ void main() {
       expect(marks.map((m) => (m.rideId, m.riderId, m.outcome, m.amount)), [
         ('offer:of-9', 'seed-rider-nadia', CashOutcome.received, 40),
       ]);
+    });
+  }
+
+  // 005 US5 (T090): driver Today's requests.
+  for (final locale in locales) {
+    final l = l10nFor(locale);
+    final code = locale.languageCode;
+
+    Future<ProviderContainer> pumpRequests(WidgetTester tester, WallTime now, {List<Override> overrides = const []}) async {
+      final c = await pumpGooraApp(
+        tester,
+        prefs: memberPrefs(role: Role.driver, locale: code),
+        overrides: [...dailyOverrides(TestClock(now)), ...overrides],
+      );
+      tester.view.physicalSize = const Size(390, 4200);
+      await tester.pumpAndSettle();
+      return c;
+    }
+
+    Future<void> tapIt(WidgetTester tester, Finder f) async {
+      await tester.ensureVisible(f);
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('[$code] requests: the demand banner and up to 3 cards with detour and Accept', (tester) async {
+      await pumpRequests(tester, at(rideTuesday, 20, 0));
+      expect(
+        find.text(l.demandBanner(12, l.routeLine(l.areaSheikhZayed, l.areaSmartVillage), 'morning')),
+        findsOneWidget,
+      );
+      final cards = find.byWidgetPredicate((w) => '${w.key}'.startsWith("[<'request-rq-seed-"));
+      expect(cards, findsNWidgets(3));
+      expect(find.byKey(const Key('requests-see-all')), findsOneWidget);
+      expect(find.byKey(const Key('accept-rq-seed-m02')), findsOneWidget);
+      // "Omar" is the signed-in driver's own greeting, not a rider.
+      for (final rider in MarketSeed.riders.where((r) => r.firstName != 'Omar')) {
+        expect(find.textContaining(rider.firstName), findsNothing, reason: 'SC-004');
+      }
+    });
+
+    testWidgets('[$code] off-duty day: Accept → Accepted ✓; a daily request says one group only', (tester) async {
+      // Tuesday evening: the requests are for Wednesday, a day this driver does not drive.
+      await pumpRequests(tester, at(rideTuesday, 20, 0));
+      expect(find.byKey(const Key('blocked-rq-seed-m01')), findsOneWidget);
+      expect(find.text(l.oneGroupOnly), findsOneWidget);
+      await tapIt(tester, find.byKey(const Key('accept-rq-seed-m02')));
+      await tapIt(tester, find.byKey(const Key('confirm-accept-rq-seed-m02')));
+      expect(find.byKey(const Key('accepted-rq-seed-m02')), findsOneWidget);
+      expect(find.text(l.accepted), findsOneWidget);
+    });
+
+    testWidgets('[$code] a day driving both legs: cards near the group trip are full, the rest over the limit', (tester) async {
+      // Wednesday evening: the requests are for Thursday, when this driver drives both legs.
+      await pumpRequests(tester, at(rideTuesday.addDays(1), 20, 0));
+      expect(find.byWidgetPredicate((w) => '${w.key}'.startsWith("[<'accept-rq-seed-")), findsNothing);
+      expect(find.text(l.yourCarFull), findsWidgets);
+      expect(find.byKey(const Key('blocked-rq-seed-m01')), findsOneWidget);
+    });
+
+    testWidgets('[$code] See all opens Find riders; Back returns to Today', (tester) async {
+      await pumpRequests(tester, at(rideTuesday, 20, 0));
+      await tapIt(tester, find.byKey(const Key('requests-see-all')));
+      expect(find.byType(FindRidersScreen), findsOneWidget);
+      await tester.tap(find.byTooltip(l.back));
+      await tester.pumpAndSettle();
+      expect(find.byType(TodayScreen), findsOneWidget);
+    });
+
+    testWidgets('[$code] no matching requests: a calm message and the privacy caption, not a placeholder', (tester) async {
+      await pumpRequests(
+        tester,
+        at(rideTuesday, 20, 0),
+        overrides: [requestCardsProvider(null, PartOfDay.morning).overrideWith((ref) async => const [])],
+      );
+      expect(find.byKey(const Key('requests-empty')), findsOneWidget);
+      expect(find.text(l.noRequests), findsOneWidget);
+      expect(find.text(l.privacyCaption), findsOneWidget);
+      expect(find.text(l.reqsPlaceholder), findsNothing);
     });
   }
 }

@@ -1577,7 +1577,7 @@ void main() {
         },
       );
       final seats = await w.repo.seatOffers(Leg.going, now: w.clock.now);
-      expect(seats.where((s) => s.source == BookingSource.offer('of-9')), hasLength(1), reason: 'a subscriber still sees it');
+      expect(seats.where((s) => s.source == const BookingSource.offer('of-9')), hasLength(1), reason: 'a subscriber still sees it');
 
       final booked = await bookOf(w, 'of-9');
       final stored = (jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List).cast<Map<String, Object?>>();
@@ -1599,7 +1599,7 @@ void main() {
         },
       );
       final seats = await w.repo.seatOffers(Leg.going, now: w.clock.now);
-      expect(seats.where((s) => s.source == BookingSource.offer('of-9')), isEmpty);
+      expect(seats.where((s) => s.source == const BookingSource.offer('of-9')), isEmpty);
     });
 
     test('demoSubscriberTakes takes the rider\'s latest booking, then says too late after 9 PM', () async {

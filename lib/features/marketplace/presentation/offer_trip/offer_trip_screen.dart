@@ -192,6 +192,12 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
             ),
           ),
         const SizedBox(height: AppSpacing.lg),
+        GooraGhostButton(
+          key: const Key('find-riders-link'),
+          label: l10n.findRidersLink,
+          onPressed: () => context.push(Routes.findRiders),
+        ),
+        const SizedBox(height: AppSpacing.md),
         GooraPrimaryButton(
           key: const Key('publish'),
           label: l10n.publish,

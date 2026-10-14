@@ -100,6 +100,7 @@ final class RequestCard {
     required this.price,
     required this.detourMinutes,
     required this.fit,
+    this.joinTime,
   });
 
   final String requestId;
@@ -120,6 +121,9 @@ final class RequestCard {
 
   /// What accepting would do to the driver's day (`DriverDayRules`).
   final TripFit fit;
+
+  /// The time of the trip a join lands on (fit = join).
+  final Clock? joinTime;
 }
 
 /// Book on Empty seats (A).
@@ -313,6 +317,9 @@ abstract interface class MarketplaceRepository {
   // B — Post your trip
   Future<PostResult> post(TripDraft draft, {required WallTime now});
   Future<void> cancelRequest(String requestId);
+
+  /// The person's requests still waiting for a driver, soonest first.
+  Future<List<TripRequest>> myRequests({required WallTime now});
 
   /// Expires on read (R13).
   Future<TripRequest?> request(String requestId, {required WallTime now});

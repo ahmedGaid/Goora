@@ -28,11 +28,14 @@ import '../../daily/presentation/today/today_controller.dart';
 import '../../marketplace/data/fake_marketplace_repository.dart';
 import '../../marketplace/data/providers.dart';
 import '../../marketplace/domain/marketplace_repository.dart';
+import '../../marketplace/presentation/empty_seats/empty_seats_controller.dart';
 import '../../marketplace/presentation/offer_trip/offer_trip_controller.dart';
+import '../../marketplace/presentation/post_trip/post_trip_controller.dart';
 import '../../marketplace/presentation/today/one_off_section.dart';
 import '../../onboarding/data/providers.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../wallet/data/fake_wallet_repository.dart';
+import '../../wallet/presentation/wallet/wallet_controller.dart';
 
 /// Debug builds only (research R11): move the demo clock to the moments the
 /// rules care about, or reset the fake daily data. Release builds never
@@ -68,6 +71,8 @@ class DemoSection extends ConsumerWidget {
             ('demo-no-cover', l10n.demoNoCover, () => _driverOut(ref, cover: false)),
             ('demo-verify-driver', l10n.demoVerifyDriver, () => _verifyDriver(ref)),
             ('demo-rider-books', l10n.demoBookSeat, () => _riderBooks(context, ref)),
+            ('demo-driver-accepts', l10n.demoAcceptRequest, () => _driverAccepts(context, ref)),
+            ('demo-subscriber-takes', l10n.demoReclaim, () => _subscriberTakes(context, ref)),
             ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -151,6 +156,42 @@ class DemoSection extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.demoNothingToDo)));
     }
   }
+
+  /// The next fake driver takes the person's latest posted request (005 R10, R8).
+  Future<void> _driverAccepts(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final result = await ref.read(marketplaceRepositoryProvider).demoDriverAccepts(now: ref.read(nowProvider)());
+    ref
+      ..invalidate(postedRequestProvider)
+      ..invalidate(myPostedRequestsProvider)
+      ..invalidate(oneOffTodayProvider)
+      ..invalidate(walletControllerProvider)
+      ..invalidate(todayControllerProvider);
+    if (result is DemoNothing && context.mounted) _say(context, l10n.demoNothingToDo);
+  }
+
+  /// A subscriber takes the person's latest one-off seat; after 9 PM it is final (US6).
+  Future<void> _subscriberTakes(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final result = await ref.read(marketplaceRepositoryProvider).demoSubscriberTakes(now: ref.read(nowProvider)());
+    ref
+      ..invalidate(oneOffTodayProvider)
+      ..invalidate(myBookingsProvider)
+      ..invalidate(walletControllerProvider)
+      ..invalidate(todayControllerProvider);
+    if (!context.mounted) return;
+    switch (result) {
+      case DemoTooLate():
+        _say(context, l10n.reclaimTooLate);
+      case DemoNothing():
+        _say(context, l10n.demoNothingToDo);
+      case DemoDone():
+        break;
+    }
+  }
+
+  void _say(BuildContext context, String text) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
 
   /// Everything the demo built up: daily schedule/attendance, trust data,
   /// the saved commute (profile, group membership, waitlist) and the signed-

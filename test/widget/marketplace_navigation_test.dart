@@ -11,7 +11,9 @@ import 'package:goora/features/daily/presentation/today/today_controller.dart';
 import 'package:goora/features/daily/presentation/today/today_screen.dart';
 import 'package:goora/features/daily/presentation/trust/trust_screen.dart';
 import 'package:goora/features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
+import 'package:goora/features/marketplace/presentation/find_riders/find_riders_screen.dart';
 import 'package:goora/features/marketplace/presentation/offer_trip/offer_trip_screen.dart';
+import 'package:goora/features/marketplace/presentation/post_trip/post_trip_screen.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/frequency_screen.dart';
@@ -182,6 +184,51 @@ void main() {
       await tester.tap(find.byKey(const Key('verify-license')));
       await tester.pumpAndSettle();
       expect(find.byType(TrustScreen), findsOneWidget);
+    });
+ 
+    // 005 US3/US4 (T076, T088): Post your trip and Find riders entry points.
+    testWidgets('[$code] Empty seats "Post your trip" → Post your trip; Back → Empty seats', (tester) async {
+      await _pump(tester, _newRider(code, frequency: Frequency.once));
+      expect(find.byType(EmptySeatsScreen), findsOneWidget);
+      await tester.ensureVisible(find.byKey(const Key('post-trip')));
+      await tester.tap(find.byKey(const Key('post-trip')));
+      await tester.pumpAndSettle();
+      expect(find.byType(PostTripScreen), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(EmptySeatsScreen), findsOneWidget);
+    });
+
+    testWidgets('[$code] no-cover "Post your trip" → Post your trip; Back → Today', (tester) async {
+      final c = await _pump(tester, memberPrefs(role: Role.rider, locale: code), height: 2600);
+      final repo = c.read(dailyCommuteRepositoryProvider) as FakeDailyCommuteRepository;
+      await tester.runAsync(() => repo.demoDriverOut(cover: false));
+      c.invalidate(todayControllerProvider);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('no-cover-post')));
+      await tester.pumpAndSettle();
+      expect(find.byType(PostTripScreen), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(TodayScreen), findsOneWidget);
+    });
+
+    testWidgets('[$code] driver Today "Find riders" → Find riders; Back → Today', (tester) async {
+      await _pump(tester, memberPrefs(role: Role.driver, locale: code));
+      await tester.tap(find.byKey(const Key('find-riders')));
+      await tester.pumpAndSettle();
+      expect(find.byType(FindRidersScreen), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(TodayScreen), findsOneWidget);
+    });
+
+    testWidgets('[$code] Offer a trip "find riders who already posted" → Find riders; Back → Offer a trip', (tester) async {
+      await _pump(tester, _newDriver(code, frequency: Frequency.once), height: 3000);
+      expect(find.byType(OfferTripScreen), findsOneWidget);
+      await tester.ensureVisible(find.byKey(const Key('find-riders-link')));
+      await tester.tap(find.byKey(const Key('find-riders-link')));
+      await tester.pumpAndSettle();
+      expect(find.byType(FindRidersScreen), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(OfferTripScreen), findsOneWidget);
     });
   }
 }

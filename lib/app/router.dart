@@ -19,7 +19,9 @@ import '../features/daily/presentation/week/week_screen.dart';
 import '../features/design_gallery/presentation/design_gallery_screen.dart';
 import '../features/marketplace/data/fake_marketplace_repository.dart';
 import '../features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
+import '../features/marketplace/presentation/find_riders/find_riders_screen.dart';
 import '../features/marketplace/presentation/offer_trip/offer_trip_screen.dart';
+import '../features/marketplace/presentation/post_trip/post_trip_screen.dart';
 import '../features/onboarding/domain/choices.dart';
 import '../features/onboarding/domain/phone_number.dart';
 import '../features/onboarding/presentation/frequency_screen.dart';
@@ -30,7 +32,6 @@ import '../features/onboarding/presentation/profile_screen.dart';
 import '../features/onboarding/presentation/role_screen.dart';
 import '../features/onboarding/presentation/session_controller.dart';
 import '../features/onboarding/presentation/welcome_screen.dart';
-import '../features/placeholder/presentation/placeholder_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/wallet/data/providers.dart';
 import '../features/wallet/presentation/pay_method/pay_method_screen.dart';
@@ -39,10 +40,6 @@ import '../features/wallet/presentation/wallet/wallet_tab.dart';
 import 'routes.dart';
 
 part 'router.g.dart';
-
-const _placeholderPaths = {
-  PlaceholderKind.postTrip: Routes.postTrip,
-};
 
 /// A rider with no payment arrangement — a payment method, a paid-up
 /// subscription or a company plan — is sent to the payment-method screen
@@ -106,8 +103,11 @@ GoRouter router(Ref ref) {
         path: Routes.offerTrip,
         builder: (_, state) => OfferTripScreen(id: state.uri.queryParameters['id']),
       ),
-      for (final kind in PlaceholderKind.values)
-        GoRoute(path: _placeholderPaths[kind]!, builder: (_, _) => PlaceholderScreen(kind: kind)),
+      GoRoute(
+        path: Routes.postTrip,
+        builder: (_, state) => PostTripScreen(id: state.uri.queryParameters['id']),
+      ),
+      GoRoute(path: Routes.findRiders, builder: (_, _) => const FindRidersScreen()),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => AppShell(shell: shell),
         branches: [

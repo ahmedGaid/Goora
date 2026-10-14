@@ -14,6 +14,7 @@ abstract final class Routes {
   static const match = '/match';
   static const noMatch = '/no-match';
   static const postTrip = '/post-trip';
+  static const findRiders = '/find-riders';
   static const plan = '/plan';
   static const payMethod = '/pay-method';
   static const today = '/today';

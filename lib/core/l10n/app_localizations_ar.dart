@@ -2058,4 +2058,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoNothingToDo => 'مفيش حاجة تتعمل لسه. انشر مشوار الأول.';
+
+  @override
+  String get seeAll => 'شوف الكل';
+
+  @override
+  String get acceptConfirm => 'أيوه، وافق';
+
+  @override
+  String get requestWithdrawn =>
+      'رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.';
+
+  @override
+  String get requestGone => 'الطلب ده مبقاش مفتوح. دي القايمة بعد التحديث.';
+
+  @override
+  String get dailyBlockedNote => 'كل يوم شغل مقفول وإنت راكب في مجموعة يومية.';
+
+  @override
+  String get findRidersLink => 'أو دوّر على ركاب نشروا مشاويرهم';
 }

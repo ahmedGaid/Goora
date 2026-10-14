@@ -555,5 +555,11 @@
   "tripCancelledState": "You cancelled this trip. Every rider got back everything they paid.",
   "cancelTripConfirm": "Cancel this trip? Every rider gets back everything they paid.",
   "keepTrip": "Keep the trip",
-  "demoNothingToDo": "Nothing to do yet. Publish a trip first."
+  "demoNothingToDo": "Nothing to do yet. Publish a trip first.",
+  "seeAll": "See all",
+  "acceptConfirm": "Yes, accept",
+  "requestWithdrawn": "Your balance was too low when a driver accepted, so the request was withdrawn. Nothing was charged.",
+  "requestGone": "That request is no longer open. Here's the updated list.",
+  "dailyBlockedNote": "Every workday is off while you ride in a daily group.",
+  "findRidersLink": "Or find riders who already posted"
 }

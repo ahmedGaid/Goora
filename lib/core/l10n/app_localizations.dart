@@ -3398,6 +3398,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مفيش حاجة تتعمل لسه. انشر مشوار الأول.'**
   String get demoNothingToDo;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'شوف الكل'**
+  String get seeAll;
+
+  /// No description provided for @acceptConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيوه، وافق'**
+  String get acceptConfirm;
+
+  /// No description provided for @requestWithdrawn.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.'**
+  String get requestWithdrawn;
+
+  /// No description provided for @requestGone.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلب ده مبقاش مفتوح. دي القايمة بعد التحديث.'**
+  String get requestGone;
+
+  /// No description provided for @dailyBlockedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل يوم شغل مقفول وإنت راكب في مجموعة يومية.'**
+  String get dailyBlockedNote;
+
+  /// No description provided for @findRidersLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو دوّر على ركاب نشروا مشاويرهم'**
+  String get findRidersLink;
 }
 
 class _AppLocalizationsDelegate
