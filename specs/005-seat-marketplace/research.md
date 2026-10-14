@@ -553,3 +553,28 @@ rest are the R16 draft.
   no tables because its ledger is a partner concern.
 - **Alternatives**: skip the migration. Possible, and it is the first item to drop if the
   feature runs long (P10).
+
+## T104 — device walk, partial (2026-10-14, phone R5CNC0NK6ZT, Arabic, debug APK from main 1b5ae86)
+
+Walked: quickstart §1 steps 1–5 (rider books an empty seat, wallet). **Stopped** at the start of §2: a person took the
+phone (call screen, WhatsApp). Not walked: §1 step 6 (upsell), §2–§8, the whole English pass.
+
+Confirmed on device: payment-method screen after "Book seat" with no method; "Top up 44 EGP first" with the chosen
+seat marked "Your pick"; booked summary with "Make it your daily commute"; one-off card on Today with Share, SOS and
+Cancel; Wallet row "Seat −44 (40 + 4 fee)", balance 156; list prices 40+4 (group cars) and 44+4 (Tarek).
+
+Findings (none fixed yet):
+- **F1 (bug, blocks the main US1 path)** — a rider who picks "Just one trip" at onboarding has no saved route, so
+  `FakeMarketplaceRepository._route` returns null and Empty seats is empty ("no seats on your route"). quickstart §1
+  step 2 and spec US1 expect the Sheikh Zayed → Smart Village default and a route line. The route line is also not
+  shown when a route exists. Needs a founder/implementer call: default route vs. ask for the route first.
+- **F2 (bug)** — top-up sheet opened from the Empty seats gate hangs: money is credited, the sheet stays busy.
+  Log: `Cannot use the Ref of walletControllerProvider after it has been disposed` at
+  `WalletController._refresh` (wallet_controller.dart). The autoDispose controller has no listener on that screen.
+- **F3 (copy/logic)** — Wallet plan card for a no-group wallet rider reads "Per trip · no service fee on your trips"
+  while a 4 EGP fee was charged; breakdown shows "Driver's share 0 / Total 0". Cause: no group → riderSeats 0 → fee 0 guard.
+- **F4 (quickstart)** — the demo clock survives "Reset demo data"; set "Ride day 7:15" first or every seeded car
+  has already left (it was 8 PM). Quickstart names sz-0740; the seed lists cars at 7:20, 7:25, 7:30, 7:40.
+- "First month free" still shown on the frequency screen (already known).
+- **Process incident** — during the §2 macro the phone was taken by its owner. Guarded taps were refused, but the
+  macro's `input text` calls were not guarded and may have typed digits/names into another app. Reported to the founder.
