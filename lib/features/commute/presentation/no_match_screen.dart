@@ -54,7 +54,7 @@ class NoMatchScreen extends ConsumerWidget {
         key: const Key('post-trip'),
         label: l10n.postReq,
         trailingArrow: true,
-        onPressed: () => context.go(Routes.postTrip),
+        onPressed: () => context.push(Routes.postTrip),
       ),
     );
   }

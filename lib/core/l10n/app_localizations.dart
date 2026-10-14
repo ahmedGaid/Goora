@@ -2924,6 +2924,516 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{price} ج ليك من كل راكب · جورة مجانية للسواقين'**
   String priceDriver(int price);
+
+  /// No description provided for @seatsLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{فاضي كرسي واحد} =2{فاضي كرسيين} few{فاضي {count} كراسي} other{فاضي {count} كرسي}}'**
+  String seatsLeft(int count);
+
+  /// No description provided for @bookSeat.
+  ///
+  /// In ar, this message translates to:
+  /// **'احجز الكرسي'**
+  String get bookSeat;
+
+  /// No description provided for @seatRule.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل ٩ بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.'**
+  String get seatRule;
+
+  /// No description provided for @nothingFits.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة على ميعادك؟ انشر مشوارك'**
+  String get nothingFits;
+
+  /// No description provided for @alreadyRiding.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت عندك توصيلة في المشوار ده خلاص.'**
+  String get alreadyRiding;
+
+  /// No description provided for @seatBookedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكرسي اتحجز'**
+  String get seatBookedTitle;
+
+  /// No description provided for @upsellDaily.
+  ///
+  /// In ar, this message translates to:
+  /// **'عجبك؟ خليه مشوارك كل يوم'**
+  String get upsellDaily;
+
+  /// No description provided for @backToToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'ارجع للنهارده'**
+  String get backToToday;
+
+  /// No description provided for @lateBookingNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.'**
+  String get lateBookingNote;
+
+  /// No description provided for @topUpFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشحن {gap} ج الأول'**
+  String topUpFirst(int gap);
+
+  /// No description provided for @seatJustTaken.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكرسي ده لسه محجوز حالًا. دي القايمة بعد التحديث.'**
+  String get seatJustTaken;
+
+  /// No description provided for @justOnce.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرة واحدة'**
+  String get justOnce;
+
+  /// No description provided for @everyWorkday.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل يوم شغل'**
+  String get everyWorkday;
+
+  /// No description provided for @ruleNoBidding.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر بتحدده جورة — مفيش فصال'**
+  String get ruleNoBidding;
+
+  /// No description provided for @ruleCostShare.
+  ///
+  /// In ar, this message translates to:
+  /// **'السواق بيشارك في التكلفة، مش بيكسب'**
+  String get ruleCostShare;
+
+  /// No description provided for @ruleRoute.
+  ///
+  /// In ar, this message translates to:
+  /// **'اللي على خطك بس هيشوفوه'**
+  String get ruleRoute;
+
+  /// No description provided for @post.
+  ///
+  /// In ar, this message translates to:
+  /// **'انشر'**
+  String get post;
+
+  /// No description provided for @sentToDrivers.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{اتبعت لسواق واحد على خطك} =2{اتبعت لسواقين على خطك} few{اتبعت لـ{count} سواقين على خطك} other{اتبعت لـ{count} سواق على خطك}}'**
+  String sentToDrivers(int count);
+
+  /// No description provided for @waitingDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستنيين سواق يوافق'**
+  String get waitingDriver;
+
+  /// No description provided for @cancelRequest.
+  ///
+  /// In ar, this message translates to:
+  /// **'الغي الطلب'**
+  String get cancelRequest;
+
+  /// No description provided for @requestAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'سواق وافق على مشوارك'**
+  String get requestAccepted;
+
+  /// No description provided for @nowGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'بقيتوا مجموعة مشوار'**
+  String get nowGroup;
+
+  /// No description provided for @requestExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش سواق أخد المشوار في ميعاده. محدش خصم منك حاجة.'**
+  String get requestExpired;
+
+  /// No description provided for @postAgain.
+  ///
+  /// In ar, this message translates to:
+  /// **'انشر تاني'**
+  String get postAgain;
+
+  /// No description provided for @seeEmptySeats.
+  ///
+  /// In ar, this message translates to:
+  /// **'شوف الكراسي الفاضية'**
+  String get seeEmptySeats;
+
+  /// No description provided for @dailyNeedsNoGroup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت في مجموعة يومية خلاص'**
+  String get dailyNeedsNoGroup;
+
+  /// No description provided for @verifyChip.
+  ///
+  /// In ar, this message translates to:
+  /// **'{item} مش موثّق — وثّقه'**
+  String verifyChip(String item);
+
+  /// No description provided for @publish.
+  ///
+  /// In ar, this message translates to:
+  /// **'انشر المشوار'**
+  String get publish;
+
+  /// No description provided for @dailyLimitReached.
+  ///
+  /// In ar, this message translates to:
+  /// **'خلصت مشاوير النهارده'**
+  String get dailyLimitReached;
+
+  /// No description provided for @joinsTripInstead.
+  ///
+  /// In ar, this message translates to:
+  /// **'ده هيدخل على مشوارك الساعة {time}'**
+  String joinsTripInstead(String time);
+
+  /// No description provided for @seatsBooked.
+  ///
+  /// In ar, this message translates to:
+  /// **'{booked} من {seats} كراسي اتحجزوا'**
+  String seatsBooked(int booked, int seats);
+
+  /// No description provided for @carFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'عربيتك اتملت!'**
+  String get carFull;
+
+  /// No description provided for @newRider.
+  ///
+  /// In ar, this message translates to:
+  /// **'جديد'**
+  String get newRider;
+
+  /// No description provided for @cancelTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'الغي المشوار'**
+  String get cancelTrip;
+
+  /// No description provided for @tripCancelledRefund.
+  ///
+  /// In ar, this message translates to:
+  /// **'{driver} لغى المشوار. فلوسك كلها رجعتلك.'**
+  String tripCancelledRefund(String driver);
+
+  /// No description provided for @leavingFrom.
+  ///
+  /// In ar, this message translates to:
+  /// **'طالع من'**
+  String get leavingFrom;
+
+  /// No description provided for @allAreas.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get allAreas;
+
+  /// No description provided for @morning.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصبح'**
+  String get morning;
+
+  /// No description provided for @evening.
+  ///
+  /// In ar, this message translates to:
+  /// **'بالليل'**
+  String get evening;
+
+  /// No description provided for @createsTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'ده هيعمل مشوار جديد: {route} · {time}. {count, plural, =0{مش هيفضلك مشاوير بعده} =1{هيفضلك مشوار واحد بعده} other{هيفضلك {count} مشاوير بعده}}'**
+  String createsTrip(String route, String time, int count);
+
+  /// No description provided for @doesntFit.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش على مشوارك'**
+  String get doesntFit;
+
+  /// No description provided for @yourCarFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'عربيتك مليانة'**
+  String get yourCarFull;
+
+  /// No description provided for @oneGroupOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت سايق مجموعة يومية خلاص'**
+  String get oneGroupOnly;
+
+  /// No description provided for @overlapTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'عندك مشوار تاني في نفس الوقت'**
+  String get overlapTrip;
+
+  /// No description provided for @accept.
+  ///
+  /// In ar, this message translates to:
+  /// **'وافق'**
+  String get accept;
+
+  /// No description provided for @accepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتوافق ✓'**
+  String get accepted;
+
+  /// No description provided for @demandBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} واحد عايزين {route} {part, select, morning{الصبح} evening{بالليل} other{}}'**
+  String demandBanner(int count, String route, String part);
+
+  /// No description provided for @detourMin.
+  ///
+  /// In ar, this message translates to:
+  /// **'{min, plural, =1{+دقيقة لفّة} =2{+دقيقتين لفّة} few{+{min} دقايق لفّة} other{+{min} دقيقة لفّة}}'**
+  String detourMin(int min);
+
+  /// No description provided for @noRequests.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش طلبات على خطك دلوقتي. هنعرضها هنا أول ما توصل.'**
+  String get noRequests;
+
+  /// No description provided for @privacyCaption.
+  ///
+  /// In ar, this message translates to:
+  /// **'هتشوف الأسامي لما الركاب يركبوا.'**
+  String get privacyCaption;
+
+  /// No description provided for @seatReclaimed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشترك أخد كرسيك يوم {day}. رجعلك {amount} ج.'**
+  String seatReclaimed(String day, int amount);
+
+  /// No description provided for @reclaimTooLate.
+  ///
+  /// In ar, this message translates to:
+  /// **'فات الميعاد — الحجز ده نهائي.'**
+  String get reclaimTooLate;
+
+  /// No description provided for @oneOffTrips.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاوير مرة واحدة'**
+  String get oneOffTrips;
+
+  /// No description provided for @cancelBooking.
+  ///
+  /// In ar, this message translates to:
+  /// **'الغي الحجز'**
+  String get cancelBooking;
+
+  /// No description provided for @noGroupYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مفيش مجموعة يومية'**
+  String get noGroupYet;
+
+  /// No description provided for @demoAcceptRequest.
+  ///
+  /// In ar, this message translates to:
+  /// **'سواق يوافق على طلبك'**
+  String get demoAcceptRequest;
+
+  /// No description provided for @demoBookSeat.
+  ///
+  /// In ar, this message translates to:
+  /// **'راكب يحجز كرسي'**
+  String get demoBookSeat;
+
+  /// No description provided for @demoReclaim.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشترك ياخد الكرسي ده'**
+  String get demoReclaim;
+
+  /// No description provided for @demoVerifyDriver.
+  ///
+  /// In ar, this message translates to:
+  /// **'وثّق أوراق السواقة'**
+  String get demoVerifyDriver;
+
+  /// No description provided for @nSeatBooked.
+  ///
+  /// In ar, this message translates to:
+  /// **'راكب حجز كرسي في مشوارك.'**
+  String get nSeatBooked;
+
+  /// No description provided for @nRequestAccepted.
+  ///
+  /// In ar, this message translates to:
+  /// **'{driver} وافق على مشوارك الساعة {time}.'**
+  String nRequestAccepted(String driver, String time);
+
+  /// No description provided for @actSeatBooked.
+  ///
+  /// In ar, this message translates to:
+  /// **'كرسي'**
+  String get actSeatBooked;
+
+  /// No description provided for @actSeatRefund.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرتجع'**
+  String get actSeatRefund;
+
+  /// No description provided for @noSeatsOnRoute.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش كراسي فاضية على طريقك دلوقتي'**
+  String get noSeatsOnRoute;
+
+  /// No description provided for @seatPayFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع ماتمّش. ومخدناش منك حاجة.'**
+  String get seatPayFailed;
+
+  /// No description provided for @seatChosen.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيارك'**
+  String get seatChosen;
+
+  /// No description provided for @cancelFreeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.'**
+  String get cancelFreeNote;
+
+  /// No description provided for @offerFromLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طالع من'**
+  String get offerFromLabel;
+
+  /// No description provided for @offerToLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رايح'**
+  String get offerToLabel;
+
+  /// No description provided for @offerTimeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ميعاد الخروج'**
+  String get offerTimeLabel;
+
+  /// No description provided for @riderPaysLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'الراكب بيدفع {amount} ج'**
+  String riderPaysLine(int amount);
+
+  /// No description provided for @dailyOfferNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أول ما حد يحجز، المشوار ده بيبقى مجموعة يومية.'**
+  String get dailyOfferNote;
+
+  /// No description provided for @noRidersYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه محدش حجز. الركاب هيظهروا هنا أول ما يحجزوا.'**
+  String get noRidersYet;
+
+  /// No description provided for @tripDepartedState.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشوار ماشي. أسامي الركاب ظاهرة دلوقتي.'**
+  String get tripDepartedState;
+
+  /// No description provided for @tripDoneState.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشوار خلص.'**
+  String get tripDoneState;
+
+  /// No description provided for @tripCancelledState.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت لغيت المشوار. كل راكب فلوسه كلها رجعتله.'**
+  String get tripCancelledState;
+
+  /// No description provided for @cancelTripConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلغي المشوار؟ كل راكب فلوسه كلها هترجعله.'**
+  String get cancelTripConfirm;
+
+  /// No description provided for @keepTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيب المشوار'**
+  String get keepTrip;
+
+  /// No description provided for @demoNothingToDo.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة تتعمل لسه. انشر مشوار الأول.'**
+  String get demoNothingToDo;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'شوف الكل'**
+  String get seeAll;
+
+  /// No description provided for @acceptConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيوه، وافق'**
+  String get acceptConfirm;
+
+  /// No description provided for @requestWithdrawn.
+  ///
+  /// In ar, this message translates to:
+  /// **'رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.'**
+  String get requestWithdrawn;
+
+  /// No description provided for @requestGone.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطلب ده مبقاش مفتوح. دي القايمة بعد التحديث.'**
+  String get requestGone;
+
+  /// No description provided for @dailyBlockedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل يوم شغل مقفول وإنت راكب في مجموعة يومية.'**
+  String get dailyBlockedNote;
+
+  /// No description provided for @findRidersLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو دوّر على ركاب نشروا مشاويرهم'**
+  String get findRidersLink;
 }
 
 class _AppLocalizationsDelegate

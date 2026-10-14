@@ -6,3 +6,10 @@ export function loadCases<T>(name: string): T[] {
   const url = new URL(`../../../test/fixtures/${name}_vectors.json`, import.meta.url);
   return (JSON.parse(readFileSync(url, "utf8")) as { cases: T[] }).cases;
 }
+
+// Loads a whole test/fixtures/<name>_vectors.json whose top level is not
+// `{cases}` (marketplace_vectors.json has `fit` and `refund`).
+export function loadVectors<T>(name: string): T {
+  const url = new URL(`../../../test/fixtures/${name}_vectors.json`, import.meta.url);
+  return JSON.parse(readFileSync(url, "utf8")) as T;
+}

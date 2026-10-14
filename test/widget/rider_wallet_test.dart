@@ -25,6 +25,7 @@ import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/domain/payment_provider.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
 import 'package:goora/features/wallet/presentation/plan/plan_screen.dart';
+import 'package:goora/features/wallet/presentation/wallet/wallet_controller.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -76,6 +77,27 @@ Future<ProviderContainer> _openWallet(
   c.read(routerProvider).go(Routes.wallet);
   await tester.pumpAndSettle();
   return c;
+}
+
+/// The real wallet view with the contribution set to 44 at the same 160/3
+/// basis, so the cash rounding (005 FR-029) shows: 44 → 45.
+class _At44 extends WalletController {
+  @override
+  Future<WalletView> build() async {
+    final v = await super.build();
+    return WalletView(
+      role: v.role,
+      wallet: v.wallet,
+      today: v.today,
+      plan: v.plan,
+      mode: v.mode,
+      legShare: 44,
+      capacitySeats: v.capacitySeats,
+      filledSeats: v.filledSeats,
+      groupTripCost: v.groupTripCost,
+      riderSeats: v.riderSeats,
+    );
+  }
 }
 
 void main() {
@@ -237,6 +259,24 @@ void main() {
       expect(find.byKey(const Key('needs-top-up')), findsNothing, reason: 'cash riders need no balance');
     });
 
+    testWidgets('[$code] 005 FR-029: on the demo corridor the cash plan card still reads 40',
+        (tester) async {
+      await _openWallet(tester, code, method: PaymentMethod.cash);
+      final card = find.byKey(const Key('plan-card'));
+      expect(find.descendant(of: card, matching: find.text(l.priceCash(40))), findsOneWidget);
+    });
+
+    testWidgets('[$code] 005 FR-029: at 44 the cash plan card reads 45', (tester) async {
+      await _openWallet(
+        tester,
+        code,
+        method: PaymentMethod.cash,
+        overrides: [walletControllerProvider.overrideWith(_At44.new)],
+      );
+      final card = find.byKey(const Key('plan-card'));
+      expect(find.descendant(of: card, matching: find.text(l.priceCash(45))), findsOneWidget);
+    });
+
     testWidgets('[$code] US4 AC2: after 7 cash trips the top-up banner shows', (tester) async {
       await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(7));
       expect(find.byKey(const Key('cash-top-up-banner')), findsOneWidget);
@@ -316,4 +356,7 @@ final class _AlwaysFail implements PaymentProvider {
 
   @override
   Future<PaymentResult> withdraw({required int amount}) async => PaymentResult.failure;
+
+  @override
+  Future<PaymentResult> debit({required int amount}) async => PaymentResult.failure;
 }

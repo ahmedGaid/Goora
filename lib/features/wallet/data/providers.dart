@@ -4,6 +4,7 @@ import '../../../core/storage/preferences.dart';
 import '../../../core/time/now_provider.dart';
 import '../../commute/domain/group.dart';
 import '../../daily/data/providers.dart';
+import '../../marketplace/data/providers.dart';
 import '../../onboarding/domain/choices.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../domain/cash_mark.dart';
@@ -27,6 +28,9 @@ WalletRepository walletRepository(Ref ref) => FakeWalletRepository(
           : MemberRole.rider,
       now: ref.watch(nowProvider),
       provider: ref.watch(paymentProviderProvider),
+      // Read when called, not while building: the marketplace watches this
+      // provider back for its ledger (005 research R9).
+      oneOffs: () => ref.read(marketplaceRepositoryProvider).doneOneOffs(),
     );
 
 /// For a driver's check-in after drop-off (FR-012): is this passenger paying

@@ -184,7 +184,7 @@ class NoCoverCard extends ConsumerWidget {
           GooraGhostButton(
             key: const Key('no-cover-seat'),
             label: l10n.noCoverEmptySeat,
-            onPressed: () => context.push(Routes.emptySeats),
+            onPressed: () => context.push(Routes.emptySeatsOn(legs.contains(Leg.going) ? Leg.going : Leg.ret)),
           ),
           const SizedBox(height: AppSpacing.sm),
           GooraGhostButton(

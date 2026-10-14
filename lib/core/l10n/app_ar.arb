@@ -1275,5 +1275,196 @@
         "type": "int"
       }
     }
-  }
+  },
+  "seatsLeft": "{count, plural, =1{فاضي كرسي واحد} =2{فاضي كرسيين} few{فاضي {count} كراسي} other{فاضي {count} كرسي}}",
+  "@seatsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookSeat": "احجز الكرسي",
+  "seatRule": "المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل ٩ بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.",
+  "nothingFits": "مفيش حاجة على ميعادك؟ انشر مشوارك",
+  "alreadyRiding": "إنت عندك توصيلة في المشوار ده خلاص.",
+  "seatBookedTitle": "الكرسي اتحجز",
+  "upsellDaily": "عجبك؟ خليه مشوارك كل يوم",
+  "backToToday": "ارجع للنهارده",
+  "lateBookingNote": "عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.",
+  "topUpFirst": "اشحن {gap} ج الأول",
+  "@topUpFirst": {
+    "placeholders": {
+      "gap": {
+        "type": "int"
+      }
+    }
+  },
+  "seatJustTaken": "الكرسي ده لسه محجوز حالًا. دي القايمة بعد التحديث.",
+  "justOnce": "مرة واحدة",
+  "everyWorkday": "كل يوم شغل",
+  "ruleNoBidding": "السعر بتحدده جورة — مفيش فصال",
+  "ruleCostShare": "السواق بيشارك في التكلفة، مش بيكسب",
+  "ruleRoute": "اللي على خطك بس هيشوفوه",
+  "post": "انشر",
+  "sentToDrivers": "{count, plural, =1{اتبعت لسواق واحد على خطك} =2{اتبعت لسواقين على خطك} few{اتبعت لـ{count} سواقين على خطك} other{اتبعت لـ{count} سواق على خطك}}",
+  "@sentToDrivers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitingDriver": "مستنيين سواق يوافق",
+  "cancelRequest": "الغي الطلب",
+  "requestAccepted": "سواق وافق على مشوارك",
+  "nowGroup": "بقيتوا مجموعة مشوار",
+  "requestExpired": "مفيش سواق أخد المشوار في ميعاده. محدش خصم منك حاجة.",
+  "postAgain": "انشر تاني",
+  "seeEmptySeats": "شوف الكراسي الفاضية",
+  "dailyNeedsNoGroup": "إنت في مجموعة يومية خلاص",
+  "verifyChip": "{item} مش موثّق — وثّقه",
+  "@verifyChip": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "publish": "انشر المشوار",
+  "dailyLimitReached": "خلصت مشاوير النهارده",
+  "joinsTripInstead": "ده هيدخل على مشوارك الساعة {time}",
+  "@joinsTripInstead": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "seatsBooked": "{booked} من {seats} كراسي اتحجزوا",
+  "@seatsBooked": {
+    "placeholders": {
+      "booked": {
+        "type": "int"
+      },
+      "seats": {
+        "type": "int"
+      }
+    }
+  },
+  "carFull": "عربيتك اتملت!",
+  "newRider": "جديد",
+  "cancelTrip": "الغي المشوار",
+  "tripCancelledRefund": "{driver} لغى المشوار. فلوسك كلها رجعتلك.",
+  "@tripCancelledRefund": {
+    "placeholders": {
+      "driver": {
+        "type": "String"
+      }
+    }
+  },
+  "leavingFrom": "طالع من",
+  "allAreas": "الكل",
+  "morning": "الصبح",
+  "evening": "بالليل",
+  "createsTrip": "ده هيعمل مشوار جديد: {route} · {time}. {count, plural, =0{مش هيفضلك مشاوير بعده} =1{هيفضلك مشوار واحد بعده} other{هيفضلك {count} مشاوير بعده}}",
+  "@createsTrip": {
+    "placeholders": {
+      "route": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "doesntFit": "مش على مشوارك",
+  "yourCarFull": "عربيتك مليانة",
+  "oneGroupOnly": "إنت سايق مجموعة يومية خلاص",
+  "overlapTrip": "عندك مشوار تاني في نفس الوقت",
+  "accept": "وافق",
+  "accepted": "اتوافق ✓",
+  "demandBanner": "{count} واحد عايزين {route} {part, select, morning{الصبح} evening{بالليل} other{}}",
+  "@demandBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "route": {
+        "type": "String"
+      },
+      "part": {
+        "type": "String"
+      }
+    }
+  },
+  "detourMin": "{min, plural, =1{+دقيقة لفّة} =2{+دقيقتين لفّة} few{+{min} دقايق لفّة} other{+{min} دقيقة لفّة}}",
+  "@detourMin": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "noRequests": "مفيش طلبات على خطك دلوقتي. هنعرضها هنا أول ما توصل.",
+  "privacyCaption": "هتشوف الأسامي لما الركاب يركبوا.",
+  "seatReclaimed": "مشترك أخد كرسيك يوم {day}. رجعلك {amount} ج.",
+  "@seatReclaimed": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "reclaimTooLate": "فات الميعاد — الحجز ده نهائي.",
+  "oneOffTrips": "مشاوير مرة واحدة",
+  "cancelBooking": "الغي الحجز",
+  "noGroupYet": "لسه مفيش مجموعة يومية",
+  "demoAcceptRequest": "سواق يوافق على طلبك",
+  "demoBookSeat": "راكب يحجز كرسي",
+  "demoReclaim": "مشترك ياخد الكرسي ده",
+  "demoVerifyDriver": "وثّق أوراق السواقة",
+  "nSeatBooked": "راكب حجز كرسي في مشوارك.",
+  "nRequestAccepted": "{driver} وافق على مشوارك الساعة {time}.",
+  "@nRequestAccepted": {
+    "placeholders": {
+      "driver": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "actSeatBooked": "كرسي",
+  "actSeatRefund": "مرتجع",
+  "noSeatsOnRoute": "مفيش كراسي فاضية على طريقك دلوقتي",
+  "seatPayFailed": "الدفع ماتمّش. ومخدناش منك حاجة.",
+  "seatChosen": "اختيارك",
+  "cancelFreeNote": "الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.",
+  "offerFromLabel": "طالع من",
+  "offerToLabel": "رايح",
+  "offerTimeLabel": "ميعاد الخروج",
+  "riderPaysLine": "الراكب بيدفع {amount} ج",
+  "@riderPaysLine": {"placeholders": {"amount": {"type": "int"}}},
+  "dailyOfferNote": "أول ما حد يحجز، المشوار ده بيبقى مجموعة يومية.",
+  "noRidersYet": "لسه محدش حجز. الركاب هيظهروا هنا أول ما يحجزوا.",
+  "tripDepartedState": "المشوار ماشي. أسامي الركاب ظاهرة دلوقتي.",
+  "tripDoneState": "المشوار خلص.",
+  "tripCancelledState": "إنت لغيت المشوار. كل راكب فلوسه كلها رجعتله.",
+  "cancelTripConfirm": "تلغي المشوار؟ كل راكب فلوسه كلها هترجعله.",
+  "keepTrip": "سيب المشوار",
+  "demoNothingToDo": "مفيش حاجة تتعمل لسه. انشر مشوار الأول.",
+  "seeAll": "شوف الكل",
+  "acceptConfirm": "أيوه، وافق",
+  "requestWithdrawn": "رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.",
+  "requestGone": "الطلب ده مبقاش مفتوح. دي القايمة بعد التحديث.",
+  "dailyBlockedNote": "كل يوم شغل مقفول وإنت راكب في مجموعة يومية.",
+  "findRidersLink": "أو دوّر على ركاب نشروا مشاويرهم"
 }

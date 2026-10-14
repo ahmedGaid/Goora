@@ -58,13 +58,19 @@ final class WalletView {
 
   /// The service fee on one trip for this rider now (0 unless paying per trip
   /// from the wallet).
-  int get fee => PricingService.serviceFee(
-        legShare,
-        tripCost: groupTripCost,
-        riderSeats: riderSeats,
-        isSubscriber: mode == PricingMode.subscribed || mode == PricingMode.company,
-        isCashTrial: mode == PricingMode.cash,
-      );
+  ///
+  /// A rider with no group yet (a once rider) has no price basis, so no fee:
+  /// `serviceFee` needs at least one rider seat (005: the Wallet tab crashed
+  /// for them).
+  int get fee => riderSeats < 1
+      ? 0
+      : PricingService.serviceFee(
+          legShare,
+          tripCost: groupTripCost,
+          riderSeats: riderSeats,
+          isSubscriber: mode == PricingMode.subscribed || mode == PricingMode.company,
+          isCashTrial: mode == PricingMode.cash,
+        );
 
   /// What one trip costs this rider: 44, or 40 fee-free.
   int get legTotal => legShare + fee;

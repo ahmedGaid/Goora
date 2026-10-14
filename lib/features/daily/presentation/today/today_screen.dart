@@ -4,11 +4,18 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_banner.dart';
+import '../../../../core/widgets/goora_card.dart';
+import '../../../../core/widgets/goora_dashed_button.dart';
 import '../../../../core/widgets/goora_logo.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
+import '../../../commute/domain/commute_profile.dart';
+import '../../../marketplace/presentation/today/one_off_section.dart';
+import '../../../onboarding/domain/choices.dart';
 import '../../../onboarding/presentation/session_controller.dart';
 import '../labels.dart';
 import '../shell/tab_page.dart';
@@ -43,6 +50,38 @@ class TodayScreen extends ConsumerWidget {
         title: greeting,
         actions: const [TodayHeaderActions()],
         children: [TabLoadState(failed: state.hasError, onRetry: () => ref.invalidate(todayControllerProvider))],
+      );
+    }
+
+    if (view.noGroupYet) {
+      final driver = ref.watch(sessionControllerProvider).profile?.role == Role.driver;
+      return TabPage(
+        leading: _logo,
+        title: greeting,
+        subtitle: l10n.noGroupYet,
+        actions: const [TodayHeaderActions()],
+        children: [
+          const OneOffSection(),
+          if (driver) const DriverOffersSection(),
+          GooraCard(
+            key: const Key('no-group-yet'),
+            child: Text(driver ? l10n.fOnceDriver : l10n.fOnceRider, style: AppTypography.body.copyWith(color: AppColors.textBody)),
+          ),
+          const SizedBox(height: AppSpacing.gap),
+          GooraPrimaryButton(
+            key: const Key('no-group-action'),
+            label: driver ? l10n.offerTitle : l10n.extraTrip,
+            onPressed: () => context.push(driver ? Routes.offerTrip : Routes.emptySeatsOn(Leg.going)),
+          ),
+          if (!driver) ...[
+            const SizedBox(height: AppSpacing.md),
+            GooraDashedButton(
+              key: const Key('no-group-post'),
+              label: l10n.postReq,
+              onPressed: () => context.push(Routes.postTrip),
+            ),
+          ],
+        ],
       );
     }
 

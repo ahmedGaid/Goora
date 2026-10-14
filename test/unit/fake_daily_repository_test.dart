@@ -8,6 +8,7 @@ import 'package:goora/features/daily/domain/absence.dart';
 import 'package:goora/features/daily/domain/charge.dart';
 import 'package:goora/features/daily/domain/check_in.dart';
 import 'package:goora/features/daily/domain/notice.dart';
+import 'package:goora/features/daily/domain/reliability_rules.dart';
 import 'package:goora/features/daily/domain/ride.dart';
 import 'package:goora/features/daily/domain/schedule.dart';
 import 'package:goora/features/daily/domain/trust.dart';
@@ -377,6 +378,60 @@ void main() {
       final first = (await a.repo.ride(tue, Leg.going))!.shareToken;
       final b = await _make(Role.rider, start: at(mon, 12, 0));
       expect((await b.repo.ride(tue, Leg.going))!.shareToken, isNot(first));
+    });
+  });
+
+  group('NoticeSink (marketplace seam, R9)', () {
+    test('post: each new kind reaches the inbox stream unchanged, to me', () async {
+      final s = await _make(Role.rider, start: at(mon, 12, 0));
+      final sink = s.repo as NoticeSink;
+      await sink.post(NoticeKind.seatBooked, const {'day': '2026-10-20'});
+      await sink.post(NoticeKind.seatReclaimed, const {'day': '2026-10-20', 'amount': '44'});
+      await sink.post(NoticeKind.requestAccepted, const {});
+      await sink.post(NoticeKind.requestExpired, const {});
+      await sink.post(NoticeKind.tripCancelledByDriver, const {'driver': 'Tarek'});
+      final notices = await s.repo.notices().first;
+      expect(notices.map((n) => n.kind), [
+        NoticeKind.seatBooked,
+        NoticeKind.seatReclaimed,
+        NoticeKind.requestAccepted,
+        NoticeKind.requestExpired,
+        NoticeKind.tripCancelledByDriver,
+      ]);
+      expect(notices.every((n) => n.toMe && !n.read), isTrue);
+      expect(notices[1].params, {'day': '2026-10-20', 'amount': '44'});
+    });
+
+    test('post: survives a restart (stored, not memory only)', () async {
+      final s = await _make(Role.rider, start: at(mon, 12, 0));
+      await s.repo.post(NoticeKind.requestExpired, const {});
+      final again = FakeDailyCommuteRepository(
+        s.prefs,
+        commute: FakeCommuteRepository(s.prefs),
+        person: () => Profile(phone: testPhone, firstName: 'Omar', lastName: 'Khaled', gender: Gender.male, role: Role.rider),
+        now: s.clock.call,
+      );
+      expect((await again.notices().first).single.kind, NoticeKind.requestExpired);
+    });
+
+    test('recordReliability: a lateCantDrive event counts in events() and lowers reliability', () async {
+      final s = await _make(Role.driver, start: at(mon, 22, 30));
+      final before = ReliabilityRules.compute(await s.repo.events(tue.addDays(-60), tue.addDays(60)), tue.addDays(7));
+      await s.repo.recordReliability(
+        ReliabilityEvent(personId: 'me', rideId: 'offer:of-1', date: tue, kind: ReliabilityEventKind.lateCantDrive),
+      );
+      final events = await s.repo.events(tue.addDays(-1), tue.addDays(1));
+      expect(events.single.kind, ReliabilityEventKind.lateCantDrive);
+      final after = ReliabilityRules.compute(await s.repo.events(tue.addDays(-60), tue.addDays(60)), tue.addDays(7));
+      expect(after.percent, lessThan(before.percent));
+    });
+
+    test('recordReliability: same event twice is stored once', () async {
+      final s = await _make(Role.driver, start: at(mon, 22, 30));
+      final e = ReliabilityEvent(personId: 'me', rideId: 'offer:of-1', date: tue, kind: ReliabilityEventKind.lateCantDrive);
+      await s.repo.recordReliability(e);
+      await s.repo.recordReliability(e);
+      expect(await s.repo.events(tue, tue), hasLength(1));
     });
   });
 }

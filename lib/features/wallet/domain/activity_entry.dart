@@ -4,7 +4,9 @@ import '../../../core/time/calendar_date.dart';
 /// `tripDeduction` for a no-show, `freeCancelZero`) are derived from 003's
 /// records at read time (research R3, R7); `topUp`, `withdrawal`,
 /// `subscription`, `feeReceived`, `tripIncome` and `cashReceived` are written
-/// by this feature's repository.
+/// by this feature's repository. `seatBooked` (a one-off seat paid at booking,
+/// fee recorded) and `seatRefund` (its one credit back) are written through
+/// `SeatLedger` (005 research R7).
 enum ActivityKind {
   topUp,
   tripDeduction,
@@ -17,6 +19,8 @@ enum ActivityKind {
   cashTrip,
   subscription,
   cashReceived,
+  seatBooked,
+  seatRefund,
 }
 
 final class ActivityEntry {
@@ -39,7 +43,7 @@ final class ActivityEntry {
   final int amount;
   final CalendarDate date;
 
-  /// The service-fee part of [amount] (`trip` only).
+  /// The service-fee part of [amount] (`trip`, `seatBooked`).
   final int fee;
 
   /// A charge skipped because the rider was in the cash trial (amount 0).

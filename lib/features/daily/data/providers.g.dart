@@ -55,7 +55,7 @@ final class DailyCommuteRepositoryProvider
 }
 
 String _$dailyCommuteRepositoryHash() =>
-    r'eb27688d5d3c995c611228fdbedf8d100a2164f9';
+    r'13f547b82b796e76a36199363d6cbc0daedab286';
 
 @ProviderFor(trustRepository)
 final trustRepositoryProvider = TrustRepositoryProvider._();

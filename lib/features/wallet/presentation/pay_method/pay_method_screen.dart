@@ -9,18 +9,22 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../../core/widgets/goora_radio_card.dart';
-import '../../../commute/domain/pricing_service.dart';
 import '../../../daily/data/providers.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../data/providers.dart';
 import '../../domain/payment_method.dart';
+import '../../domain/seat_price.dart';
+import '../labels.dart';
 import '../wallet/wallet_controller.dart';
 
 /// v2 US1: right after "Join this group" a rider picks cash (first 10 trips)
 /// or the wallet; subscribing is a small link, never a required step.
 /// Drivers never route here (router.dart only sends riders).
 class PayMethodScreen extends ConsumerStatefulWidget {
-  const PayMethodScreen({super.key});
+  const PayMethodScreen({super.key, this.next});
+
+  /// Where to go after choosing (a seat the rider picked); Today when null.
+  final String? next;
 
   @override
   ConsumerState<PayMethodScreen> createState() => _PayMethodScreenState();
@@ -37,18 +41,18 @@ class _PayMethodScreenState extends ConsumerState<PayMethodScreen> {
     ref
       ..invalidate(riderPricingProvider)
       ..invalidate(walletControllerProvider);
-    if (mounted) context.go(Routes.today);
+    if (mounted) context.go(widget.next ?? Routes.today);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final view = ref.watch(walletControllerProvider).value;
-    final contribution = view?.legShare ?? 0;
-    final fee = view == null || view.riderSeats < 1
-        ? 0
-        : PricingService.serviceFee(contribution,
-            tripCost: view.groupTripCost, riderSeats: view.riderSeats, isSubscriber: false, isCashTrial: false);
+    // No quote on the loading frame: riderSeats is 0 until the group loads.
+    final walletPrice = view == null || view.riderSeats < 1
+        ? null
+        : SeatPrice.of(view.legShare,
+            tripCost: view.groupTripCost, riderSeats: view.riderSeats, mode: PricingMode.wallet);
     return OnboardingScaffold(
       title: l10n.payMethodTitle,
       subtitle: l10n.payMethodSub,
@@ -66,7 +70,7 @@ class _PayMethodScreenState extends ConsumerState<PayMethodScreen> {
           GooraRadioCard(
             key: const Key('pay-wallet'),
             title: l10n.payWallet,
-            subtitle: l10n.priceWithFee(contribution, fee),
+            subtitle: walletPrice == null ? null : l10n.priceLine(walletPrice),
             selected: _selected == PaymentMethod.wallet,
             onTap: () => setState(() => _selected = PaymentMethod.wallet),
           ),

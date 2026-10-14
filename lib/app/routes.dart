@@ -1,3 +1,4 @@
+import '../features/commute/domain/commute_profile.dart';
 import '../features/onboarding/domain/onboarding_flow.dart';
 
 abstract final class Routes {
@@ -13,6 +14,7 @@ abstract final class Routes {
   static const match = '/match';
   static const noMatch = '/no-match';
   static const postTrip = '/post-trip';
+  static const findRiders = '/find-riders';
   static const plan = '/plan';
   static const payMethod = '/pay-method';
   static const today = '/today';
@@ -23,6 +25,9 @@ abstract final class Routes {
   static const gallery = '/debug/gallery';
 
   static const phoneParam = 'phone';
+
+  /// Empty seats on one leg (`leg=going|return`).
+  static String emptySeatsOn(Leg leg) => '$emptySeats?leg=${leg == Leg.ret ? 'return' : 'going'}';
 
   static String forDestination(Destination d) => switch (d) {
         Destination.commuteSetup => commuteSetup,

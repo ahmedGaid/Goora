@@ -17,7 +17,9 @@ import '../../../core/widgets/goora_primary_button.dart';
 import '../../../core/widgets/goora_radio_card.dart';
 import '../../../core/widgets/goora_route_map.dart';
 import '../../../core/widgets/goora_stepper.dart';
+import '../../onboarding/domain/choices.dart';
 import '../../onboarding/domain/onboarding_flow.dart';
+import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../data/providers.dart';
 import '../domain/commute_profile.dart';
@@ -27,7 +29,11 @@ import 'commute_controller.dart';
 import 'labels.dart';
 
 class CommuteSetupScreen extends ConsumerStatefulWidget {
-  const CommuteSetupScreen({super.key});
+  const CommuteSetupScreen({super.key, this.presetFrequency});
+
+  /// "Every day" when the rider came from a one-off seat's upsell; saved when
+  /// they ask for a match, not on a mere look.
+  final Frequency? presetFrequency;
 
   @override
   ConsumerState<CommuteSetupScreen> createState() => _CommuteSetupScreenState();
@@ -39,6 +45,8 @@ class _CommuteSetupScreenState extends ConsumerState<CommuteSetupScreen> {
   Future<void> _find() async {
     setState(() => _finding = true);
     try {
+      final preset = widget.presetFrequency;
+      if (preset != null) await ref.read(sessionControllerProvider.notifier).setFrequency(preset);
       final outcome = await ref.read(commuteControllerProvider.notifier).findMatch();
       if (mounted) context.go(outcome.result.found ? Routes.match : Routes.noMatch);
     } finally {

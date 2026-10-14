@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/features/commute/domain/pricing_service.dart';
 
-/// 004 v2 per-trip rider price against test/fixtures/pricing_vectors.json — the
+/// 004 v2 per-trip rider price (and 005's cash amount, FR-029) against test/fixtures/pricing_vectors.json — the
 /// same file supabase/functions/_shared/pricing.test.ts runs.
 /// Regenerate with `python test/fixtures/gen_pricing_vectors.py`.
 void main() {
@@ -59,6 +59,7 @@ void main() {
             tripCost: tripCost, riderSeats: riderSeats, isSubscriber: isSubscriber, isCashTrial: isCashTrial),
         c['total'],
       );
+      expect(PricingService.cashAmount(contribution, tripCost: tripCost, riderSeats: riderSeats), c['cash']);
     });
   }
 }

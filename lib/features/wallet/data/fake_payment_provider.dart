@@ -14,4 +14,8 @@ final class FakePaymentProvider implements PaymentProvider {
   @override
   Future<PaymentResult> withdraw({required int amount}) async =>
       _shouldFail() ? PaymentResult.failure : PaymentResult.success;
+
+  @override
+  Future<PaymentResult> debit({required int amount}) async =>
+      _shouldFail() ? PaymentResult.failure : PaymentResult.success;
 }

@@ -8,6 +8,57 @@ part of 'providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Every commute group the fakes know: the corridor seed plus groups the
+/// marketplace created (005 research R10). The commute and daily
+/// repositories watch it, so invalidating it rebuilds both.
+
+@ProviderFor(groupCatalog)
+final groupCatalogProvider = GroupCatalogProvider._();
+
+/// Every commute group the fakes know: the corridor seed plus groups the
+/// marketplace created (005 research R10). The commute and daily
+/// repositories watch it, so invalidating it rebuilds both.
+
+final class GroupCatalogProvider
+    extends $FunctionalProvider<GroupCatalog, GroupCatalog, GroupCatalog>
+    with $Provider<GroupCatalog> {
+  /// Every commute group the fakes know: the corridor seed plus groups the
+  /// marketplace created (005 research R10). The commute and daily
+  /// repositories watch it, so invalidating it rebuilds both.
+  GroupCatalogProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'groupCatalogProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$groupCatalogHash();
+
+  @$internal
+  @override
+  $ProviderElement<GroupCatalog> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GroupCatalog create(Ref ref) {
+    return groupCatalog(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GroupCatalog value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GroupCatalog>(value),
+    );
+  }
+}
+
+String _$groupCatalogHash() => r'6a40882c54caf200c19c1db8d6fddbde36b565f0';
 
 @ProviderFor(commuteRepository)
 final commuteRepositoryProvider = CommuteRepositoryProvider._();
@@ -54,7 +105,7 @@ final class CommuteRepositoryProvider
   }
 }
 
-String _$commuteRepositoryHash() => r'b01a59a8efc9e4e90e443f4b677fe8d746061e84';
+String _$commuteRepositoryHash() => r'76db8e40eb79a85171e99bc341a94d32b7f025f2';
 
 /// Real rates stay off until the founder sets them (brief §8 open item).
 

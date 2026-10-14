@@ -1,0 +1,657 @@
+{
+ "fit": [
+  {
+   "name": "fit: empty day creates",
+   "trips": [],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 450,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "create",
+    "tripsLeftAfter": 1
+   }
+  },
+  {
+   "name": "fit: join within 30",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 480,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "join",
+    "tripId": "t1"
+   }
+  },
+  {
+   "name": "fit: 31 min is not a join",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 481,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "doesntFit"
+   }
+  },
+  {
+   "name": "fit: join beats limit",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    },
+    {
+     "id": "t2",
+     "leg": "return",
+     "from": "smartVillage",
+     "to": "sheikhZayed",
+     "departure": 1020,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 465,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "join",
+    "tripId": "t1"
+   }
+  },
+  {
+   "name": "fit: full",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 3
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 460,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "full",
+    "tripId": "t1"
+   }
+  },
+  {
+   "name": "fit: other direction creates",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "return",
+    "from": "smartVillage",
+    "to": "sheikhZayed",
+    "departure": 1020,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "create",
+    "tripsLeftAfter": 0
+   }
+  },
+  {
+   "name": "fit: two trips -> limit",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    },
+    {
+     "id": "t2",
+     "leg": "return",
+     "from": "smartVillage",
+     "to": "sheikhZayed",
+     "departure": 1020,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 570,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "limitReached"
+   }
+  },
+  {
+   "name": "fit: group leg counts",
+   "trips": [
+    {
+     "id": "g:sz-0725:going",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 445,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 3
+    }
+   ],
+   "candidate": {
+    "leg": "return",
+    "from": "smartVillage",
+    "to": "sheikhZayed",
+    "departure": 1020,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "create",
+    "tripsLeftAfter": 0
+   }
+  },
+  {
+   "name": "fit: other route same leg",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "october",
+    "to": "smartVillage",
+    "departure": 450,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "doesntFit"
+   }
+  },
+  {
+   "name": "fit: one daily group",
+   "trips": [],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 450,
+    "durationMinutes": 40,
+    "daily": true,
+    "leadsGroup": true
+   },
+   "expect": {
+    "kind": "oneGroupOnly"
+   }
+  },
+  {
+   "name": "fit: once ok when leading",
+   "trips": [],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 450,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": true
+   },
+   "expect": {
+    "kind": "create",
+    "tripsLeftAfter": 1
+   }
+  },
+  {
+   "name": "fit: overlap other direction",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "return",
+    "from": "smartVillage",
+    "to": "sheikhZayed",
+    "departure": 480,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "overlap"
+   }
+  },
+  {
+   "name": "fit: back-to-back ok",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "return",
+    "from": "smartVillage",
+    "to": "sheikhZayed",
+    "departure": 490,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "create",
+    "tripsLeftAfter": 0
+   }
+  },
+  {
+   "name": "fit: join picks the nearest departure",
+   "trips": [
+    {
+     "id": "a",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 430,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    },
+    {
+     "id": "b",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 460,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 455,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "join",
+    "tripId": "b"
+   }
+  },
+  {
+   "name": "fit: join tie -> lowest id",
+   "trips": [
+    {
+     "id": "b",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 440,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    },
+    {
+     "id": "a",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 470,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 455,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "join",
+    "tripId": "a"
+   }
+  },
+  {
+   "name": "fit: join 30 min earlier (inclusive)",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 420,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "join",
+    "tripId": "t1"
+   }
+  },
+  {
+   "name": "fit: join skips a full trip for one with a seat",
+   "trips": [
+    {
+     "id": "a",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 3
+    },
+    {
+     "id": "b",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 470,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 455,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "join",
+    "tripId": "b"
+   }
+  },
+  {
+   "name": "fit: limit with a joinable full trip -> full",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 3
+    },
+    {
+     "id": "t2",
+     "leg": "return",
+     "from": "smartVillage",
+     "to": "sheikhZayed",
+     "departure": 1020,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "going",
+    "from": "sheikhZayed",
+    "to": "smartVillage",
+    "departure": 460,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "full",
+    "tripId": "t1"
+   }
+  },
+  {
+   "name": "fit: overlap half-open, ends at start ok",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "return",
+    "from": "smartVillage",
+    "to": "sheikhZayed",
+    "departure": 410,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "create",
+    "tripsLeftAfter": 0
+   }
+  },
+  {
+   "name": "fit: overlap half-open, one minute in",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "going",
+     "from": "sheikhZayed",
+     "to": "smartVillage",
+     "departure": 450,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 1
+    }
+   ],
+   "candidate": {
+    "leg": "return",
+    "from": "smartVillage",
+    "to": "sheikhZayed",
+    "departure": 411,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "overlap"
+   }
+  },
+  {
+   "name": "fit: full, return leg",
+   "trips": [
+    {
+     "id": "t1",
+     "leg": "return",
+     "from": "smartVillage",
+     "to": "sheikhZayed",
+     "departure": 1020,
+     "durationMinutes": 40,
+     "seats": 3,
+     "taken": 3
+    }
+   ],
+   "candidate": {
+    "leg": "return",
+    "from": "smartVillage",
+    "to": "sheikhZayed",
+    "departure": 1050,
+    "durationMinutes": 40,
+    "daily": false,
+    "leadsGroup": false
+   },
+   "expect": {
+    "kind": "full",
+    "tripId": "t1"
+   }
+  }
+ ],
+ "refund": [
+  {
+   "name": "refund: before cut-off",
+   "paidTotal": 44,
+   "fee": 4,
+   "owed": 0,
+   "expect": 44
+  },
+  {
+   "name": "refund: after cut-off half share",
+   "paidTotal": 44,
+   "fee": 4,
+   "owed": 20,
+   "expect": 24
+  },
+  {
+   "name": "refund: subscriber after cut-off",
+   "paidTotal": 40,
+   "fee": 0,
+   "owed": 20,
+   "expect": 20
+  },
+  {
+   "name": "refund: cash",
+   "paidTotal": 0,
+   "fee": 0,
+   "owed": 0,
+   "expect": 0
+  },
+  {
+   "name": "refund: no-show full share keeps the fee coming back",
+   "paidTotal": 44,
+   "fee": 4,
+   "owed": 40,
+   "expect": 4
+  },
+  {
+   "name": "refund: never negative",
+   "paidTotal": 0,
+   "fee": 0,
+   "owed": 20,
+   "expect": 0
+  }
+ ]
+}

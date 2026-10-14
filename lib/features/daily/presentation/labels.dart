@@ -113,6 +113,11 @@ extension DailyLabels on AppLocalizations {
       NoticeKind.backupCover => backupBodyFor(n.params['cover'] ?? ''),
       NoticeKind.sosSent => sosAlertSent,
       NoticeKind.driverNoShow => nDriverNoShow(dayParam()),
+      NoticeKind.seatBooked => seatBookedTitle,
+      NoticeKind.seatReclaimed => seatReclaimed(dayParam(), amount()),
+      NoticeKind.requestAccepted => requestAccepted,
+      NoticeKind.requestExpired => requestExpired,
+      NoticeKind.tripCancelledByDriver => tripCancelledRefund(n.params['driver'] ?? ''),
     };
   }
 }

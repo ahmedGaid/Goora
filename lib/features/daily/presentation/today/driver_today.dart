@@ -9,12 +9,13 @@ import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_card.dart';
-import '../../../../core/widgets/goora_dashed_button.dart';
 import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/presentation/labels.dart';
+import '../../../marketplace/presentation/today/one_off_section.dart';
+import '../../../marketplace/presentation/today/requests_section.dart';
 import '../labels.dart';
 import 'cant_come_sheet.dart';
 import 'cash_after_trip.dart';
@@ -60,7 +61,7 @@ class DriverToday extends StatelessWidget {
                 key: const Key('find-riders'),
                 label: l10n.browseBtn,
                 icon: GooraIcons.person,
-                onPressed: () => context.push(Routes.offerTrip),
+                onPressed: () => context.push(Routes.findRiders),
               ),
             ),
           ],
@@ -87,13 +88,8 @@ class DriverToday extends StatelessWidget {
           TripMapCard(key: const Key('riding-map'), view: view, next: rideToday),
         ],
         const SizedBox(height: AppSpacing.gap),
-        SectionTitle(l10n.reqsOnRoute),
-        GooraDashedButton(
-          key: const Key('requests'),
-          label: l10n.reqsPlaceholder,
-          onPressed: () => context.push(Routes.offerTrip),
-        ),
-        Caption(l10n.reqPrivacy),
+        const DriverOffersSection(),
+        const RequestsSection(),
         const SizedBox(height: AppSpacing.gap),
         SafetyRow(view: view),
       ],

@@ -23,7 +23,10 @@ final class FakeTrustRepository implements TrustRepository {
   static const sosKey = 'trust.sos';
   static const docsPendingKey = 'trust.driverDocsPending';
 
-  static const allKeys = [privacyKey, contactsKey, sosKey, docsPendingKey];
+  /// Debug: license and vehicle read as verified whatever the role (005 R14).
+  static const docsVerifiedKey = 'trust.driverDocsVerified';
+
+  static const allKeys = [privacyKey, contactsKey, sosKey, docsPendingKey, docsVerifiedKey];
 
   final SharedPreferences _prefs;
   final Profile? Function() _person;
@@ -32,9 +35,10 @@ final class FakeTrustRepository implements TrustRepository {
   @override
   Future<TrustProfile> profile() async {
     final p = _person()!;
+    final verified = _prefs.getBool(docsVerifiedKey) ?? false;
     final items = DailySeed.verification(
-      driver: p.role == Role.driver,
-      docsPending: _prefs.getBool(docsPendingKey) ?? false,
+      driver: verified || p.role == Role.driver,
+      docsPending: !verified && (_prefs.getBool(docsPendingKey) ?? false),
     );
     final workEmail = items.any((i) => i.kind == VerificationKind.workEmail && i.status == VerificationStatus.verified);
     return TrustProfile(
@@ -87,6 +91,13 @@ final class FakeTrustRepository implements TrustRepository {
 
   @override
   Future<void> startDriverVerification() => _prefs.setBool(docsPendingKey, true);
+
+  /// Settings → Demo "Verify my driver documents" (debug only, 005 R14):
+  /// license and vehicle read as verified, and a pending check ends.
+  Future<void> demoVerifyDriver() async {
+    await _prefs.remove(docsPendingKey);
+    await _prefs.setBool(docsVerifiedKey, true);
+  }
 
   List<T> _read<T>(String key, T Function(Map<String, Object?>) fromJson) {
     final raw = _prefs.getString(key);

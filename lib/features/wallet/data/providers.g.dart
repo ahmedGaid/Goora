@@ -95,7 +95,7 @@ final class WalletRepositoryProvider
   }
 }
 
-String _$walletRepositoryHash() => r'b59cf4bb340e6221bfdbf04cb0f1ad0be71a5d9d';
+String _$walletRepositoryHash() => r'bda8b69cabbee44d8704348a0ac10f1a4d413d0d';
 
 /// For a driver's check-in after drop-off (FR-012): is this passenger paying
 /// cash, and has the driver already recorded it? `isCash` false hides the

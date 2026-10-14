@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/app/router.dart';
+import 'package:goora/app/routes.dart';
 import 'package:goora/features/design_gallery/presentation/design_gallery_screen.dart';
 import 'package:goora/features/onboarding/data/fake_auth_repository.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
@@ -117,9 +120,10 @@ void main() {
     expect(find.text(a.whereGo), findsOneWidget);
   });
 
-  testWidgets('settings from a placeholder: switching role changes frequency sublines', (tester) async {
-    await pumpGooraApp(tester, prefs: _signedIn(role: Role.rider, frequency: Frequency.once));
-    await tester.tap(find.byKey(const Key('open-settings')));
+  testWidgets('settings from a screen: switching role changes frequency sublines', (tester) async {
+    // A once driver lands on Offer a trip (005 US2); settings is pushed on top of it.
+    final c = await pumpGooraApp(tester, prefs: _signedIn(role: Role.driver, frequency: Frequency.once));
+    unawaited(c.read(routerProvider).push(Routes.settings));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('switch-role')));
     await tester.pumpAndSettle();
@@ -127,7 +131,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip(a.back));
     await tester.pumpAndSettle();
-    expect(find.text(a.fRegDriver), findsOneWidget);
+    expect(find.text(a.fRegRider), findsOneWidget);
   });
 
   testWidgets('debug: long-press the welcome logo opens the Design gallery', (tester) async {

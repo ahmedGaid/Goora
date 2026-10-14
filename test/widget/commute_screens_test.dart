@@ -16,6 +16,8 @@ import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
+import 'package:goora/features/wallet/data/providers.dart';
+import 'package:goora/features/wallet/domain/payment_method.dart';
 
 import '../helpers/pump_app.dart';
 
@@ -376,6 +378,26 @@ void main() {
         );
         expect(find.text(l.priceNoFee(24)), findsOneWidget);
       });
+
+      for (final (price, cash) in [(44, 45), (40, 40)]) {
+        testWidgets('005 FR-029: a cash rider at $price reads "Pay $cash EGP cash", a multiple of 5',
+            (tester) async {
+          final result = _priceLineMatch(price: price, tripCost: 160, riderSeats: 3);
+          await pumpScreen(
+            tester,
+            const MatchResultScreen(),
+            locale: locale,
+            session: _session(Role.rider),
+            overrides: [
+              riderPricingProvider.overrideWith((ref) => PricingMode.cash),
+              lastMatchProvider.overrideWith(
+                () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
+              ),
+            ],
+          );
+          expect(find.text(l.priceCash(cash)), findsOneWidget);
+        });
+      }
 
       testWidgets('driver sees riders only as verified riders (no names)', (tester) async {
         final outcome = _outcome(driver: true);

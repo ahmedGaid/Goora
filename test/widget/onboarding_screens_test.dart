@@ -17,7 +17,6 @@ import 'package:goora/features/onboarding/presentation/profile_screen.dart';
 import 'package:goora/features/onboarding/presentation/role_screen.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
 import 'package:goora/features/onboarding/presentation/welcome_screen.dart';
-import 'package:goora/features/placeholder/presentation/placeholder_screen.dart';
 import 'package:goora/features/settings/presentation/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -177,21 +176,6 @@ void main() {
         });
       }
 
-      for (final kind in PlaceholderKind.values) {
-        testWidgets('placeholder ${kind.name}', (tester) async {
-          await pumpScreen(tester, PlaceholderScreen(kind: kind), locale: locale, session: _session());
-          _expectDirection(tester, locale);
-          expect(find.text(l10n.comingSoonTitle), findsOneWidget);
-          final title = switch (kind) {
-            PlaceholderKind.emptySeats => l10n.emptySeatsTitle,
-            PlaceholderKind.offerTrip => l10n.offerTitle,
-            PlaceholderKind.postTrip => l10n.postReq,
-          };
-          expect(find.text(title), findsWidgets);
-          await _expectAccessible(tester);
-        });
-      }
-
       testWidgets('settings: switch role and it persists', (tester) async {
         final container = await pumpScreen(
           tester,
@@ -220,7 +204,6 @@ void main() {
           const ProfileScreen(),
           const RoleScreen(),
           const FrequencyScreen(),
-          const PlaceholderScreen(kind: PlaceholderKind.emptySeats),
           const SettingsScreen(),
         ]) {
           await pumpScreen(tester, screen, locale: locale, session: _session(role: Role.driver), textScale: 1.3);

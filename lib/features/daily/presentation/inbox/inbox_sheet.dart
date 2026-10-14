@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../app/routes.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
 import '../../data/providers.dart';
 import '../../domain/notice.dart';
@@ -38,6 +41,12 @@ class _InboxSheetState extends ConsumerState<InboxSheet> {
         await repo.markRead(n.id);
       }
     });
+  }
+
+  void _go(String route) {
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    router.push(route);
   }
 
   @override
@@ -94,6 +103,20 @@ class _InboxSheetState extends ConsumerState<InboxSheet> {
                               style: (n.read ? AppTypography.bodySmall : AppTypography.bodyStrong)
                                   .copyWith(color: AppColors.textPrimary),
                             ),
+                            if (n.kind == NoticeKind.seatReclaimed && n.toMe) ...[
+                              const SizedBox(height: AppSpacing.sm),
+                              GooraGhostButton(
+                                key: const Key('notice-empty-seats'),
+                                label: l10n.seeEmptySeats,
+                                onPressed: () => _go(Routes.emptySeats),
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              GooraGhostButton(
+                                key: const Key('notice-post-trip'),
+                                label: l10n.postReq,
+                                onPressed: () => _go(Routes.postTrip),
+                              ),
+                            ],
                           ],
                         ),
                       );

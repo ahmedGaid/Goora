@@ -16,6 +16,8 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../../core/widgets/goora_text_field.dart';
 import '../../commute/data/fake_commute_repository.dart';
+import '../../daily/data/daily_seed.dart';
+import '../../marketplace/data/fake_marketplace_repository.dart';
 import '../data/providers.dart';
 import '../domain/phone_number.dart';
 import '../domain/repositories.dart';
@@ -78,6 +80,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       context.go(routeForSession(
         ref.read(sessionControllerProvider),
         isMember: FakeCommuteRepository.hasMembership(ref.read(sharedPreferencesProvider)),
+        hasOneOff: FakeMarketplaceRepository.hasOneOff(ref.read(sharedPreferencesProvider), DailySeed.meId),
       ));
     } on InvalidCodeException {
       if (mounted) setState(() => _wrong = true);
