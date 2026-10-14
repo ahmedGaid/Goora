@@ -445,6 +445,102 @@ gives English only for them. Drafted for review (Egyptian register, lexicon: م�
 The `ruleNoBidding` Arabic uses "فصال" (bargaining), the everyday Egyptian word. It reads as
 "no haggling", which is the Constitution II point. **Not** "مزايدة" (auction).
 
+## R16 addendum — every 005 ARB key actually shipped (founder review)
+
+Written at the end of the build, 2026-10-14, from the ARB files against `main`. The Arabic is Egyptian
+colloquial and drafted; the wording is the founder's to approve or change. Keys from R16's table that
+changed on the way: `riderPaysLine`, `dailyOfferNote`, `cancelTripConfirm`, `keepTrip`, `acceptConfirm`,
+`requestWithdrawn`, `requestGone`, `findRidersLink`, `seeAll` and the Offer-a-trip labels were added; the
+rest are the R16 draft.
+
+| key | en | ar |
+|---|---|---|
+| seatsLeft | {count, plural, =1{1 seat left} other{{count} seats left}} | {count, plural, =1{فاضي كرسي واحد} =2{فاضي كرسيين} few{فاضي {count} كراسي} other{فاضي {count} كرسي}} |
+| bookSeat | Book seat | احجز الكرسي |
+| seatRule | Subscribers get priority on empty seats. If a subscriber takes your seat before 9 PM the evening before, you get back everything you paid. | المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل ٩ بالليل اليوم اللي قبله، فلوسك كلها بترجعلك. |
+| nothingFits | Nothing fits your time? Post your trip | مفيش حاجة على ميعادك؟ انشر مشوارك |
+| alreadyRiding | You already have a ride on this trip. | إنت عندك توصيلة في المشوار ده خلاص. |
+| seatBookedTitle | Seat booked | الكرسي اتحجز |
+| upsellDaily | Liked it? Make it your daily commute | عجبك؟ خليه مشوارك كل يوم |
+| backToToday | Back to today | ارجع للنهارده |
+| lateBookingNote | It's past 9 PM the evening before, so cancelling now means paying half your share. | عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك. |
+| topUpFirst | Top up {gap} EGP first | اشحن {gap} ج الأول |
+| seatJustTaken | That seat was just taken. Here's the updated list. | الكرسي ده لسه محجوز حالًا. دي القايمة بعد التحديث. |
+| justOnce | Just once | مرة واحدة |
+| everyWorkday | Every workday | كل يوم شغل |
+| ruleNoBidding | The price is set by Goora — no bargaining | السعر بتحدده جورة — مفيش فصال |
+| ruleCostShare | Drivers share costs, they don't profit | السواق بيشارك في التكلفة، مش بيكسب |
+| ruleRoute | Only people on your route see it | اللي على خطك بس هيشوفوه |
+| post | Post | انشر |
+| sentToDrivers | {count, plural, =1{Sent to 1 driver on your route} other{Sent to {count} drivers on your route}} | {count, plural, =1{اتبعت لسواق واحد على خطك} =2{اتبعت لسواقين على خطك} few{اتبعت لـ{count} سواقين على خطك} other{اتبعت لـ{count} سواق على خطك}} |
+| waitingDriver | Waiting for a driver to accept | مستنيين سواق يوافق |
+| cancelRequest | Cancel request | الغي الطلب |
+| requestAccepted | A driver accepted your trip | سواق وافق على مشوارك |
+| nowGroup | You're now a commute group | بقيتوا مجموعة مشوار |
+| requestExpired | No driver took this trip in time. Nothing was charged. | مفيش سواق أخد المشوار في ميعاده. محدش خصم منك حاجة. |
+| postAgain | Post again | انشر تاني |
+| seeEmptySeats | See empty seats | شوف الكراسي الفاضية |
+| dailyNeedsNoGroup | You're already in a daily group | إنت في مجموعة يومية خلاص |
+| verifyChip | {item} not verified — verify | {item} مش موثّق — وثّقه |
+| publish | Publish | انشر المشوار |
+| dailyLimitReached | Daily limit reached | خلصت مشاوير النهارده |
+| joinsTripInstead | This joins your trip at {time} | ده هيدخل على مشوارك الساعة {time} |
+| seatsBooked | {booked} of {seats} seats booked | {booked} من {seats} كراسي اتحجزوا |
+| carFull | Your car is full! | عربيتك اتملت! |
+| newRider | New | جديد |
+| cancelTrip | Cancel trip | الغي المشوار |
+| tripCancelledRefund | {driver} cancelled the trip. You got back everything you paid. | {driver} لغى المشوار. فلوسك كلها رجعتلك. |
+| leavingFrom | Leaving from | طالع من |
+| allAreas | All | الكل |
+| morning | Morning | الصبح |
+| evening | Evening | بالليل |
+| createsTrip | This creates your trip: {route} · {time}. Trips left after this: {count} | ده هيعمل مشوار جديد: {route} · {time}. {count, plural, =0{مش هيفضلك مشاوير بعده} =1{هيفضلك مشوار واحد بعده} other{هيفضلك {count} مشاوير بعده}} |
+| doesntFit | Doesn't fit your trip | مش على مشوارك |
+| yourCarFull | Your car is full | عربيتك مليانة |
+| oneGroupOnly | You already drive a daily group | إنت سايق مجموعة يومية خلاص |
+| overlapTrip | You have another trip at that time | عندك مشوار تاني في نفس الوقت |
+| accept | Accept | وافق |
+| accepted | Accepted ✓ | اتوافق ✓ |
+| demandBanner | {count} people want {route} {part, select, morning{in the morning} evening{in the evening} other{}} | {count} واحد عايزين {route} {part, select, morning{الصبح} evening{بالليل} other{}} |
+| detourMin | +{min} min detour | {min, plural, =1{+دقيقة لفّة} =2{+دقيقتين لفّة} few{+{min} دقايق لفّة} other{+{min} دقيقة لفّة}} |
+| noRequests | No requests on your route right now. We'll show them here as they come in. | مفيش طلبات على خطك دلوقتي. هنعرضها هنا أول ما توصل. |
+| privacyCaption | You'll see names when riders board. | هتشوف الأسامي لما الركاب يركبوا. |
+| seatReclaimed | A subscriber took your seat on {day}. You got back {amount} EGP. | مشترك أخد كرسيك يوم {day}. رجعلك {amount} ج. |
+| reclaimTooLate | Too late to reclaim — this booking is final. | فات الميعاد — الحجز ده نهائي. |
+| oneOffTrips | One-off trips | مشاوير مرة واحدة |
+| cancelBooking | Cancel booking | الغي الحجز |
+| noGroupYet | No daily group yet | لسه مفيش مجموعة يومية |
+| demoAcceptRequest | A driver accepts your request | سواق يوافق على طلبك |
+| demoBookSeat | A rider books your seat | راكب يحجز كرسي |
+| demoReclaim | A subscriber takes this seat | مشترك ياخد الكرسي ده |
+| demoVerifyDriver | Verify my driver documents | وثّق أوراق السواقة |
+| nSeatBooked | A rider booked a seat on your trip. | راكب حجز كرسي في مشوارك. |
+| nRequestAccepted | {driver} accepted your trip at {time}. | {driver} وافق على مشوارك الساعة {time}. |
+| actSeatBooked | Seat | كرسي |
+| actSeatRefund | Refund | مرتجع |
+| noSeatsOnRoute | No seats on your route right now | مفيش كراسي فاضية على طريقك دلوقتي |
+| seatPayFailed | The payment didn't go through. Nothing was charged. | الدفع ماتمّش. ومخدناش منك حاجة. |
+| seatChosen | Your pick | اختيارك |
+| cancelFreeNote | Cancel free until 9 PM the evening before. After that you pay half your share. | الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك. |
+| offerFromLabel | Leaving from | طالع من |
+| offerToLabel | Heading to | رايح |
+| offerTimeLabel | Leaving at | ميعاد الخروج |
+| riderPaysLine | Riders pay {amount} EGP | الراكب بيدفع {amount} ج |
+| dailyOfferNote | Once someone books, this becomes your daily commute group. | أول ما حد يحجز، المشوار ده بيبقى مجموعة يومية. |
+| noRidersYet | No one has booked yet. Riders appear here as they book. | لسه محدش حجز. الركاب هيظهروا هنا أول ما يحجزوا. |
+| tripDepartedState | On the way. Rider names show now. | المشوار ماشي. أسامي الركاب ظاهرة دلوقتي. |
+| tripDoneState | Trip finished. | المشوار خلص. |
+| tripCancelledState | You cancelled this trip. Every rider got back everything they paid. | إنت لغيت المشوار. كل راكب فلوسه كلها رجعتله. |
+| cancelTripConfirm | Cancel this trip? Every rider gets back everything they paid. | تلغي المشوار؟ كل راكب فلوسه كلها هترجعله. |
+| keepTrip | Keep the trip | سيب المشوار |
+| demoNothingToDo | Nothing to do yet. Publish a trip first. | مفيش حاجة تتعمل لسه. انشر مشوار الأول. |
+| seeAll | See all | شوف الكل |
+| acceptConfirm | Yes, accept | أيوه، وافق |
+| requestWithdrawn | Your balance was too low when a driver accepted, so the request was withdrawn. Nothing was charged. | رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة. |
+| requestGone | That request is no longer open. Here's the updated list. | الطلب ده مبقاش مفتوح. دي القايمة بعد التحديث. |
+| dailyBlockedNote | Every workday is off while you ride in a daily group. | كل يوم شغل مقفول وإنت راكب في مجموعة يومية. |
+| findRidersLink | Or find riders who already posted | أو دوّر على ركاب نشروا مشاويرهم |
+
 ---
 
 ## R17 — Server side (schema only, not deployed)

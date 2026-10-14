@@ -87,7 +87,10 @@ class _FindRidersScreenState extends ConsumerState<FindRidersScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Row(
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               GooraPill(
                 key: const Key('part-morning'),
@@ -95,22 +98,23 @@ class _FindRidersScreenState extends ConsumerState<FindRidersScreen> {
                 selected: _part == PartOfDay.morning,
                 onTap: () => setState(() => _part = PartOfDay.morning),
               ),
-              const SizedBox(width: AppSpacing.sm),
               GooraPill(
                 key: const Key('part-evening'),
                 label: l10n.evening,
                 selected: _part == PartOfDay.evening,
                 onTap: () => setState(() => _part = PartOfDay.evening),
               ),
-              const Spacer(),
-              if (left != null)
-                Text(
-                  '${l10n.tripsLeftA} · $left',
-                  key: const Key('trips-left'),
-                  style: AppTypography.bodyStrong.copyWith(color: AppColors.greenText),
-                ),
             ],
           ),
+          if (left != null)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(top: AppSpacing.sm),
+              child: Text(
+                '${l10n.tripsLeftA} · $left',
+                key: const Key('trips-left'),
+                style: AppTypography.bodyStrong.copyWith(color: AppColors.greenText),
+              ),
+            ),
           const SizedBox(height: AppSpacing.md),
           if (_gone) ...[
             GooraBanner(key: const Key('notice-gone'), kind: GooraBannerKind.info, title: l10n.requestGone, body: ''),

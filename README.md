@@ -83,6 +83,18 @@ gets "Received cash" / "Didn't pay" after ending a trip. `FakePaymentProvider`'s
 hook (top-up/withdrawal failure) is wired only in widget tests, not in Settings → Demo. No new
 packages.
 
+## Seat marketplace (feature 005)
+
+One-off trips next to the daily commute groups: a rider **books an empty seat** or **posts a trip**, a driver
+**offers a trip** or **finds riders** who posted, and a subscriber can take a one-off seat before 9 PM the
+evening before (the booker gets everything back). All of it runs on fake data in `lib/features/marketplace/`;
+the rules (two trips a driver per day, the cost cap, the refund, cash rounding to 5 EGP) are pure Dart with a
+TypeScript twin in `supabase/functions/_shared/marketplace.ts` and shared vectors in `test/fixtures/`.
+
+Try it in a debug build (any Egyptian number, code `123456`): choose "Just one trip" as a rider or a driver.
+Settings → Demo has the fake other side: "A rider books your seat", "A driver accepts your request",
+"A subscriber takes this seat", "Verify my driver documents". "Reset demo data" clears it all.
+
 ## Code generation
 
 Riverpod providers and l10n are generated and committed. After changing a `@riverpod` provider or
