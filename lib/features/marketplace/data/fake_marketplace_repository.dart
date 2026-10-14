@@ -731,9 +731,6 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
 
   // ------------------------------------------------------ C: Offer a trip
 
-  /// What a driver must have verified before publishing (FR-014).
-  static const _publishChecks = {VerificationKind.nationalId, VerificationKind.license, VerificationKind.vehicle};
-
   static String _nextOfferId(List<OfferedTrip> all) {
     var top = 0;
     for (final o in all) {
@@ -748,7 +745,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final profile = await trust.profile();
     final missing = [
       for (final item in profile.items)
-        if (_publishChecks.contains(item.kind) && item.status != VerificationStatus.verified) item.kind,
+        if (publishChecks.contains(item.kind) && item.status != VerificationStatus.verified) item.kind,
     ];
     if (missing.isNotEmpty) return NotVerified(missing);
 
@@ -828,7 +825,16 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     return OfferLive(
       trip: _onClock(o, now),
       // A name only from departure (R15, FR-023).
-      riders: [for (final b in riders) LiveRider(rider: b.rider, firstName: departed ? b.riderName : null)],
+      riders: [
+        for (final b in riders)
+          LiveRider(
+            rider: b.rider,
+            firstName: departed ? b.riderName : null,
+            riderId: b.riderId,
+            paidBy: b.paidBy,
+            price: b.price,
+          ),
+      ],
     );
   }
 

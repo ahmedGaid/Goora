@@ -15,6 +15,7 @@ import '../../../../core/widgets/goora_icons.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/presentation/labels.dart';
+import '../../../marketplace/presentation/today/one_off_section.dart';
 import '../labels.dart';
 import 'cant_come_sheet.dart';
 import 'cash_after_trip.dart';
@@ -87,6 +88,7 @@ class DriverToday extends StatelessWidget {
           TripMapCard(key: const Key('riding-map'), view: view, next: rideToday),
         ],
         const SizedBox(height: AppSpacing.gap),
+        const DriverOffersSection(),
         SectionTitle(l10n.reqsOnRoute),
         GooraDashedButton(
           key: const Key('requests'),

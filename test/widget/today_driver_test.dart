@@ -3,13 +3,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_status_chip.dart';
+import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/commute/domain/place.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/domain/absence.dart';
 import 'package:goora/features/daily/domain/notice.dart';
+import 'package:goora/features/marketplace/data/fake_marketplace_repository.dart';
+import 'package:goora/features/marketplace/data/market_seed.dart';
+import 'package:goora/features/marketplace/domain/anonymous_rider.dart';
+import 'package:goora/features/marketplace/domain/booking.dart';
+import 'package:goora/features/marketplace/domain/offered_trip.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
+import 'package:goora/features/onboarding/domain/profile.dart';
+import 'package:goora/features/wallet/data/providers.dart';
+import 'package:goora/features/wallet/domain/cash_mark.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -191,4 +202,130 @@ void main() {
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
   });
+
+  // 005 US2 (T065): the driver's offered trip on Today.
+  for (final locale in locales) {
+    final l = l10nFor(locale);
+    final code = locale.languageCode;
+
+    OfferedTrip trip() => OfferedTrip(
+          id: 'of-9',
+          driverId: 'me',
+          leg: Leg.going,
+          from: Area.sheikhZayed,
+          to: Area.smartVillage,
+          date: _wed,
+          departure: const Clock.hm(9, 0),
+          seats: 3,
+          riderSeats: 3,
+          tripCost: MarketSeed.tripCost,
+          contribution: 40,
+          repeat: Repeat.once,
+          pickup: MarketSeed.pickupIn(Area.sheikhZayed, 'of-stop-of-9', const Clock.hm(9, 0)),
+        );
+
+    Booking booked(String id, String riderId, String name, {PaidBy paidBy = PaidBy.wallet, double? rating = 4.6}) =>
+        Booking(
+          id: id,
+          riderId: riderId,
+          riderName: name,
+          rider: AnonymousRider(isWoman: true, rating: rating),
+          source: const BookingSource.offer('of-9'),
+          date: _wed,
+          leg: Leg.going,
+          rideId: Booking.offerRideId('of-9'),
+          price: MarketSeed.quote(40),
+          paidBy: paidBy,
+          paid: paidBy == PaidBy.cash ? 0 : 44,
+          bookedAt: at(rideTuesday, 10, 0),
+          isSubscriber: false,
+        );
+
+    Map<String, Object> offered(List<Booking> bookings) => {
+          FakeMarketplaceRepository.offersKey: jsonEncode([trip().toJson()]),
+          FakeMarketplaceRepository.bookingsKey: jsonEncode([for (final b in bookings) b.toJson()]),
+        };
+
+    Future<ProviderContainer> pumpToday(WidgetTester tester, WallTime now, Map<String, Object> extra,
+        {bool member = true}) async {
+      final c = await pumpGooraApp(
+        tester,
+        prefs: {...memberPrefs(role: Role.driver, locale: code, member: member), ...extra},
+        overrides: dailyOverrides(TestClock(now)),
+      );
+      tester.view.physicalSize = const Size(390, 3200);
+      await tester.pumpAndSettle();
+      return c;
+    }
+
+    testWidgets('[$code] offered trip card: progress, anonymous riders, Cancel trip — no Share/SOS before departure',
+        (tester) async {
+      await pumpToday(tester, at(rideTuesday, 20, 0), offered([booked('bk-1', 'seed-rider-nadia', 'Nadia')]));
+      expect(find.byKey(const Key('driver-offer-of-9')), findsOneWidget);
+      expect(find.text(l.oneOffTrips), findsOneWidget);
+      expect(find.text(l.seatsBooked(1, 3)), findsOneWidget);
+      expect(find.text(l.verifiedRiderWoman), findsOneWidget);
+      expect(find.text('Nadia'), findsNothing, reason: 'no name before departure (FR-023)');
+      expect(find.byKey(const Key('cancel-trip-of-9')), findsOneWidget);
+      expect(find.byKey(const Key('offer-share-of-9')), findsNothing);
+      expect(find.byKey(const Key('offer-sos-of-9')), findsNothing);
+    });
+
+    testWidgets('[$code] from departure: names, Share and SOS one tap away, nothing left to cancel', (tester) async {
+      await pumpToday(tester, at(_wed, 9, 5), offered([booked('bk-1', 'seed-rider-nadia', 'Nadia')]));
+      expect(find.text('Nadia'), findsOneWidget);
+      expect(find.text(l.tripDepartedState), findsOneWidget);
+      expect(find.byKey(const Key('offer-share-of-9')), findsOneWidget);
+      expect(find.byKey(const Key('offer-sos-of-9')), findsOneWidget);
+      expect(find.byKey(const Key('cancel-trip-of-9')), findsNothing);
+    });
+
+    testWidgets('[$code] a driver with no group and only a once trip still sees Share + SOS during it', (tester) async {
+      // A once driver: the resume step lands on Today because a live offer exists (R12).
+      final onceProfile = jsonEncode(
+        Profile(
+          phone: testPhone,
+          firstName: 'Omar',
+          lastName: 'Khaled',
+          gender: Gender.male,
+          role: Role.driver,
+          frequency: Frequency.once,
+        ).toJson(),
+      );
+      await pumpToday(
+        tester,
+        at(_wed, 9, 5),
+        {...offered([booked('bk-1', 'seed-rider-nadia', 'Nadia')]), 'profile': onceProfile},
+        member: false,
+      );
+      expect(find.byKey(const Key('driver-offer-of-9')), findsOneWidget);
+      expect(find.byKey(const Key('offer-share-of-9')), findsOneWidget);
+      expect(find.byKey(const Key('offer-sos-of-9')), findsOneWidget);
+    });
+
+    testWidgets('[$code] after done: cash riders get Received / Didn\'t pay, stored against offer:<id>', (tester) async {
+      final c = await pumpToday(
+        tester,
+        at(_wed, 9, 45),
+        offered([
+          booked('bk-1', 'seed-rider-nadia', 'Nadia', paidBy: PaidBy.cash),
+          booked('bk-2', 'seed-rider-omar', 'Omar'),
+        ]),
+      );
+      expect(find.text(l.tripDoneState), findsOneWidget);
+      expect(find.byKey(const Key('cash-received-seed-rider-nadia')), findsOneWidget);
+      expect(find.text(l.cashReceived(40)), findsOneWidget);
+      expect(find.byKey(const Key('cash-received-seed-rider-omar')), findsNothing, reason: 'a wallet rider paid already');
+
+      final button = find.byKey(const Key('cash-received-seed-rider-nadia'));
+      await tester.ensureVisible(button);
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(find.text(l.cashMarkedReceived), findsOneWidget);
+      final marks = await c.read(walletRepositoryProvider).cashMarks(Booking.offerRideId('of-9'));
+      expect(marks.map((m) => (m.rideId, m.riderId, m.outcome, m.amount)), [
+        ('offer:of-9', 'seed-rider-nadia', CashOutcome.received, 40),
+      ]);
+    });
+  }
 }

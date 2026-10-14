@@ -1970,4 +1970,46 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cancelFreeNote =>
       'Cancel free until 9 PM the evening before. After that you pay half your share.';
+
+  @override
+  String get offerFromLabel => 'Leaving from';
+
+  @override
+  String get offerToLabel => 'Heading to';
+
+  @override
+  String get offerTimeLabel => 'Leaving at';
+
+  @override
+  String riderPaysLine(int amount) {
+    return 'Riders pay $amount EGP';
+  }
+
+  @override
+  String get dailyOfferNote =>
+      'Once someone books, this becomes your daily commute group.';
+
+  @override
+  String get noRidersYet =>
+      'No one has booked yet. Riders appear here as they book.';
+
+  @override
+  String get tripDepartedState => 'On the way. Rider names show now.';
+
+  @override
+  String get tripDoneState => 'Trip finished.';
+
+  @override
+  String get tripCancelledState =>
+      'You cancelled this trip. Every rider got back everything they paid.';
+
+  @override
+  String get cancelTripConfirm =>
+      'Cancel this trip? Every rider gets back everything they paid.';
+
+  @override
+  String get keepTrip => 'Keep the trip';
+
+  @override
+  String get demoNothingToDo => 'Nothing to do yet. Publish a trip first.';
 }

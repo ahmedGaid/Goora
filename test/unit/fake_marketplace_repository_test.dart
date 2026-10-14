@@ -14,8 +14,8 @@ import 'package:goora/features/daily/data/daily_seed.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/fake_trust_repository.dart';
 import 'package:goora/features/daily/domain/charge.dart';
-import 'package:goora/features/daily/domain/privacy.dart';
 import 'package:goora/features/daily/domain/notice.dart';
+import 'package:goora/features/daily/domain/privacy.dart';
 import 'package:goora/features/daily/domain/ride.dart';
 import 'package:goora/features/daily/domain/trust.dart';
 import 'package:goora/features/marketplace/data/fake_marketplace_repository.dart';
@@ -1173,7 +1173,7 @@ void main() {
         final w = await withRiders();
         await w.repo.cancelOffer('of-9', now: w.clock.now);
 
-        final stored = (jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List).cast<Map>();
+        final stored = (jsonDecode(w.prefs.getString(FakeMarketplaceRepository.bookingsKey)!) as List).cast<Map<String, Object?>>();
         expect(stored.map((b) => b['status']), everyElement(BookingStatus.refunded.name));
         expect((await w.repo.offer('of-9', now: w.clock.now))?.status, OfferStatus.cancelled);
         expect(await notices(w, NoticeKind.tripCancelledByDriver), 2);

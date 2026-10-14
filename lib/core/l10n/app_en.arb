@@ -543,5 +543,17 @@
   "noSeatsOnRoute": "No seats on your route right now",
   "seatPayFailed": "The payment didn't go through. Nothing was charged.",
   "seatChosen": "Your pick",
-  "cancelFreeNote": "Cancel free until 9 PM the evening before. After that you pay half your share."
+  "cancelFreeNote": "Cancel free until 9 PM the evening before. After that you pay half your share.",
+  "offerFromLabel": "Leaving from",
+  "offerToLabel": "Heading to",
+  "offerTimeLabel": "Leaving at",
+  "riderPaysLine": "Riders pay {amount} EGP",
+  "dailyOfferNote": "Once someone books, this becomes your daily commute group.",
+  "noRidersYet": "No one has booked yet. Riders appear here as they book.",
+  "tripDepartedState": "On the way. Rider names show now.",
+  "tripDoneState": "Trip finished.",
+  "tripCancelledState": "You cancelled this trip. Every rider got back everything they paid.",
+  "cancelTripConfirm": "Cancel this trip? Every rider gets back everything they paid.",
+  "keepTrip": "Keep the trip",
+  "demoNothingToDo": "Nothing to do yet. Publish a trip first."
 }

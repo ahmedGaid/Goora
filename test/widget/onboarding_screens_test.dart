@@ -183,7 +183,6 @@ void main() {
           _expectDirection(tester, locale);
           expect(find.text(l10n.comingSoonTitle), findsOneWidget);
           final title = switch (kind) {
-            PlaceholderKind.offerTrip => l10n.offerTitle,
             PlaceholderKind.postTrip => l10n.postReq,
           };
           expect(find.text(title), findsWidgets);
@@ -219,7 +218,7 @@ void main() {
           const ProfileScreen(),
           const RoleScreen(),
           const FrequencyScreen(),
-          const PlaceholderScreen(kind: PlaceholderKind.offerTrip),
+          const PlaceholderScreen(kind: PlaceholderKind.postTrip),
           const SettingsScreen(),
         ]) {
           await pumpScreen(tester, screen, locale: locale, session: _session(role: Role.driver), textScale: 1.3);

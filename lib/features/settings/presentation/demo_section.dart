@@ -27,6 +27,9 @@ import '../../daily/presentation/labels.dart';
 import '../../daily/presentation/today/today_controller.dart';
 import '../../marketplace/data/fake_marketplace_repository.dart';
 import '../../marketplace/data/providers.dart';
+import '../../marketplace/domain/marketplace_repository.dart';
+import '../../marketplace/presentation/offer_trip/offer_trip_controller.dart';
+import '../../marketplace/presentation/today/one_off_section.dart';
 import '../../onboarding/data/providers.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../wallet/data/fake_wallet_repository.dart';
@@ -63,6 +66,8 @@ class DemoSection extends ConsumerWidget {
             ('demo-driver-arrives', l10n.demoDriverArrives, () => _driverArrives(ref)),
             ('demo-backup', l10n.demoBackup, () => _driverOut(ref, cover: true)),
             ('demo-no-cover', l10n.demoNoCover, () => _driverOut(ref, cover: false)),
+            ('demo-verify-driver', l10n.demoVerifyDriver, () => _verifyDriver(ref)),
+            ('demo-rider-books', l10n.demoBookSeat, () => _riderBooks(context, ref)),
             ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -124,6 +129,27 @@ class DemoSection extends ConsumerWidget {
     final repo = ref.read(dailyCommuteRepositoryProvider);
     if (repo is FakeDailyCommuteRepository) await repo.demoDriverOut(cover: cover);
     ref.invalidate(dailyCommuteRepositoryProvider);
+  }
+
+  /// ID, license and vehicle read as verified, so a driver can publish (005 R14).
+  Future<void> _verifyDriver(WidgetRef ref) async {
+    final trust = ref.read(trustRepositoryProvider);
+    if (trust is FakeTrustRepository) await trust.demoVerifyDriver();
+    ref.invalidate(offerCheckProvider);
+  }
+
+  /// The next fake rider books the driver's latest open offer. A daily offer's
+  /// first booking turns it into a commute group (005 R10).
+  Future<void> _riderBooks(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context);
+    final result = await ref.read(marketplaceRepositoryProvider).demoRiderBooks(now: ref.read(nowProvider)());
+    ref
+      ..invalidate(driverOffersProvider)
+      ..invalidate(dailyCommuteRepositoryProvider)
+      ..invalidate(todayControllerProvider);
+    if (result is DemoNothing && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.demoNothingToDo)));
+    }
   }
 
   /// Everything the demo built up: daily schedule/attendance, trust data,

@@ -13,7 +13,6 @@ import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 
 /// Screens owned by later features.
 enum PlaceholderKind {
-  offerTrip(Routes.frequency), // 005-C
   postTrip(Routes.noMatch); // 005-B
 
   const PlaceholderKind(this.backRoute);
@@ -29,7 +28,6 @@ class PlaceholderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final title = switch (kind) {
-      PlaceholderKind.offerTrip => l10n.offerTitle,
       PlaceholderKind.postTrip => l10n.postReq,
     };
     return OnboardingScaffold(

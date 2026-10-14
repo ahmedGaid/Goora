@@ -2019,4 +2019,43 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get cancelFreeNote =>
       'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.';
+
+  @override
+  String get offerFromLabel => 'طالع من';
+
+  @override
+  String get offerToLabel => 'رايح';
+
+  @override
+  String get offerTimeLabel => 'ميعاد الخروج';
+
+  @override
+  String riderPaysLine(int amount) {
+    return 'الراكب بيدفع $amount ج';
+  }
+
+  @override
+  String get dailyOfferNote => 'أول ما حد يحجز، المشوار ده بيبقى مجموعة يومية.';
+
+  @override
+  String get noRidersYet => 'لسه محدش حجز. الركاب هيظهروا هنا أول ما يحجزوا.';
+
+  @override
+  String get tripDepartedState => 'المشوار ماشي. أسامي الركاب ظاهرة دلوقتي.';
+
+  @override
+  String get tripDoneState => 'المشوار خلص.';
+
+  @override
+  String get tripCancelledState =>
+      'إنت لغيت المشوار. كل راكب فلوسه كلها رجعتله.';
+
+  @override
+  String get cancelTripConfirm => 'تلغي المشوار؟ كل راكب فلوسه كلها هترجعله.';
+
+  @override
+  String get keepTrip => 'سيب المشوار';
+
+  @override
+  String get demoNothingToDo => 'مفيش حاجة تتعمل لسه. انشر مشوار الأول.';
 }

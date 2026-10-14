@@ -5,10 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
+import 'package:goora/features/daily/data/fake_trust_repository.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/presentation/today/today_controller.dart';
 import 'package:goora/features/daily/presentation/today/today_screen.dart';
+import 'package:goora/features/daily/presentation/trust/trust_screen.dart';
 import 'package:goora/features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
+import 'package:goora/features/marketplace/presentation/offer_trip/offer_trip_screen.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/frequency_screen.dart';
@@ -31,6 +34,21 @@ Map<String, Object> _newRider(String locale, {Frequency? frequency, PaymentMetho
           lastName: 'Khaled',
           gender: Gender.male,
           role: Role.rider,
+          frequency: frequency,
+        ).toJson(),
+      ),
+    };
+
+/// A signed-in driver with no group.
+Map<String, Object> _newDriver(String locale, {Frequency? frequency}) => {
+      ...memberPrefs(role: Role.driver, locale: locale, member: false),
+      'profile': jsonEncode(
+        Profile(
+          phone: testPhone,
+          firstName: 'Omar',
+          lastName: 'Khaled',
+          gender: Gender.male,
+          role: Role.driver,
           frequency: frequency,
         ).toJson(),
       ),
@@ -132,6 +150,38 @@ void main() {
       await tap(find.byWidgetPredicate((w) => '${w.key}'.contains('book-')).first);
       expect(find.byKey(const Key('booked-view')), findsOneWidget);
       expect(taps, lessThanOrEqualTo(3));
+    });
+ 
+    // 005 US2: the driver's entry points (FR-001, FR-002).
+    testWidgets('[$code] driver Just one trip → Offer a trip; Back → Frequency', (tester) async {
+      await _pump(tester, _newDriver(code));
+      expect(find.byType(FrequencyScreen), findsOneWidget);
+      await tester.tap(find.byKey(const Key('freq-once')));
+      await tester.tap(find.byKey(const Key('freq-continue')));
+      await tester.pumpAndSettle();
+      expect(find.byType(OfferTripScreen), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(FrequencyScreen), findsOneWidget);
+    });
+
+    testWidgets('[$code] driver Today "Offer a trip" → Offer a trip; Back → Today', (tester) async {
+      await _pump(tester, memberPrefs(role: Role.driver, locale: code));
+      await tester.tap(find.byKey(const Key('offer-trip')));
+      await tester.pumpAndSettle();
+      expect(find.byType(OfferTripScreen), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(TodayScreen), findsOneWidget);
+    });
+
+    testWidgets('[$code] a missing document chip opens Trust', (tester) async {
+      await _pump(
+        tester,
+        {..._newDriver(code, frequency: Frequency.once), FakeTrustRepository.docsPendingKey: true},
+      );
+      expect(find.byType(OfferTripScreen), findsOneWidget);
+      await tester.tap(find.byKey(const Key('verify-license')));
+      await tester.pumpAndSettle();
+      expect(find.byType(TrustScreen), findsOneWidget);
     });
   }
 }

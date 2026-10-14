@@ -428,14 +428,14 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
   `NoticeSink.recordReliability` **only** when cancelled after the 9 PM cut-off with ≥ 1 booking
   (before the cut-off → none; no bookings → none), the trip still counts in `driverDay`;
   `demoRiderBooks` books the latest open offer from the rider pool
-- [ ] T064 [P] [US2] `test/widget/offer_trip_test.dart`, ar + en: chips (missing → "License not
+- [x] T064 [P] [US2] `test/widget/offer_trip_test.dart`, ar + en: chips (missing → "License not
   verified — verify", tap → Trust), From/To/Time + resolved day, seats, Just once/Every workday,
   stepper starts at 40, 2 EGP steps, stops at 32 and 48, label "Suggested price" / "2 EGP above
   suggested", rider price "44 EGP" under it; three rules with check icons; Publish off with
   `dailyLimitReached` / `joinsTripInstead` / `overlapTrip` / `oneGroupOnly` words; live state "0 of 3
   seats booked" + GooraProgressBar + anonymous rows; full "Your car is full!"; live-state loading and
   error + retry (FR-027); no price input field anywhere (FR-022)
-- [ ] T065 [P] [US2] `test/widget/today_driver_test.dart`: driver one-off section shows the offered
+- [x] T065 [P] [US2] `test/widget/today_driver_test.dart`: driver one-off section shows the offered
   trip card (progress, anonymous riders, Cancel trip; Share + SOS one tap away from departure to
   done, Constitution V) and, after `done`, "Received 40 EGP cash" / "Didn't pay" rows for cash riders
   writing `CashMark` with `rideId = offer:<id>`; a driver with no group and only a once trip still
@@ -450,24 +450,35 @@ Each phase ≈ one session and ends with a green checkpoint that can be committe
 - [x] T067 [P] [US2] `lib/features/daily/data/fake_trust_repository.dart`: `demoVerifyDriver()`
   sets ID, license and vehicle verified (debug only); test in `test/widget/trust_test.dart` or
   `test/unit/` alongside
-- [ ] T068 [P] [US2] `lib/features/marketplace/presentation/route_form.dart`: shared From / To /
+- [x] T068 [P] [US2] `lib/features/marketplace/presentation/route_form.dart`: shared From / To /
   Time / Just once–Every workday form with the resolved-day line (R13), used by C and B
-- [ ] T069 [US2] `lib/features/marketplace/presentation/offer_trip/offer_trip_controller.dart` +
+- [x] T069 [US2] `lib/features/marketplace/presentation/offer_trip/offer_trip_controller.dart` +
   `offer_trip_screen.dart`: form (GooraStepper on `PricingService.range`, 002 stepper keys, rider
   price via `SeatPrice.of`), Publish disabled reasons from `DriverDayRules.fit`, live / full /
   departed / done / cancelled states (contracts/navigation.md "Offer a trip"); `?id=` re-enters the
   live state; Back rule
-- [ ] T070 [US2] `lib/app/routes.dart` + `router.dart`: real `/offer-trip` (+ `id`), drop
+- [x] T070 [US2] `lib/app/routes.dart` + `router.dart`: real `/offer-trip` (+ `id`), drop
   `PlaceholderKind.offerTrip`; driver Just one trip → Offer a trip, Back → frequency; driver Today
   "Offer a trip" pushes, Back → Today
-- [ ] T071 [US2] `lib/features/marketplace/presentation/today/one_off_section.dart` (driver side):
+- [x] T071 [US2] `lib/features/marketplace/presentation/today/one_off_section.dart` (driver side):
   offered trip card with Share + SOS (fed by the once trip, `rideId = offer:<id>`, not by 003's
   `TodayView`) + after `done` the cash rows via `cash_received_row.dart`; add to
   `lib/features/daily/presentation/today/driver_today.dart`
-- [ ] T072 [US2] `lib/features/settings/presentation/demo_section.dart`: "Verify my driver
+- [x] T072 [US2] `lib/features/settings/presentation/demo_section.dart`: "Verify my driver
   documents" and "A rider books your seat" (debug only, `kDebugMode`, snackbar result like the
   other demo buttons)
-- [ ] T073 [US2] Checkpoint P5: gates green; quickstart §3 reachable
+- [x] T073 [US2] Checkpoint P5: gates green; quickstart §3 reachable
+  **T063–T073 choices (implementer, founder may review):** `publish` checks ID, license, vehicle (not phone);
+  a price outside the range throws (the stepper can't make one); the day is the next workday (R13) for once and daily.
+  Published trip basis = corridor 160 EGP across the offered seats; pickup = one fixed public gate per area.
+  `demoRiderBooks` books from the fake rider pool; only a daily offer whose driver has no group becomes an `mk-` group
+  (the driver joins it, bookings re-keyed). Cancel with riders: refund only for the signed-in rider, a notice per booking,
+  `lateCantDrive` only after the 9 PM cut-off. `LiveRider` gained riderId/paidBy/price for the cash rows.
+  Cash rows after `done` are a small `_OfferCashRow` in `one_off_section.dart`, not `CashReceivedRow` (that one reads
+  `cashStatus`, which hides the outcome for non-me riders). The no-group Today also shows the driver's offers.
+  Left for US4: "Or find riders who already posted" link; driver Today "Find riders"/requests still open Offer a trip.
+  Gates: analyze 0 · flutter test 928ish (full run 922 + 1 fixed + 6 nav, changed files re-run green) · node 148.
+  NOT walked on a phone.
 
 ---
 

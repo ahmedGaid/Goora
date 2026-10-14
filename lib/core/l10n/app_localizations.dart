@@ -3326,6 +3326,78 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.'**
   String get cancelFreeNote;
+
+  /// No description provided for @offerFromLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طالع من'**
+  String get offerFromLabel;
+
+  /// No description provided for @offerToLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رايح'**
+  String get offerToLabel;
+
+  /// No description provided for @offerTimeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'ميعاد الخروج'**
+  String get offerTimeLabel;
+
+  /// No description provided for @riderPaysLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'الراكب بيدفع {amount} ج'**
+  String riderPaysLine(int amount);
+
+  /// No description provided for @dailyOfferNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أول ما حد يحجز، المشوار ده بيبقى مجموعة يومية.'**
+  String get dailyOfferNote;
+
+  /// No description provided for @noRidersYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه محدش حجز. الركاب هيظهروا هنا أول ما يحجزوا.'**
+  String get noRidersYet;
+
+  /// No description provided for @tripDepartedState.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشوار ماشي. أسامي الركاب ظاهرة دلوقتي.'**
+  String get tripDepartedState;
+
+  /// No description provided for @tripDoneState.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشوار خلص.'**
+  String get tripDoneState;
+
+  /// No description provided for @tripCancelledState.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت لغيت المشوار. كل راكب فلوسه كلها رجعتله.'**
+  String get tripCancelledState;
+
+  /// No description provided for @cancelTripConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'تلغي المشوار؟ كل راكب فلوسه كلها هترجعله.'**
+  String get cancelTripConfirm;
+
+  /// No description provided for @keepTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيب المشوار'**
+  String get keepTrip;
+
+  /// No description provided for @demoNothingToDo.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة تتعمل لسه. انشر مشوار الأول.'**
+  String get demoNothingToDo;
 }
 
 class _AppLocalizationsDelegate

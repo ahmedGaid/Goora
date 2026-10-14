@@ -57,11 +57,19 @@ final class OfferDraft {
 /// One booked rider on the driver's live trip: anonymous until departure,
 /// then [firstName] is set (R15, FR-023).
 final class LiveRider {
-  const LiveRider({required this.rider, this.firstName});
+  const LiveRider({required this.rider, this.firstName, this.riderId, this.paidBy, this.price});
 
   final AnonymousRider rider;
   final String? firstName;
+
+  /// The booking behind the row, for the cash rows after the trip (FR-029).
+  final String? riderId;
+  final PaidBy? paidBy;
+  final SeatPrice? price;
 }
+
+/// What a driver must have verified before publishing (FR-014).
+const publishChecks = {VerificationKind.nationalId, VerificationKind.license, VerificationKind.vehicle};
 
 /// A published trip as its driver watches it fill (FR-016).
 final class OfferLive {

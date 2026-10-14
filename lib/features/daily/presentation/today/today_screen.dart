@@ -62,6 +62,7 @@ class TodayScreen extends ConsumerWidget {
         actions: const [TodayHeaderActions()],
         children: [
           const OneOffSection(),
+          if (driver) const DriverOffersSection(),
           GooraCard(
             key: const Key('no-group-yet'),
             child: Text(driver ? l10n.fOnceDriver : l10n.fOnceRider, style: AppTypography.body.copyWith(color: AppColors.textBody)),

@@ -19,6 +19,7 @@ import '../features/daily/presentation/week/week_screen.dart';
 import '../features/design_gallery/presentation/design_gallery_screen.dart';
 import '../features/marketplace/data/fake_marketplace_repository.dart';
 import '../features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
+import '../features/marketplace/presentation/offer_trip/offer_trip_screen.dart';
 import '../features/onboarding/domain/choices.dart';
 import '../features/onboarding/domain/phone_number.dart';
 import '../features/onboarding/presentation/frequency_screen.dart';
@@ -40,7 +41,6 @@ import 'routes.dart';
 part 'router.g.dart';
 
 const _placeholderPaths = {
-  PlaceholderKind.offerTrip: Routes.offerTrip,
   PlaceholderKind.postTrip: Routes.postTrip,
 };
 
@@ -101,6 +101,10 @@ GoRouter router(Ref ref) {
           leg: state.uri.queryParameters['leg'] == 'return' ? Leg.ret : Leg.going,
           seat: state.uri.queryParameters['seat'],
         ),
+      ),
+      GoRoute(
+        path: Routes.offerTrip,
+        builder: (_, state) => OfferTripScreen(id: state.uri.queryParameters['id']),
       ),
       for (final kind in PlaceholderKind.values)
         GoRoute(path: _placeholderPaths[kind]!, builder: (_, _) => PlaceholderScreen(kind: kind)),
