@@ -634,6 +634,8 @@ New findings:
 - **F16 (debug copy)** — Settings "A subscriber takes this seat" on a final booking says "Nothing to do yet. Publish a trip
   first." (driver wording).
 - A once driver's Wallet shows the 004 seeded history (+160 trip, "sara's fee") from before they joined.
+  **Fixed on `fix/005-once-driver-wallet-history`**: the driver seed is a group's ride, so a driver with no group now
+  starts with an empty wallet (written at once, so a group joined later doesn't back-fill it). Tests ar + en.
 
 All four fixes (F5, F6, F10, F17) re-walked together on the emulator from a throwaway merge of the fix branches with the
 F2 branch: tabs sit above the 3-button bar and every tab opens; "Back to today" shows the new seat at once; cash prices
