@@ -75,28 +75,31 @@ class DriverWallet extends StatelessWidget {
           GooraCard(child: Text(l10n.activityEmpty, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)))
         else
           GooraCard.rows(key: const Key('activity-list'), rows: [for (final e in view.wallet.activity) ActivityRow(entry: e)]),
-        const SizedBox(height: AppSpacing.gap),
-        GooraCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.driverBreakdownTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
-              const SizedBox(height: AppSpacing.sm),
-              _BreakdownRow(label: l10n.driverBreakdownCost, value: l10n.egpAmount(view.dayTripCost)),
-              const SizedBox(height: AppSpacing.xs),
-              _BreakdownRow(label: l10n.driverBreakdownReceived, value: l10n.egpAmount(view.receivedFromRiders)),
-              if (view.driverGap > 0) ...[
+        // No group (a once driver): there is no per-group trip cost to break down.
+        if (view.hasGroup) ...[
+          const SizedBox(height: AppSpacing.gap),
+          GooraCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.driverBreakdownTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
+                const SizedBox(height: AppSpacing.sm),
+                _BreakdownRow(label: l10n.driverBreakdownCost, value: l10n.egpAmount(view.dayTripCost)),
                 const SizedBox(height: AppSpacing.xs),
-                _BreakdownRow(label: l10n.driverBreakdownGap, value: l10n.egpAmount(view.driverGap)),
+                _BreakdownRow(label: l10n.driverBreakdownReceived, value: l10n.egpAmount(view.receivedFromRiders)),
+                if (view.driverGap > 0) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  _BreakdownRow(label: l10n.driverBreakdownGap, value: l10n.egpAmount(view.driverGap)),
+                ],
+                const Padding(
+                  padding: EdgeInsetsDirectional.symmetric(vertical: AppSpacing.xs),
+                  child: Divider(height: 1, color: AppColors.divider),
+                ),
+                _BreakdownRow(label: l10n.driverBreakdownFree, value: null, strong: true),
               ],
-              const Padding(
-                padding: EdgeInsetsDirectional.symmetric(vertical: AppSpacing.xs),
-                child: Divider(height: 1, color: AppColors.divider),
-              ),
-              _BreakdownRow(label: l10n.driverBreakdownFree, value: null, strong: true),
-            ],
+            ),
           ),
-        ),
+        ],
       ],
     );
   }

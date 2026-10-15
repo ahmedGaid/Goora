@@ -12,7 +12,9 @@ Proves the feature end-to-end. It is a run guide, not code; details live in
     tap (`flutter-lessons` #15).
 - **Debug build** (Settings → Demo exists only in debug). Settings → Demo gives:
   - the demo clock ("Ride day 7:15", "8:55 PM", "9:05 PM", "Real time");
-  - "Reset demo data";
+  - "Reset demo data" — it does **not** reset the demo clock. After every reset, set **Ride day
+    7:15** (or whichever time the scenario needs) again; at a late real hour every seeded car has
+    already left and the lists look empty;
   - the new actions: **Verify my driver documents**, **A rider books your seat**, **A driver
     accepts your request** and **A subscriber takes this seat**.
 
@@ -40,7 +42,8 @@ the independent generator. The two sweeps report 0 cases over the cap and 0 cash
      October car);
    - the subscriber-priority caption;
    - the dashed "Nothing fits your time? Post your trip".
-3. With no payment method, tap **Book seat** on sz-0740. **Expect** the payment-method screen.
+3. With no payment method, tap **Book seat** on the first car with a free seat (the seeded cars
+   leave 7:15–7:40). **Expect** the payment-method screen.
    Choose **Use wallet**. **Expect** a return to Empty seats with the same seat ready to confirm.
 4. With balance 0, **expect** "Top up 44 EGP first", and nothing booked. Top up 200, then book.
    **Expect**:
@@ -61,14 +64,21 @@ the independent generator. The two sweeps report 0 cases over the cap and 0 cash
 4. 004 amendment, group trip: as a driver of sz-0725 with a cash rider, after drop-off **expect**
    "Received 40 EGP cash" (40 is already a multiple of 5 on the corridor). The 45 case is proven
    by the widget test at contribution 44.
+5. No-group wallet (T104 F3): a Just-one-trip rider with a wallet opens Wallet. **Expect** the
+   plan card "4 EGP service fee per trip", the breakdown 40 + 4 = 44, and at balance 156 "Covers
+   about 1 trip" (a trip is both legs). The cash method reads "Pay 40 EGP cash to the driver".
+   A Just-one-trip driver's Wallet shows no trip-cost breakdown.
 
 ## 3 — Driver offers a trip; daily becomes a group (US2)
 
 1. Reset. Sign up as a driver, Just one trip. **Expect** Offer a trip with license and vehicle
-   chips "not verified" and Publish off.
-2. Settings → Demo → **Verify my driver documents**. Back to Offer a trip: **expect** all chips
-   verified.
-3. Pick From Sheikh Zayed, To Smart Village, 7:30, 3 seats, Just once. **Expect** the stepper
+   chips **verified** and Publish on — the demo seeds anyone who signs up as a driver as verified
+   (`DailySeed.verification(driver: true)`).
+2. Unverified path: Reset, sign up as a **rider**, Just one trip, then Settings → switch to
+   **Driver**. **Expect** Offer a trip with the license and vehicle chips "not verified" and
+   Publish off. Settings → Demo → **Verify my driver documents**. Back to Offer a trip: **expect**
+   all chips verified.
+3. (Either path, now verified.) Pick From Sheikh Zayed, To Smart Village, 7:30, 3 seats, Just once. **Expect** the stepper
    at "Suggested price" 40, with steps 38/42 reading "2 EGP below/above suggested" and stops at
    32 and 48. Below it, the rider price is "44 EGP".
 4. Publish. **Expect** the live state "0 of 3 seats booked". Demo → **A rider books your seat**
@@ -102,10 +112,13 @@ the independent generator. The two sweeps report 0 cases over the cap and 0 cash
 1. Verified driver with no trips today (Just one trip onboarding). Find riders. **Expect** the
    "Leaving from" filter, Morning/Evening, **Trips left today 2**, and anonymous cards with fixed
    prices.
-2. Accept a 7:30 going request. **Expect** the inline confirm "This creates your trip: … ·
-   7:30 AM. Trips left after this: 1". Confirm → counter 1.
-3. A 7:45 going request reads "This joins your trip at 7:30 AM". Accept → counter stays 1.
-4. A 9:30 going request reads "Doesn't fit your trip". Evening: accept a 17:00 return → counter 0.
+2. The seeded morning requests run 7:00–8:00 (evening 5:00–6:00 PM). Accept the 7:20 going
+   request (Just once). **Expect** the inline confirm "This creates your trip: … · 7:20 AM. Trips
+   left after this: 1". Confirm → counter 1.
+3. The 7:35 going request (within 30 minutes) reads "This joins your trip at 7:20 AM". Accept →
+   counter stays 1.
+4. The 8:00 going request (40 minutes later) reads "Doesn't fit your trip". Evening: accept the
+   5:00 PM return → counter 0.
 5. **Expect** every remaining non-joinable request to read "Daily limit reached", and no price
    input anywhere.
 
@@ -125,11 +138,14 @@ the independent generator. The two sweeps report 0 cases over the cap and 0 cash
 ## 7 — Subscriber priority and refunds (US6)
 
 1. Wallet rider. Demo clock "8:55 PM" the evening before a ride day. Book a seat on a car for
-   tomorrow (44). Demo → **A subscriber takes this seat**. **Expect**:
+   tomorrow (44) **while the clock still reads 8:55 PM**. Demo → **A subscriber takes this
+   seat**. **Expect**:
    - the booking gone from Today;
    - Wallet with one "Refund" row of 44, balance back to the pre-booking value;
    - a notice offering Empty seats / Post your trip.
-2. Repeat at "9:05 PM". **Expect** "Too late to reclaim — this booking is final".
+2. Book another seat at "8:55 PM", then set the clock to "9:05 PM" and tap **A subscriber takes
+   this seat**. **Expect** "Too late to reclaim — this booking is final". (Do not book after 9 PM:
+   a seat booked then is final from the start, FR-025, so it proves nothing about the cutoff.)
 3. Cash rider: book (cash), reclaim before 9 PM. **Expect** no wallet movement, and the cash
    counter unchanged.
 
