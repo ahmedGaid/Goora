@@ -634,3 +634,9 @@ New findings:
 - **F16 (debug copy)** — Settings "A subscriber takes this seat" on a final booking says "Nothing to do yet. Publish a trip
   first." (driver wording).
 - A once driver's Wallet shows the 004 seeded history (+160 trip, "sara's fee") from before they joined.
+
+All four fixes (F5, F6, F10, F17) re-walked together on the emulator from a throwaway merge of the fix branches with the
+F2 branch: tabs sit above the 3-button bar and every tab opens; "Back to today" shows the new seat at once; cash prices
+right after choosing cash; a daily 5 PM return offer becomes a group whose return starts at Smart Village, Gate 2 and
+whose Week header reads Sheikh Zayed → Smart Village. Left (copy): that header still says "Going: 5:00 PM · Return:
+5:00 PM" for a return-only group.
