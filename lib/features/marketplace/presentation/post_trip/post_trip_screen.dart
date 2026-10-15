@@ -38,10 +38,13 @@ import 'post_trip_controller.dart';
 /// Post your trip (B): a rider asks drivers for a seat. The price is Goora's
 /// and fixed; nothing is charged until a driver accepts (FR-012, FR-022).
 class PostTripScreen extends ConsumerStatefulWidget {
-  const PostTripScreen({super.key, this.id});
+  const PostTripScreen({super.key, this.id, this.draft});
 
   /// A posted request to watch; null starts a new one.
   final String? id;
+
+  /// Edits to restore after the payment-method detour; null starts from the commute.
+  final PostTripDraft? draft;
 
   @override
   ConsumerState<PostTripScreen> createState() => _PostTripScreenState();
@@ -51,10 +54,10 @@ enum _NoticeKind { topUp, daily }
 
 class _PostTripScreenState extends ConsumerState<PostTripScreen> {
   late String? _id = widget.id;
-  Area? _from;
-  Area? _to;
-  Clock? _departure;
-  Repeat _repeat = Repeat.once;
+  late Area? _from = widget.draft?.from;
+  late Area? _to = widget.draft?.to;
+  late Clock? _departure = widget.draft?.departure;
+  late Repeat _repeat = widget.draft?.repeat ?? Repeat.once;
   bool _busy = false;
   _NoticeKind? _notice;
   int _gap = 0;
@@ -89,7 +92,13 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
         return;
       case PostNeedsMethod():
         setState(() => _busy = false);
-        context.push('${Routes.payMethod}?next=${Uri.encodeQueryComponent(Routes.postTrip)}');
+        final back = Routes.postTripDraft(
+          from: from.name,
+          to: to.name,
+          at: draft.departure.minutes,
+          repeat: draft.repeat.name,
+        );
+        context.push('${Routes.payMethod}?next=${Uri.encodeQueryComponent(back)}');
         return;
       case PostTopUp(:final gap):
         _gap = gap;

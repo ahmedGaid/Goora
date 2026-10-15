@@ -48,6 +48,7 @@ Future<_Open> _open(
   WidgetTester tester,
   String locale, {
   String? id,
+  PostTripDraft? draft,
   bool member = false,
   int balance = 0,
   List<Override> overrides = const [],
@@ -55,7 +56,7 @@ Future<_Open> _open(
   final clock = TestClock(at(_tue, 20, 0));
   final c = await pumpScreen(
     tester,
-    PostTripScreen(id: id),
+    PostTripScreen(id: id, draft: draft),
     locale: Locale(locale),
     session: _rider(),
     prefs: memberPrefs(role: Role.rider, member: member, locale: locale, method: PaymentMethod.wallet),

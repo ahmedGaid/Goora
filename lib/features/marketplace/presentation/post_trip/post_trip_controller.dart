@@ -7,6 +7,7 @@ import '../../../commute/domain/place.dart';
 import '../../../daily/data/providers.dart';
 import '../../data/providers.dart';
 import '../../domain/marketplace_repository.dart';
+import '../../domain/offered_trip.dart';
 import '../../domain/trip_request.dart';
 
 part 'post_trip_controller.g.dart';
@@ -20,6 +21,26 @@ final class PostStart {
   final Area to;
   final Clock departure;
   final bool inGroup;
+}
+
+/// The rider's edits, carried in the URL across the payment-method detour.
+final class PostTripDraft {
+  const PostTripDraft({required this.from, required this.to, required this.departure, required this.repeat});
+
+  final Area from;
+  final Area to;
+  final Clock departure;
+  final Repeat repeat;
+
+  /// Null unless every part is present and valid (a bare `/post-trip` starts fresh).
+  static PostTripDraft? parse({String? from, String? to, String? at, String? repeat}) {
+    final a = Area.values.asNameMap()[from];
+    final b = Area.values.asNameMap()[to];
+    final r = Repeat.values.asNameMap()[repeat];
+    final minutes = int.tryParse(at ?? '');
+    if (a == null || b == null || r == null || minutes == null || minutes < 0 || minutes >= Clock.minutesPerDay) return null;
+    return PostTripDraft(from: a, to: b, departure: Clock(minutes), repeat: r);
+  }
 }
 
 @riverpod
