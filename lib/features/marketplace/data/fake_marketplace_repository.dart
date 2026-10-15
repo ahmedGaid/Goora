@@ -933,12 +933,18 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   }) {
     final going = leg == Leg.going;
     final free = riderSeats - seatsTaken < 0 ? 0 : riderSeats - seatsTaken;
+    // A group runs home → work: its stops are at home and its work stop is
+    // where the return leg starts. A return trip is the other way round
+    // (T104 F10), so its pickup is the work stop and it ends at a home stop.
+    final home = going ? from : to;
+    final work = going ? to : from;
+    final homeStop = going ? pickup : MarketSeed.pickupIn(home, pickup.id, pickup.time.shift(durationMinutes));
     return CommuteGroup(
       id: id,
-      origin: from,
-      destination: to,
-      destinationPoint: MarketSeed.pointIn(to),
-      pickupPoints: [pickup.point],
+      origin: home,
+      destination: work,
+      destinationPoint: going ? MarketSeed.pointIn(work) : pickup.point,
+      pickupPoints: [homeStop.point],
       going: pickup.time,
       ret: pickup.time,
       days: MarketDay.workdays,
@@ -949,9 +955,9 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       detourMinutes: 0,
       tripCost: tripCost,
       riderSeats: riderSeats,
-      stops: [pickup],
+      stops: [homeStop],
       arrival: pickup.time.shift(durationMinutes),
-      arrivalName: MarketSeed.pickupIn(to, '', pickup.time).name,
+      arrivalName: going ? MarketSeed.pickupIn(work, '', pickup.time).name : pickup.name,
       // The Sunday of the trip's week: the rotation starts with it.
       rotationStart: date.addDays(-date.weekday.index),
     );

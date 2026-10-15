@@ -1144,6 +1144,22 @@ void main() {
         expect((await w.daily.myGroup())?.id, 'mk-of-1');
       });
 
+      test('a daily return offer becomes a group the right way round: home → work, picked up at work (T104 F10)', () async {
+        final w = await driver();
+        await w.repo.publish(draft(leg: Leg.ret, departure: const Clock.hm(17, 0), repeat: Repeat.daily), now: w.clock.now);
+        expect(await w.repo.demoRiderBooks(now: w.clock.now), isA<DemoDone>());
+
+        final g = GroupCatalog(w.prefs).byId('mk-of-1')!;
+        expect((g.origin, g.destination), (Area.sheikhZayed, Area.smartVillage), reason: 'a group runs home → work');
+        expect(g.legs, {Leg.ret});
+        expect((g.workStop.name, g.workStop.time), (StopName.smartVillageGate2, const Clock.hm(17, 0)),
+            reason: 'the return leg starts at the offer pickup');
+        final sv = MarketSeed.pointIn(Area.smartVillage);
+        expect((g.workStop.point.lat, g.workStop.point.lng), (sv.lat, sv.lng));
+        expect(g.goingStops.single.name, StopName.mainGate, reason: 'the return leg ends at home');
+        expect(g.endFor(Leg.ret), const Clock.hm(17, 40));
+      });
+
       test('a once offer stays an offer', () async {
         final w = await driver();
         await w.repo.publish(draft(), now: w.clock.now);
