@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
@@ -38,10 +40,12 @@ class GooraBottomNav extends StatelessWidget {
           color: AppColors.surface,
           border: BorderDirectional(top: BorderSide(color: AppColors.border)),
         ),
+        // Clear the system navigation bar (3-button Android draws over the
+        // app edge to edge); the design spacing is the floor.
         child: Padding(
-          padding: const EdgeInsetsDirectional.only(
+          padding: EdgeInsetsDirectional.only(
             top: AppSpacing.sm,
-            bottom: AppSpacing.bottomNavBottom,
+            bottom: math.max(AppSpacing.bottomNavBottom, MediaQuery.viewPaddingOf(context).bottom),
           ),
           child: Row(
             children: [
