@@ -207,6 +207,26 @@ void main() {
       expect(find.text(l.priceCash(40)), findsWidgets);
     });
  
+    // T104 F8: once something is booked or live, Back is Today, not onboarding.
+    testWidgets('[$code] once rider books; Back (top bar) → Today, not Frequency', (tester) async {
+      await _pump(tester, _newRider(code, frequency: Frequency.once, method: PaymentMethod.cash));
+      await tester.tap(find.byWidgetPredicate((w) => '${w.key}'.contains('book-')).first);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('booked-view')), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(TodayScreen), findsOneWidget);
+    });
+
+    testWidgets('[$code] once driver publishes; Back → Today, not Frequency', (tester) async {
+      await _pump(tester, _newDriver(code, frequency: Frequency.once), height: 3000);
+      await tester.ensureVisible(find.byKey(const Key('publish')));
+      await tester.tap(find.byKey(const Key('publish')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('offer-live')), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(TodayScreen), findsOneWidget);
+    });
+
     // 005 US2: the driver's entry points (FR-001, FR-002).
     testWidgets('[$code] driver Just one trip → Offer a trip; Back → Frequency', (tester) async {
       await _pump(tester, _newDriver(code));

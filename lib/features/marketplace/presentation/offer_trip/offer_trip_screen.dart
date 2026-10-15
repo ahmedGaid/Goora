@@ -50,7 +50,11 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
   late String? _id = widget.id;
   bool _busy = false;
 
-  void _back() => context.canPop() ? context.pop() : context.go(Routes.frequency);
+  // A live offer lives on Today; before publishing, Back is onboarding's last
+  // step when there is nothing to pop (T104 F8).
+  void _back() => context.canPop()
+      ? context.pop()
+      : context.go(_id != null ? Routes.today : Routes.frequency);
 
   void _set(OfferForm f) => setState(() => _form = f);
 
