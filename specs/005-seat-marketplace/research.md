@@ -581,3 +581,56 @@ Findings (F2 fixed; the rest open):
 - "First month free" still shown on the frequency screen (already known).
 - **Process incident** — during the §2 macro the phone was taken by its owner. Guarded taps were refused, but the
   macro's `input text` calls were not guarded and may have typed digits/names into another app. Reported to the founder.
+
+## T104 — device walk, rest (2026-10-15, emulator `Goora_Test` with 3-button nav, debug APK from `fix/005-f2-topup-hang` bad3f73)
+
+Walked in Arabic: quickstart §1 (all), §2.1–2.3, §3 (all), §4 (all), §5 (all), §6.1–6.3, §7 (all), §8 group-member case.
+English: Empty seats, booked view, Today one-off card, Wallet, Post your trip — LTR layout clean. **Not walked**: §2.4
+(needs the seeded sz-0725 driver; the 45 case is a widget test), §6.4 (needs a 6th of October driver), §8 women-only,
+the English pass of the driver screens (Offer a trip, Find riders, driver Today).
+F1 workaround used: onboard as an Every day rider up to the match result (saves the route), restart, Back, Just one trip.
+Demo clock set by editing `flutter.debug.demoNow` in shared_prefs via `run-as` (setAt = now), app stopped first.
+
+Confirmed on the emulator: **F2 fix** (top-up sheet from Empty seats and Post your trip closes, booking goes on);
+upsell → commute setup route step; cash prices after reopening (Tarek "Pay 45 cash", group 40); subscriber "40 · no fees
+(subscribed)" and no upsell; offer stepper 42 "+2 above", stops 32/48, rider price follows (35/53); live 0/3 → 3/3 with
+anonymous rows → "Your car is full!" → names after departure → done; driver wallet +40 ×3; a daily offer becomes a group
+and Week shows only its leg, no "no driver" notice (R10 holds); cancel with bookings refunds everyone; Post your trip
+sent/accepted/expired (nothing charged)/daily-in-a-group refused; Find riders create/join/doesn't fit/limit, counter
+2 → 1 → 1 → 0, no price input; driver Today requests banner, "Your car is full" on a driving day, Accept when off duty;
+reclaim before 9 PM (refund 44, notice with both actions), after 9 PM "Too late — this booking is final", cash reclaim
+moves no money and keeps 10 cash trips.
+
+New findings:
+- **F5 (bug, fixed on `fix/005-f5-nav-inset`)** — with Android's 3-button bar the bottom tabs drew under Back/Home/Recents;
+  a tap on a tab's lower half went Home. `GooraBottomNav` now pads by the system inset. Regression test.
+- **F6 (bug, fixed on `fix/005-f17-stale-views`)** — Empty seats kept the wallet prices after the rider chose cash on the
+  payment-method screen; correct only after reopening. `seatOffers` now follows `riderPricingProvider`.
+- **F17 (bug, fixed on `fix/005-f17-stale-views`)** — booked → "Back to today" showed no trip card until an app restart (a
+  rider would think the booking failed). `oneOffToday` now follows `myBookingsProvider`. Regression tests (ar + en).
+- **F10 (bug, fixed on `fix/005-f10-return-group`)** — a daily **return** offer or request became a group running backwards:
+  Week header "Smart Village → Sheikh Zayed · Going 5:00 PM", return pickup "Main Gate" (Sheikh Zayed), arrival Smart
+  Village. `_oneLegGroup` used the leg's from/to as home/work. Regression test.
+- **F3 (more)** — the same no-group 0 also shows as "Covers no trips yet" at balance 156, "Pay 0 EGP cash to the driver" on
+  the cash plan card, a once driver's "Your trip cost 0 / You receive 0", and no subtitle on the wallet option of the
+  payment-method screen.
+- **F7 (quickstart §3.1–3.2)** — anyone who signs up as a driver is seeded verified (`DailySeed.verification(driver: true)`);
+  the "not verified" chips and Publish off only show for a rider who switches to driver in Settings. Fix the quickstart.
+- **F4 (more)** — the seeded requests run 7:00–8:00 (no 7:30 or 9:30, §5 wording); §7.2 must book before 9 PM and then move
+  the clock (a seat booked after 9 PM is final from the start, FR-025).
+- **F8 (UX)** — a once rider/driver: Back from Empty seats or the live offer goes to onboarding step 2, not Today. The rider
+  has "Back to today"; the driver's live offer has no way to Today except restarting the app.
+- **F9 (UX)** — the time stepper moves 5 minutes a tap: 7:30 AM → 5:00 PM is 114 taps on Offer a trip and Post your trip.
+  A return trip could start from the rider's/corridor's return time, or a time picker.
+- **F13 (UX)** — Post your trip loses its edits after the payment-method detour (7:45 came back as 7:30); Empty seats keeps
+  the chosen seat across the same detour.
+- **F12 (copy)** — "Empty seats today" heads lists whose cards all say Tomorrow (or a day name).
+- **F11 (copy)** — a cancelled offer card also says "Nobody has booked yet…" though riders had booked and were refunded.
+- **F14 (copy/spec)** — a group member opening Empty seats on a leg they ride sees "No empty seats on your route right now";
+  quickstart §8 expects "You already have a ride on this trip". `seatOffers` hides those legs, so that notice only shows
+  if a booking races. Founder call: say why the list is empty, or change the quickstart.
+- **F15 (question, ties to T078)** — an off-duty driver who accepts a 7:05 request still shows "Riding today with Mohamed
+  7:25" on the same leg: two going trips on one morning.
+- **F16 (debug copy)** — Settings "A subscriber takes this seat" on a final booking says "Nothing to do yet. Publish a trip
+  first." (driver wording).
+- A once driver's Wallet shows the 004 seeded history (+160 trip, "sara's fee") from before they joined.
