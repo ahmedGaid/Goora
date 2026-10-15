@@ -653,3 +653,43 @@ Copy fixes on `fix/005-copy-f11-f12-f16` (tests first; not walked on the emulato
 - **Week header** — a one-leg group shows new `weekLegLine` "{leg}: {time}" (e.g. "Return: 5:00 PM").
 - New keys for founder review: `demoBookSeatFirst` "مفيش حاجة تتعمل لسه. احجز كرسي فاضي الأول.", `demoPostTripFirst`
   "مفيش حاجة تتعمل لسه. انشر مشوارك الأول.", `weekLegLine`.
+
+## T104 — re-walk of the fixes (2026-10-16, emulator `Goora_Test`, debug APK from main `d2c8a30`)
+
+Walked in Arabic, English spot check on the Week header. Once rider via the F1 workaround (Every day up to the match
+result, restart, Back, Just one trip); once driver the same way.
+
+Confirmed on the emulator:
+- **F8** — once rider: booked seat → app Back → Today with the one-off card; Empty seats opened from Today → Android
+  Back → Today; a relaunch lands on Today. Once driver: live offer → Back → Today with the offer card.
+- **F9** — tap the time on Post your trip → clock picker; 7:30 AM → 5:00 PM in 4 taps, ± 5 min still there. Offer a
+  trip: picker opens, Cancel keeps 7:30.
+- **F13** — Post your trip at 7:45 + Every workday → Publish → payment-method detour (cash) → form comes back at 7:45 +
+  Every workday, price line now cash ("ادفع 40 ج كاش للسواق"). Empty seats keeps the chosen seat across the same detour.
+- **F12** — the list is headed "كراسي فاضية"; cards say the day (حد).
+- **F16** — "سواق يوافق على طلبك" with no request → "مفيش حاجة تتعمل لسه. انشر مشوارك الأول."; "مشترك ياخد الكرسي ده" with
+  no booking → "مفيش حاجة تتعمل لسه. احجز كرسي فاضي الأول.". The after-9 PM (`reclaimTooLate`) case was not walked
+  (needs the clock moved past the evening before the booked day).
+- **F11** — once driver offer with one demo booking → Cancel trip → Today card reads only "إنت لغيت المشوار. كل راكب
+  فلوسه كلها رجعتله." — no riders list, no "nobody booked".
+- **Once-driver wallet** — new once driver: "اتجمّع الأسبوع ده 0 ج", "لسه مفيش حركة", Withdraw disabled; no seeded +160
+  or "sara's fee".
+- **Week header (one-leg group)** — daily 5 PM return offer + a demo booking → Week: "الشيخ زايد ← القرية الذكية" /
+  "الرجوع: 5:00 م"; English "Sheikh Zayed → Smart Village" / "Return: 5:00 PM". F10 still holds.
+
+New findings:
+- **F18 (bug)** — a subscriber takes a **cash** rider's one-off seat ("مشترك ياخد الكرسي ده" on a cash booking): the
+  seat disappears from Today and the inbox gets nothing. `_reclaim` posts `seatReclaimed` only when `refund > 0`, and a
+  cash booking paid 0. FR-025 and the method's own comment say the booker is told. The fix also needs cash wording:
+  `seatReclaimed` says "رجعلك {amount} ج.".
+- **F8b (UX, same class as F8)** — once rider with a posted request (nothing booked): Back on Post your trip goes to
+  onboarding step 2. `PostTripScreen._back` always falls back to `Routes.frequency`; Empty seats / Offer a trip fall
+  back to Today once something is live. A relaunch already lands on Today, which shows the request.
+- **F19 (copy)** — the posted-request card on Today has a button "انشر مشوارك" that opens the existing request, next to
+  the dashed "انشر مشوارك" that starts a new one: two identical labels, different actions. Suggest "شوف طلبك" / "See your
+  request" for the card.
+- Minor, no action proposed: a demo action that succeeds ("مشترك ياخد الكرسي ده" on a reclaimable booking) shows no
+  snackbar; the time value's accessibility label is "اختار الميعاد" without the time (the day line under it reads it).
+
+Emulator note: the window was off-screen on this PC (1536×864) — boot it with `D:\Company\99-Ops\start-emulator.ps1`
+(`flutter-lessons` #19).
