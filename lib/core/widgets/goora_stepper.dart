@@ -15,6 +15,8 @@ class GooraStepper extends StatelessWidget {
     required this.increaseLabel,
     this.onDecrease,
     this.onIncrease,
+    this.onValueTap,
+    this.valueTapLabel,
   });
 
   final String valueLabel;
@@ -25,16 +27,41 @@ class GooraStepper extends StatelessWidget {
   final VoidCallback? onDecrease;
   final VoidCallback? onIncrease;
 
+  /// Makes the value tappable (e.g. open a picker); [valueTapLabel] names it for screen readers.
+  final VoidCallback? onValueTap;
+  final String? valueTapLabel;
+
+  Widget _value() {
+    final text = Text(valueLabel, style: AppTypography.title.copyWith(color: AppColors.textPrimary));
+    if (onValueTap == null) {
+      return Padding(padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.cardPad), child: text);
+    }
+    return Semantics(
+      button: true,
+      label: valueTapLabel ?? valueLabel,
+      excludeSemantics: true,
+      child: InkWell(
+        key: const Key('stepper-value'),
+        borderRadius: BorderRadius.circular(AppSizes.stepperButton / 2),
+        onTap: onValueTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: AppSizes.stepperButton),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.cardPad),
+            child: Center(child: text),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         _StepButton(icon: GooraIcons.minus, label: decreaseLabel, onTap: onDecrease),
-        Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: AppSpacing.cardPad),
-          child: Text(valueLabel, style: AppTypography.title.copyWith(color: AppColors.textPrimary)),
-        ),
+        _value(),
         _StepButton(icon: GooraIcons.plus, label: increaseLabel, onTap: onIncrease),
       ],
     );

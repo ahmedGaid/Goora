@@ -1214,6 +1214,12 @@ abstract class AppLocalizations {
   /// **'الكراسي الفاضية في عربيتك'**
   String get seatsQ;
 
+  /// No description provided for @pickTime.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختار الميعاد'**
+  String get pickTime;
+
   /// No description provided for @fewerSeats.
   ///
   /// In ar, this message translates to:

@@ -146,6 +146,21 @@ void main() {
       expect(tester.widget<GooraPill>(find.byKey(const Key('from-october'))).selected, isTrue);
     });
 
+    // F9: tapping the time opens a picker, so 7:30 → 5 PM is not 114 taps.
+    testWidgets('[$code] tapping the time opens a picker; cancel keeps it, OK applies it', (tester) async {
+      final c = await _pump(tester, _newRider(code, frequency: Frequency.once));
+      c.read(routerProvider).push(Routes.postTrip);
+      await tester.pumpAndSettle();
+      String shown() => tester.widget<GooraStepper>(find.byKey(const Key('time-stepper'))).valueLabel;
+      final before = shown();
+      await tester.tap(find.descendant(of: find.byKey(const Key('time-stepper')), matching: find.byKey(const Key('stepper-value'))));
+      await tester.pumpAndSettle();
+      expect(find.byType(TimePickerDialog), findsOneWidget);
+      await tester.tap(find.text(MaterialLocalizations.of(tester.element(find.byType(TimePickerDialog))).cancelButtonLabel));
+      await tester.pumpAndSettle();
+      expect(shown(), before);
+    });
+
     testWidgets('[$code] booked upsell opens commute setup', (tester) async {
       await _pump(tester, _newRider(code, frequency: Frequency.once, method: PaymentMethod.cash));
       expect(find.byType(EmptySeatsScreen), findsOneWidget);

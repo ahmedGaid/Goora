@@ -82,6 +82,16 @@ class RouteForm extends StatelessWidget {
             increaseLabel: l10n.later,
             onDecrease: () => onShift(-_step),
             onIncrease: () => onShift(_step),
+            valueTapLabel: l10n.pickTime,
+            onValueTap: () async {
+              final picked = await showTimePicker(
+                context: context,
+                initialTime: TimeOfDay(hour: departure.hour, minute: departure.minute),
+              );
+              if (picked == null) return;
+              final delta = (picked.hour * 60 + picked.minute) - departure.minutes;
+              if (delta != 0) onShift(delta);
+            },
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
