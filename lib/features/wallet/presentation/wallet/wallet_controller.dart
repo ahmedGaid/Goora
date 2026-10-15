@@ -29,7 +29,15 @@ final class WalletView {
     this.filledSeats = 0,
     this.groupTripCost = 0,
     this.riderSeats = 0,
+    this.hasGroup = true,
   });
+
+  /// The corridor's standard trip (160 EGP a leg, 3 rider seats → 40 + a 4
+  /// EGP fee): the price basis for someone with no group yet, so a once
+  /// rider's wallet quotes real numbers instead of zeros (005 T104 F3).
+  static const standardTripCost = 160;
+  static const standardRiderSeats = 3;
+  static final standardLegShare = PricingService.suggested(standardTripCost, standardRiderSeats);
 
   final MemberRole role;
   final Wallet wallet;
@@ -56,12 +64,16 @@ final class WalletView {
   /// `CommuteGroup.riderSeats`.
   final int riderSeats;
 
+  /// False for a person with no group (Just one trip): the prices above are
+  /// then the standard corridor basis, and the per-group parts of the
+  /// driver's wallet do not apply.
+  final bool hasGroup;
+
   /// The service fee on one trip for this rider now (0 unless paying per trip
   /// from the wallet).
   ///
-  /// A rider with no group yet (a once rider) has no price basis, so no fee:
-  /// `serviceFee` needs at least one rider seat (005: the Wallet tab crashed
-  /// for them).
+  /// Needs at least one rider seat; the controller always supplies one (the
+  /// standard corridor basis when there is no group).
   int get fee => riderSeats < 1
       ? 0
       : PricingService.serviceFee(
@@ -123,11 +135,12 @@ class WalletController extends _$WalletController {
         today: today,
         cashAvailable: wallet.cashTrial?.available ?? false,
       ),
-      legShare: group?.price ?? 0,
+      legShare: group?.price ?? WalletView.standardLegShare,
       capacitySeats: (group?.riders.length ?? 0) + (group?.freeSeatsGoing ?? 0),
       filledSeats: group?.riders.length ?? 0,
-      groupTripCost: group?.tripCost ?? 0,
-      riderSeats: group?.riderSeats ?? 0,
+      groupTripCost: group?.tripCost ?? WalletView.standardTripCost,
+      riderSeats: group?.riderSeats ?? WalletView.standardRiderSeats,
+      hasGroup: group != null,
     );
   }
 
