@@ -1,6 +1,6 @@
 ---
 name: goora-resume
-description: Resume work on Goora — the daily-commute coordination Flutter app for Egypt at C:\AhmedGaid\Goora. Use whenever the user wants to continue, pick up, start the next session on, or check the status of Goora, especially in a fresh session or after pasting a /goal block. Checks live git first, reads Docs/NEXT_GOAL.md and the top goora-status entry, proposes ONE task and waits for "go".
+description: Resume work on Goora — the daily-commute coordination Flutter app for Egypt at C:\AhmedGaid\Goora. Use whenever the user wants to continue, pick up, start the next session on, or check the status of Goora, especially in a fresh session or after pasting a /goal block. Checks live git first, reads Docs/NEXT_GOAL.md and the top goora-status entry, picks ONE task and starts it — stops only for merge/push/delete, a product decision or a blocker.
 ---
 
 # goora-resume — session start procedure
@@ -29,15 +29,20 @@ session's hand-off.
    `goora-brand`).
 Blocker named? It comes first.
 
-## 3. Reply — at most 10 lines, then wait
+## 3. Reply — at most 10 lines, then start
 - Where we are (main sha, last merged feature)
 - Unmerged branches (name + one word: done / in progress / stale)
 - Next task + one-line scope (which speckit step / task IDs)
 - What the founder must do first (merge X, connect a phone, decide Y — or "nothing")
 - Best model (Haiku / Sonnet / Opus) + time estimate
-Print the `/goal` block for that task, then ask **"Start <task>?"** and wait.
+- Founder's open decisions, one line each — listed, never waited on unless they block the task
+Print the `/goal` block for that task, then **start it at once** (step 4) — don't ask "Start?".
+Stop and ask ONLY if:
+- the next step is a merge, push, deleting a branch/worktree/file, or a product decision;
+- something the founder must do first blocks the task;
+- git and the notes disagree in a way that changes which task is next.
 
-## 4. On "go"
+## 4. Start the task
 1. Next task continues an unmerged feature branch → work in that feature's existing worktree.
    Otherwise new branch + worktree off `main`: `git worktree add ../Goora-<NNN> -b <NNN>-<name> main`.
    All reads and edits from there. Recall `multi-agent-git` before any git write.
