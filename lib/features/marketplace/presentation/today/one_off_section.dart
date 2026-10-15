@@ -49,14 +49,14 @@ final class OneOffSeat {
 }
 
 /// The rider's booked one-off seats on Today. A seat booked on the rider's own
-/// group ride is the group card's business, not shown twice (R10).
+/// group ride is the group card's business, not shown twice (R10). Follows
+/// [myBookingsProvider], so a booking made over Today shows on it (T104 F17).
 @riverpod
 Future<List<OneOffSeat>> oneOffToday(Ref ref) async {
-  final now = ref.watch(nowProvider)();
   final market = ref.watch(marketplaceRepositoryProvider);
   final daily = ref.watch(dailyCommuteRepositoryProvider);
   final out = <OneOffSeat>[];
-  for (final b in await market.myBookings(now: now)) {
+  for (final b in await ref.watch(myBookingsProvider.future)) {
     final mine = await daily.ride(b.date, b.leg);
     if (mine != null && mine.id == b.rideId && mine.carries(daily.meId)) continue;
     final seat = await market.seatOf(b);

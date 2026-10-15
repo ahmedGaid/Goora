@@ -153,6 +153,35 @@ void main() {
       expect(find.byKey(const Key('booked-view')), findsOneWidget);
       expect(taps, lessThanOrEqualTo(3));
     });
+
+    // T104 F17: Today stayed mounted under Empty seats and kept its old list.
+    testWidgets('[$code] booked → Back to today shows the booked seat on Today', (tester) async {
+      final c = await _pump(tester, memberPrefs(role: Role.rider, locale: code), height: 2600);
+      final repo = c.read(dailyCommuteRepositoryProvider) as FakeDailyCommuteRepository;
+      await tester.runAsync(() => repo.demoDriverOut(cover: false));
+      c.invalidate(todayControllerProvider);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('no-cover-seat')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byWidgetPredicate((w) => '${w.key}'.contains('book-')).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('back-to-today')));
+      await tester.pumpAndSettle();
+      expect(find.byType(TodayScreen), findsOneWidget);
+      expect(find.byKey(const Key('one-off-section')), findsOneWidget);
+    });
+
+    // T104 F6: the list kept the wallet prices after the rider chose cash.
+    testWidgets('[$code] PayMethod cash → back on Empty seats with cash prices', (tester) async {
+      await _pump(tester, _newRider(code, frequency: Frequency.once));
+      await tester.tap(find.byWidgetPredicate((w) => '${w.key}'.contains('book-')).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('pay-cash')));
+      await tester.tap(find.byKey(const Key('pay-continue')));
+      await tester.pumpAndSettle();
+      expect(find.byType(EmptySeatsScreen), findsOneWidget);
+      expect(find.text(l.priceCash(40)), findsWidgets);
+    });
  
     // 005 US2: the driver's entry points (FR-001, FR-002).
     testWidgets('[$code] driver Just one trip → Offer a trip; Back → Frequency', (tester) async {
