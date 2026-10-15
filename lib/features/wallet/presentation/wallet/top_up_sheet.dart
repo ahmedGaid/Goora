@@ -63,6 +63,10 @@ class _TopUpSheetState extends ConsumerState<TopUpSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // Keeps the auto-dispose controller alive while the sheet is open: Empty
+    // seats and Post your trip open it without watching the wallet, and the
+    // controller was disposed mid top-up (005 T104 F2).
+    ref.watch(walletControllerProvider);
     return SafeArea(
       child: Padding(
         padding: EdgeInsetsDirectional.only(
