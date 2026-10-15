@@ -123,5 +123,24 @@ void main() {
       expect(wallet.balance, 156);
       expect(wallet.activity.where((e) => e.kind == ActivityKind.seatRefund), isEmpty);
     });
+
+    testWidgets('[$code] a seat booked after 9 PM is final from the start: the demo says so (T104 F16)', (tester) async {
+      final clock = TestClock(at(_tue, 21, 30));
+      final c = await _booked(tester, clock, code);
+      expect(find.byKey(const Key('one-off-bk-1')), findsOneWidget);
+
+      await _demo(tester, c, 'demo-subscriber-takes');
+      expect(find.text(l.reclaimTooLate), findsOneWidget);
+      expect(find.text(l.demoNothingToDo), findsNothing, reason: 'that is the driver wording');
+    });
+
+    testWidgets('[$code] no seat booked yet: the demo asks for a booking, not a published trip (T104 F16)', (tester) async {
+      final c = await pumpGooraApp(tester, prefs: _prefs(code), overrides: dailyOverrides(TestClock(at(_tue, 12, 0))));
+      tester.view.physicalSize = const Size(390, 3000);
+
+      await _demo(tester, c, 'demo-subscriber-takes');
+      expect(find.text(l.demoBookSeatFirst), findsOneWidget);
+      expect(find.text(l.demoNothingToDo), findsNothing);
+    });
   }
 }

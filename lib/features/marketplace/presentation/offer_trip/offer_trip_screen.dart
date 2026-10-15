@@ -307,8 +307,10 @@ class _Live extends ConsumerWidget {
                         )
                       else
                         OfferProgress(live: live),
-                      const SizedBox(height: AppSpacing.md),
-                      LiveRidersList(riders: live.riders),
+                      if (trip.status != OfferStatus.cancelled) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        LiveRidersList(riders: live.riders),
+                      ],
                     ],
                   ),
                 ),

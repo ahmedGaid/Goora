@@ -791,7 +791,7 @@ abstract class AppLocalizations {
   /// No description provided for @emptySeatsTitle.
   ///
   /// In ar, this message translates to:
-  /// **'كراسي فاضية النهارده'**
+  /// **'كراسي فاضية'**
   String get emptySeatsTitle;
 
   /// No description provided for @offerTitle.
@@ -2613,6 +2613,12 @@ abstract class AppLocalizations {
   /// **'الذهاب: {going} · الرجوع: {ret}'**
   String weekRiderLine(String going, String ret);
 
+  /// No description provided for @weekLegLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{leg}: {time}'**
+  String weekLegLine(String leg, String time);
+
   /// No description provided for @weekDriveLine.
   ///
   /// In ar, this message translates to:
@@ -3398,6 +3404,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مفيش حاجة تتعمل لسه. انشر مشوار الأول.'**
   String get demoNothingToDo;
+
+  /// No description provided for @demoBookSeatFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة تتعمل لسه. احجز كرسي فاضي الأول.'**
+  String get demoBookSeatFirst;
+
+  /// No description provided for @demoPostTripFirst.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش حاجة تتعمل لسه. انشر مشوارك الأول.'**
+  String get demoPostTripFirst;
 
   /// No description provided for @seeAll.
   ///

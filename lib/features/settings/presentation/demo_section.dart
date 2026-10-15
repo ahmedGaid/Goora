@@ -167,7 +167,7 @@ class DemoSection extends ConsumerWidget {
       ..invalidate(oneOffTodayProvider)
       ..invalidate(walletControllerProvider)
       ..invalidate(todayControllerProvider);
-    if (result is DemoNothing && context.mounted) _say(context, l10n.demoNothingToDo);
+    if (result is DemoNothing && context.mounted) _say(context, l10n.demoPostTripFirst);
   }
 
   /// A subscriber takes the person's latest one-off seat; after 9 PM it is final (US6).
@@ -184,7 +184,7 @@ class DemoSection extends ConsumerWidget {
       case DemoTooLate():
         _say(context, l10n.reclaimTooLate);
       case DemoNothing():
-        _say(context, l10n.demoNothingToDo);
+        _say(context, l10n.demoBookSeatFirst);
       case DemoDone():
         break;
     }

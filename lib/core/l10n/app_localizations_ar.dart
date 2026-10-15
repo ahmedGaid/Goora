@@ -373,7 +373,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get toRider => 'حوّل لوضع الراكب';
 
   @override
-  String get emptySeatsTitle => 'كراسي فاضية النهارده';
+  String get emptySeatsTitle => 'كراسي فاضية';
 
   @override
   String get offerTitle => 'اعرض مشوار';
@@ -1521,6 +1521,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String weekLegLine(String leg, String time) {
+    return '$leg: $time';
+  }
+
+  @override
   String weekDriveLine(String direction, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -2058,6 +2063,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoNothingToDo => 'مفيش حاجة تتعمل لسه. انشر مشوار الأول.';
+
+  @override
+  String get demoBookSeatFirst => 'مفيش حاجة تتعمل لسه. احجز كرسي فاضي الأول.';
+
+  @override
+  String get demoPostTripFirst => 'مفيش حاجة تتعمل لسه. انشر مشوارك الأول.';
 
   @override
   String get seeAll => 'شوف الكل';

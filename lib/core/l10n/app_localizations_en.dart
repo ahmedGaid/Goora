@@ -377,7 +377,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toRider => 'Switch to rider mode';
 
   @override
-  String get emptySeatsTitle => 'Empty seats today';
+  String get emptySeatsTitle => 'Empty seats';
 
   @override
   String get offerTitle => 'Offer a trip';
@@ -1503,6 +1503,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String weekLegLine(String leg, String time) {
+    return '$leg: $time';
+  }
+
+  @override
   String weekDriveLine(String direction, int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -2012,6 +2017,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoNothingToDo => 'Nothing to do yet. Publish a trip first.';
+
+  @override
+  String get demoBookSeatFirst =>
+      'Nothing to do yet. Book an empty seat first.';
+
+  @override
+  String get demoPostTripFirst => 'Nothing to do yet. Post your trip first.';
 
   @override
   String get seeAll => 'See all';

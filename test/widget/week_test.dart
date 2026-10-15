@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/time/calendar_date.dart';
+import 'package:goora/features/commute/data/corridor_seed.dart';
+import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/commute/domain/geo.dart';
+import 'package:goora/features/commute/domain/group.dart';
+import 'package:goora/features/commute/domain/place.dart';
+import 'package:goora/features/commute/presentation/labels.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/presentation/labels.dart';
@@ -15,10 +21,52 @@ import '../helpers/pump_app.dart';
 /// US5, ar + en. Sunday 4 Oct 2026 (rotation start), noon.
 final sun = CalendarDate(2026, 10, 4);
 
-Future<ProviderContainer> _openWeek(WidgetTester tester, Role role, String locale, {bool seedChanges = false}) async {
+/// A daily offer that became a group (005 R10): it runs [leg] only.
+CommuteGroup _oneLeg(Leg leg) {
+  Member member(String id, MemberRole role) => Member(
+        id: id,
+        firstName: id,
+        initials: id.substring(0, 2).toUpperCase(),
+        role: role,
+        isWoman: false,
+        rating: 4.8,
+        reliability: 96,
+        legs: {leg},
+        seats: role == MemberRole.driver ? 3 : null,
+      );
+  return CommuteGroup(
+    id: 'mk-of-${leg.name}',
+    origin: Area.sheikhZayed,
+    destination: Area.smartVillage,
+    destinationPoint: const GeoPoint(30.0719, 31.017),
+    pickupPoints: const [GeoPoint(30.0432, 30.981)],
+    going: CommuteProfile.defaultDeparture,
+    ret: const Clock.hm(17, 0),
+    days: CommuteProfile.defaultDays,
+    members: [member('Tarek', MemberRole.driver), member('Nadia', MemberRole.rider)],
+    price: 40,
+    freeSeatsGoing: leg == Leg.going ? 1 : 0,
+    freeSeatsReturn: leg == Leg.ret ? 1 : 0,
+    tripCost: 160,
+    riderSeats: 3,
+    detourMinutes: 0,
+    rotationStart: CorridorSeed.rotationStart,
+  );
+}
+
+Future<ProviderContainer> _openWeek(
+  WidgetTester tester,
+  Role role,
+  String locale, {
+  bool seedChanges = false,
+  CommuteGroup? group,
+}) async {
   final c = await pumpGooraApp(
     tester,
-    prefs: memberPrefs(role: role, locale: locale),
+    prefs: {
+      ...memberPrefs(role: role, locale: locale, groupId: group?.id ?? 'sz-0725'),
+      if (group != null) ...createdGroupsPrefs([group]),
+    },
     overrides: dailyOverrides(TestClock(at(sun, 12, 0))),
   );
   tester.view.physicalSize = const Size(390, 2400);
@@ -68,6 +116,13 @@ void main() {
       expect(row(6, l.drivesName('Mohamed')), findsOneWidget);
       expect(row(6, l.youRide), findsOneWidget);
       expect(row(4, l.heroWhen(sun, sun)), findsOneWidget);
+    });
+
+    testWidgets('[$code] a one-leg group: the header names only the leg it runs (T104)', (tester) async {
+      final g = _oneLeg(Leg.ret);
+      await _openWeek(tester, Role.rider, code, group: g);
+      expect(find.text(l.weekLegLine(l.legName(Leg.ret), l.time(g.ret))), findsOneWidget);
+      expect(find.text(l.weekRiderLine(l.time(g.going), l.time(g.ret))), findsNothing);
     });
 
     testWidgets('[$code] Not coming next week is on the Week tab', (tester) async {
