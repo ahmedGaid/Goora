@@ -323,9 +323,15 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
 
   /// A driver's first-ever wallet read seeds trip income, a rider fee and one
   /// cash mark (research R11), once, so it survives later reads and a
-  /// withdrawal.
+  /// withdrawal. The seed is a group's past ride, so a driver with no group
+  /// (005 "Just one trip", T104) starts empty instead — written now, so a
+  /// group joined later doesn't back-fill rows from before they joined.
   Future<void> _ensureDriverSeeded(String ownerId) async {
     if (_prefs.containsKey(_activityKey(ownerId))) return;
+    if (ownerId == _daily.meId && await _daily.myGroup() == null) {
+      await _writeActivity(ownerId, const []);
+      return;
+    }
     final today = _now().date;
     final seed = WalletSeed.driverActivity(today);
     await _writeActivity(ownerId, seed);

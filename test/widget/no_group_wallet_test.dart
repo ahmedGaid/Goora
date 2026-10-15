@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
 import 'package:goora/app/routes.dart';
+import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
+import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 
 import '../helpers/daily_fakes.dart';
@@ -114,5 +116,20 @@ void main() {
       expect(find.text(l.recoveredTitle), findsOneWidget);
       expect(find.text(l.driverBreakdownTitle), findsNothing);
     });
+
+    testWidgets(
+      '[$code] T104: no-group driver — no seeded history from before they joined',
+      (tester) async {
+        final c = await _open(tester, code, role: Role.driver);
+        expect(find.text(l.actTripIncome), findsNothing);
+        expect(find.text(l.egpAmount(180)), findsNothing);
+
+        final meId = c.read(dailyCommuteRepositoryProvider).meId;
+        final wallet = await c.read(walletRepositoryProvider).getWallet(meId);
+        expect(wallet.balance, 0);
+        expect(wallet.activity, isEmpty);
+        expect(wallet.cashReceived, 0);
+      },
+    );
   }
 }
