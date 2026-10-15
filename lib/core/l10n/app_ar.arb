@@ -136,7 +136,7 @@
   "fOnceDriver": "اعرض كراسيك الفاضية في مشوار إنت رايحه أصلًا.",
   "toDriver": "حوّل لوضع السواق",
   "toRider": "حوّل لوضع الراكب",
-  "emptySeatsTitle": "كراسي فاضية النهارده",
+  "emptySeatsTitle": "كراسي فاضية",
   "offerTitle": "اعرض مشوار",
   "backupTitle": "أحمد مش هيقدر يسوق يوم التلات",
   "backupBody": "محمد هيسوق بداله. مشوارك متغطّي، ومش محتاج تعمل حاجة.",
@@ -1075,6 +1075,17 @@
       }
     }
   },
+  "weekLegLine": "{leg}: {time}",
+  "@weekLegLine": {
+    "placeholders": {
+      "leg": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "weekDriveLine": "{direction} · {count, plural, =0{مفيش ركاب} =1{راكب واحد} =2{راكبين} few{{count} ركاب} other{{count} راكب}}",
   "@weekDriveLine": {
     "placeholders": {
@@ -1461,6 +1472,8 @@
   "cancelTripConfirm": "تلغي المشوار؟ كل راكب فلوسه كلها هترجعله.",
   "keepTrip": "سيب المشوار",
   "demoNothingToDo": "مفيش حاجة تتعمل لسه. انشر مشوار الأول.",
+  "demoBookSeatFirst": "مفيش حاجة تتعمل لسه. احجز كرسي فاضي الأول.",
+  "demoPostTripFirst": "مفيش حاجة تتعمل لسه. انشر مشوارك الأول.",
   "seeAll": "شوف الكل",
   "acceptConfirm": "أيوه، وافق",
   "requestWithdrawn": "رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.",

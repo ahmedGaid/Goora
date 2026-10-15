@@ -265,6 +265,7 @@ void main() {
         await _tap(tester, find.byKey(const Key('confirm-cancel-trip')));
         expect(find.text(l.tripCancelledState), findsOneWidget);
         expect(find.byKey(const Key('cancel-trip')), findsNothing);
+        expect(find.byKey(const Key('no-riders')), findsNothing, reason: 'a rider booked and got a refund (T104 F11)');
       });
 
       testWidgets('re-entering with ?id= shows the trip; from departure the first names show', (tester) async {

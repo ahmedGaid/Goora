@@ -320,7 +320,7 @@ class _OfferCard extends ConsumerWidget {
             OfferProgress(live: live),
             const SizedBox(height: AppSpacing.md),
           ],
-          LiveRidersList(riders: live.riders),
+          if (trip.status != OfferStatus.cancelled) LiveRidersList(riders: live.riders),
           if (open) ...[
             const SizedBox(height: AppSpacing.md),
             GooraGhostButton(

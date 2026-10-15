@@ -1462,8 +1462,8 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     if (mine.isEmpty) return const DemoNothing();
     return switch (await reclaim(mine.first.id, now: now)) {
       Reclaimed() => const DemoDone(),
-      ReclaimTooLate() => const DemoTooLate(),
-      NotReclaimable() => const DemoNothing(),
+      // A booking made after the cut-off is final from the start (FR-025).
+      ReclaimTooLate() || NotReclaimable() => const DemoTooLate(),
     };
   }
 

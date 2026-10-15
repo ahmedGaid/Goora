@@ -46,7 +46,9 @@ class WeekScreen extends ConsumerWidget {
       subtitle: l10n.routeLine(l10n.area(g.origin), l10n.area(g.destination)),
       children: [
         Text(
-          l10n.weekRiderLine(l10n.time(g.going), l10n.time(g.ret)),
+          g.legs.length == 1
+              ? l10n.weekLegLine(l10n.legName(g.legs.single), l10n.time(g.timeFor(g.legs.single)))
+              : l10n.weekRiderLine(l10n.time(g.going), l10n.time(g.ret)),
           style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.gap),

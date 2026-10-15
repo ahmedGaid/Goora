@@ -1636,5 +1636,16 @@ void main() {
       w.clock.now = at(_tue, 21, 5);
       expect(await w.repo.demoSubscriberTakes(now: w.clock.now), isA<DemoTooLate>());
     });
+
+    test('demoSubscriberTakes on a seat booked after 9 PM says too late, not "nothing to do" (T104 F16)', () async {
+      final w = await rider(
+        balance: 400,
+        extra: offers([_offer('of-9', date: wed, departure: const Clock.hm(9, 0), driverId: 'khaled')]),
+      );
+      w.clock.now = at(_tue, 21, 30);
+      await bookOf(w, 'of-9');
+      expect(await w.repo.demoSubscriberTakes(now: w.clock.now), isA<DemoTooLate>());
+      expect((await w.repo.myBookings(now: w.clock.now)).map((b) => b.date), [wed], reason: 'the booking stays');
+    });
   });
 }

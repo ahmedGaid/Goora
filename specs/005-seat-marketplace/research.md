@@ -640,3 +640,14 @@ F2 branch: tabs sit above the 3-button bar and every tab opens; "Back to today" 
 right after choosing cash; a daily 5 PM return offer becomes a group whose return starts at Smart Village, Gate 2 and
 whose Week header reads Sheikh Zayed → Smart Village. Left (copy): that header still says "Going: 5:00 PM · Return:
 5:00 PM" for a return-only group.
+
+Copy fixes on `fix/005-copy-f11-f12-f16` (tests first; not walked on the emulator yet):
+- **F11** — a cancelled offer (Offer a trip and the driver's Today card) no longer shows the riders list, so no
+  "No one has booked yet" under "Every rider got back everything they paid".
+- **F12** — `emptySeatsTitle` is "Empty seats" / "كراسي فاضية" (the list holds today, tomorrow and later days).
+- **F16** — "A subscriber takes this seat" on a seat booked after 9 PM says `reclaimTooLate` (the booking is final from the
+  start, FR-025); with no booking it says new `demoBookSeatFirst`; "A driver takes your request" with no request says new
+  `demoPostTripFirst`. `demoNothingToDo` stays for "A rider books your seat".
+- **Week header** — a one-leg group shows new `weekLegLine` "{leg}: {time}" (e.g. "Return: 5:00 PM").
+- New keys for founder review: `demoBookSeatFirst` "مفيش حاجة تتعمل لسه. احجز كرسي فاضي الأول.", `demoPostTripFirst`
+  "مفيش حاجة تتعمل لسه. انشر مشوارك الأول.", `weekLegLine`.
