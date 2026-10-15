@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:goora/features/wallet/data/fake_wallet_repository.dart';
 import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/payment_provider.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
+import 'package:goora/features/wallet/presentation/wallet/top_up_sheet.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -90,6 +92,34 @@ void main() {
       expect(wallet.balance, 0);
       expect(wallet.activity, isEmpty);
       expect(find.byKey(const Key('top-up-confirm')), findsOneWidget, reason: 'sheet stays open after a failure');
+    });
+
+    // 005 T104 F2: Empty seats and Post your trip open the sheet without
+    // watching the wallet controller. It was disposed mid top-up, the refresh
+    // threw, and the sheet stayed busy with the money already credited.
+    testWidgets('[$code] opened from a screen that does not watch the wallet: success still closes the sheet',
+        (tester) async {
+      final c = await pumpGooraApp(
+        tester,
+        prefs: {
+          ...memberPrefs(role: Role.rider, locale: code, withPlan: false),
+          FakeWalletRepository.planKey: _activePlan,
+        },
+        overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
+      );
+      tester.view.physicalSize = const Size(390, 2600);
+      c.read(routerProvider).go(Routes.today);
+      await tester.pumpAndSettle();
+      unawaited(showTopUpSheet(tester.element(find.byType(Scaffold).first)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('top-up-confirm')));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('top-up-confirm')), findsNothing, reason: 'sheet closed on success');
+      final meId = c.read(dailyCommuteRepositoryProvider).meId;
+      final wallet = await c.read(walletRepositoryProvider).getWallet(meId);
+      expect(wallet.balance, 200);
     });
   }
 }

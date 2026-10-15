@@ -1,8 +1,8 @@
-/goal Goora — 005-seat-marketplace: US1–US6 + polish built and gated (analyze 0 · flutter test 1040 · node 148), merged into main. Not walked on a phone since US2 (no device connected at the end).
+/goal Goora — main 1b5ae86 = origin/main (005 merged + pushed). F2 (top-up sheet hang) fixed on `fix/005-f2-topup-hang` (cut from `chore/005-device-walk`), gates green. Neither branch merged yet.
 WHERE: verify first — `git log --oneline -10 main` · `git branch -a --no-merged main` · `git worktree list` · `git status --short`.
-NEXT: device walk of specs/005-seat-marketplace/quickstart.md §1–§8 (ar + en) on the phone R5CNC0NK6ZT — T104, the only open 005 task. Build: `flutter build apk --debug` in the repo, then `adb install -r`. Fix any bug it shows on a new branch + worktree.
-READ FIRST: goora-status top entry · quickstart.md · tasks.md T063–T103 choices note · flutter-lessons #15 (adb safety; aim from uiautomator bounds).
-SCOPE: device walk = no app code unless a bug shows. Record results in research.md. Phone is the founder's personal phone: check mCurrentFocus before every tap.
+NEXT: T104 — finish the device walk of specs/005-seat-marketplace/quickstart.md (§1 step 6, §2–§8, then the English pass). Use the emulator `Goora_Test` (goora-stack "Device testing"; flutter-lessons #19) — no personal apps on it. Build the debug APK from the F2 branch so the fix is in. Onboard a DAILY rider to get past F1. Record results in research.md under "T104 — device walk".
+READ FIRST: goora-status top entry · research.md "T104 — device walk, partial" (F1–F4) · quickstart.md · flutter-lessons #15 (adb safety) + #19 (emulator).
+SCOPE: device walk = no app code unless a new bug shows; fix it on a new branch + worktree, test first.
 FIT: Sonnet. EST: 60–90 min.
-ALSO OPEN: T078 off-duty driver pays? · "first month free" copy · trip = leg vs day · legal: per-trip fee? · 005 ARB copy review (research R16 addendum lists all 85 keys) · delete branch/worktree 004-wallet-subscription, 005-seat-marketplace after the walk · push of main waits for the founder's OK.
-BLOCKED, don't re-ask: never push main without the founder's OK · phone is personal.
+ALSO OPEN: F1 once rider has no route — default Sheikh Zayed → Smart Village, or ask for the route first? · F3 no-group wallet rider: plan card says "no service fee" while a 4 EGP seat fee was charged · F4 quickstart fixes (demo clock survives reset; sz-0740 not in the seed) · merge `chore/005-device-walk`, `fix/005-f2-topup-hang`, `chore/resume-autostart`? · T078 off-duty driver pays? · "first month free" copy · trip = leg vs day · legal: per-trip fee? · 005 ARB copy review (research R16 addendum).
+BLOCKED, don't re-ask: push only with the founder's OK · the phone is the founder's personal phone — check mCurrentFocus before every tap, never unguarded `input text`.

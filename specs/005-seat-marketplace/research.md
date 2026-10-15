@@ -563,7 +563,7 @@ Confirmed on device: payment-method screen after "Book seat" with no method; "To
 seat marked "Your pick"; booked summary with "Make it your daily commute"; one-off card on Today with Share, SOS and
 Cancel; Wallet row "Seat −44 (40 + 4 fee)", balance 156; list prices 40+4 (group cars) and 44+4 (Tarek).
 
-Findings (none fixed yet):
+Findings (F2 fixed; the rest open):
 - **F1 (bug, blocks the main US1 path)** — a rider who picks "Just one trip" at onboarding has no saved route, so
   `FakeMarketplaceRepository._route` returns null and Empty seats is empty ("no seats on your route"). quickstart §1
   step 2 and spec US1 expect the Sheikh Zayed → Smart Village default and a route line. The route line is also not
@@ -571,6 +571,9 @@ Findings (none fixed yet):
 - **F2 (bug)** — top-up sheet opened from the Empty seats gate hangs: money is credited, the sheet stays busy.
   Log: `Cannot use the Ref of walletControllerProvider after it has been disposed` at
   `WalletController._refresh` (wallet_controller.dart). The autoDispose controller has no listener on that screen.
+  **Fixed (2026-10-15):** `TopUpSheet` watches the controller while open, so it lives through the top-up. Same hole
+  on Post your trip (it opens the same sheet). Regression test in `top_up_sheet_test.dart` (sheet opened over Today,
+  ar + en): red with the same `UnmountedRefException` before, green after. Not re-walked on a device yet.
 - **F3 (copy/logic)** — Wallet plan card for a no-group wallet rider reads "Per trip · no service fee on your trips"
   while a 4 EGP fee was charged; breakdown shows "Driver's share 0 / Total 0". Cause: no group → riderSeats 0 → fee 0 guard.
 - **F4 (quickstart)** — the demo clock survives "Reset demo data"; set "Ride day 7:15" first or every seeded car
