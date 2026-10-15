@@ -530,6 +530,7 @@
   "noRequests": "No requests on your route right now. We'll show them here as they come in.",
   "privacyCaption": "You'll see names when riders board.",
   "seatReclaimed": "A subscriber took your seat on {day}. You got back {amount} EGP.",
+  "seatReclaimedCash": "A subscriber took your seat on {day}. You were paying cash, so there's nothing to refund.",
   "reclaimTooLate": "Too late to reclaim — this booking is final.",
   "oneOffTrips": "One-off trips",
   "cancelBooking": "Cancel booking",

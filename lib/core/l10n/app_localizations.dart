@@ -3243,6 +3243,12 @@ abstract class AppLocalizations {
   /// **'مشترك أخد كرسيك يوم {day}. رجعلك {amount} ج.'**
   String seatReclaimed(String day, int amount);
 
+  /// No description provided for @seatReclaimedCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشترك أخد كرسيك يوم {day}. كنت هتدفع كاش، فمفيش فلوس ترجعلك.'**
+  String seatReclaimedCash(String day);
+
   /// No description provided for @reclaimTooLate.
   ///
   /// In ar, this message translates to:

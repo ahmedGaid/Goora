@@ -1978,6 +1978,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String seatReclaimedCash(String day) {
+    return 'مشترك أخد كرسيك يوم $day. كنت هتدفع كاش، فمفيش فلوس ترجعلك.';
+  }
+
+  @override
   String get reclaimTooLate => 'فات الميعاد — الحجز ده نهائي.';
 
   @override

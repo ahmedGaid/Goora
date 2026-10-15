@@ -114,7 +114,9 @@ extension DailyLabels on AppLocalizations {
       NoticeKind.sosSent => sosAlertSent,
       NoticeKind.driverNoShow => nDriverNoShow(dayParam()),
       NoticeKind.seatBooked => seatBookedTitle,
-      NoticeKind.seatReclaimed => seatReclaimed(dayParam(), amount()),
+      // 0 = a cash seat: nothing was paid, so nothing comes back (T104 F18).
+      NoticeKind.seatReclaimed =>
+        amount() == 0 ? seatReclaimedCash(dayParam()) : seatReclaimed(dayParam(), amount()),
       NoticeKind.requestAccepted => requestAccepted,
       NoticeKind.requestExpired => requestExpired,
       NoticeKind.tripCancelledByDriver => tripCancelledRefund(n.params['driver'] ?? ''),

@@ -1434,6 +1434,14 @@
       }
     }
   },
+  "seatReclaimedCash": "مشترك أخد كرسيك يوم {day}. كنت هتدفع كاش، فمفيش فلوس ترجعلك.",
+  "@seatReclaimedCash": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
   "reclaimTooLate": "فات الميعاد — الحجز ده نهائي.",
   "oneOffTrips": "مشاوير مرة واحدة",
   "cancelBooking": "الغي الحجز",
