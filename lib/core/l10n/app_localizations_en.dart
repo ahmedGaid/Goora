@@ -601,6 +601,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get seatsQ => 'Empty seats in your car';
 
   @override
+  String get pickTime => 'Pick a time';
+
+  @override
   String get fewerSeats => 'One seat fewer';
 
   @override

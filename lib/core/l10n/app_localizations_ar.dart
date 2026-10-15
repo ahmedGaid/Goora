@@ -596,6 +596,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get seatsQ => 'الكراسي الفاضية في عربيتك';
 
   @override
+  String get pickTime => 'اختار الميعاد';
+
+  @override
   String get fewerSeats => 'كرسي أقل';
 
   @override
