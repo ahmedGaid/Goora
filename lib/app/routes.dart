@@ -29,6 +29,12 @@ abstract final class Routes {
   /// Empty seats on one leg (`leg=going|return`).
   static String emptySeatsOn(Leg leg) => '$emptySeats?leg=${leg == Leg.ret ? 'return' : 'going'}';
 
+  /// Post your trip with the rider's edits (area names, minutes of the day,
+  /// repeat name), so a detour to pick a payment method comes back to the
+  /// same form (F13).
+  static String postTripDraft({required String from, required String to, required int at, required String repeat}) =>
+      '$postTrip?from=$from&to=$to&at=$at&repeat=$repeat';
+
   static String forDestination(Destination d) => switch (d) {
         Destination.commuteSetup => commuteSetup,
         Destination.emptySeatsToday => emptySeats,

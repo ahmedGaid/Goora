@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/app/router.dart';
+import 'package:goora/app/routes.dart';
+import 'package:goora/core/widgets/goora_pill.dart';
+import 'package:goora/core/widgets/goora_stepper.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/daily/data/fake_trust_repository.dart';
@@ -120,6 +124,26 @@ void main() {
       expect(find.byType(EmptySeatsScreen), findsOneWidget, reason: 'not Today');
       expect(find.byKey(const Key('seat-chosen')), findsOneWidget);
       expect(find.byKey(Key('book-$key')), findsOneWidget, reason: 'the same seat, still bookable');
+    });
+
+    // F13: the form's edits survive the payment-method detour.
+    testWidgets('[$code] Post with no method → PayMethod → back on the same edited form', (tester) async {
+      final c = await _pump(tester, _newRider(code, frequency: Frequency.once));
+      c.read(routerProvider).push(Routes.postTrip);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('from-october')));
+      await tester.tap(find.bySemanticsLabel(l.later));
+      await tester.pumpAndSettle();
+      final shown = tester.widget<GooraStepper>(find.byKey(const Key('time-stepper'))).valueLabel;
+      await tester.ensureVisible(find.byKey(const Key('post')));
+      await tester.tap(find.byKey(const Key('post')));
+      await tester.pumpAndSettle();
+      expect(find.byType(PayMethodScreen), findsOneWidget);
+      await tester.tap(find.byKey(const Key('pay-continue')));
+      await tester.pumpAndSettle();
+      expect(find.byType(PostTripScreen), findsOneWidget);
+      expect(tester.widget<GooraStepper>(find.byKey(const Key('time-stepper'))).valueLabel, shown);
+      expect(tester.widget<GooraPill>(find.byKey(const Key('from-october'))).selected, isTrue);
     });
 
     testWidgets('[$code] booked upsell opens commute setup', (tester) async {

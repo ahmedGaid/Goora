@@ -21,6 +21,7 @@ import '../features/marketplace/data/fake_marketplace_repository.dart';
 import '../features/marketplace/presentation/empty_seats/empty_seats_screen.dart';
 import '../features/marketplace/presentation/find_riders/find_riders_screen.dart';
 import '../features/marketplace/presentation/offer_trip/offer_trip_screen.dart';
+import '../features/marketplace/presentation/post_trip/post_trip_controller.dart';
 import '../features/marketplace/presentation/post_trip/post_trip_screen.dart';
 import '../features/onboarding/domain/choices.dart';
 import '../features/onboarding/domain/phone_number.dart';
@@ -105,7 +106,13 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(
         path: Routes.postTrip,
-        builder: (_, state) => PostTripScreen(id: state.uri.queryParameters['id']),
+        builder: (_, state) {
+          final q = state.uri.queryParameters;
+          return PostTripScreen(
+            id: q['id'],
+            draft: PostTripDraft.parse(from: q['from'], to: q['to'], at: q['at'], repeat: q['repeat']),
+          );
+        },
       ),
       GoRoute(path: Routes.findRiders, builder: (_, _) => const FindRidersScreen()),
       StatefulShellRoute.indexedStack(
