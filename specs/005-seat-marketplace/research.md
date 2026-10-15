@@ -693,3 +693,16 @@ New findings:
 
 Emulator note: the window was off-screen on this PC (1536×864) — boot it with `D:\Company\99-Ops\start-emulator.ps1`
 (`flutter-lessons` #19).
+
+## T104 F18 — a cash rider is told when a subscriber takes their seat (2026-10-16)
+
+Bug (found on the emulator re-walk): `FakeMarketplaceRepository._reclaim` posted `seatReclaimed` only when the refund
+was above 0. A cash one-off seat pays 0 at booking, so the seat vanished from Today with no notice (FR-025: the booker
+is told). Fix: the notice is posted for every reclaim of my booking; `amount` 0 = a cash seat, and the label shows new
+key `seatReclaimedCash` instead of "رجعلك 0 ج". The two actions (See empty seats / Post your trip) stay.
+- New key for founder review: `seatReclaimedCash` — "مشترك أخد كرسيك يوم {day}. كنت هتدفع كاش، فمفيش فلوس ترجعلك." /
+  "A subscriber took your seat on {day}. You were paying cash, so there's nothing to refund."
+- Tests first, red → green: repo unit (cash reclaim posts `{'day', 'amount': '0'}`), inbox widget ar + en (cash text
+  shown, "0" text not, both actions there).
+- Walked on the emulator (`Goora_Test`, APK from this branch): once rider, cash seat with Youssef → Settings "مشترك
+  ياخد الكرسي ده" → bell 1 → 2, inbox shows the cash text and both actions.

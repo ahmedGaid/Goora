@@ -1434,7 +1434,9 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       final o = _offers().where((o) => o.id == b.source.id).firstOrNull;
       if (o != null && o.status == OfferStatus.full) await _saveOffer(o.copyWith(status: OfferStatus.open));
     }
-    if (b.riderId == me && refund > 0) {
+    // A cash seat refunds 0 but still vanishes from Today, so the booker is
+    // told either way (T104 F18); the label words a 0 as "nothing to refund".
+    if (b.riderId == me) {
       await notices.post(NoticeKind.seatReclaimed, {'day': b.date.toIso(), 'amount': '$refund'});
     }
     return refund;

@@ -1580,6 +1580,16 @@ void main() {
       expect(await w.repo.doneOneOffs(), isEmpty);
     });
 
+    test('a cash booking still tells the rider, with nothing refunded (T104 F18, FR-025)', () async {
+      final w = await rider(method: PaymentMethod.cash, extra: khaled);
+      final booked = await bookOf(w, 'of-9');
+      await w.repo.reclaim(booked.booking.id, now: w.clock.now);
+      final told = [for (final n in await w.daily.notices().first) if (n.kind == NoticeKind.seatReclaimed) n.params];
+      expect(told, [
+        {'day': wed.toIso(), 'amount': '0'},
+      ]);
+    });
+
     test('a subscriber books a full car by taking the newest reclaimable seat (US6 AC1)', () async {
       final full = _offer('of-9', date: wed, departure: const Clock.hm(9, 0), driverId: 'khaled', seats: 1);
       final w = await rider(

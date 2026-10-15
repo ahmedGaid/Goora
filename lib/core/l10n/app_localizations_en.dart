@@ -1928,6 +1928,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String seatReclaimedCash(String day) {
+    return 'A subscriber took your seat on $day. You were paying cash, so there\'s nothing to refund.';
+  }
+
+  @override
   String get reclaimTooLate => 'Too late to reclaim — this booking is final.';
 
   @override

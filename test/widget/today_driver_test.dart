@@ -96,6 +96,21 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('[$code] inbox: a cash seat reclaimed says nothing to refund, not "0 EGP back" (T104 F18)',
+        (tester) async {
+      final c = await _pump(tester, TestClock(at(_wed, 12, 0)), code);
+      await (c.read(dailyCommuteRepositoryProvider) as NoticeSink)
+          .post(NoticeKind.seatReclaimed, {'day': _thu.toIso(), 'amount': '0'});
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('inbox')));
+      await tester.pumpAndSettle();
+      expect(find.text(l.seatReclaimedCash(l.dayThu)), findsOneWidget);
+      expect(find.text(l.seatReclaimed(l.dayThu, 0)), findsNothing);
+      expect(find.byKey(const Key('notice-empty-seats')), findsOneWidget);
+      expect(find.byKey(const Key('notice-post-trip')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('[$code] confirm ⇄ undo confirmation', (tester) async {
       await _pump(tester, TestClock(at(_wed, 20, 0)), code);
       await tester.tap(find.byKey(const Key('confirm-drive')));
