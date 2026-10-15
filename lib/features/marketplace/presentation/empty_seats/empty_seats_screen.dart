@@ -46,7 +46,11 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
   Booking? _booking;
   _Notice? _notice;
 
-  void _back() => context.canPop() ? context.pop() : context.go(Routes.frequency);
+  // Nothing to pop (the pay-method detour replaces the stack): a booked seat
+  // lives on Today; before that, Back is still onboarding's last step (T104 F8).
+  void _back() => context.canPop()
+      ? context.pop()
+      : context.go(_booking != null ? Routes.today : Routes.frequency);
 
   Future<void> _book(SeatOffer offer) async {
     setState(() {
