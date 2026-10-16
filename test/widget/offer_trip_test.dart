@@ -6,7 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/time/wall_time.dart';
+import 'package:goora/core/widgets/goora_pill.dart';
 import 'package:goora/core/widgets/goora_primary_button.dart';
+import 'package:goora/features/commute/data/corridor_seed.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/place.dart';
@@ -133,6 +135,24 @@ void main() {
         expect(find.byType(TextField), findsNothing, reason: 'the price is never typed (FR-022)');
         expect(_publishOn(tester), isTrue);
         expect(tester.takeException(), isNull);
+      });
+
+      // T104 F22: the form ignored the commute and always said Sheikh Zayed 7:30.
+      testWidgets('starts from the driver\'s saved commute: home → work at their time', (tester) async {
+        const october = CommuteProfile(
+          home: CorridorSeed.october,
+          work: CorridorSeed.smartVillage,
+          departure: Clock.hm(7, 45),
+          ret: CommuteProfile.defaultReturn,
+          days: CommuteProfile.defaultDays,
+          driver: DriverOffer(seats: 4, trips: DrivenTrips.both, contribution: 40),
+        );
+        await _open(tester, code, extra: {'commute.profile': jsonEncode(october.toJson())});
+        bool on(String key) => tester.widget<GooraPill>(find.byKey(Key(key))).selected;
+        expect(on('from-october'), isTrue);
+        expect(on('from-sheikhZayed'), isFalse);
+        expect(on('to-smartVillage'), isTrue);
+        expect(find.text('${l.heroTomorrow} · ${l.timeAm('7:45')}'), findsOneWidget);
       });
 
       testWidgets('the price moves in 2 EGP steps and stops at 32 and 48', (tester) async {

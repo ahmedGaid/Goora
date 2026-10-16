@@ -8,6 +8,52 @@ part of 'offer_trip_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Where the form starts: the driver's saved commute, home → work at their
+/// time (T104 F22), like Post your trip's `postStart`.
+
+@ProviderFor(offerStart)
+final offerStartProvider = OfferStartProvider._();
+
+/// Where the form starts: the driver's saved commute, home → work at their
+/// time (T104 F22), like Post your trip's `postStart`.
+
+final class OfferStartProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<OfferForm>,
+          OfferForm,
+          FutureOr<OfferForm>
+        >
+    with $FutureModifier<OfferForm>, $FutureProvider<OfferForm> {
+  /// Where the form starts: the driver's saved commute, home → work at their
+  /// time (T104 F22), like Post your trip's `postStart`.
+  OfferStartProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'offerStartProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$offerStartHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<OfferForm> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<OfferForm> create(Ref ref) {
+    return offerStart(ref);
+  }
+}
+
+String _$offerStartHash() => r'953dc1e5907eec677e8e8d4d74dee48d7a342166';
+
 /// The form's check, re-read when the form changes.
 
 @ProviderFor(offerCheck)

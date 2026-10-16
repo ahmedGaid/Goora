@@ -761,3 +761,14 @@ New findings:
   "Empty seats in your car 3" reads as a contradiction; seed names stay Latin in Arabic (Youssef, Omar); Trust shows a
   no-group rider "3 absences a month take you out of the group" and "applies to future groups, not your current one";
   Find riders' "Leaving from" chip is the driver's origin while the cards show the rider's route.
+
+## T104 F22 — Offer a trip starts from the driver's commute (2026-10-16)
+
+Bug (found on the leftovers walk): `OfferForm.start()` always gave Sheikh Zayed → Smart Village 7:30, so a 6th of
+October driver published "Sheikh Zayed → Smart Village" without touching the form. Post your trip already started from
+the saved commute (`postStart`). Now a new `offerStart` provider reads the commute profile (home → work, departure) and
+the screen starts from it; it shows a spinner while it loads, and falls back to the old defaults if there is no profile
+or it can't be read. Once the driver edits anything, their edits win.
+Test first: `offer_trip_test.dart` "starts from the driver's saved commute" (6th of October at 7:45, ar + en, red on
+`from-october` → green). Gates: analyze 0 · flutter 1087 · node 148. Emulator: a 6th of October once driver opens
+Offer a trip on "6th of October → Smart Village".
