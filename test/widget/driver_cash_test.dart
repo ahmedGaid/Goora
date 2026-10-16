@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
@@ -127,6 +128,18 @@ void main() {
       await tester.pumpAndSettle();
       final marks = await c.read(walletRepositoryProvider).cashMarks(ride.id);
       expect(marks.single.amount, 45);
+    });
+    testWidgets('[$code] F20: the cash label is shown in full at 390 px (not cut with "…")', (tester) async {
+      await _driveAndEnd(tester, code);
+      final label = find.text(l.cashReceived(40));
+      expect(label, findsOneWidget);
+      final paragraph = tester.renderObject<RenderParagraph>(label);
+      expect(paragraph.didExceedMaxLines, isFalse, reason: 'no ellipsis');
+      final textWidth = paragraph.size.width;
+      expect(textWidth, greaterThan(0));
+      // The text box is as wide as the text itself, so nothing was clipped.
+      final tp = TextPainter(text: paragraph.text, textDirection: paragraph.textDirection)..layout();
+      expect(textWidth, greaterThanOrEqualTo(tp.width - 0.5));
     });
   }
 }

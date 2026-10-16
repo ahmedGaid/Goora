@@ -411,22 +411,19 @@ class _OfferCashRow extends ConsumerWidget {
                   : GooraStatusChip(status: GooraStatus.off, label: l10n.cashMarkedUnpaid),
             )
           else
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: GooraGhostButton(
-                    key: Key('cash-received-$id'),
-                    label: l10n.cashReceived(_amount),
-                    onPressed: () => _record(ref, CashOutcome.received),
-                  ),
+                GooraGhostButton(
+                  key: Key('cash-received-$id'),
+                  label: l10n.cashReceived(_amount),
+                  onPressed: () => _record(ref, CashOutcome.received),
                 ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: GooraGhostButton(
-                    key: Key('cash-unpaid-$id'),
-                    label: l10n.didNotPay,
-                    onPressed: () => _record(ref, CashOutcome.didNotPay),
-                  ),
+                const SizedBox(height: AppSpacing.sm),
+                GooraGhostButton(
+                  key: Key('cash-unpaid-$id'),
+                  label: l10n.didNotPay,
+                  onPressed: () => _record(ref, CashOutcome.didNotPay),
                 ),
               ],
             ),
