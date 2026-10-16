@@ -717,3 +717,47 @@ key `seatReclaimedCash` instead of "رجعلك 0 ج". The two actions (See empty
   request. New key `seeYourRequest`: "شوف طلبك" / "See your request". The dashed "انشر مشوارك" (new request) is unchanged.
 - Test first: `marketplace_navigation_test.dart` "once rider posts after the pay-method detour; Back → Today; card opens
   it" (ar + en, red on Back → green). Gates: analyze 0 · flutter 1085 · node 148. Not walked on the emulator.
+
+## T104 — leftovers walk (2026-10-16, emulator `Goora_Test`, debug APK from main `e7046ea`)
+
+How: signed in with the fake OTP, then wrote each persona into `FlutterSharedPreferences.xml` via `run-as` (the same
+keys as the widget tests' `memberPrefs`: profile, `commute.profile`, `commute.membership`, locale). Demo clock for a
+no-group rider set the same way (`flutter.debug.demoNow`), see F23.
+
+Confirmed on the emulator:
+- **English driver screens** (sz-0725 driver): Today (group card, requests banner + cards, "Your car is full"), Find
+  riders, Offer a trip — LTR layout clean, no Arabic left over. §6.2 still holds in English.
+- **§2.4** — sz-0725 driver, Ride day 7:15: confirm → pick up all four → Start trip → End trip → Youssef's cash row
+  "استلمت 40 ج كاش" → tap → "الكاش وصل ✓". Rider names show only after pickup (R15).
+- **§8 women-only** — woman once rider, Trust → "مين يركب معايا" → "سيدات فقط": the return leg lists only Heba and Sara
+  (unfiltered: Ahmed, Hassan, Sara, Tarek, Youssef). The going leg was empty because she had already booked Sunday's
+  going seat (`ridesOn`), not because of the filter.
+- **F16 after-9 PM** — cash seat booked before the cut-off, clock Sat 9:05 PM (evening before Sun) → "مشترك ياخد
+  الكرسي ده" → snackbar "فات الميعاد — الحجز ده نهائي.".
+- **F8b + F19** — new once rider, no payment method: Empty seats → Post your trip → Publish → pay method (cash) → form
+  back → Publish → Back → Today; the request card's button reads "شوف طلبك" and the dashed "انشر مشوارك" stays.
+
+Not walkable as written:
+- **§6.4** — a 6th of October driver still sees the Sheikh Zayed requests (+8–9 min detour, under the 10-minute cap),
+  and a no-group driver's Today has no requests section. The empty state stays covered by the widget test only.
+
+New findings:
+- **F20 (bug, English layout)** — the driver's cash row button "Received 40 EGP cash" is cut to "Received 40 EG…" (two
+  half-width ghost buttons). Arabic "استلمت 40 ج كاش" fits. Same layout in `cash_received_row.dart` (group trip, seen)
+  and `one_off_section.dart` (one-off trip). Fix: let the label wrap or stack the two buttons; a shorter English label
+  is a copy call.
+- **F21 (spec gap)** — the no-match screen shows "Post your trip" to a waitlisted **driver** too
+  (`no_match_screen.dart` is not role-aware; FR-002 lists it without a role). A driver lands on a rider request priced
+  "40 to the driver + 4 service fee". Suggest: a driver gets "Offer a trip". Founder call (changes FR-002).
+- **F22 (bug)** — Offer a trip ignores the driver's commute: `OfferForm` always starts Sheikh Zayed → Smart Village
+  7:30, so a 6th of October driver published "Sheikh Zayed → Smart Village" without touching the form. Post your
+  trip already starts from `profile.home` / `work` / `departure` (`postStart`).
+- **F23 (debug tooling)** — Settings → Demo "Ride day 7:15" / "8:55 PM" / "9:05 PM" do nothing, silently, for a
+  no-group user (`_nextDuty` returns null without `myGroup`). Quickstart §7 can't be run by a once rider without
+  editing prefs. Suggest: fall back to the next Sun–Thu.
+- Minor, no action proposed: Find riders reads "Trips left today · N" while every card is for Sun (real day Fri); the
+  requests banner has an empty lower half (no body text); a picked-up rider still shows "No-show · Available in m:ss";
+  Offer a trip's price stepper has no heading and is centered while the others start-align; "Your car is full" next to
+  "Empty seats in your car 3" reads as a contradiction; seed names stay Latin in Arabic (Youssef, Omar); Trust shows a
+  no-group rider "3 absences a month take you out of the group" and "applies to future groups, not your current one";
+  Find riders' "Leaving from" chip is the driver's origin while the cards show the rider's route.
