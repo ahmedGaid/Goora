@@ -1,8 +1,8 @@
-/goal Goora — main = origin/main after merging `fix/005-f8b-f19-request-back` (T104 F8b + F19). Gates on the merged tree: analyze 0 · flutter 1085 · node 148. No unmerged branches.
-WHERE: verify first — `git log --oneline -12 main` · `git branch --no-merged main` · `git worktree list` · `git status --short`.
-NEXT: T104 leftovers on the emulator: quickstart §2.4, §6.4, women-only, English driver screens, F16 after-9 PM (`reclaimTooLate`) case; also a quick look at F8b/F19 (Post → pay-method → Publish → Back = Today; card reads "شوف طلبك"). Findings → 005 research.md, one fix branch per bug, test first.
-READ FIRST: goora-status top entry · specs/005-seat-marketplace/research.md "T104 F8b + F19" and "T104 — re-walk of the fixes" · specs/005-seat-marketplace/quickstart.md (§2.4, §6.4) · goora-stack · goora-brand.
-SCOPE: walk = docs only, own branch + worktree off main. No F1/F14/F15.
-FIT: Sonnet. EST: 60–90 min.
-ALSO OPEN: F1 · F14 · F15/T078 · "first month free" copy · trip = leg vs day · legal per-trip fee · 005 ARB copy review (incl. `seatReclaimedCash`, `seeYourRequest`) · merged branch `fix/005-f8b-f19-request-back` + worktree Goora-005-f8b can be deleted.
-BLOCKED, don't re-ask: push only with the founder's OK · the phone is the founder's personal phone — use the emulator, booted ONLY via `D:\Company\99-Ops\start-emulator.ps1`.
+﻿/goal Goora 006 — branch `006-cairo-ismailia-corridor` @ 42d16d4 (3 docs commits on main e7046ea, NOT pushed, worktree D:/Company/80-Worktrees/Goora-006). Spec + plan done; brief + constitution 1.0.1 amended (founder OK 2026-10-16). Cap proof at 300 EGP/leg: 0 over the cap.
+WHERE: verify first — `git -C D:/Company/80-Worktrees/Goora-006 log --oneline -6` · `git branch --no-merged main` · `git worktree list` · `git status --short`.
+NEXT: `/speckit-tasks` in the 006 worktree (Opus; then `/speckit-analyze`). Tasks follow plan phases P1–P7: P1 spike (flip default, count failing tests) before anything else.
+READ FIRST: specs/006-cairo-ismailia-corridor/{plan.md, research.md (R2 cap proof, R4 Corridor, R5 leg rule, R6 durations, R7 recalled geography), data-model.md, contracts/*} · goora-status top entry · goora-stack · goora-brand (copy).
+SCOPE: tasks.md only (docs). Implementation later, one phase per session, tests first. Do not change pricing rules.
+FIT: Opus for tasks + analyze; Sonnet for P2/P5 data and vectors. EST: tasks 30–45 min.
+ALSO OPEN: trip cost 300 EGP is an unverified placeholder (fuel, tolls, running cost for ~123 km) · map check of the six recalled area centres · founder review of drafted ar/en area + stop names · legal per-trip fee (brief §8) · F1/F14/F15 and trip=leg-vs-day · T104 leftovers walk on main.
+BLOCKED, don't re-ask: corridor = Cairo↔Ismailia · areas = New Cairo, Nasr City, Heliopolis, Obour, 10th of Ramadan, Ismailia · push only with the founder's OK · use the emulator via D:\Company\99-Ops\start-emulator.ps1, never the personal phone.
