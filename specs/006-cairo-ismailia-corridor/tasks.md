@@ -57,11 +57,11 @@ node specs/006-cairo-ismailia-corridor/cap_sweep.ts
 
 **Goal**: the 300 EGP numbers live in the shared fixtures that both languages run. No formula change.
 
-- [ ] T004 [US2] Extend `test/fixtures/gen_pricing_vectors.py` with the contract rows (seats 3: 62/76/90; seats 4: 48/60/72; wallet 300) plus subscriber and cash variants for the 3-seat rows. Existing rows stay byte-identical.
-- [ ] T005 [US2] Regenerate `test/fixtures/pricing_vectors.json`; diff shows only added rows.
-- [ ] T006 [P] [US2] Run the existing Dart vector test (`test/unit/pricing_service_test.dart`, `pricing_cap_sweep_test.dart`) and `supabase/functions/_shared/pricing.test.ts` against the new rows; both green with no code change. If a row fails, stop and report — it means the contract is wrong, not the rule.
-- [ ] T007 [P] [US2] Extend `test/unit/pricing_cap_sweep_test.dart` (reuse its helper) with a 300 EGP sweep, seats 1–4, every allowed price: rider total ≤ equal share, full car ≤ 300 (mirror of `cap_sweep.ts`; reuse the 004 sweep helper) in `test/unit/`.
-- [ ] T008 [US2] Extend the 004 `corridor_seed_invariant_test.dart` with the corridor-group rules: `riders + freeSeats ≤ 3` both legs, `price ∈ [62, 90]`, `arrival` always set (R6). Expect it to fail until P5 seeds exist (mark clearly; do not skip).
+- [x] T004 [US2] Extend `test/fixtures/gen_pricing_vectors.py` with the contract rows (seats 3: 62/76/90; seats 4: 48/60/72; wallet 300) plus subscriber and cash variants for the 3-seat rows. Existing rows stay byte-identical.
+- [x] T005 [US2] Regenerate `test/fixtures/pricing_vectors.json`; diff shows only added rows.
+- [x] T006 [P] [US2] Run the existing Dart vector test (`test/unit/pricing_service_test.dart`, `pricing_cap_sweep_test.dart`) and `supabase/functions/_shared/pricing.test.ts` against the new rows; both green with no code change. If a row fails, stop and report — it means the contract is wrong, not the rule.
+- [x] T007 [P] [US2] Extend `test/unit/pricing_cap_sweep_test.dart` (reuse its helper) with a 300 EGP sweep, seats 1–4, every allowed price: rider total ≤ equal share, full car ≤ 300 (mirror of `cap_sweep.ts`; reuse the 004 sweep helper) in `test/unit/`.
+- [x] T008 (written; one test RED on purpose until P5, T026) [US2] Extend the 004 `corridor_seed_invariant_test.dart` with the corridor-group rules: `riders + freeSeats ≤ 3` both legs, `price ∈ [62, 90]`, `arrival` always set (R6). Expect it to fail until P5 seeds exist (mark clearly; do not skip).
 
 **Checkpoint**: vector tests green in Dart + TS; `cap_sweep.ts` exits 0.
 

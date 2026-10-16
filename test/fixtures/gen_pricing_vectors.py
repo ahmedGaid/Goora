@@ -123,6 +123,30 @@ for name, c, trip_cost, rider_seats in CASH_ROWS:
         cash=cash_for(c, trip_cost, rider_seats),
     ))
 
+# 006 Cairo <-> Ismailia: 300 EGP per leg (spec FR / research R8, cap_sweep.ts).
+# Rows are appended after the 004/005 rows, which stay byte-identical.
+CORRIDOR_COST = 300
+CORRIDOR_ROWS = [
+    # (contribution, rider seats, modes)  3 seats: range 62-90, suggested 76.
+    (62, 3, MODES), (76, 3, MODES), (90, 3, MODES),
+    # 4 seats: range 48-72, suggested 60. Wallet only.
+    (48, 4, MODES[:1]), (60, 4, MODES[:1]), (72, 4, MODES[:1]),
+]
+for c, rider_seats, modes in CORRIDOR_ROWS:
+    for mode, subscriber, cash in modes:
+        fee = fee_for(c, CORRIDOR_COST, rider_seats, subscriber, cash)
+        cases.append(dict(
+            name=f"corridor 300/{rider_seats}: {c} EGP, {mode}",
+            contribution=c,
+            tripCost=CORRIDOR_COST,
+            riderSeats=rider_seats,
+            isSubscriber=subscriber,
+            isCashTrial=cash,
+            fee=fee,
+            total=c + fee,
+            cash=cash_for(c, CORRIDOR_COST, rider_seats),
+        ))
+
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pricing_vectors.json")
 with open(path, "w", newline="\n") as f:
     json.dump(dict(cases=cases), f, indent=1)

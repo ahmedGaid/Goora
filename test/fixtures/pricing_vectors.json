@@ -637,6 +637,138 @@
    "fee": 0,
    "total": 2,
    "cash": null
+  },
+  {
+   "name": "corridor 300/3: 62 EGP, wallet",
+   "contribution": 62,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 6,
+   "total": 68,
+   "cash": 65
+  },
+  {
+   "name": "corridor 300/3: 62 EGP, subscriber",
+   "contribution": 62,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 62,
+   "cash": 65
+  },
+  {
+   "name": "corridor 300/3: 62 EGP, cash",
+   "contribution": 62,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 62,
+   "cash": 65
+  },
+  {
+   "name": "corridor 300/3: 76 EGP, wallet",
+   "contribution": 76,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 8,
+   "total": 84,
+   "cash": 75
+  },
+  {
+   "name": "corridor 300/3: 76 EGP, subscriber",
+   "contribution": 76,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 76,
+   "cash": 75
+  },
+  {
+   "name": "corridor 300/3: 76 EGP, cash",
+   "contribution": 76,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 76,
+   "cash": 75
+  },
+  {
+   "name": "corridor 300/3: 90 EGP, wallet",
+   "contribution": 90,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 9,
+   "total": 99,
+   "cash": 90
+  },
+  {
+   "name": "corridor 300/3: 90 EGP, subscriber",
+   "contribution": 90,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": true,
+   "isCashTrial": false,
+   "fee": 0,
+   "total": 90,
+   "cash": 90
+  },
+  {
+   "name": "corridor 300/3: 90 EGP, cash",
+   "contribution": 90,
+   "tripCost": 300,
+   "riderSeats": 3,
+   "isSubscriber": false,
+   "isCashTrial": true,
+   "fee": 0,
+   "total": 90,
+   "cash": 90
+  },
+  {
+   "name": "corridor 300/4: 48 EGP, wallet",
+   "contribution": 48,
+   "tripCost": 300,
+   "riderSeats": 4,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 5,
+   "total": 53,
+   "cash": 50
+  },
+  {
+   "name": "corridor 300/4: 60 EGP, wallet",
+   "contribution": 60,
+   "tripCost": 300,
+   "riderSeats": 4,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 6,
+   "total": 66,
+   "cash": 60
+  },
+  {
+   "name": "corridor 300/4: 72 EGP, wallet",
+   "contribution": 72,
+   "tripCost": 300,
+   "riderSeats": 4,
+   "isSubscriber": false,
+   "isCashTrial": false,
+   "fee": 3,
+   "total": 75,
+   "cash": 70
   }
  ]
 }

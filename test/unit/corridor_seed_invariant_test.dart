@@ -18,4 +18,29 @@ void main() {
       });
     }
   }
+
+
+  // 006 Cairo <-> Ismailia corridor-group rules (spec FR, research R6/R8).
+  // EXPECTED RED until P5 seeds the corridor groups: before then there are none,
+  // so this test fails on purpose rather than passing on an empty list.
+  group('006 corridor groups', () {
+    final corridor = CorridorSeed.groups.where((g) => g.tripCost == 300).toList();
+
+    test('corridor groups are seeded (red until P5)', () {
+      expect(corridor, isNotEmpty, reason: 'P5 (T026) seeds the 300 EGP corridor groups');
+    });
+
+    for (final g in corridor) {
+      for (final leg in Leg.values) {
+        test('${g.id} ${leg.name}: riders + free <= 3, price 62-90', () {
+          final ridersOnLeg = g.riders.where((r) => r.legs.contains(leg)).length;
+          expect(ridersOnLeg + g.freeSeats(leg), lessThanOrEqualTo(3));
+          expect(g.price, inInclusiveRange(62, 90));
+        });
+      }
+      test('${g.id}: arrival is set, not the 40-minute default', () {
+        expect(g.arrival, isNotNull);
+      });
+    }
+  });
 }
