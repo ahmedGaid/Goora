@@ -2,6 +2,14 @@
 
 **Feature**: 006 · **Date**: 2026-10-16 · Every fact is tagged **verified** (checked this session, source named), **proven** (run this session), **recalled** (from memory, not checked) or **guess**.
 
+## P1 spike result (2026-10-16) — proven, run this session
+
+- **Baseline** (main logic, branch `006` @ 75488cb): `flutter analyze` 0 issues · `flutter test --concurrency=1` **1,085 pass** · `node --test` **148 pass**.
+- **Spike** (throwaway, restored, nothing committed): added the 6 new `Area` values; new corridor made the default in `CorridorSeed.homePlaces/workPlaces`, offer/post-trip controller defaults and leg rule, and the area pills in `find_riders_screen` + `route_form`. `flutter analyze` 0 issues (exhaustive switches got a `_` arm).
+- **Result**: **13 failing tests in 6 files** out of 1,085: `find_riders_test` 4 · `commute_screens_test` 2 · `marketplace_navigation_test` 2 · `offer_trip_test` 2 · `post_trip_test` 2 · `commute_flow_test` 1. The other ~28 files that mention the old corridor kept passing because the seeded groups, offers and requests stayed on the old areas.
+- **Limit**: lower bound. The spike did not replace seed groups/market data or the 40-minute durations (R6); those are added beside the old data, not over it, so the old-data tests should stay green.
+- **Decision (R4 confirmed, simplified)**: the new corridor is the **app default**. The 6 failing files pin the old corridor with a one-line `activeCorridor` override in their setup (no shared-helper rewrite of 34 files). New corridor gets its own ar + en tests. Re-count after P3; if it grows past ~10 files, switch to one shared helper.
+
 ## R1 — Route facts (risk: durations and stop times)
 
 - **Decision**: Seed trips take **105 minutes door-to-door arrival** for Cairo ↔ Ismailia legs (departure → arrival), and 15–25 minutes less for legs that start in a road town.
