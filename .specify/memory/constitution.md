@@ -1,3 +1,14 @@
+<!--
+Sync Impact Report
+- Version change: 1.0.0 → 1.0.1 (PATCH: clarification, no principle added, removed or redefined)
+- Amended 2026-10-16 with the founder's approval (chat, same day).
+- Principle IX rationale: launch corridor changed from Sheikh Zayed → Smart Village to Cairo ↔ Ismailia.
+- Development Workflow: roadmap order 001 → 005 became 001 → 006; the deferred company network moved from 006 to 007.
+- Principles I–VIII, the legal boundary in II and all quality gates are unchanged.
+- Templates: no change needed. Brief §6.1, §2 table, §5 heading and the no-match copy amended in the same commit.
+- Follow-up: plan for feature 006 (specs/006-cairo-ismailia-corridor) must re-run the Constitution II cap proof on the new trip cost.
+-->
+
 # Goora Constitution
 
 Goora ("Go together. Every day." · "مشوارك.. سوا.") is a daily-commute coordination app for
@@ -85,7 +96,7 @@ Rationale: the business rules are the product's legal and financial core; they m
 Build the smallest thing that proves the network. Anything not in the current feature spec MUST
 be deferred. New packages MUST NOT be added without a stated reason.
 
-Rationale: density on one corridor (Sheikh Zayed → Smart Village) matters more than features.
+Rationale: density on one corridor (Cairo ↔ Ismailia, since 2026-10-16) matters more than features.
 
 ## Technology, Secrets and Legal Constraints
 
@@ -106,7 +117,7 @@ Rationale: density on one corridor (Sheikh Zayed → Smart Village) matters more
 
 ## Development Workflow and Quality Gates
 
-- Features are built in roadmap order (001 → 005; 006 is deferred), each through
+- Features are built in roadmap order (001 → 006; 007 is deferred), each through
   specify → (clarify) → plan → tasks → (analyze) → implement → converge, repeating
   implement → converge until Converged.
 - Each feature lives on its own branch `feature/00X-name` and is committed there.
@@ -129,4 +140,4 @@ Rationale: density on one corridor (Sheikh Zayed → Smart Village) matters more
   violation MUST be listed in the plan's Complexity Tracking table with a justification, or
   removed.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-10-05
+**Version**: 1.0.1 | **Ratified**: 2026-10-05 | **Last Amended**: 2026-10-16

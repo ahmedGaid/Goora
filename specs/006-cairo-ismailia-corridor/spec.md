@@ -134,5 +134,5 @@ The brief, the constitution and the roadmap name the new launch corridor, so no 
 - The service fee (up to 10%, trimmed to the cap) stays as built in feature 004; its legality (Law 87/2018, brief §8) remains an open item and is not decided here.
 - The existing matching thresholds are kept for the longer route unless the founder says otherwise.
 - The corridor is added as data and rules on top of the current structure; no new packages are added (Constitution IX).
-- This feature takes number 006. The company-network feature (currently 006 in the brief) moves to a later number; this needs the founder's approval with the document amendments in FR-014.
+- This feature takes number 006. The company-network feature (currently 006 in the brief) moves to a later number; the founder approved this with the document amendments in FR-014 on 2026-10-16 (done: brief, constitution 1.0.1).
 - This is a commute product (Constitution I). The founder (2026-10-16) wants fixed-day work commuting plus occasional travel. Occasional travel is served only through the existing one-off features of 005 (empty seats, post a trip request); this feature builds no separate travel product. If occasional travel becomes a goal in its own right, Constitution I needs an amendment first.
