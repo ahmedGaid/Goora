@@ -294,6 +294,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postReq => 'Post your trip';
 
   @override
+  String get seeYourRequest => 'See your request';
+
+  @override
   String get offerBtn => 'Offer a trip';
 
   @override

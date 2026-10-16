@@ -242,6 +242,32 @@ void main() {
       expect(find.byType(TodayScreen), findsOneWidget);
     });
 
+    // T104 F8b + F19: after the pay-method detour there is nothing to pop, so a
+    // posted request's Back is Today; its card there says "See your request".
+    testWidgets('[$code] once rider posts after the pay-method detour; Back → Today; card opens it', (tester) async {
+      final c = await _pump(tester, _newRider(code, frequency: Frequency.once), height: 3000);
+      c.read(routerProvider).push(Routes.postTrip);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('post')));
+      await tester.tap(find.byKey(const Key('post')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('pay-cash')));
+      await tester.tap(find.byKey(const Key('pay-continue')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('post')));
+      await tester.tap(find.byKey(const Key('post')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('request-posted')), findsOneWidget);
+      await _back(tester, l.back);
+      expect(find.byType(TodayScreen), findsOneWidget);
+      final open = find.byWidgetPredicate((w) => '${w.key}'.contains('open-posted-'));
+      expect(find.descendant(of: open, matching: find.text(l.seeYourRequest)), findsOneWidget);
+      await tester.ensureVisible(open);
+      await tester.tap(open);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('request-posted')), findsOneWidget);
+    });
+
     // 005 US2: the driver's entry points (FR-001, FR-002).
     testWidgets('[$code] driver Just one trip → Offer a trip; Back → Frequency', (tester) async {
       await _pump(tester, _newDriver(code));

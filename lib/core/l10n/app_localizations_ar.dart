@@ -294,6 +294,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get postReq => 'انشر مشوارك';
 
   @override
+  String get seeYourRequest => 'شوف طلبك';
+
+  @override
   String get offerBtn => 'اعرض مشوار';
 
   @override

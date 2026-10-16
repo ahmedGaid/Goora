@@ -706,3 +706,14 @@ key `seatReclaimedCash` instead of "رجعلك 0 ج". The two actions (See empty
   shown, "0" text not, both actions there).
 - Walked on the emulator (`Goora_Test`, APK from this branch): once rider, cash seat with Youssef → Settings "مشترك
   ياخد الكرسي ده" → bell 1 → 2, inbox shows the cash text and both actions.
+
+## T104 F8b + F19 — posted request: Back → Today, card reads "See your request" (2026-10-16)
+
+- **F8b** — `PostTripScreen._back` fell back to `Routes.frequency` even after a request was posted. After the
+  payment-method detour (`go(next)` replaces the stack) there is nothing to pop, so Back went to onboarding. Now it
+  falls back to Today once `_id` is set, same rule as Empty seats / Offer a trip (F8). Before posting, Back is still
+  onboarding's last step.
+- **F19** — the posted-request card on Today used `postReq` ("انشر مشوارك") for the button that opens the existing
+  request. New key `seeYourRequest`: "شوف طلبك" / "See your request". The dashed "انشر مشوارك" (new request) is unchanged.
+- Test first: `marketplace_navigation_test.dart` "once rider posts after the pay-method detour; Back → Today; card opens
+  it" (ar + en, red on Back → green). Gates: analyze 0 · flutter 1085 · node 148. Not walked on the emulator.
