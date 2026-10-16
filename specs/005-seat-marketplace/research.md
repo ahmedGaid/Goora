@@ -772,3 +772,9 @@ or it can't be read. Once the driver edits anything, their edits win.
 Test first: `offer_trip_test.dart` "starts from the driver's saved commute" (6th of October at 7:45, ar + en, red on
 `from-october` → green). Gates: analyze 0 · flutter 1087 · node 148. Emulator: a 6th of October once driver opens
 Offer a trip on "6th of October → Smart Village".
+
+### T104 F20 — English cash button cut off (fixed 2026-10-16)
+The driver's two cash buttons ("Received 40 EGP cash" / "Didn't pay") were half-width side by side, so English was cut
+to "Received 40 EG…". Now stacked full-width in both `cash_received_row.dart` (group trip) and `one_off_section.dart`
+(one-off trip); Arabic unchanged. Test first (`driver_cash_test.dart`, ar + en, 390 px, no ellipsis; red in en → green).
+Gates: analyze 0 · flutter 1089 · node 148. Not re-walked on the emulator.
