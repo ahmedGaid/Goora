@@ -45,9 +45,9 @@ node specs/006-cairo-ismailia-corridor/cap_sweep.ts
 
 **Goal**: choose "old tests default to old corridor" vs "default to new" with a number.
 
-- [ ] T001 Record baseline: run the gates; write the passing counts (expect 1,085 Flutter / 148 Node) at the top of `research.md` under a new "P1 spike result" heading.
-- [ ] T002 Throwaway spike (do not commit code): in a scratch change make the six new areas exist and make them the default in `lib/features/commute/data/corridor_seed.dart` + `providers.dart`; run `flutter test --concurrency=1`; count failing files and tests. Then `git restore` the spike.
-- [ ] T003 Write the result and the decision (R4: "tests default old" via one shared helper, unless the count is small) into `research.md`; commit docs only.
+- [x] T001 Record baseline: run the gates; write the passing counts (expect 1,085 Flutter / 148 Node) at the top of `research.md` under a new "P1 spike result" heading.
+- [x] T002 Throwaway spike (do not commit code): in a scratch change make the six new areas exist and make them the default in `lib/features/commute/data/corridor_seed.dart` + `providers.dart`; run `flutter test --concurrency=1`; count failing files and tests. Then `git restore` the spike.
+- [x] T003 Write the result and the decision (R4: "tests default old" via one shared helper, unless the count is small) into `research.md`; commit docs only.
 
 **Checkpoint**: failing-test count and the chosen approach are written down. Tree clean of spike code.
 
