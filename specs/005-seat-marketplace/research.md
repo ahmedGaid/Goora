@@ -755,6 +755,8 @@ New findings:
 - **F23 (debug tooling)** — Settings → Demo "Ride day 7:15" / "8:55 PM" / "9:05 PM" do nothing, silently, for a
   no-group user (`_nextDuty` returns null without `myGroup`). Quickstart §7 can't be run by a once rider without
   editing prefs. Suggest: fall back to the next Sun–Thu.
+  **Fixed 2026-10-16** (`fix/005-f23-demo-clock`): `_nextDuty` falls back to the next Sun–Thu when there is no group;
+  `test/widget/demo_clock_test.dart` (ar+en, Fri → Sun 7:15 / Sat 8:55 and 9:05 PM).
 - Minor, no action proposed: Find riders reads "Trips left today · N" while every card is for Sun (real day Fri); the
   requests banner has an empty lower half (no body text); a picked-up rider still shows "No-show · Available in m:ss";
   Offer a trip's price stepper has no heading and is centered while the others start-align; "Your car is full" next to
