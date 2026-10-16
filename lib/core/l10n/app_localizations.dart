@@ -632,6 +632,12 @@ abstract class AppLocalizations {
   /// **'انشر مشوارك'**
   String get postReq;
 
+  /// No description provided for @seeYourRequest.
+  ///
+  /// In ar, this message translates to:
+  /// **'شوف طلبك'**
+  String get seeYourRequest;
+
   /// No description provided for @offerBtn.
   ///
   /// In ar, this message translates to:

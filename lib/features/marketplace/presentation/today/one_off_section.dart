@@ -464,7 +464,7 @@ class _PostedCard extends ConsumerWidget {
           const SizedBox(height: AppSpacing.md),
           GooraGhostButton(
             key: Key('open-posted-${request.id}'),
-            label: l10n.postReq,
+            label: l10n.seeYourRequest,
             onPressed: () => context.push('${Routes.postTrip}?id=${request.id}'),
           ),
         ],

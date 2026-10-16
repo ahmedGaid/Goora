@@ -62,7 +62,11 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
   _NoticeKind? _notice;
   int _gap = 0;
 
-  void _back() => context.canPop() ? context.pop() : context.go(Routes.frequency);
+  // Nothing to pop (the pay-method detour replaces the stack): a posted request
+  // lives on Today; before that, Back is still onboarding's last step (T104 F8b).
+  void _back() => context.canPop()
+      ? context.pop()
+      : context.go(_id != null ? Routes.today : Routes.frequency);
 
   Future<void> _post(PostStart start) async {
     setState(() {
