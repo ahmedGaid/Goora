@@ -46,8 +46,12 @@ class OfferTripScreen extends ConsumerStatefulWidget {
 }
 
 class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
-  OfferForm _form = OfferForm.start();
+  /// Null until the driver changes something; before that the form is the
+  /// saved commute (T104 F22), or the defaults if it can't be read.
+  OfferForm? _edited;
   late String? _id = widget.id;
+
+  OfferForm get _form => _edited ?? ref.read(offerStartProvider).value ?? OfferForm.start();
   bool _busy = false;
 
   // A live offer lives on Today; before publishing, Back is onboarding's last
@@ -56,7 +60,7 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
       ? context.pop()
       : context.go(_id != null ? Routes.today : Routes.frequency);
 
-  void _set(OfferForm f) => setState(() => _form = f);
+  void _set(OfferForm f) => setState(() => _edited = f);
 
   void _seats(int seats) => _set(_form.copyWith(seats: seats, contribution: OfferForm.rangeFor(seats).suggested));
 
@@ -99,6 +103,12 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
   }
 
   Widget _formView(AppLocalizations l10n) {
+    if (_edited == null && ref.watch(offerStartProvider).isLoading) {
+      return const Padding(
+        padding: EdgeInsetsDirectional.symmetric(vertical: AppSpacing.lg),
+        child: Center(child: CircularProgressIndicator(key: Key('offer-start-loading'))),
+      );
+    }
     final now = ref.watch(nowProvider)();
     final check = ref.watch(offerCheckProvider(_form)).value;
     final range = _form.range;

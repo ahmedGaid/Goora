@@ -717,3 +717,14 @@ key `seatReclaimedCash` instead of "رجعلك 0 ج". The two actions (See empty
   request. New key `seeYourRequest`: "شوف طلبك" / "See your request". The dashed "انشر مشوارك" (new request) is unchanged.
 - Test first: `marketplace_navigation_test.dart` "once rider posts after the pay-method detour; Back → Today; card opens
   it" (ar + en, red on Back → green). Gates: analyze 0 · flutter 1085 · node 148. Not walked on the emulator.
+
+## T104 F22 — Offer a trip starts from the driver's commute (2026-10-16)
+
+Bug (found on the leftovers walk): `OfferForm.start()` always gave Sheikh Zayed → Smart Village 7:30, so a 6th of
+October driver published "Sheikh Zayed → Smart Village" without touching the form. Post your trip already started from
+the saved commute (`postStart`). Now a new `offerStart` provider reads the commute profile (home → work, departure) and
+the screen starts from it; it shows a spinner while it loads, and falls back to the old defaults if there is no profile
+or it can't be read. Once the driver edits anything, their edits win.
+Test first: `offer_trip_test.dart` "starts from the driver's saved commute" (6th of October at 7:45, ar + en, red on
+`from-october` → green). Gates: analyze 0 · flutter 1087 · node 148. Emulator: a 6th of October once driver opens
+Offer a trip on "6th of October → Smart Village".
