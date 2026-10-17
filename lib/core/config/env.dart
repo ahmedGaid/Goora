@@ -3,6 +3,9 @@ abstract final class Env {
   static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
   static const googleMapsApiKey = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
 
+  /// `fake` (default), `whatsapp`, `firebase` or `sms`; see OtpProviderKind.
+  static const otpProvider = String.fromEnvironment('OTP_PROVIDER');
+
   static const _shareBaseUrl = String.fromEnvironment('SHARE_BASE_URL');
 
   /// Base of shared trip links (`<base>/t/<token>`). Reserved `.example`
