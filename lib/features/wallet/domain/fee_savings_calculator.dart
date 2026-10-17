@@ -1,9 +1,9 @@
 import 'activity_entry.dart';
 
-/// "You paid X EGP in fees this month. With a subscription you'd pay 129."
+/// "You paid X EGP in fees this month. With a subscription you'd pay 149."
 /// (brief §6.7 B).
 abstract final class FeeSavingsCalculator {
-  static const subscriptionPrice = 129;
+  static const subscriptionPrice = 149;
 
   /// Service fees paid on trips dated in [monthKey] (`yyyy-mm`).
   static int feesInMonth(Iterable<ActivityEntry> activity, String monthKey) => activity

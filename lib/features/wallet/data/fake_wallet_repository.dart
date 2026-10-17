@@ -122,8 +122,8 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
   }
 
   static int priceFor(PlanType type) => switch (type) {
-        PlanType.monthly => 129,
-        PlanType.yearly => 1290,
+        PlanType.monthly => 149,
+        PlanType.yearly => 1490,
         PlanType.company => 0,
       };
 

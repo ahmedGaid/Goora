@@ -67,8 +67,8 @@ backup), and resets the fake data. Release builds always use real time. New pack
 ## Wallet and payment model (feature 004)
 
 After joining a group a rider picks how to pay: **cash to the driver** for their first 10 trips,
-or the **wallet** (40 EGP to the driver + a 10% service fee = 44 per trip). Subscribing (129/month,
-1,290/year, or a company plan) is optional and removes the fee. Drivers never pay anything. The
+or the **wallet** (40 EGP to the driver + a 10% service fee = 44 per trip). Subscribing (149/month,
+1,490/year, or a company plan) is optional and removes the fee. Drivers never pay anything. The
 rules are pure Dart — `PricingService.serviceFee/riderTotal` (commute domain), `CashTrialPolicy`,
 `FeeSavingsCalculator` (wallet domain) — and the fee rule has a TypeScript twin on shared vectors:
 
