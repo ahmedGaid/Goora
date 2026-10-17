@@ -93,13 +93,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planMonthlyTitle => 'شهري';
 
   @override
-  String get planMonthlySub => '129 جنيه/الشهر';
+  String get planMonthlySub => '149 جنيه/الشهر';
 
   @override
   String get planYearlyTitle => 'سنوي';
 
   @override
-  String get planYearlySub => '1,290 جنيه/السنة';
+  String get planYearlySub => '1,490 جنيه/السنة';
 
   @override
   String get planYearlyChip => 'شهرين مجانًا';
@@ -1705,7 +1705,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String feeSavings(int fees) {
-    return 'دفعت $fees ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس.';
+    return 'دفعت $fees ج رسوم الشهر ده. بالاشتراك هتدفع 149 بس.';
   }
 
   @override

@@ -269,7 +269,7 @@ abstract class AppLocalizations {
   /// No description provided for @planMonthlySub.
   ///
   /// In ar, this message translates to:
-  /// **'129 جنيه/الشهر'**
+  /// **'149 جنيه/الشهر'**
   String get planMonthlySub;
 
   /// No description provided for @planYearlyTitle.
@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// No description provided for @planYearlySub.
   ///
   /// In ar, this message translates to:
-  /// **'1,290 جنيه/السنة'**
+  /// **'1,490 جنيه/السنة'**
   String get planYearlySub;
 
   /// No description provided for @planYearlyChip.
@@ -2844,7 +2844,7 @@ abstract class AppLocalizations {
   /// No description provided for @feeSavings.
   ///
   /// In ar, this message translates to:
-  /// **'دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس.'**
+  /// **'دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 149 بس.'**
   String feeSavings(int fees);
 
   /// No description provided for @actTrip.

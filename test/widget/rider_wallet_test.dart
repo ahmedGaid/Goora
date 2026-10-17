@@ -160,16 +160,16 @@ void main() {
       expect(find.text(l.actFreeCancelZero), findsOneWidget);
     });
 
-    testWidgets('[$code] US2 AC4: fees over 129 this month → the subscribe banner', (tester) async {
-      await _openWallet(tester, code, extra: {..._trips(33), ..._balance(2000)});
-      expect(find.text(l.feeSavings(132)), findsOneWidget, reason: '33 × 4 EGP');
+    testWidgets('[$code] US2 AC4: fees over 149 this month → the subscribe banner', (tester) async {
+      await _openWallet(tester, code, extra: {..._trips(38), ..._balance(2000)});
+      expect(find.text(l.feeSavings(152)), findsOneWidget, reason: '38 × 4 EGP');
       await tester.tap(find.descendant(of: find.byKey(const Key('fee-savings')), matching: find.text(l.subscribe)));
       await tester.pumpAndSettle();
       expect(find.byType(PlanScreen), findsOneWidget);
     });
 
-    testWidgets('[$code] US2 AC4: 32 trips (128 in fees) → no banner', (tester) async {
-      await _openWallet(tester, code, extra: {..._trips(32), ..._balance(2000)});
+    testWidgets('[$code] US2 AC4: 37 trips (148 in fees) → no banner', (tester) async {
+      await _openWallet(tester, code, extra: {..._trips(37), ..._balance(2000)});
       expect(find.byKey(const Key('fee-savings')), findsNothing);
     });
 
@@ -229,7 +229,7 @@ void main() {
         tester,
         code,
         extra: {
-          ..._trips(33),
+          ..._trips(38),
           ..._balance(2000),
           FakeWalletRepository.planKey: jsonEncode(Plan(
             personId: 'me',

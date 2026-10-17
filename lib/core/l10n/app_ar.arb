@@ -28,9 +28,9 @@
   "planTitle": "اشترك ومن غير رسوم",
   "planSubline": "من غير رسوم خدمة على أي مشوار أو كرسي.",
   "planMonthlyTitle": "شهري",
-  "planMonthlySub": "129 جنيه/الشهر",
+  "planMonthlySub": "149 جنيه/الشهر",
   "planYearlyTitle": "سنوي",
-  "planYearlySub": "1,290 جنيه/السنة",
+  "planYearlySub": "1,490 جنيه/السنة",
   "planYearlyChip": "شهرين مجانًا",
   "planCompanyTitle": "عن طريق شركتي",
   "planCompanySub": "مجاني — أكّد إيميل الشغل",
@@ -1237,7 +1237,7 @@
   "cashEnded": "مشاوير الكاش خلصت — اشحن محفظتك عشان تكمّل.",
   "cashOff": "الكاش اتقفل بعد ما مشوارين اتسجّلوا من غير دفع — اشحن محفظتك عشان تكمّل.",
   "needsTopUp": "اشحن عشان تكمّل مشاويرك",
-  "feeSavings": "دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس.",
+  "feeSavings": "دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 149 بس.",
   "@feeSavings": {
     "placeholders": {
       "fees": {

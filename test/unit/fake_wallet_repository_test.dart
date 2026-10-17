@@ -293,7 +293,7 @@ void main() {
   });
 
   group('subscription (brief §6.7 B, research R10)', () {
-    test('Monthly with 200 in the wallet: 129 leaves, plan active one month', () async {
+    test('Monthly with 200 in the wallet: 149 leaves, plan active one month', () async {
       final repo = _repo(await _prefs());
       await repo.topUp('me', method: 'instapay', amount: 200);
       expect(await repo.subscribe('me', PlanType.monthly, today: today), SubscribeResult.subscribed);
@@ -302,16 +302,16 @@ void main() {
       expect(plan.startDate, WallTime(today, const Clock.hm(9, 0)));
       expect(plan.untilDate, today.addMonths(1));
       final w = await repo.getWallet('me');
-      expect(w.balance, 71);
+      expect(w.balance, 51);
       expect(w.activity.first.kind, ActivityKind.subscription);
     });
 
-    test('Yearly is 1,290 for 12 months', () async {
+    test('Yearly is 1,490 for 12 months', () async {
       final repo = _repo(await _prefs());
       await repo.topUp('me', method: 'instapay', amount: 1500);
       await repo.subscribe('me', PlanType.yearly, today: today);
       expect((await repo.getPlan('me'))!.untilDate, today.addMonths(12));
-      expect((await repo.getWallet('me')).balance, 210);
+      expect((await repo.getWallet('me')).balance, 10);
     });
 
     test('not enough balance: nothing charged, no plan', () async {

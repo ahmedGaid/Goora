@@ -93,13 +93,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planMonthlyTitle => 'Monthly';
 
   @override
-  String get planMonthlySub => '129 EGP/month';
+  String get planMonthlySub => '149 EGP/month';
 
   @override
   String get planYearlyTitle => 'Yearly';
 
   @override
-  String get planYearlySub => '1,290 EGP/year';
+  String get planYearlySub => '1,490 EGP/year';
 
   @override
   String get planYearlyChip => '2 months free';
@@ -1674,7 +1674,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feeSavings(int fees) {
-    return 'You paid $fees EGP in fees this month. With a subscription you\'d pay 129.';
+    return 'You paid $fees EGP in fees this month. With a subscription you\'d pay 149.';
   }
 
   @override

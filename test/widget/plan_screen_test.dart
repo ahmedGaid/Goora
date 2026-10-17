@@ -41,11 +41,11 @@ void main() {
       expect(find.byKey(const Key('plan-yearly')), findsOneWidget);
       expect(find.byKey(const Key('plan-company')), findsOneWidget);
       expect(find.text(l.planYearlyChip), findsOneWidget);
-      expect(find.text(l.subscribeCta(129)), findsOneWidget);
+      expect(find.text(l.subscribeCta(149)), findsOneWidget);
       expect(find.text(l.planFooter), findsOneWidget);
     });
 
-    testWidgets('[$code] AC1: Monthly with 200 in the wallet → 129 charged, plan active, on to Today',
+    testWidgets('[$code] AC1: Monthly with 200 in the wallet → 149 charged, plan active, on to Today',
         (tester) async {
       final c = await _openSubscription(tester, code, balance: 200);
       await tester.tap(find.byKey(const Key('plan-cta')));
@@ -54,16 +54,16 @@ void main() {
       final plan = (await c.read(walletRepositoryProvider).getPlan(meId))!;
       expect(plan.type, PlanType.monthly);
       expect(plan.untilDate, rideTuesday.addMonths(1));
-      expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 71);
+      expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 51);
       expect(find.byType(TodayScreen), findsOneWidget);
       expect(find.text(l.priceSubscribed(40)), findsOneWidget, reason: 'AC2: no fee once subscribed');
     });
 
-    testWidgets('[$code] Yearly shows its 1,290 price on the button', (tester) async {
+    testWidgets('[$code] Yearly shows its 1,490 price on the button', (tester) async {
       await _openSubscription(tester, code);
       await tester.tap(find.byKey(const Key('plan-yearly')));
       await tester.pumpAndSettle();
-      expect(find.text(l.subscribeCta(1290)), findsOneWidget);
+      expect(find.text(l.subscribeCta(1490)), findsOneWidget);
     });
 
     testWidgets('[$code] AC3: not enough balance → "top up first", nothing charged', (tester) async {
@@ -71,7 +71,7 @@ void main() {
       await tester.tap(find.byKey(const Key('plan-cta')));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('sub-needs-top-up')), findsOneWidget);
-      expect(find.text(l.subNeedsTopUp(29, 100)), findsOneWidget);
+      expect(find.text(l.subNeedsTopUp(49, 100)), findsOneWidget);
       final meId = c.read(dailyCommuteRepositoryProvider).meId;
       expect(await c.read(walletRepositoryProvider).getPlan(meId), isNull);
       expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 100);
