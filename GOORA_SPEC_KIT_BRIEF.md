@@ -208,7 +208,7 @@ abstract final class AppSpacing {
 - Localization: flutter_localizations + intl with ARB files (app_ar.arb default, app_en.arb). Locale switch in-app, persisted. RTL via Directionality from locale.
 - Fonts bundled as assets: Cairo, Plus Jakarta Sans. Theme from section 3 (AppColors, AppTypography, AppRadii, AppSpacing) in lib/core/theme.
 - Backend: Supabase. Postgres + PostGIS for locations and route distance, Supabase Auth with phone OTP, Row Level Security on every table, Edge Functions (TypeScript) for matching, pricing and scheduled jobs (nightly 9 PM cancellation cutoff, weekly payouts).
-- Maps: google_maps_flutter for display, Google Directions/Distance Matrix via Edge Function only (never from the client, protects the API key).
+- Maps: OpenStreetMap via flutter_map for display only (profit change 4), tiles from a commercial OSM host (`MAP_TILE_URL_TEMPLATE`, `MAP_TILE_API_KEY`), never the public OSM tiles; show the OSM attribution the tile licence requires. Prefer fixed pickup points over a live map. Matching stays on PostGIS. Routing/distance, if needed, via an Edge Function calling a hosted OSRM/Valhalla (never from the client). Keep the map behind an interface so the provider can change. No map widget exists yet, so no dependency is added in this change.
 - Notifications: Firebase Cloud Messaging.
 - Payments: a PaymentProvider interface with a FakePaymentProvider for now; real provider (Paymob, InstaPay, Vodafone Cash, cards) in a later feature. Never store card data.
 - Architecture: feature-first folders (lib/features/<feature>/{data,domain,presentation}), repositories behind abstract interfaces, pure-Dart domain services (MatchingService, PricingService, AttendanceRules) with unit tests.
