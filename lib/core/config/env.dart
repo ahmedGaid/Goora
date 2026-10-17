@@ -4,6 +4,9 @@ abstract final class Env {
   static const mapTileUrlTemplate = String.fromEnvironment('MAP_TILE_URL_TEMPLATE');
   static const mapTileApiKey = String.fromEnvironment('MAP_TILE_API_KEY');
 
+  /// `fake` (default), `whatsapp`, `firebase` or `sms`; see OtpProviderKind.
+  static const otpProvider = String.fromEnvironment('OTP_PROVIDER');
+
   static const _shareBaseUrl = String.fromEnvironment('SHARE_BASE_URL');
 
   /// Base of shared trip links (`<base>/t/<token>`). Reserved `.example`
