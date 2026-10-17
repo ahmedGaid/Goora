@@ -1,7 +1,8 @@
 abstract final class Env {
   static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
   static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
-  static const googleMapsApiKey = String.fromEnvironment('GOOGLE_MAPS_API_KEY');
+  static const mapTileUrlTemplate = String.fromEnvironment('MAP_TILE_URL_TEMPLATE');
+  static const mapTileApiKey = String.fromEnvironment('MAP_TILE_API_KEY');
 
   static const _shareBaseUrl = String.fromEnvironment('SHARE_BASE_URL');
 
