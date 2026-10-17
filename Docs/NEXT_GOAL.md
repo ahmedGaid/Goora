@@ -1,8 +1,8 @@
-/goal Goora — main @ `b4c6a46` = origin/main after merging F23 (`fix/005-f23-demo-clock`: demo clock works with no group). Gates on merged tree: analyze 0 · flutter 1093 · node 148. Pushed. Merged branch + worktree Goora-005-f23 deleted. Another session has `006-cairo-ismailia-corridor` (Goora-006) — don't touch it.
+/goal Goora — main @ `99aca2c` (local only, NOT pushed). Profit changes 2, 3, 4, 6 merged. Gates on merged tree: analyze 0 · flutter 1096 · node 148. Branch `006-cairo-ismailia-corridor` / Goora-006 belongs to another session; don't touch.
 WHERE: verify first — `git log --oneline -12 main` · `git branch --no-merged main` · `git worktree list` · `git status --short`.
-NEXT: founder OK to merge `fix/005-f23-demo-clock` into main (`--no-ff`, research.md + NEXT_GOAL may conflict — keep both), then delete its worktree + branch. After that the founder picks the next open item.
-NEXT: the founder picks the next open item (see ALSO OPEN). F23 not walked on the emulator (widget tests cover ar+en).
-SCOPE: one item, new branch + worktree off main. No 006 files.
-FIT: Sonnet for .g.dart hashes; Opus for F21 / F1 / F14 / F15 (spec calls).
-ALSO OPEN: F21 (driver on no-match gets "Post your trip" — changes FR-002) · stale `.g.dart` hashes on main · F1 · F14 · F15/T078 · "first month free" copy · trip = leg vs day · legal per-trip fee · 005 ARB copy review (incl. `seatReclaimedCash`, `seeYourRequest`) · F20 not walked on one-off row / Arabic.
+NEXT: speckit specs for the remaining profit changes, one per session, in this order: change 1 (direct driver payment) -> change 8 (pay later + 20-trip bundle) -> change 5 (rider ID check before first trip) -> change 7 (company plan, goes into the 006 spec). Start with `/speckit-specify "Direct driver payment"` then `/speckit-clarify`.
+READ FIRST: `GOORA_PROFIT_CHANGES.md` (sections 1, 5, 7, 8, 10) · `goora-stack` · `goora-brand`.
+SCOPE: new branch + worktree per spec. Changes 1/8 touch lib/features/wallet, SeatLedger, chargesOwed, supabase/functions/_shared twins + vectors. Change 5: no rider ID check exists in code yet, so it is a new feature, not an edit.
+FIT: Opus (money flow, design calls).
+ALSO OPEN: lawyer answer was skipped by the founder's choice (CBE licence for holding money, Law 87/2018 per-trip fee, pay-later balance) · real OTP adapters (WhatsApp/Firebase) need a provider pick + keys · map tiles host pick; no map widget exists, flutter_map arrives with the first map screen · existing subscribers keep 129/1,290 until renewal (30-day notice job not built) · cash-trial grandfathering needs a backend · cash-trial meaning after change 1 (founder to confirm) · dispute path for "ماستلمتش" needs a rider "دفعت" counter-claim.
 BLOCKED, don't re-ask: push only with the founder's OK · emulator only, booted via `D:\Company\99-Ops\start-emulator.ps1`.
