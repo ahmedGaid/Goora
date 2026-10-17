@@ -2742,7 +2742,7 @@ abstract class AppLocalizations {
   /// No description provided for @payCash.
   ///
   /// In ar, this message translates to:
-  /// **'ادفع كاش للسواق (أول 10 مشاوير)'**
+  /// **'ادفع كاش للسواق (أول 5 مشاوير)'**
   String get payCash;
 
   /// No description provided for @payCashSub.

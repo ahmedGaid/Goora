@@ -251,10 +251,10 @@ void main() {
       expect(find.text(l.needsTopUpBody(44)), findsOneWidget);
     });
 
-    testWidgets('[$code] US4 AC1: 3 cash trips → "7 cash trips left", no fee, paid-cash rows', (tester) async {
-      await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(3));
-      expect(find.text(l.cashTripsLeft(7)), findsOneWidget);
-      expect(find.text(l.cashPaidLine(40)), findsNWidgets(3));
+    testWidgets('[$code] US4 AC1: 2 cash trips → "3 cash trips left", no fee, paid-cash rows', (tester) async {
+      await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(2));
+      expect(find.text(l.cashTripsLeft(3)), findsOneWidget);
+      expect(find.text(l.cashPaidLine(40)), findsNWidgets(2));
       expect(find.byKey(const Key('cash-top-up-banner')), findsNothing);
       expect(find.byKey(const Key('needs-top-up')), findsNothing, reason: 'cash riders need no balance');
     });
@@ -277,14 +277,14 @@ void main() {
       expect(find.descendant(of: card, matching: find.text(l.priceCash(45))), findsOneWidget);
     });
 
-    testWidgets('[$code] US4 AC2: after 7 cash trips the top-up banner shows', (tester) async {
-      await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(7));
+    testWidgets('[$code] US4 AC2: after 3 cash trips the top-up banner shows', (tester) async {
+      await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(3));
       expect(find.byKey(const Key('cash-top-up-banner')), findsOneWidget);
       expect(find.text(l.cashTopUpBanner), findsOneWidget);
     });
 
-    testWidgets('[$code] US4 AC3: after 10 cash trips cash is over', (tester) async {
-      await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(10));
+    testWidgets('[$code] US4 AC3: after 5 cash trips cash is over', (tester) async {
+      await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(5));
       expect(find.byKey(const Key('cash-trial')), findsNothing);
       expect(find.text(l.cashEnded), findsOneWidget);
       expect(find.text(l.planPerTripLine(4)), findsOneWidget, reason: 'the wallet price now');

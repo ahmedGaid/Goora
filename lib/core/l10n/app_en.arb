@@ -446,7 +446,7 @@
   "priceCash": "Pay {price} EGP cash to the driver",
   "payMethodTitle": "How do you want to pay?",
   "payMethodSub": "You can top up or subscribe anytime.",
-  "payCash": "Pay cash to the driver (first 10 trips)",
+  "payCash": "Pay cash to the driver (first 5 trips)",
   "payCashSub": "No service fee on cash trips.",
   "payWallet": "Use wallet",
   "subscribeLink": "Subscribe and pay no fees",

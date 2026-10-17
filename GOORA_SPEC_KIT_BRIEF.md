@@ -279,7 +279,7 @@ Prices everywhere a trip is priced (match result, Today, booking): "40 EGP to th
 Wallet, rider: plan card (Pay per trip / Subscribed / Company, Change), dark balance card with "Covers about N trips" and Top up (method pills InstaPay / Vodafone Cash / Card, amounts 200/400/800), the cash-trial counter "N cash trips left" while it is active (top-up banner from cash trip 8), the fee-savings banner when this month's fees exceed 129 EGP, "How paying works" rules list, activity list (each trip shows its service fee separately, late-cancel half charge, zero rows for free cancellations, cash trips, top-ups), and "What you pay per trip" breakdown (driver's share / service fee / total).
 Wallet, driver: "Recovered this week" balance, "Paid out every Thursday · no fees taken from you", Withdraw to InstaPay, cash received shown separately (recorded only, not withdrawable), activity (trip income, late-cancel and no-show fees), "Your trip cost" breakdown (trip cost / you receive from riders / what you pay yourself / Goora is free for drivers).
 Driver Today: after drop-off, for each cash rider, "Received 40 EGP cash" / "Didn't pay".
-Domain (pure Dart, unit tests with these exact numbers): PricingService.riderTotal(contribution, isSubscriber, isCashTrial), CashTrialPolicy (10-trip limit, 2 "didn't pay" strikes, banner from trip 8), FeeSavingsCalculator (monthly fees vs 129).
+Domain (pure Dart, unit tests with these exact numbers): PricingService.riderTotal(contribution, isSubscriber, isCashTrial), CashTrialPolicy (5-trip limit, 2 "didn't pay" strikes, banner from trip 4), FeeSavingsCalculator (monthly fees vs 129).
 Money is held by a licensed payment partner; the app keeps a ledger only. Use FakePaymentProvider in this feature.
 ```
 

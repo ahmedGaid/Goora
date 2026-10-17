@@ -1632,7 +1632,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get payMethodSub => 'تقدر تشحن المحفظة أو تشترك في أي وقت.';
 
   @override
-  String get payCash => 'ادفع كاش للسواق (أول 10 مشاوير)';
+  String get payCash => 'ادفع كاش للسواق (أول 5 مشاوير)';
 
   @override
   String get payCashSub => 'من غير رسوم خدمة على مشاوير الكاش.';

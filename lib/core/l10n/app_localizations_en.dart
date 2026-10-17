@@ -1602,7 +1602,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payMethodSub => 'You can top up or subscribe anytime.';
 
   @override
-  String get payCash => 'Pay cash to the driver (first 10 trips)';
+  String get payCash => 'Pay cash to the driver (first 5 trips)';
 
   @override
   String get payCashSub => 'No service fee on cash trips.';

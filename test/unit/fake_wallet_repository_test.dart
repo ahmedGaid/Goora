@@ -240,28 +240,28 @@ void main() {
   });
 
   group('cash trial (brief §6.7 C)', () {
-    test('3 cash trips: no wallet movement, no fee, 7 left', () async {
-      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(3)));
+    test('2 cash trips: no wallet movement, no fee, 3 left', () async {
+      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(2)));
       await repo.setMethod('me', PaymentMethod.cash);
       final w = await repo.getWallet('me');
       expect(w.balance, 0);
-      expect(w.activity.where((e) => e.kind == ActivityKind.cashTrip), hasLength(3));
+      expect(w.activity.where((e) => e.kind == ActivityKind.cashTrip), hasLength(2));
       expect(w.feesThisMonth, 0);
-      expect(w.cashTrial!.tripsLeft, 7);
+      expect(w.cashTrial!.tripsLeft, 3);
       expect(w.cashTrial!.showTopUpBanner, isFalse);
     });
 
-    test('after 7 cash trips the top-up banner shows', () async {
-      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(7)));
+    test('after 3 cash trips the top-up banner shows', () async {
+      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(3)));
       await repo.setMethod('me', PaymentMethod.cash);
       expect((await repo.getWallet('me')).cashTrial!.showTopUpBanner, isTrue);
     });
 
-    test('the 11th trip is a wallet trip at 44; cash ended by trips used', () async {
-      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(11)));
+    test('the 6th trip is a wallet trip at 44; cash ended by trips used', () async {
+      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(6)));
       await repo.setMethod('me', PaymentMethod.cash);
       final w = await repo.getWallet('me');
-      expect(w.activity.where((e) => e.kind == ActivityKind.cashTrip), hasLength(10));
+      expect(w.activity.where((e) => e.kind == ActivityKind.cashTrip), hasLength(5));
       expect(w.activity.where((e) => e.kind == ActivityKind.trip).single.amount, 44);
       expect(w.balance, -44);
       expect(w.cashTrial!.endedBy, CashTrialEnd.tripsUsed);
@@ -493,8 +493,8 @@ void main() {
       expect(w.balance, 0);
     });
 
-    test('cash one-offs count toward the 10, in date then leg order with group trips', () async {
-      final kept = trips(10); // 1–10 Oct, going
+    test('cash one-offs count toward the 5, in date then leg order with group trips', () async {
+      final kept = trips(5); // 1–5 Oct, going
       final repo = _repo(
         await _prefs(),
         daily: _StubDailyRepo(kept: kept),
@@ -504,15 +504,15 @@ void main() {
       final w = await repo.getWallet('me');
       expect(w.activity.where((e) => e.kind == ActivityKind.cashTrip).map((e) => e.rideId), contains('offer:t1'));
       expect(w.activity.where((e) => e.kind == ActivityKind.trip).single.rideId, kept.last,
-          reason: "1 Oct return is the 2nd trip, so 10 Oct is the 11th: the trial's over");
+          reason: "1 Oct return is the 2nd trip, so 5 Oct is the 6th: the trial's over");
       expect(w.balance, -44);
       expect(w.cashTrial!.endedBy, CashTrialEnd.tripsUsed);
     });
 
-    test('after 7 trips mixing group and one-off cash, the top-up banner shows', () async {
+    test('after 3 trips mixing group and one-off cash, the top-up banner shows', () async {
       final repo = _repo(
         await _prefs(),
-        daily: _StubDailyRepo(kept: trips(5)),
+        daily: _StubDailyRepo(kept: trips(1)),
         oneOffs: [
           _oneOff('offer:t1', CalendarDate(2026, 10, 10)),
           _oneOff('offer:t2', CalendarDate(2026, 10, 11)),
@@ -520,7 +520,7 @@ void main() {
       );
       await repo.setMethod('me', PaymentMethod.cash);
       final trial = (await repo.getWallet('me')).cashTrial!;
-      expect(trial.tripsDone, 7);
+      expect(trial.tripsDone, 3);
       expect(trial.showTopUpBanner, isTrue);
     });
 
