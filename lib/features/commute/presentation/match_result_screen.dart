@@ -14,6 +14,7 @@ import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
+import '../../daily/data/providers.dart';
 import '../../marketplace/domain/booking_gate.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
@@ -42,14 +43,21 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
   Future<void> _join(GroupMatch main, MatchOutcome outcome) async {
     setState(() => _joining = true);
     if (!outcome.viewerIsDriver) {
-      // 007 FR-005: a share a driver marked as not received blocks joining.
-      final check = BookingGate.check(hasArrangement: true, openShares: await ref.read(myOpenSharesProvider.future));
-      if (check.kind == BookingCheckKind.owesDriver) {
+      // 007 FR-005 / 008 FR-005: an unpaid share or overdue Goora fees block joining.
+      final wallet = await ref.read(walletRepositoryProvider).getWallet(ref.read(dailyCommuteRepositoryProvider).meId);
+      final check = BookingGate.check(
+        hasArrangement: true,
+        openShares: await ref.read(myOpenSharesProvider.future),
+        feeOverdue: wallet.feeOverdue ? wallet.owed : 0,
+      );
+      if (check.kind == BookingCheckKind.owesDriver || check.kind == BookingCheckKind.feeOverdue) {
         if (!mounted) return;
         final l10n = AppLocalizations.of(context);
         setState(() => _joining = false);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(l10n.owesDriver(check.amount, check.driverFirstName))));
+        final text = check.kind == BookingCheckKind.owesDriver
+            ? l10n.owesDriver(check.amount, check.driverFirstName)
+            : l10n.feeOwed(check.amount);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
         return;
       }
     }

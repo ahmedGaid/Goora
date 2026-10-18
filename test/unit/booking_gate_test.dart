@@ -56,4 +56,17 @@ void main() {
     expect(BookingGate.check(hasArrangement: false, openShares: [share(ShareStatus.notReceived)]).kind,
         BookingCheckKind.owesDriver);
   });
+
+  test('008 FR-005: overdue Goora fees block with the amount; a debt to a driver comes first', () {
+    expect(BookingGate.check(hasArrangement: true, openShares: const [], feeOverdue: 152),
+        const BookingCheck.feeOverdue(152));
+    expect(BookingGate.check(hasArrangement: true, openShares: [share(ShareStatus.notReceived)], feeOverdue: 152).kind,
+        BookingCheckKind.owesDriver);
+    expect(BookingGate.check(hasArrangement: false, openShares: const [], feeOverdue: 152).kind,
+        BookingCheckKind.feeOverdue);
+  });
+
+  test('008: fees owed within the grace never block', () {
+    expect(BookingGate.check(hasArrangement: true, openShares: const []), BookingCheck.ok);
+  });
 }

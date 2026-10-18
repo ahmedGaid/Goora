@@ -260,6 +260,62 @@ void main() {
       expect(find.text(l.feeOwedBody), findsOneWidget);
     });
 
+    testWidgets('[$code] 008 US2: Pay opens one payment for what is owed; after it nothing is owed',
+        (tester) async {
+      final c = await _openWallet(tester, code, extra: _trips(2));
+      await tester.tap(find.descendant(of: find.byKey(const Key('fee-owed')), matching: find.text(l.payNow)));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('pay-sheet-settle')), findsOneWidget);
+      expect(find.text(l.settleConfirm(8)), findsOneWidget);
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('fee-owed')), findsNothing);
+      final wallet = await c.read(walletRepositoryProvider).getWallet(c.read(dailyCommuteRepositoryProvider).meId);
+      expect(wallet.owed, 0);
+    });
+
+    testWidgets('[$code] 008: Fawry shows a reference code and "I paid at Fawry"', (tester) async {
+      await _openWallet(tester, code, extra: _trips(2));
+      await tester.tap(find.descendant(of: find.byKey(const Key('fee-owed')), matching: find.text(l.payNow)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('pay-method-fawry')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('fawry-code')), findsOneWidget);
+      expect(find.text(l.fawryPaid), findsOneWidget);
+    });
+
+    testWidgets('[$code] 008 US4: buying the bundle shows 20 trips left; the balance does not move',
+        (tester) async {
+      final c = await _openWallet(tester, code, extra: _balance(100));
+      final buy = find.byKey(const Key('bundle-buy'));
+      await tester.ensureVisible(buy);
+      await tester.tap(buy);
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('pay-sheet-bundle')), findsOneWidget);
+      expect(find.text(l.settleConfirm(75)), findsOneWidget);
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.text(l.bundleLeft(20)), findsOneWidget);
+      final wallet = await c.read(walletRepositoryProvider).getWallet(c.read(dailyCommuteRepositoryProvider).meId);
+      expect(wallet.balance, 100);
+    });
+
+    testWidgets('[$code] 008: a failed settlement shows a retry and changes nothing', (tester) async {
+      final c = await _openWallet(
+        tester,
+        code,
+        extra: _trips(2),
+        overrides: [paymentProviderProvider.overrideWithValue(const _AlwaysFail())],
+      );
+      await tester.tap(find.descendant(of: find.byKey(const Key('fee-owed')), matching: find.text(l.payNow)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.text(l.settleFailTitle), findsOneWidget);
+      final wallet = await c.read(walletRepositoryProvider).getWallet(c.read(dailyCommuteRepositoryProvider).meId);
+      expect(wallet.owed, 8);
+    });
+
     testWidgets('[$code] 007 US3: a share marked unpaid shows "you owe", and "I paid" makes it disputed',
         (tester) async {
       await _openWallet(

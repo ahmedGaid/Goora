@@ -1,3 +1,4 @@
+import '../../../core/time/calendar_date.dart';
 import '../../commute/domain/group.dart';
 import 'activity_entry.dart';
 import 'cash_trial_policy.dart';
@@ -18,6 +19,9 @@ final class Wallet {
     this.feesThisMonth = 0,
     this.cashReceived = 0,
     this.shares = const [],
+    this.bundleTripsLeft = 0,
+    this.feeDue,
+    this.feeOverdue = false,
   });
 
   final String ownerId;
@@ -44,6 +48,18 @@ final class Wallet {
   /// Riders: shares not yet confirmed (open debts first). Drivers: their
   /// riders' shares, newest first.
   final List<Share> shares;
+
+  /// Riders: bundle trips not used yet (008; they never expire).
+  final int bundleTripsLeft;
+
+  /// Riders: the day the owed fees fell due (008 FR-004), or null.
+  final CalendarDate? feeDue;
+
+  /// Riders: owed fees past the 3-day grace — booking is blocked (FR-005).
+  final bool feeOverdue;
+
+  /// Riders: what is owed to Goora now.
+  int get owed => balance < 0 ? -balance : 0;
 
   /// Riders: everything a driver marked as not received.
   List<Share> get openDebts => [for (final s in shares) if (s.status.isOpenDebt) s];

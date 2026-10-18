@@ -33,3 +33,12 @@ fee overdue → needs method → ok.
 
 ## R6 — Nudge copy
 `feeSavings` becomes the brief §8 sentence (149, guaranteed seat, backup driver).
+
+## Addenda from implementation (2026-10-19)
+
+- **R3a — purchase date.** A bundle covers trips from the day it was bought; earlier trips keep
+  their fee (the walk counts only purchases dated on or before each trip).
+- **R3b — one-off seats.** A seat's fee is taken at booking (007), so the bundle does not cover it;
+  covering it would need refunding a bundle trip on cancel. Founder may want this later.
+- **R2a — opening balance.** The day series starts from (ledger − sum of dated moves), so seeded or
+  legacy balances without rows still count.

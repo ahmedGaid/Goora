@@ -15,6 +15,7 @@ import '../../../../core/widgets/goora_pill.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
+import '../../../wallet/presentation/wallet/pay_sheet.dart';
 import '../../../wallet/presentation/wallet/wallet_controller.dart';
 import '../../data/providers.dart';
 import '../../domain/booking.dart';
@@ -78,6 +79,8 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
         return;
       case BookOwesDriver(:final amount, :final driverFirstName):
         _notice = _Notice.owesDriver(amount, driverFirstName);
+      case BookFeeOverdue(:final amount):
+        _notice = _Notice.feeOverdue(amount);
       case SeatTaken():
         ref.invalidate(seatOffersProvider);
         _notice = const _Notice.taken();
@@ -85,6 +88,12 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
         _notice = const _Notice.alreadyRiding();
     }
     setState(() => _busy = false);
+  }
+
+  Future<void> _pay() async {
+    await showPaySheet(context, PayPurpose.settle);
+    if (!mounted) return;
+    setState(() => _notice = null);
   }
 
   @override
@@ -152,6 +161,14 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
             title: l10n.owesDriver(n.amount, n.name),
             body: l10n.owesDriverBody(n.name),
           ),
+        _NoticeKind.feeOverdue => GooraBanner(
+            key: const Key('notice-fee-overdue'),
+            kind: GooraBannerKind.warning,
+            title: l10n.feeOwed(n.amount),
+            body: l10n.feeOverdueBody,
+            actionLabel: l10n.payNow,
+            onAction: _pay,
+          ),
         _NoticeKind.taken => GooraBanner(
             key: const Key('notice-taken'),
             kind: GooraBannerKind.info,
@@ -167,10 +184,11 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
       };
 }
 
-enum _NoticeKind { owesDriver, taken, alreadyRiding }
+enum _NoticeKind { owesDriver, feeOverdue, taken, alreadyRiding }
 
 final class _Notice {
   const _Notice.owesDriver(this.amount, this.name) : kind = _NoticeKind.owesDriver;
+  const _Notice.feeOverdue(this.amount) : kind = _NoticeKind.feeOverdue, name = '';
   const _Notice.taken() : kind = _NoticeKind.taken, amount = 0, name = '';
   const _Notice.alreadyRiding() : kind = _NoticeKind.alreadyRiding, amount = 0, name = '';
 

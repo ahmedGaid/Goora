@@ -26,6 +26,7 @@ import '../../../wallet/data/providers.dart';
 import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
 import '../../../wallet/presentation/labels.dart';
+import '../../../wallet/presentation/wallet/pay_sheet.dart';
 import '../../../wallet/presentation/wallet/top_up_sheet.dart';
 import '../../../wallet/presentation/wallet/wallet_controller.dart';
 import '../../data/market_seed.dart';
@@ -51,7 +52,7 @@ class PostTripScreen extends ConsumerStatefulWidget {
   ConsumerState<PostTripScreen> createState() => _PostTripScreenState();
 }
 
-enum _NoticeKind { owesDriver, daily }
+enum _NoticeKind { owesDriver, feeOverdue, daily }
 
 class _PostTripScreenState extends ConsumerState<PostTripScreen> {
   late String? _id = widget.id;
@@ -110,6 +111,9 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
         _owed = amount;
         _owedTo = driverFirstName;
         _notice = _NoticeKind.owesDriver;
+      case PostFeeOverdue(:final amount):
+        _owed = amount;
+        _notice = _NoticeKind.feeOverdue;
       case DailyNotAllowed():
         _notice = _NoticeKind.daily;
     }
@@ -168,6 +172,20 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
                 kind: GooraBannerKind.warning,
                 title: l10n.owesDriver(_owed, _owedTo),
                 body: l10n.owesDriverBody(_owedTo),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+            if (_notice == _NoticeKind.feeOverdue) ...[
+              GooraBanner(
+                key: const Key('notice-fee-overdue'),
+                kind: GooraBannerKind.warning,
+                title: l10n.feeOwed(_owed),
+                body: l10n.feeOverdueBody,
+                actionLabel: l10n.payNow,
+                onAction: () async {
+                  await showPaySheet(context, PayPurpose.settle);
+                  if (mounted) setState(() => _notice = null);
+                },
               ),
               const SizedBox(height: AppSpacing.md),
             ],

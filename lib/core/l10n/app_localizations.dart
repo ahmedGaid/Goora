@@ -2844,7 +2844,7 @@ abstract class AppLocalizations {
   /// No description provided for @feeSavings.
   ///
   /// In ar, this message translates to:
-  /// **'دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 149 بس.'**
+  /// **'دفعت {fees} ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.'**
   String feeSavings(int fees);
 
   /// No description provided for @actTrip.
@@ -3594,8 +3594,110 @@ abstract class AppLocalizations {
   /// No description provided for @feeOwedBody.
   ///
   /// In ar, this message translates to:
-  /// **'اشحن في أي وقت عشان تسدّها. ده عمره ما هيوقف مشاويرك.'**
+  /// **'ادفعها في أي وقت. لما توصل 150 ج، أو آخر الشهر من 30 ج، بتبقى مستحقة.'**
   String get feeOwedBody;
+
+  /// No description provided for @feeDueLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستحقة من {date}. ادفعها خلال 3 أيام عشان تفضل تحجز.'**
+  String feeDueLine(String date);
+
+  /// No description provided for @feeOverdueBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفعها عشان تقدر تحجز تاني. المشاوير اللي حجزتها ماشية عادي.'**
+  String get feeOverdueBody;
+
+  /// No description provided for @payNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع'**
+  String get payNow;
+
+  /// No description provided for @settleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع رسوم جورة'**
+  String get settleTitle;
+
+  /// No description provided for @settleConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع {amount} ج'**
+  String settleConfirm(int amount);
+
+  /// No description provided for @settleFailTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع ماتمّش'**
+  String get settleFailTitle;
+
+  /// No description provided for @settleFailBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'مخدناش منك حاجة. جرّب تاني.'**
+  String get settleFailBody;
+
+  /// No description provided for @methodFawry.
+  ///
+  /// In ar, this message translates to:
+  /// **'فوري'**
+  String get methodFawry;
+
+  /// No description provided for @fawryCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'كود فوري: {code}'**
+  String fawryCode(String code);
+
+  /// No description provided for @fawryPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعت في فوري'**
+  String get fawryPaid;
+
+  /// No description provided for @bundleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'باقة 20 مشوار'**
+  String get bundleTitle;
+
+  /// No description provided for @bundleSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'75 ج مرة واحدة. مبتخلصش أبداً، وبتغطي رسوم جورة بس، مش نصيب السواق.'**
+  String get bundleSub;
+
+  /// No description provided for @bundleLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{خلصت مشاوير الباقة} =1{فاضل مشوار واحد في الباقة} =2{فاضل مشوارين في الباقة} few{فاضل {count} مشاوير في الباقة} other{فاضل {count} مشوار في الباقة}}'**
+  String bundleLeft(int count);
+
+  /// No description provided for @bundleBuy.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتريها بـ 75 ج'**
+  String get bundleBuy;
+
+  /// No description provided for @actSettlement.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع رسوم'**
+  String get actSettlement;
+
+  /// No description provided for @actBundle.
+  ///
+  /// In ar, this message translates to:
+  /// **'باقة مشاوير'**
+  String get actBundle;
+
+  /// No description provided for @actBundleTrip.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشوار من الباقة'**
+  String get actBundleTrip;
 }
 
 class _AppLocalizationsDelegate

@@ -1707,7 +1707,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String feeSavings(int fees) {
-    return 'دفعت $fees ج رسوم الشهر ده. بالاشتراك هتدفع 149 بس.';
+    return 'دفعت $fees ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.';
   }
 
   @override
@@ -2179,5 +2179,75 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get feeOwedBody =>
-      'اشحن في أي وقت عشان تسدّها. ده عمره ما هيوقف مشاويرك.';
+      'ادفعها في أي وقت. لما توصل 150 ج، أو آخر الشهر من 30 ج، بتبقى مستحقة.';
+
+  @override
+  String feeDueLine(String date) {
+    return 'مستحقة من $date. ادفعها خلال 3 أيام عشان تفضل تحجز.';
+  }
+
+  @override
+  String get feeOverdueBody =>
+      'ادفعها عشان تقدر تحجز تاني. المشاوير اللي حجزتها ماشية عادي.';
+
+  @override
+  String get payNow => 'ادفع';
+
+  @override
+  String get settleTitle => 'ادفع رسوم جورة';
+
+  @override
+  String settleConfirm(int amount) {
+    return 'ادفع $amount ج';
+  }
+
+  @override
+  String get settleFailTitle => 'الدفع ماتمّش';
+
+  @override
+  String get settleFailBody => 'مخدناش منك حاجة. جرّب تاني.';
+
+  @override
+  String get methodFawry => 'فوري';
+
+  @override
+  String fawryCode(String code) {
+    return 'كود فوري: $code';
+  }
+
+  @override
+  String get fawryPaid => 'دفعت في فوري';
+
+  @override
+  String get bundleTitle => 'باقة 20 مشوار';
+
+  @override
+  String get bundleSub =>
+      '75 ج مرة واحدة. مبتخلصش أبداً، وبتغطي رسوم جورة بس، مش نصيب السواق.';
+
+  @override
+  String bundleLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'فاضل $count مشوار في الباقة',
+      few: 'فاضل $count مشاوير في الباقة',
+      two: 'فاضل مشوارين في الباقة',
+      one: 'فاضل مشوار واحد في الباقة',
+      zero: 'خلصت مشاوير الباقة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bundleBuy => 'اشتريها بـ 75 ج';
+
+  @override
+  String get actSettlement => 'دفع رسوم';
+
+  @override
+  String get actBundle => 'باقة مشاوير';
+
+  @override
+  String get actBundleTrip => 'مشوار من الباقة';
 }
