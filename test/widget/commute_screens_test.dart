@@ -243,7 +243,8 @@ void main() {
         expect(find.text(l.foundGroup), findsOneWidget);
         expect(find.text(l.membersCount(main.group.members.length + 1)), findsOneWidget);
         expect(find.text(l.routeLine(l.areaSheikhZayed, l.areaSmartVillage)), findsOneWidget);
-        expect(find.text(l.priceWithFee(40, 4)), findsOneWidget, reason: 'no method chosen yet: the wallet price');
+        expect(find.text(l.priceCash(40)), findsOneWidget,
+            reason: 'a new rider: the fee-free trial, paid to the driver directly (007 R6)');
         for (final r in main.reasons) {
           await _scrollTo(tester, find.text(l.reason(r)));
         }
@@ -267,7 +268,12 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [lastMatchProvider.overrideWith(() => _Seeded(outcome))],
+          overrides: [
+            // Past the trial, paying the exact share: the fee line shows.
+            riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
+            riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
+            lastMatchProvider.overrideWith(() => _Seeded(outcome)),
+          ],
         );
         await _scrollTo(tester, find.byKey(const Key('toggle-others')));
         await tester.tap(find.byKey(const Key('toggle-others')));
@@ -355,6 +361,8 @@ void main() {
           locale: locale,
           session: _session(Role.rider),
           overrides: [
+            riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
+            riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
               () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
             ),
@@ -371,6 +379,8 @@ void main() {
           locale: locale,
           session: _session(Role.rider),
           overrides: [
+            riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
+            riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
               () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
             ),
@@ -389,7 +399,7 @@ void main() {
             locale: locale,
             session: _session(Role.rider),
             overrides: [
-              riderPricingProvider.overrideWith((ref) => PricingMode.cash),
+              riderPricingProvider.overrideWith((ref) => PricingMode.trial),
               lastMatchProvider.overrideWith(
                 () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
               ),

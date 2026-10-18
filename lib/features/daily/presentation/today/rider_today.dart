@@ -24,7 +24,9 @@ import '../../../marketplace/presentation/today/one_off_section.dart';
 import '../../../wallet/data/providers.dart';
 import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
+import '../../../wallet/presentation/driver_instapay_line.dart';
 import '../../../wallet/presentation/labels.dart';
+import '../../../wallet/presentation/share_debt_banner.dart';
 import '../../data/providers.dart';
 import '../../domain/location_source.dart';
 import '../../domain/ride.dart';
@@ -50,6 +52,7 @@ class RiderToday extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TodayBanners(view: view),
+        const ShareDebtBanners(),
         RideHero(view: view),
         const SizedBox(height: AppSpacing.gap),
         if (day != null) ...[
@@ -60,6 +63,7 @@ class RiderToday extends StatelessWidget {
           if (next?.driver != null) ...[
             DriverCard(view: view, driver: next!.driver!),
             const SizedBox(height: AppSpacing.gap),
+            DriverInstapayLine(driverId: next.driver!.id, driverFirstName: next.driver!.firstName),
           ],
           if (next != null) ...[
             TripTimeline(view: view, leg: next),

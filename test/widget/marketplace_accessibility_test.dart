@@ -37,7 +37,7 @@ Future<void> _pump(WidgetTester tester, Widget screen, Role role, String locale,
     screen,
     locale: Locale(locale),
     session: _session(role),
-    prefs: memberPrefs(role: role, member: false, locale: locale, method: PaymentMethod.wallet),
+    prefs: memberPrefs(role: role, member: false, locale: locale, method: PaymentMethod.instapay, pastTrial: true),
     overrides: dailyOverrides(TestClock(_evening)),
     textScale: scale,
   );

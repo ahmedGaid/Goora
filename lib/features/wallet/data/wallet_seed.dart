@@ -11,6 +11,9 @@ abstract final class WalletSeed {
     'sara': PaymentMethod.instapay,
   };
 
+  /// Seeded drivers' InstaPay handles, so a rider sees one to copy.
+  static const instapayHandles = <String, String>{'ahmed': 'ahmed.k@instapay'};
+
   /// First names for seeded marks whose ride isn't in 003's records.
   static const riderNames = <String, String>{'youssef': 'Youssef', 'sara': 'Sara'};
 

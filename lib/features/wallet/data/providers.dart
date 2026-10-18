@@ -40,6 +40,11 @@ WalletRepository walletRepository(Ref ref) => FakeWalletRepository(
 Future<Share?> driverShare(Ref ref, String rideId, String riderId) =>
     ref.watch(walletRepositoryProvider).driverShareOn(rideId, riderId);
 
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+@riverpod
+Future<String?> driverInstapay(Ref ref, String driverId) =>
+    ref.watch(walletRepositoryProvider).instapayHandleOf(driverId);
+
 /// The signed-in rider's shares a driver hasn't confirmed, open debts first
 /// (007 US3 debt banner).
 @riverpod

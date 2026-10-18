@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -8,25 +10,26 @@ import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/activity_entry.dart';
-import 'package:goora/features/wallet/domain/payment_provider.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
-/// US3: driver Wallet tab (T039). The seeded driver already has trip income
-/// (160 EGP) + a rider's fee (20 EGP, from 'sara') via `WalletSeed`,
-/// confirmed through the repository rather than replayed from 003's flows.
+/// 004 US3 → 007 US4: the driver Wallet tab. Goora holds none of the
+/// driver's money: the tab shows what passengers paid directly this month
+/// (the seeded 40 from Youssef), each passenger's share and its status, the
+/// driver's InstaPay handle, and the trip-cost breakdown.
 Future<ProviderContainer> _openWallet(
   WidgetTester tester,
   String locale, {
   List<Override> overrides = const [],
+  Map<String, Object> extra = const {},
 }) async {
   final c = await pumpGooraApp(
     tester,
-    prefs: {...memberPrefs(role: Role.driver, locale: locale)},
+    prefs: {...memberPrefs(role: Role.driver, locale: locale), ...extra},
     overrides: [...dailyOverrides(TestClock(at(rideTuesday, 7, 0))), ...overrides],
   );
-  tester.view.physicalSize = const Size(390, 2600);
+  tester.view.physicalSize = const Size(390, 3000);
   c.read(routerProvider).go(Routes.wallet);
   await tester.pumpAndSettle();
   return c;
@@ -37,25 +40,23 @@ void main() {
     final l = l10nFor(locale);
     final code = locale.languageCode;
 
-    testWidgets('[$code] AC1: recovered total and payout line', (tester) async {
+    testWidgets('[$code] AC1: received directly this month, apart from Goora — no balance to withdraw',
+        (tester) async {
       await _openWallet(tester, code);
-      expect(find.text(l.recoveredTitle), findsOneWidget);
-      expect(find.text(l.egpAmount(180)), findsWidgets, reason: 'seeded 160 + 20 EGP');
-      expect(find.text(l.payoutNote), findsOneWidget);
+      expect(find.text(l.cashReceivedTitle), findsOneWidget);
+      final card = find.byKey(const Key('cash-received'));
+      expect(find.descendant(of: card, matching: find.text(l.egpAmount(40))), findsOneWidget,
+          reason: 'seeded: Youssef paid 40 cash yesterday');
+      expect(find.text(l.cashReceivedNote), findsOneWidget);
+      expect(find.byKey(const Key('withdraw')), findsNothing);
+      expect(find.text(l.actTripIncome), findsNothing, reason: 'Goora writes no driver income (007 R8)');
     });
 
-    testWidgets('[$code] AC2: withdraw resets the balance and adds a Withdrawal row', (tester) async {
-      final c = await _openWallet(tester, code);
-      await tester.tap(find.byKey(const Key('withdraw')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('withdraw-confirm')));
-      await tester.pumpAndSettle();
-
-      final meId = c.read(dailyCommuteRepositoryProvider).meId;
-      final wallet = await c.read(walletRepositoryProvider).getWallet(meId);
-      expect(wallet.balance, 0);
-      expect(wallet.activity.first.kind, ActivityKind.withdrawal);
-      expect(find.text(l.actWithdrawal), findsOneWidget);
+    testWidgets('[$code] AC2: each passenger share is listed with its status in words', (tester) async {
+      await _openWallet(tester, code);
+      expect(find.byKey(const Key('payments-list')), findsOneWidget);
+      expect(find.text('Youssef'), findsOneWidget);
+      expect(find.text(l.cashMarkedReceived), findsOneWidget);
     });
 
     testWidgets('[$code] AC3: trip-cost breakdown shows the gap for an empty seat', (tester) async {
@@ -67,41 +68,39 @@ void main() {
       expect(find.text(l.driverBreakdownFree), findsOneWidget);
     });
 
-    testWidgets('[$code] AC4: a rider fee shows labelled by rider', (tester) async {
-      await _openWallet(tester, code);
-      expect(find.text(l.actFeeReceivedFrom('sara')), findsOneWidget);
-      expect(find.text(l.actTripIncome), findsOneWidget);
+    testWidgets('[$code] AC4: the InstaPay handle is saved trimmed (007 R7)', (tester) async {
+      final c = await _openWallet(tester, code);
+      final field = find.descendant(of: find.byKey(const Key('instapay-field')), matching: find.byType(TextField));
+      await tester.ensureVisible(field);
+      await tester.enterText(field, '  omar.k@instapay  ');
+      await tester.tap(find.byKey(const Key('instapay-save')));
+      await tester.pumpAndSettle();
+      final meId = c.read(dailyCommuteRepositoryProvider).meId;
+      expect(await c.read(walletRepositoryProvider).instapayHandleOf(meId), 'omar.k@instapay');
+      expect(find.text(l.instapayHandleHint), findsOneWidget);
     });
 
-    testWidgets('[$code] SC-005: a forced withdrawal failure leaves balance/activity unchanged', (tester) async {
+    testWidgets('[$code] a 004 balance left from before can still be withdrawn', (tester) async {
       final c = await _openWallet(
         tester,
         code,
-        overrides: [paymentProviderProvider.overrideWithValue(const _AlwaysFail())],
+        extra: {
+          'wallet.balance.me': 180,
+          'wallet.activity.me': jsonEncode([
+            ActivityEntry(id: 'w-income-1', kind: ActivityKind.tripIncome, amount: 180, date: rideTuesday.addDays(-1))
+                .toJson(),
+          ]),
+        },
       );
       await tester.tap(find.byKey(const Key('withdraw')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('withdraw-confirm')));
       await tester.pumpAndSettle();
-
-      expect(find.text(l.withdrawFailTitle), findsOneWidget);
       final meId = c.read(dailyCommuteRepositoryProvider).meId;
       final wallet = await c.read(walletRepositoryProvider).getWallet(meId);
-      expect(wallet.balance, 180);
-      expect(wallet.activity, hasLength(2));
+      expect(wallet.balance, 0);
+      expect(wallet.activity.first.kind, ActivityKind.withdrawal);
+      expect(find.byKey(const Key('withdraw')), findsNothing, reason: 'nothing left to take out');
     });
   }
-}
-
-final class _AlwaysFail implements PaymentProvider {
-  const _AlwaysFail();
-
-  @override
-  Future<PaymentResult> topUp({required String method, required int amount}) async => PaymentResult.failure;
-
-  @override
-  Future<PaymentResult> withdraw({required int amount}) async => PaymentResult.failure;
-
-  @override
-  Future<PaymentResult> debit({required int amount}) async => PaymentResult.failure;
 }

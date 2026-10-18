@@ -29,7 +29,7 @@ final _tue = rideTuesday;
 final _wed = rideTuesday.addDays(1);
 
 Map<String, Object> _prefs(String locale) => {
-      ...memberPrefs(role: Role.rider, member: false, locale: locale, withPlan: false, method: PaymentMethod.wallet),
+      ...memberPrefs(role: Role.rider, member: false, locale: locale, withPlan: false, method: PaymentMethod.instapay, pastTrial: true),
       'profile': jsonEncode(
         Profile(
           phone: testPhone,
@@ -95,7 +95,7 @@ void main() {
       final c = await _booked(tester, clock, code);
       expect(find.byKey(const Key('one-off-bk-1')), findsOneWidget);
       var wallet = await c.read(walletRepositoryProvider).getWallet(DailySeed.meId);
-      expect(wallet.balance, 156);
+      expect(wallet.balance, 196, reason: "only Goora's 4 at booking (007 R5)");
 
       await _demo(tester, c, 'demo-subscriber-takes');
       c.read(routerProvider).go(Routes.today);
@@ -120,7 +120,7 @@ void main() {
       await _demo(tester, c, 'demo-subscriber-takes');
       expect(find.text(l.reclaimTooLate), findsOneWidget);
       final wallet = await c.read(walletRepositoryProvider).getWallet(DailySeed.meId);
-      expect(wallet.balance, 156);
+      expect(wallet.balance, 196);
       expect(wallet.activity.where((e) => e.kind == ActivityKind.seatRefund), isEmpty);
     });
 

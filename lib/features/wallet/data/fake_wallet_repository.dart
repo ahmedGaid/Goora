@@ -173,7 +173,8 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
   Future<PaymentMethod?> methodOf(String riderId) async => await getMethod(riderId) ?? WalletSeed.methods[riderId];
 
   @override
-  Future<String?> instapayHandleOf(String driverId) async => _prefs.getString(instapayKey(driverId));
+  Future<String?> instapayHandleOf(String driverId) async =>
+      _prefs.getString(instapayKey(driverId)) ?? WalletSeed.instapayHandles[driverId];
 
   @override
   Future<void> setInstapayHandle(String driverId, String? handle) async {

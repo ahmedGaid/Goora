@@ -185,6 +185,84 @@ final class DriverShareFamily extends $Family
   String toString() => r'driverShareProvider';
 }
 
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+@ProviderFor(driverInstapay)
+final driverInstapayProvider = DriverInstapayFamily._();
+
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+final class DriverInstapayProvider
+    extends $FunctionalProvider<AsyncValue<String?>, String?, FutureOr<String?>>
+    with $FutureModifier<String?>, $FutureProvider<String?> {
+  /// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+  DriverInstapayProvider._({
+    required DriverInstapayFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'driverInstapayProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$driverInstapayHash();
+
+  @override
+  String toString() {
+    return r'driverInstapayProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<String?> create(Ref ref) {
+    final argument = this.argument as String;
+    return driverInstapay(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DriverInstapayProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$driverInstapayHash() => r'a9bf2f8440181c5291480fe1b10723d3088db93c';
+
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+final class DriverInstapayFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<String?>, String> {
+  DriverInstapayFamily._()
+    : super(
+        retry: null,
+        name: r'driverInstapayProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+  DriverInstapayProvider call(String driverId) =>
+      DriverInstapayProvider._(argument: driverId, from: this);
+
+  @override
+  String toString() => r'driverInstapayProvider';
+}
+
 /// The signed-in rider's shares a driver hasn't confirmed, open debts first
 /// (007 US3 debt banner).
 

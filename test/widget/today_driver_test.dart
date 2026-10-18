@@ -326,7 +326,8 @@ void main() {
       expect(find.byKey(const Key('offer-sos-of-9')), findsOneWidget);
     });
 
-    testWidgets('[$code] after done: cash riders get Received / Didn\'t pay, stored against offer:<id>', (tester) async {
+    testWidgets('[$code] after done: every rider gets the receipt buttons, stored against offer:<id> (007 US2)',
+        (tester) async {
       final c = await pumpToday(
         tester,
         at(_wed, 9, 45),
@@ -337,15 +338,15 @@ void main() {
       );
       expect(find.text(l.tripDoneState), findsOneWidget);
       expect(find.byKey(const Key('cash-received-seed-rider-nadia')), findsOneWidget);
-      expect(find.text(l.cashReceived(40)), findsOneWidget);
-      expect(find.byKey(const Key('cash-received-seed-rider-omar')), findsNothing, reason: 'a wallet rider paid already');
+      expect(find.byKey(const Key('cash-received-seed-rider-omar')), findsOneWidget,
+          reason: 'every rider pays the driver directly now');
 
       final button = find.byKey(const Key('cash-received-seed-rider-nadia'));
       await tester.ensureVisible(button);
       await tester.tap(button);
       await tester.pumpAndSettle();
       expect(find.text(l.cashMarkedReceived), findsOneWidget);
-      final marks = await c.read(walletRepositoryProvider).cashMarks(Booking.offerRideId('of-9'));
+      final marks = await c.read(walletRepositoryProvider).shareMarks(Booking.offerRideId('of-9'));
       expect(marks.map((m) => (m.rideId, m.riderId, m.outcome, m.amount)), [
         ('offer:of-9', 'seed-rider-nadia', CashOutcome.received, 40),
       ]);

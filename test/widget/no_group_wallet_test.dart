@@ -18,7 +18,7 @@ Future<ProviderContainer> _open(
   WidgetTester tester,
   String locale, {
   required Role role,
-  PaymentMethod method = PaymentMethod.wallet,
+  PaymentMethod method = PaymentMethod.instapay,
   String route = Routes.wallet,
   int balance = 0,
 }) async {
@@ -31,6 +31,7 @@ Future<ProviderContainer> _open(
         member: false,
         withPlan: false,
         method: method,
+        pastTrial: method == PaymentMethod.instapay,
       ),
       if (balance > 0) 'wallet.balance.me': balance,
     },
@@ -77,10 +78,10 @@ void main() {
     );
 
     testWidgets(
-      '[$code] F3: no-group rider at balance 156 — covers 1 round trip (156 ÷ 88)',
+      '[$code] F3: no-group rider at balance 156 — covers 19 days of fees (156 ÷ 8; 007 R5)',
       (tester) async {
         await _open(tester, code, role: Role.rider, balance: 156);
-        expect(find.text(l.coversTrips(1)), findsOneWidget);
+        expect(find.text(l.coversTrips(19)), findsOneWidget);
         expect(find.text(l.coversTrips(0)), findsNothing);
       },
     );
@@ -95,14 +96,14 @@ void main() {
     );
 
     testWidgets(
-      '[$code] F3: pay-method screen — wallet option shows 40 + 4 with no group',
+      '[$code] F3: pay-method screen — the InstaPay option says it goes to the driver, with no group',
       (tester) async {
         await _open(tester, code, role: Role.rider, route: Routes.payMethod);
-        final wallet = find.byKey(const Key('pay-wallet'));
+        final instapay = find.byKey(const Key('pay-instapay'));
         expect(
           find.descendant(
-            of: wallet,
-            matching: find.text(l.priceWithFee(40, 4)),
+            of: instapay,
+            matching: find.text(l.payInstapaySub),
           ),
           findsOneWidget,
         );
@@ -113,7 +114,7 @@ void main() {
       tester,
     ) async {
       await _open(tester, code, role: Role.driver);
-      expect(find.text(l.recoveredTitle), findsOneWidget);
+      expect(find.text(l.cashReceivedTitle), findsOneWidget);
       expect(find.text(l.driverBreakdownTitle), findsNothing);
     });
 
