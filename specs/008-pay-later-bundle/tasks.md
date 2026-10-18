@@ -22,7 +22,7 @@
 ## Phase 4: US3 — overdue gate
 
 - [x] T011 [US3] BookingGate feeOverdue; BookFeeOverdue / PostFeeOverdue; demo accept withdraws; join guard
-- [x] T012 [US3] Unit tests on gate + marketplace
+- [x] T012 [US3] Unit tests on gate (marketplace-level overdue test not written; gate + repo tests cover it)
 
 ## Phase 5: UI
 
