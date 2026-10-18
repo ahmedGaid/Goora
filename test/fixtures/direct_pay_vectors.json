@@ -1,0 +1,55 @@
+{
+  "_doc": "007 direct driver payment (research R2-R4). Run by test/unit/direct_pay_vectors_test.dart and supabase/functions/_shared/direct_pay.test.ts. Times in whole minutes; tripEnd 0 unless stated.",
+  "status": [
+    { "name": "no mark, 23h59 -> pending", "mark": null, "markedAt": null, "claimAt": null, "tripEnd": 0, "now": 1439, "expect": "pending" },
+    { "name": "no mark, 24h -> autoReceived", "mark": null, "markedAt": null, "claimAt": null, "tripEnd": 0, "now": 1440, "expect": "autoReceived" },
+    { "name": "received", "mark": "received", "markedAt": 30, "claimAt": null, "tripEnd": 0, "now": 60, "expect": "received" },
+    { "name": "received beats a claim", "mark": "received", "markedAt": 30, "claimAt": 90, "tripEnd": 0, "now": 120, "expect": "received" },
+    { "name": "didNotPay -> notReceived", "mark": "didNotPay", "markedAt": 30, "claimAt": null, "tripEnd": 0, "now": 60, "expect": "notReceived" },
+    { "name": "claim after mark -> disputed", "mark": "didNotPay", "markedAt": 30, "claimAt": 31, "tripEnd": 0, "now": 60, "expect": "disputed" },
+    { "name": "claim before mark does not count", "mark": "didNotPay", "markedAt": 30, "claimAt": 20, "tripEnd": 0, "now": 60, "expect": "notReceived" },
+    { "name": "claim at same minute does not count", "mark": "didNotPay", "markedAt": 30, "claimAt": 30, "tripEnd": 0, "now": 60, "expect": "notReceived" },
+    { "name": "legacy mark without time + claim -> disputed", "mark": "didNotPay", "markedAt": null, "claimAt": 5, "tripEnd": 0, "now": 60, "expect": "disputed" },
+    { "name": "didNotPay stays after 24h", "mark": "didNotPay", "markedAt": 30, "claimAt": null, "tripEnd": 0, "now": 5000, "expect": "notReceived" }
+  ],
+  "canMark": [
+    { "name": "before trip end: no", "current": "pending", "outcome": "received", "tripEnd": 100, "now": 99, "reversedOnce": false, "expect": false },
+    { "name": "pending, within 24h, didNotPay: yes", "current": "pending", "outcome": "didNotPay", "tripEnd": 0, "now": 10, "reversedOnce": false, "expect": true },
+    { "name": "correct received -> didNotPay within 24h: yes", "current": "received", "outcome": "didNotPay", "tripEnd": 0, "now": 1439, "reversedOnce": false, "expect": true },
+    { "name": "correct received -> didNotPay after 24h: no", "current": "received", "outcome": "didNotPay", "tripEnd": 0, "now": 1440, "reversedOnce": false, "expect": false },
+    { "name": "received again on received after 24h: no", "current": "received", "outcome": "received", "tripEnd": 0, "now": 2000, "reversedOnce": false, "expect": false },
+    { "name": "clear a debt any time: yes", "current": "notReceived", "outcome": "received", "tripEnd": 0, "now": 99999, "reversedOnce": true, "expect": true },
+    { "name": "clear a dispute any time: yes", "current": "disputed", "outcome": "received", "tripEnd": 0, "now": 99999, "reversedOnce": false, "expect": true },
+    { "name": "reverse auto within 7d: yes", "current": "autoReceived", "outcome": "didNotPay", "tripEnd": 0, "now": 10079, "reversedOnce": false, "expect": true },
+    { "name": "reverse auto at 7d: no", "current": "autoReceived", "outcome": "didNotPay", "tripEnd": 0, "now": 10080, "reversedOnce": false, "expect": false },
+    { "name": "reverse auto twice: no", "current": "autoReceived", "outcome": "didNotPay", "tripEnd": 0, "now": 2000, "reversedOnce": true, "expect": false },
+    { "name": "mark auto received explicitly: yes", "current": "autoReceived", "outcome": "received", "tripEnd": 0, "now": 2000, "reversedOnce": false, "expect": true },
+    { "name": "notReceived -> didNotPay after 24h: no", "current": "notReceived", "outcome": "didNotPay", "tripEnd": 0, "now": 2000, "reversedOnce": false, "expect": false }
+  ],
+  "flag": [
+    { "name": "none", "days": [], "today": 100, "expect": false },
+    { "name": "one", "days": [95], "today": 100, "expect": false },
+    { "name": "two in window", "days": [71, 100], "today": 100, "expect": true },
+    { "name": "one just outside (30 days ago)", "days": [70, 100], "today": 100, "expect": false },
+    { "name": "future day ignored", "days": [100, 101], "today": 100, "expect": false },
+    { "name": "three, two inside", "days": [10, 90, 99], "today": 100, "expect": true }
+  ],
+  "share": [
+    { "name": "demo instapay 40", "contribution": 40, "method": "instapay", "tripCost": 160, "riderSeats": 3, "expect": 40 },
+    { "name": "demo cash 40", "contribution": 40, "method": "cash", "tripCost": 160, "riderSeats": 3, "expect": 40 },
+    { "name": "cash 44 -> 45", "contribution": 44, "method": "cash", "tripCost": 160, "riderSeats": 3, "expect": 45 },
+    { "name": "cash 48 -> 45 (50 passes top)", "contribution": 48, "method": "cash", "tripCost": 160, "riderSeats": 3, "expect": 45 },
+    { "name": "cash 38 in 4-seat -> 35", "contribution": 38, "method": "cash", "tripCost": 160, "riderSeats": 4, "expect": 35 },
+    { "name": "instapay 38 in 4-seat stays 38", "contribution": 38, "method": "instapay", "tripCost": 160, "riderSeats": 4, "expect": 38 },
+    { "name": "cash with no fitting multiple -> exact", "contribution": 6, "method": "cash", "tripCost": 12, "riderSeats": 1, "expect": 6 }
+  ],
+  "fee": [
+    { "name": "demo 40 -> 4", "contribution": 40, "share": 40, "tripCost": 160, "riderSeats": 3, "feeFree": false, "expect": 4 },
+    { "name": "fee-free -> 0", "contribution": 40, "share": 40, "tripCost": 160, "riderSeats": 3, "feeFree": true, "expect": 0 },
+    { "name": "cash 44 paid 45 -> 4", "contribution": 44, "share": 45, "tripCost": 160, "riderSeats": 3, "feeFree": false, "expect": 4 },
+    { "name": "instapay 38 in 4-seat -> trimmed 2", "contribution": 38, "share": 38, "tripCost": 160, "riderSeats": 4, "feeFree": false, "expect": 2 },
+    { "name": "cash 38 paid 35 in 4-seat -> 4", "contribution": 38, "share": 35, "tripCost": 160, "riderSeats": 4, "feeFree": false, "expect": 4 },
+    { "name": "share = equal share -> 0", "contribution": 24, "share": 24, "tripCost": 96, "riderSeats": 4, "feeFree": false, "expect": 0 },
+    { "name": "cash 24 paid 20 -> 2", "contribution": 24, "share": 20, "tripCost": 96, "riderSeats": 4, "feeFree": false, "expect": 2 }
+  ]
+}

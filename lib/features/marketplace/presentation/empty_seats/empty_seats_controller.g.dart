@@ -9,13 +9,15 @@ part of 'empty_seats_controller.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// The free seats on [leg] for the viewing rider (A). Re-read after every
-/// booking so a taken seat leaves the list.
+/// booking so a taken seat leaves the list, and when the rider's way of paying
+/// changes, since it sets every price line (T104 F6).
 
 @ProviderFor(seatOffers)
 final seatOffersProvider = SeatOffersFamily._();
 
 /// The free seats on [leg] for the viewing rider (A). Re-read after every
-/// booking so a taken seat leaves the list.
+/// booking so a taken seat leaves the list, and when the rider's way of paying
+/// changes, since it sets every price line (T104 F6).
 
 final class SeatOffersProvider
     extends
@@ -26,7 +28,8 @@ final class SeatOffersProvider
         >
     with $FutureModifier<List<SeatOffer>>, $FutureProvider<List<SeatOffer>> {
   /// The free seats on [leg] for the viewing rider (A). Re-read after every
-  /// booking so a taken seat leaves the list.
+  /// booking so a taken seat leaves the list, and when the rider's way of paying
+  /// changes, since it sets every price line (T104 F6).
   SeatOffersProvider._({
     required SeatOffersFamily super.from,
     required Leg super.argument,
@@ -71,10 +74,11 @@ final class SeatOffersProvider
   }
 }
 
-String _$seatOffersHash() => r'2a5276688394e488cc2b4c03dbf4d40ab62ee4c2';
+String _$seatOffersHash() => r'43432f25375c91db4b7bb4e057d933e9d49abc30';
 
 /// The free seats on [leg] for the viewing rider (A). Re-read after every
-/// booking so a taken seat leaves the list.
+/// booking so a taken seat leaves the list, and when the rider's way of paying
+/// changes, since it sets every price line (T104 F6).
 
 final class SeatOffersFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<SeatOffer>>, Leg> {
@@ -88,7 +92,8 @@ final class SeatOffersFamily extends $Family
       );
 
   /// The free seats on [leg] for the viewing rider (A). Re-read after every
-  /// booking so a taken seat leaves the list.
+  /// booking so a taken seat leaves the list, and when the rider's way of paying
+  /// changes, since it sets every price line (T104 F6).
 
   SeatOffersProvider call(Leg leg) =>
       SeatOffersProvider._(argument: leg, from: this);
@@ -139,4 +144,4 @@ final class MyBookingsProvider
   }
 }
 
-String _$myBookingsHash() => r'3f40fd4f493c94754a8bfcc3f3077a1df62a6e88';
+String _$myBookingsHash() => r'40acfc008d5a3c75ec99457fbca95f6ea141937a';

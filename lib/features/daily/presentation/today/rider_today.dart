@@ -375,7 +375,7 @@ class _Tiles extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final group = view.group!;
-    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
+    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.perTrip;
     final price = SeatPrice.of(group.price, tripCost: group.tripCost, riderSeats: group.riderSeats, mode: mode);
     final ret = day.leg(Leg.ret);
     return IntrinsicHeight(
@@ -393,7 +393,7 @@ class _Tiles extends ConsumerWidget {
             child: GooraStatTile(
               key: const Key('pay-tile'),
               label: l10n.payPerTrip,
-              value: l10n.egpAmount(price.payable),
+              value: l10n.egpAmount(price.total),
               caption: l10n.priceLine(price),
             ),
           ),

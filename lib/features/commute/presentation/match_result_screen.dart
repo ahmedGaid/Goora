@@ -68,7 +68,7 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
     final from = l10n.area(outcome.profile.home!.area);
     final to = l10n.area(g.destination);
     final secondary = AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
-    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
+    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.perTrip;
     final priceText = viewerIsDriver
         ? l10n.priceDriver(g.price)
         : l10n.priceLine(SeatPrice.of(g.price, tripCost: g.tripCost, riderSeats: g.riderSeats, mode: mode));

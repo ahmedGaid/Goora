@@ -100,9 +100,9 @@ abstract final class MarketSeed {
     );
   }
 
-  /// The wallet quote a seeded request's rider was given.
+  /// The per-trip quote a seeded request's rider was given.
   static SeatPrice quote(int contribution) =>
-      SeatPrice.of(contribution, tripCost: tripCost, riderSeats: riderSeats, mode: PricingMode.wallet);
+      SeatPrice.of(contribution, tripCost: tripCost, riderSeats: riderSeats, mode: PricingMode.perTrip);
 
   // -------------------------------------------------------------- offers
 

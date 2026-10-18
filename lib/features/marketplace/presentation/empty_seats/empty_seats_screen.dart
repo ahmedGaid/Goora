@@ -15,7 +15,6 @@ import '../../../../core/widgets/goora_pill.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
-import '../../../wallet/presentation/wallet/top_up_sheet.dart';
 import '../../../wallet/presentation/wallet/wallet_controller.dart';
 import '../../data/providers.dart';
 import '../../domain/booking.dart';
@@ -77,23 +76,15 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
         final next = '${Routes.emptySeats}?leg=${_leg.name}&seat=${Uri.encodeQueryComponent(seatKey(offer))}';
         context.push('${Routes.payMethod}?next=${Uri.encodeQueryComponent(next)}');
         return;
-      case BookTopUp(:final gap):
-        _notice = _Notice.topUp(gap);
+      case BookOwesDriver(:final amount, :final driverFirstName):
+        _notice = _Notice.owesDriver(amount, driverFirstName);
       case SeatTaken():
         ref.invalidate(seatOffersProvider);
         _notice = const _Notice.taken();
       case AlreadyRiding():
         _notice = const _Notice.alreadyRiding();
-      case PaymentFailed():
-        _notice = const _Notice.payFailed();
     }
     setState(() => _busy = false);
-  }
-
-  Future<void> _topUp() async {
-    await showTopUpSheet(context);
-    if (!mounted) return;
-    setState(() => _notice = null);
   }
 
   @override
@@ -155,13 +146,11 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
   }
 
   Widget _noticeBanner(AppLocalizations l10n, _Notice n) => switch (n.kind) {
-        _NoticeKind.topUp => GooraBanner(
-            key: const Key('notice-top-up'),
+        _NoticeKind.owesDriver => GooraBanner(
+            key: const Key('notice-owes-driver'),
             kind: GooraBannerKind.warning,
-            title: l10n.topUpFirst(n.gap),
-            body: l10n.needsTopUpBody(n.gap),
-            actionLabel: l10n.actTopUp,
-            onAction: _topUp,
+            title: l10n.owesDriver(n.amount, n.name),
+            body: l10n.owesDriverBody(n.name),
           ),
         _NoticeKind.taken => GooraBanner(
             key: const Key('notice-taken'),
@@ -175,25 +164,21 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
             title: l10n.alreadyRiding,
             body: '',
           ),
-        _NoticeKind.payFailed => GooraBanner(
-            key: const Key('notice-pay-failed'),
-            kind: GooraBannerKind.warning,
-            title: l10n.seatPayFailed,
-            body: '',
-          ),
       };
 }
 
-enum _NoticeKind { topUp, taken, alreadyRiding, payFailed }
+enum _NoticeKind { owesDriver, taken, alreadyRiding }
 
 final class _Notice {
-  const _Notice.topUp(this.gap) : kind = _NoticeKind.topUp;
-  const _Notice.taken() : kind = _NoticeKind.taken, gap = 0;
-  const _Notice.alreadyRiding() : kind = _NoticeKind.alreadyRiding, gap = 0;
-  const _Notice.payFailed() : kind = _NoticeKind.payFailed, gap = 0;
+  const _Notice.owesDriver(this.amount, this.name) : kind = _NoticeKind.owesDriver;
+  const _Notice.taken() : kind = _NoticeKind.taken, amount = 0, name = '';
+  const _Notice.alreadyRiding() : kind = _NoticeKind.alreadyRiding, amount = 0, name = '';
 
   final _NoticeKind kind;
-  final int gap;
+
+  /// owesDriver only: what is owed and to whom (first name, 007 FR-018).
+  final int amount;
+  final String name;
 }
 
 class _List extends ConsumerWidget {

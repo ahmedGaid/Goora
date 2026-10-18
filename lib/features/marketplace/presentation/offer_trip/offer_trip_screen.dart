@@ -117,7 +117,7 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
       _form.contribution,
       tripCost: MarketSeed.tripCost,
       riderSeats: _form.seats,
-      mode: PricingMode.wallet,
+      mode: PricingMode.perTrip,
     );
     final reason = check == null ? null : _reason(l10n, check);
     return Column(

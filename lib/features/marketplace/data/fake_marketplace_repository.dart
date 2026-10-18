@@ -23,8 +23,8 @@ import '../../daily/domain/trust.dart';
 import '../../daily/domain/trust_repository.dart';
 import '../../wallet/domain/done_one_off.dart';
 import '../../wallet/domain/payment_method.dart';
-import '../../wallet/domain/payment_provider.dart';
 import '../../wallet/domain/seat_price.dart';
+import '../../wallet/domain/share.dart';
 import '../../wallet/domain/wallet_repository.dart';
 import '../domain/anonymous_rider.dart';
 import '../domain/booking.dart';
@@ -251,6 +251,9 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         riderSeats: trip.riderSeats,
         riderId: b.riderId,
         driverId: trip.driverId,
+        riderName: b.riderName,
+        driverName: trip.driverName,
+        end: trip.end,
       ));
     }
     return done;
@@ -277,6 +280,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     if (o == null) return null;
     return (
       driverId: o.driverId,
+      driverName: MarketSeed.driverById(o.driverId)?.firstName ?? o.driverId,
       tripCost: o.tripCost,
       riderSeats: o.riderSeats,
       start: WallTime(o.date, o.departure),
@@ -287,8 +291,10 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   _TripInfo? _groupTrip(String groupId, Booking b) {
     final g = _catalog.byId(groupId);
     if (g == null) return null;
+    final driver = g.driverFor(b.leg);
     return (
-      driverId: g.driverFor(b.leg)?.id ?? '',
+      driverId: driver?.id ?? '',
+      driverName: driver?.firstName ?? '',
       tripCost: g.tripCost,
       riderSeats: g.riderSeats,
       start: WallTime(b.date, g.timeFor(b.leg)),
@@ -307,15 +313,16 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final plan = await w.getPlan(me);
     final covered = plan != null && plan.coversDate(now.date);
     final mode = PricingMode.of(
-      method: data.method,
       plan: plan,
       today: now.date,
-      cashAvailable: data.cashTrial?.available ?? false,
+      trialAvailable: data.cashTrial?.available ?? false,
     );
     return _Rider(
       profile: profile,
       mode: mode,
+      method: data.method ?? PaymentMethod.cash,
       hasArrangement: data.method != null || covered,
+      openShares: data.shares,
       balance: data.balance,
       // A paid-up plan or a company one: may take a seat a one-off booker could still lose (US6).
       subscriber: mode == PricingMode.subscribed || mode == PricingMode.company,
@@ -535,35 +542,30 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       tripCost: basis.tripCost,
       riderSeats: basis.riderSeats,
       mode: rider.mode,
+      method: rider.method,
     );
-    final check = BookingGate.check(
-      hasArrangement: rider.hasArrangement,
-      mode: rider.mode,
-      cashOffered: price.cashOffered,
-      balance: rider.balance,
-      price: price,
-    );
+    final check = BookingGate.check(hasArrangement: rider.hasArrangement, openShares: rider.openShares);
     switch (check.kind) {
+      case BookingCheckKind.owesDriver:
+        return BookOwesDriver(check.amount, check.driverFirstName);
       case BookingCheckKind.needsMethod:
         return const BookNeedsMethod();
-      case BookingCheckKind.topUp:
-        return BookTopUp(check.gap);
       case BookingCheckKind.ok:
         break;
     }
 
+    // Only Goora's fee is recorded; the share is paid to the driver (007 R5).
     final id = _nextBookingId(all);
-    final cash = rider.mode == PricingMode.cash && price.cashOffered;
+    final cash = rider.mode == PricingMode.trial;
     if (!cash) {
-      final paid = await ledger().debitSeat(
+      await ledger().debitSeat(
         me,
         bookingId: id,
         rideId: basis.rideId,
-        total: price.total,
         fee: price.fee,
+        share: price.share,
         date: offer.date,
       );
-      if (paid == PaymentResult.failure) return const PaymentFailed();
     }
 
     final booking = Booking(
@@ -580,7 +582,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       rideId: basis.rideId,
       price: price,
       paidBy: cash ? PaidBy.cash : (rider.subscriber ? PaidBy.plan : PaidBy.wallet),
-      paid: cash ? 0 : price.total,
+      paid: cash ? 0 : price.fee,
       bookedAt: now,
       isSubscriber: rider.subscriber,
     );
@@ -611,7 +613,9 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
 
     // 003's rule on the contribution only; the fee always goes back (R7).
     final owed = AttendanceRules.cancelCharge(b.date, now, b.price.contribution);
-    final refund = BookingRefund.amount(paidTotal: b.paid, fee: b.price.fee, owed: owed);
+    // The owed share is the driver's, paid directly (007 R5): only a 005 row
+    // that still holds the share (paid above the fee) has it kept back.
+    final refund = BookingRefund.amount(paidTotal: b.paid, fee: b.price.fee, owed: b.paid > b.price.fee ? owed : 0);
     if (refund > 0) {
       await ledger().refundSeat(me, bookingId: b.id, rideId: b.rideId, amount: refund, date: b.date);
     }
@@ -987,6 +991,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         tripCost: MarketSeed.tripCost,
         riderSeats: MarketSeed.riderSeats,
         mode: rider.mode,
+        method: rider.method,
       );
 
   @override
@@ -996,18 +1001,12 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     if (draft.repeat == Repeat.daily && await _daily.myGroup() != null) return const DailyNotAllowed();
 
     final price = _requestPrice(rider);
-    final check = BookingGate.check(
-      hasArrangement: rider.hasArrangement,
-      mode: rider.mode,
-      cashOffered: price.cashOffered,
-      balance: rider.balance,
-      price: price,
-    );
+    final check = BookingGate.check(hasArrangement: rider.hasArrangement, openShares: rider.openShares);
     switch (check.kind) {
+      case BookingCheckKind.owesDriver:
+        return PostOwesDriver(check.amount, check.driverFirstName);
       case BookingCheckKind.needsMethod:
         return const PostNeedsMethod();
-      case BookingCheckKind.topUp:
-        return PostTopUp(check.gap);
       case BookingCheckKind.ok:
         break;
     }
@@ -1178,7 +1177,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final fit = DriverDayRules.fit(day.trips, _candidate(r, day.leadsGroup));
     final name = _seedFirstName(r.riderId);
     final all = _bookings();
-    final paid = r.price.cash != null && r.price.mode == PricingMode.cash ? 0 : r.price.total;
+    final paid = r.price.mode == PricingMode.trial ? 0 : r.price.fee;
     final paidBy = paid == 0 ? PaidBy.cash : PaidBy.wallet;
 
     switch (fit.kind) {
@@ -1317,13 +1316,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final r = mine.last;
 
     final rider = await _rider(now);
-    final check = BookingGate.check(
-      hasArrangement: rider.hasArrangement,
-      mode: rider.mode,
-      cashOffered: r.price.cashOffered,
-      balance: rider.balance,
-      price: r.price,
-    );
+    final check = BookingGate.check(hasArrangement: rider.hasArrangement, openShares: rider.openShares);
     if (check.kind != BookingCheckKind.ok) {
       await _saveRequest(r.copyWith(status: RequestStatus.withdrawn));
       return const DemoDone();
@@ -1376,20 +1369,16 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       origin: OfferOrigin.fromRequest,
     );
     final id = _nextBookingId(all);
-    final cash = r.price.mode == PricingMode.cash && r.price.cashOffered;
+    final cash = r.price.mode == PricingMode.trial;
     if (!cash) {
-      final paid = await ledger().debitSeat(
+      await ledger().debitSeat(
         me,
         bookingId: id,
         rideId: Booking.offerRideId(trip.id),
-        total: r.price.total,
         fee: r.price.fee,
+        share: r.price.share,
         date: r.date,
       );
-      if (paid == PaymentResult.failure) {
-        await _saveRequest(r.copyWith(status: RequestStatus.withdrawn));
-        return const DemoDone();
-      }
     }
     await _saveOffer(trip);
     await _writeList(
@@ -1404,7 +1393,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
           now: now,
           riderName: rider.profile.firstName,
           paidBy: cash ? PaidBy.cash : (rider.subscriber ? PaidBy.plan : PaidBy.wallet),
-          paid: cash ? 0 : r.price.total,
+          paid: cash ? 0 : r.price.fee,
           subscriber: rider.subscriber,
         ),
       ],
@@ -1508,7 +1497,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       rideId: Booking.offerRideId(o.id),
       price: price,
       paidBy: PaidBy.wallet,
-      paid: price.total,
+      paid: price.fee,
       bookedAt: now,
       isSubscriber: false,
     );
@@ -1556,21 +1545,29 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
 
 }
 
-typedef _TripInfo = ({String driverId, int tripCost, int riderSeats, WallTime start, WallTime end});
+typedef _TripInfo = ({String driverId, String driverName, int tripCost, int riderSeats, WallTime start, WallTime end});
 
 /// The signed-in rider as the marketplace prices and gates them.
 final class _Rider {
   const _Rider({
     required this.profile,
     required this.mode,
+    required this.method,
     required this.hasArrangement,
+    required this.openShares,
     required this.balance,
     required this.subscriber,
   });
 
   final TrustProfile profile;
   final PricingMode mode;
+
+  /// How they pay the driver (cash / InstaPay).
+  final PaymentMethod method;
   final bool hasArrangement;
+
+  /// Shares a driver hasn't confirmed; an open debt blocks booking (007 FR-005).
+  final List<Share> openShares;
   final int balance;
   final bool subscriber;
 }
