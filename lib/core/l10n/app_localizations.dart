@@ -761,7 +761,7 @@ abstract class AppLocalizations {
   /// No description provided for @fRegRider.
   ///
   /// In ar, this message translates to:
-  /// **'مجموعة ثابتة لمشوارك اليومي. أول شهر مجاني.'**
+  /// **'مجموعة ثابتة لمشوارك اليومي. أول 5 مشاوير من غير رسوم جورة.'**
   String get fRegRider;
 
   /// No description provided for @fOnceRider.

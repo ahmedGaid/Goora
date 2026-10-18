@@ -358,7 +358,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get freqSub => 'تقدر تعمل التاني في أي وقت بعدين.';
 
   @override
-  String get fRegRider => 'مجموعة ثابتة لمشوارك اليومي. أول شهر مجاني.';
+  String get fRegRider =>
+      'مجموعة ثابتة لمشوارك اليومي. أول 5 مشاوير من غير رسوم جورة.';
 
   @override
   String get fOnceRider => 'احجز كرسي فاضي أو انشر مشوارك. من غير اشتراك.';

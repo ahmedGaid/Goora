@@ -1009,7 +1009,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   @override
   Future<PostResult> post(TripDraft draft, {required WallTime now}) async {
     final rider = await _rider(now);
-    if (!rider.hasArrangement) return const PostNeedsMethod();
+    // The gate below orders debt → overdue fees → ID → method (009 FR-008).
     if (draft.repeat == Repeat.daily && await _daily.myGroup() != null) return const DailyNotAllowed();
 
     final price = _requestPrice(rider);

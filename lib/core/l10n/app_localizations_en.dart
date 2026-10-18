@@ -359,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fRegRider =>
-      'A fixed group for your daily commute. First month free.';
+      'A fixed group for your daily commute. Your first 5 trips have no Goora fee.';
 
   @override
   String get fOnceRider =>
