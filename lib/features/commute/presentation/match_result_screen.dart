@@ -50,6 +50,15 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
         openShares: await ref.read(myOpenSharesProvider.future),
         feeOverdue: wallet.feeOverdue ? wallet.owed : 0,
       );
+      // 009 FR-002: a rider's ID is checked before their first trip.
+      if (!(await ref.read(trustRepositoryProvider).riderIdStatus()).ok &&
+          check.kind != BookingCheckKind.owesDriver &&
+          check.kind != BookingCheckKind.feeOverdue) {
+        if (!mounted) return;
+        setState(() => _joining = false);
+        context.push(Routes.idCheckThen(Routes.match));
+        return;
+      }
       if (check.kind == BookingCheckKind.owesDriver || check.kind == BookingCheckKind.feeOverdue) {
         if (!mounted) return;
         final l10n = AppLocalizations.of(context);

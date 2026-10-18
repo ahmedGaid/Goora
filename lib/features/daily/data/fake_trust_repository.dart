@@ -26,7 +26,10 @@ final class FakeTrustRepository implements TrustRepository {
   /// Debug: license and vehicle read as verified whatever the role (005 R14).
   static const docsVerifiedKey = 'trust.driverDocsVerified';
 
-  static const allKeys = [privacyKey, contactsKey, sosKey, docsPendingKey, docsVerifiedKey];
+  /// 009: the rider's ID check (a [RiderIdStatus] name).
+  static const riderIdKey = 'trust.riderId';
+
+  static const allKeys = [privacyKey, contactsKey, sosKey, docsPendingKey, docsVerifiedKey, riderIdKey];
 
   final SharedPreferences _prefs;
   final Profile? Function() _person;
@@ -36,10 +39,17 @@ final class FakeTrustRepository implements TrustRepository {
   Future<TrustProfile> profile() async {
     final p = _person()!;
     final verified = _prefs.getBool(docsVerifiedKey) ?? false;
-    final items = DailySeed.verification(
-      driver: verified || p.role == Role.driver,
-      docsPending: !verified && (_prefs.getBool(docsPendingKey) ?? false),
-    );
+    final driver = verified || p.role == Role.driver;
+    final id = driver ? RiderIdStatus.verified : await riderIdStatus();
+    final items = [
+      for (final i in DailySeed.verification(
+        driver: driver,
+        docsPending: !verified && (_prefs.getBool(docsPendingKey) ?? false),
+      ))
+        i.kind == VerificationKind.nationalId && !id.ok
+            ? const VerificationItem(VerificationKind.nationalId, VerificationStatus.notVerified)
+            : i,
+    ];
     final workEmail = items.any((i) => i.kind == VerificationKind.workEmail && i.status == VerificationStatus.verified);
     return TrustProfile(
       firstName: p.firstName,
@@ -53,6 +63,22 @@ final class FakeTrustRepository implements TrustRepository {
       privacy: PrivacyPreference.values.asNameMap()[_prefs.getString(privacyKey)] ?? PrivacyPreference.verifiedUsers,
       company: workEmail ? DailySeed.company : null,
     );
+  }
+
+  /// R1: sign-up writes `notVerified` (LocalProfileRepository.save); a
+  /// missing status is a person who signed up before 009, whose ID was
+  /// checked then, so it reads as verified.
+  @override
+  Future<RiderIdStatus> riderIdStatus() async {
+    if (_person()?.role == Role.driver) return RiderIdStatus.verified;
+    final raw = _prefs.getString(riderIdKey);
+    return raw == null ? RiderIdStatus.verified : RiderIdStatus.values.byName(raw);
+  }
+
+  @override
+  Future<RiderIdStatus> submitRiderId() async {
+    await _prefs.setString(riderIdKey, RiderIdStatus.verified.name);
+    return RiderIdStatus.verified;
   }
 
   @override

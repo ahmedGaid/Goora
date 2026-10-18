@@ -72,6 +72,11 @@ class _EmptySeatsScreenState extends ConsumerState<EmptySeatsScreen> {
           _busy = false;
         });
         return;
+      case BookNeedsId():
+        setState(() => _busy = false);
+        final back = '${Routes.emptySeats}?leg=${_leg.name}&seat=${Uri.encodeQueryComponent(seatKey(offer))}';
+        context.push(Routes.idCheckThen(back));
+        return;
       case BookNeedsMethod():
         setState(() => _busy = false);
         final next = '${Routes.emptySeats}?leg=${_leg.name}&seat=${Uri.encodeQueryComponent(seatKey(offer))}';

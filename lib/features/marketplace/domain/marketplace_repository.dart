@@ -154,6 +154,11 @@ final class BookFeeOverdue extends BookResult {
   final int amount;
 }
 
+/// The rider's ID isn't checked yet (009 FR-002); nothing was booked.
+final class BookNeedsId extends BookResult {
+  const BookNeedsId();
+}
+
 /// No free seat left at the moment of writing (SC-006).
 final class SeatTaken extends BookResult {
   const SeatTaken();
@@ -239,6 +244,11 @@ final class PostOwesDriver extends PostResult {
 final class PostFeeOverdue extends PostResult {
   const PostFeeOverdue(this.amount);
   final int amount;
+}
+
+/// The rider's ID isn't checked yet (009 FR-002); nothing was posted.
+final class PostNeedsId extends PostResult {
+  const PostNeedsId();
 }
 
 /// The rider is already in a daily group (R10).

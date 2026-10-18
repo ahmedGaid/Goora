@@ -605,5 +605,12 @@
   "bundleBuy": "Buy for 75 EGP",
   "actSettlement": "Fees paid",
   "actBundle": "Trip bundle",
-  "actBundleTrip": "Bundle trip"
+  "actBundleTrip": "Bundle trip",
+  "idCheckTitle": "Check your ID",
+  "idCheckSub": "We need to check your ID before your first trip, for everyone's safety.",
+  "idFront": "Photograph the front",
+  "idBack": "Photograph the back",
+  "idCaptured": "Captured",
+  "idSubmit": "Send for checking",
+  "idPending": "We're checking your ID. You can book as soon as it's confirmed."
 }

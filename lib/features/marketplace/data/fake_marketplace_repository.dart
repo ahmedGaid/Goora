@@ -324,6 +324,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       hasArrangement: data.method != null || covered,
       openShares: data.shares,
       feeOverdue: data.feeOverdue ? data.owed : 0,
+      idOk: (await trust.riderIdStatus()).ok,
       balance: data.balance,
       // A paid-up plan or a company one: may take a seat a one-off booker could still lose (US6).
       subscriber: mode == PricingMode.subscribed || mode == PricingMode.company,
@@ -548,12 +549,17 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       method: rider.method,
     );
     final check = BookingGate.check(
-        hasArrangement: rider.hasArrangement, openShares: rider.openShares, feeOverdue: rider.feeOverdue);
+        hasArrangement: rider.hasArrangement,
+        openShares: rider.openShares,
+        feeOverdue: rider.feeOverdue,
+        idOk: rider.idOk);
     switch (check.kind) {
       case BookingCheckKind.owesDriver:
         return BookOwesDriver(check.amount, check.driverFirstName);
       case BookingCheckKind.feeOverdue:
         return BookFeeOverdue(check.amount);
+      case BookingCheckKind.needsId:
+        return const BookNeedsId();
       case BookingCheckKind.needsMethod:
         return const BookNeedsMethod();
       case BookingCheckKind.ok:
@@ -1008,12 +1014,17 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
 
     final price = _requestPrice(rider);
     final check = BookingGate.check(
-        hasArrangement: rider.hasArrangement, openShares: rider.openShares, feeOverdue: rider.feeOverdue);
+        hasArrangement: rider.hasArrangement,
+        openShares: rider.openShares,
+        feeOverdue: rider.feeOverdue,
+        idOk: rider.idOk);
     switch (check.kind) {
       case BookingCheckKind.owesDriver:
         return PostOwesDriver(check.amount, check.driverFirstName);
       case BookingCheckKind.feeOverdue:
         return PostFeeOverdue(check.amount);
+      case BookingCheckKind.needsId:
+        return const PostNeedsId();
       case BookingCheckKind.needsMethod:
         return const PostNeedsMethod();
       case BookingCheckKind.ok:
@@ -1326,7 +1337,10 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
 
     final rider = await _rider(now);
     final check = BookingGate.check(
-        hasArrangement: rider.hasArrangement, openShares: rider.openShares, feeOverdue: rider.feeOverdue);
+        hasArrangement: rider.hasArrangement,
+        openShares: rider.openShares,
+        feeOverdue: rider.feeOverdue,
+        idOk: rider.idOk);
     if (check.kind != BookingCheckKind.ok) {
       await _saveRequest(r.copyWith(status: RequestStatus.withdrawn));
       return const DemoDone();
@@ -1566,6 +1580,7 @@ final class _Rider {
     required this.hasArrangement,
     required this.openShares,
     required this.feeOverdue,
+    required this.idOk,
     required this.balance,
     required this.subscriber,
   });
@@ -1582,6 +1597,9 @@ final class _Rider {
 
   /// Goora's owed fees when overdue (008 FR-005), else 0.
   final int feeOverdue;
+
+  /// The rider's ID is checked (009 FR-002).
+  final bool idOk;
   final int balance;
   final bool subscriber;
 }

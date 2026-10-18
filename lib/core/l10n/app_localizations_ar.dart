@@ -2250,4 +2250,26 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get actBundleTrip => 'مشوار من الباقة';
+
+  @override
+  String get idCheckTitle => 'التأكد من البطاقة';
+
+  @override
+  String get idCheckSub =>
+      'محتاجين نتأكد من بطاقتك قبل أول مشوار، عشان أمان الكل.';
+
+  @override
+  String get idFront => 'صوّر وش البطاقة';
+
+  @override
+  String get idBack => 'صوّر ضهر البطاقة';
+
+  @override
+  String get idCaptured => 'اتصوّرت';
+
+  @override
+  String get idSubmit => 'ابعتها للتأكيد';
+
+  @override
+  String get idPending => 'بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.';
 }

@@ -103,5 +103,5 @@ and vehicle before publishing a trip (005).
 ## Assumptions
 
 - Fake capture (no camera plugin); a real camera/ID provider is a later feature.
-- "Legacy rider" = any rider whose prefs predate this change; the fakes treat a missing status
-  as verified only when a `wallet.since` (payment set up) exists, i.e. they have used the app.
+- "Legacy rider" = anyone who signed up before this change: sign-up now writes "not verified",
+  so a missing status means an older account, read as verified.

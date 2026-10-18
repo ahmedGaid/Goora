@@ -7,6 +7,16 @@ enum VerificationKind { phone, nationalId, workEmail, license, vehicle }
 
 enum VerificationStatus { verified, notVerified, notNeeded }
 
+/// A rider's national ID (009): checked before the first trip, not at
+/// signup. `pending` = submitted, waiting for the check; actions stay held.
+enum RiderIdStatus {
+  notVerified,
+  pending,
+  verified;
+
+  bool get ok => this == verified;
+}
+
 final class VerificationItem {
   const VerificationItem(this.kind, this.status);
 
