@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/core/time/calendar_date.dart';
+import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_pill.dart';
 import 'package:goora/core/widgets/goora_route_map.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
@@ -17,7 +19,9 @@ import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
 import 'package:goora/features/wallet/data/providers.dart';
+import 'package:goora/features/wallet/domain/direct_pay.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
+import 'package:goora/features/wallet/domain/share.dart';
 
 import '../helpers/pump_app.dart';
 
@@ -257,6 +261,37 @@ void main() {
           await _scrollTo(tester, find.text(l.matchPercent(alt.score)));
         }
         await _accessible(tester);
+      });
+
+      testWidgets('007 FR-005: a rider who owes a driver cannot join; the debt is named', (tester) async {
+        final outcome = _outcome(driver: false);
+        await pumpScreen(
+          tester,
+          const MatchResultScreen(),
+          locale: locale,
+          session: _session(Role.rider),
+          overrides: [
+            lastMatchProvider.overrideWith(() => _Seeded(outcome)),
+            myOpenSharesProvider.overrideWith((ref) async => [
+                  Share(
+                    rideId: 'r1',
+                    riderId: 'me',
+                    driverId: 'ahmed',
+                    otherFirstName: 'Ahmed',
+                    amount: 40,
+                    method: PaymentMethod.cash,
+                    tripEnd: WallTime(CalendarDate(2026, 10, 5), const Clock.hm(8, 5)),
+                    status: ShareStatus.notReceived,
+                  ),
+                ]),
+          ],
+        );
+        final join = find.byKey(const Key('join-group'));
+        await tester.ensureVisible(join);
+        await tester.tap(join);
+        await tester.pumpAndSettle();
+        expect(find.text(l.owesDriver(40, 'Ahmed')), findsOneWidget);
+        expect(find.byType(MatchResultScreen), findsOneWidget, reason: 'not joined');
       });
 
       testWidgets('tapping an alternative swaps it into the shown result', (tester) async {

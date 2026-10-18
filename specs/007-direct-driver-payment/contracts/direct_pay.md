@@ -65,3 +65,14 @@ else `ok`. `topUp` removed.
 | instapayHandleLabel | حساب InstaPay بتاعك | Your InstaPay handle |
 | copyHandle | انسخ | Copy |
 | cashOnly | كاش بس | Cash only |
+
+## As built (2026-10-19)
+
+- Added `Future<Share?> driverShareOn(String rideId, String riderId)` (driver Today row).
+- Providers: `driverShareProvider(rideId, riderId)`, `myOpenSharesProvider`,
+  `riderPayMethodProvider`, `driverInstapayProvider(driverId)`.
+- Guards on open debt: Book, Post, demo accept (`BookOwesDriver` / `PostOwesDriver` /
+  withdrawn request) and "Join this group" on match result (snackbar with the debt).
+- Copy keys as built also include `sharePending`, `paymentsTitle`, `paymentsEmpty`, `feeOwed`,
+  `feeOwedBody`, `instapayHandleHint`, `instapaySave`, `copiedHandle`, `priceInstapay`,
+  `payInstapaySub`; existing 004 keys were re-worded for direct pay (see the ARB diff).

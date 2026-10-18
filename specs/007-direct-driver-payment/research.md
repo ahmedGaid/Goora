@@ -99,3 +99,24 @@
 
 - **Decision**: none in this feature. 004/005 had no wallet tables; the server side stays the twin
   rules + vectors. A `share_marks` table is listed for the backend feature.
+
+## Addenda from implementation (2026-10-19)
+
+- **R4a — fee base is untrimmed.** `PricingService.serviceFee` already trims against the
+  contribution, so `DirectPay.fee` takes the plain 10% (half up) and trims only against the share
+  actually paid. Cash 38 → 35 in a 160/4 car pays 35 + 4 = 39 ≤ 40; InstaPay 38 pays 38 + 2.
+  Sweep test (`direct_pay_cap_sweep_test.dart`): every allowed price, both methods, cap holds.
+- **R6a — 004 wallet riders keep out of the trial.** A stored legacy `wallet` method (or the
+  `wallet.noTrial.<id>` flag set when such a rider picks a new method) means the rider already
+  gave up the cash trial in 004, so they pay the fee from trip 1 and see no trial card.
+- **R5a — refunds are Goora's fee only.** A cancelled or reclaimed seat refunds what Goora took
+  (the fee); a late-cancel share is the driver's, paid directly. 005 rows that still hold the
+  share keep the old "owed is kept back" rule.
+- **R7a — seeded InstaPay handle.** `WalletSeed.instapayHandles` gives Ahmed a handle so a rider
+  sees one to copy in the demo; a driver's own saved handle wins.
+- **R8a — seeded mark still shows.** A driver's mark on a ride neither side knows (the seeded
+  Youssef share) is listed in the driver's payments with its seeded first name.
+- **Seam added:** `WalletRepository.driverShareOn(rideId, riderId)` for the driver Today row;
+  `riderPayMethodProvider` so price lines read cash vs InstaPay.
+- **Not built here:** quickstart device walkthrough (no emulator run this session); support
+  tooling for flagged riders; real InstaPay link.
