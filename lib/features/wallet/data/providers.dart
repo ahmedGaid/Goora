@@ -46,6 +46,14 @@ Future<Share?> driverShare(Ref ref, String rideId, String riderId) =>
 Future<List<Share>> myOpenShares(Ref ref) =>
     ref.watch(walletRepositoryProvider).openShares(ref.watch(dailyCommuteRepositoryProvider).meId);
 
+/// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+/// price lines read it for the share (007 R4).
+@riverpod
+Future<PaymentMethod> riderPayMethod(Ref ref) async {
+  final repo = ref.watch(walletRepositoryProvider);
+  return await repo.getMethod(ref.watch(dailyCommuteRepositoryProvider).meId) ?? PaymentMethod.cash;
+}
+
 /// The signed-in rider's current price mode (FR-004). Price lines watch this;
 /// screens that change the arrangement invalidate it.
 @riverpod

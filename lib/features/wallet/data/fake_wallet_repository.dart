@@ -53,6 +53,10 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
   static String methodKey(String personId) => 'wallet.method.$personId';
   static String instapayKey(String driverId) => 'wallet.instapay.$driverId';
 
+  /// Set for a 004 rider who chose "wallet" and so gave up the cash trial
+  /// (004 v2 US1): they stay out of the fee-free trial (007 research R6).
+  static String noTrialKey(String personId) => 'wallet.noTrial.$personId';
+
   /// The day the rider set up payment; trips before it are not billed (003's
   /// seeded history is demo standing, not trips the rider owes for).
   static String sinceKey(String personId) => 'wallet.since.$personId';
@@ -152,8 +156,14 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
   @override
   Future<void> setMethod(String personId, PaymentMethod method) async {
     await _markSince(personId, _now().date);
+    if (_prefs.getString(methodKey(personId)) == _legacyWallet) await _prefs.setBool(noTrialKey(personId), true);
     await _prefs.setString(methodKey(personId), method.name);
   }
+
+  static const _legacyWallet = 'wallet';
+
+  bool _trialForfeited(String personId) =>
+      (_prefs.getBool(noTrialKey(personId)) ?? false) || _prefs.getString(methodKey(personId)) == _legacyWallet;
 
   Future<void> _markSince(String personId, CalendarDate date) async {
     if (!_prefs.containsKey(sinceKey(personId))) await _prefs.setString(sinceKey(personId), date.toIso());
@@ -265,6 +275,22 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
           amount: DirectPay.share(o.contribution, method: method, tripCost: o.tripCost, riderSeats: o.riderSeats),
           method: method,
           tripEnd: _oneOffEnd(o),
+        );
+      });
+    }
+    // A mark on a ride neither side knows (the seeded one) still shows.
+    for (final m in _currentMarks().values) {
+      if (m.driverId != driverId || m.date.isBefore(from)) continue;
+      shares.putIfAbsent('${m.rideId}|${m.riderId}', () {
+        final method = WalletSeed.methods[m.riderId] ?? PaymentMethod.cash;
+        return _share(
+          rideId: m.rideId,
+          riderId: m.riderId,
+          driverId: driverId,
+          otherFirstName: WalletSeed.riderNames[m.riderId] ?? '',
+          amount: m.amount,
+          method: method,
+          tripEnd: WallTime(m.date, const Clock.hm(0, 0)),
         );
       });
     }
@@ -429,6 +455,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     final since = sinceRaw == null ? plan?.startDate?.date : CalendarDate.parse(sinceRaw);
     if (since == null) return const _Derived();
     final payBy = method ?? PaymentMethod.cash;
+    final noTrial = _trialForfeited(ownerId);
     final window = today.addDays(-_window);
     final from = since.isAfter(window) ? since : window;
     final marks = _currentMarks().values.where((m) => m.riderId == ownerId).toList();
@@ -492,7 +519,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
           ? WallTime(item.date, const Clock.hm(0, 0))
           : WallTime(item.date, item.leg == Leg.going ? group!.going : group!.ret);
       final feeFree = plan != null && plan.coversTrip(itemAt);
-      final inTrial = !feeFree && CashTrialPolicy.available(trialDone, strikes);
+      final inTrial = !feeFree && !noTrial && CashTrialPolicy.available(trialDone, strikes);
       final contribution = oneOff?.contribution ?? group!.price;
       final tripCost = oneOff?.tripCost ?? group!.tripCost;
       final riderSeats = oneOff?.riderSeats ?? group!.riderSeats;
@@ -565,7 +592,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     return _Derived(
       entries: entries,
       debits: debits,
-      cashTrial: CashTrialStatus(tripsDone: trialDone, strikes: strikes),
+      cashTrial: noTrial ? null : CashTrialStatus(tripsDone: trialDone, strikes: strikes),
       shares: shares,
     );
   }
@@ -673,7 +700,8 @@ final class _Derived {
 
   /// Goora's fees only — never a driver's share.
   final int debits;
-  final CashTrialStatus cashTrial;
+  /// Null when the rider gave up the trial in 004.
+  final CashTrialStatus? cashTrial;
   final List<Share> shares;
 }
 

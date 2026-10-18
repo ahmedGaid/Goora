@@ -376,7 +376,11 @@ class _Tiles extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final group = view.group!;
     final mode = ref.watch(riderPricingProvider).value ?? PricingMode.perTrip;
-    final price = SeatPrice.of(group.price, tripCost: group.tripCost, riderSeats: group.riderSeats, mode: mode);
+    final price = SeatPrice.of(group.price,
+        tripCost: group.tripCost,
+        riderSeats: group.riderSeats,
+        mode: mode,
+        method: ref.watch(riderPayMethodProvider).value ?? PaymentMethod.cash);
     final ret = day.leg(Leg.ret);
     return IntrinsicHeight(
       child: Row(

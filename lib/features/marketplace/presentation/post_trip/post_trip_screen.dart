@@ -23,6 +23,7 @@ import '../../../commute/presentation/labels.dart';
 import '../../../daily/presentation/labels.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../../wallet/data/providers.dart';
+import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
 import '../../../wallet/presentation/labels.dart';
 import '../../../wallet/presentation/wallet/top_up_sheet.dart';
@@ -152,6 +153,7 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
                 tripCost: MarketSeed.tripCost,
                 riderSeats: MarketSeed.riderSeats,
                 mode: mode,
+                method: ref.watch(riderPayMethodProvider).value ?? PaymentMethod.cash,
               );
         final from = _from ?? s.from;
         final to = _to ?? s.to;

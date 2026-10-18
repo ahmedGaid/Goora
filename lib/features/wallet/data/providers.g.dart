@@ -232,6 +232,53 @@ final class MyOpenSharesProvider
 
 String _$myOpenSharesHash() => r'10790c443ed9845e6dd073393e2eaec569aa224e';
 
+/// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+/// price lines read it for the share (007 R4).
+
+@ProviderFor(riderPayMethod)
+final riderPayMethodProvider = RiderPayMethodProvider._();
+
+/// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+/// price lines read it for the share (007 R4).
+
+final class RiderPayMethodProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PaymentMethod>,
+          PaymentMethod,
+          FutureOr<PaymentMethod>
+        >
+    with $FutureModifier<PaymentMethod>, $FutureProvider<PaymentMethod> {
+  /// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+  /// price lines read it for the share (007 R4).
+  RiderPayMethodProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'riderPayMethodProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$riderPayMethodHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<PaymentMethod> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PaymentMethod> create(Ref ref) {
+    return riderPayMethod(ref);
+  }
+}
+
+String _$riderPayMethodHash() => r'88f020ac6351e010ecf8211e9aa0bbcac5df0098';
+
 /// The signed-in rider's current price mode (FR-004). Price lines watch this;
 /// screens that change the arrangement invalidate it.
 

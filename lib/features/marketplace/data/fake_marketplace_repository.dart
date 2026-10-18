@@ -404,7 +404,8 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         leg: o.leg,
         departure: o.departure,
         freeSeats: free,
-        price: SeatPrice.of(o.contribution, tripCost: o.tripCost, riderSeats: o.riderSeats, mode: rider.mode),
+        price: SeatPrice.of(o.contribution,
+            tripCost: o.tripCost, riderSeats: o.riderSeats, mode: rider.mode, method: rider.method),
       ));
     }
 
@@ -443,7 +444,8 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         leg: leg,
         departure: g.timeFor(leg),
         freeSeats: free,
-        price: SeatPrice.of(g.price, tripCost: g.tripCost, riderSeats: g.riderSeats, mode: rider.mode),
+        price: SeatPrice.of(g.price,
+            tripCost: g.tripCost, riderSeats: g.riderSeats, mode: rider.mode, method: rider.method),
       ));
     }
 

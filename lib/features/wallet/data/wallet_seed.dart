@@ -11,6 +11,9 @@ abstract final class WalletSeed {
     'sara': PaymentMethod.instapay,
   };
 
+  /// First names for seeded marks whose ride isn't in 003's records.
+  static const riderNames = <String, String>{'youssef': 'Youssef', 'sara': 'Sara'};
+
   /// The share Youssef handed over in cash on yesterday's seeded ride.
   static CashMark driverCashMark(String driverId, CalendarDate today) => CashMark(
         rideId: 'seed-ride-1',
