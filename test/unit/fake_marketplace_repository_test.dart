@@ -33,6 +33,7 @@ import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/data/fake_payment_provider.dart';
 import 'package:goora/features/wallet/data/fake_wallet_repository.dart';
 import 'package:goora/features/wallet/domain/activity_entry.dart';
+import 'package:goora/features/wallet/domain/cash_mark.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -78,7 +79,16 @@ Future<_World> _make({
   PaymentMethod? method,
 }) async {
   SharedPreferences.setMockInitialValues({
-    ...memberPrefs(role: role, member: member, gender: gender, withPlan: withPlan, method: method),
+    // In this file an InstaPay rider stands for a 004 "wallet" rider: past the
+    // fee-free trial, so seats carry Goora's fee (007 research R6).
+    ...memberPrefs(
+      role: role,
+      member: member,
+      gender: gender,
+      withPlan: withPlan,
+      method: method,
+      pastTrial: method == PaymentMethod.instapay,
+    ),
     ...extra,
   });
   final prefs = await SharedPreferences.getInstance();
@@ -93,15 +103,17 @@ Future<_World> _make({
     now: clock.call,
     catalog: catalog,
   );
+  late final FakeMarketplaceRepository repo;
   final wallet = FakeWalletRepository(
     prefs,
     daily: daily,
     role: () => role == Role.driver ? MemberRole.driver : MemberRole.rider,
     now: clock.call,
     provider: FakePaymentProvider(shouldFail: () => pay.fails),
+    oneOffs: () => repo.doneOneOffs(),
   );
   final trust = FakeTrustRepository(prefs, person: () => person, now: clock.call);
-  final repo = FakeMarketplaceRepository(
+  repo = FakeMarketplaceRepository(
     prefs,
     catalog: catalog,
     daily: daily,
@@ -114,6 +126,34 @@ Future<_World> _make({
   );
   return _World(repo, daily, prefs, clock, wallet, trust, pay);
 }
+
+/// Khaled's trip earlier today, on which the person rode a trial seat and
+/// Khaled tapped "ماستلمتش" (007 FR-005) — an open debt.
+Future<void> _oweKhaled(_World w) async {
+  final day = w.clock.now.date;
+  final past = _offer('of-owed', date: day, driverId: 'khaled', departure: const Clock.hm(7, 0));
+  List<Object?> read(String key) => jsonDecode(w.prefs.getString(key) ?? '[]') as List;
+  await w.prefs.setString(
+      FakeMarketplaceRepository.offersKey, jsonEncode([...read(FakeMarketplaceRepository.offersKey), past.toJson()]));
+  final owed = _booking('bk-owed',
+      source: const BookingSource.offer('of-owed'),
+      date: day,
+      status: BookingStatus.done,
+      paidBy: PaidBy.cash,
+      riderId: 'me');
+  await w.prefs.setString(
+      FakeMarketplaceRepository.bookingsKey, jsonEncode([...read(FakeMarketplaceRepository.bookingsKey), owed.toJson()]));
+  await w.wallet.markShare(_owedMark(w, CashOutcome.didNotPay));
+}
+
+CashMark _owedMark(_World w, CashOutcome outcome) => CashMark(
+      rideId: Booking.offerRideId('of-owed'),
+      riderId: 'me',
+      driverId: 'khaled',
+      outcome: outcome,
+      amount: 40,
+      date: w.clock.now.date,
+    );
 
 OfferedTrip _offer(
   String id, {
@@ -218,7 +258,7 @@ void main() {
       expect(r.price.contribution, 40);
       expect(r.price.fee, 4);
       expect(r.price.total, 44);
-      expect(r.price.cash, 40);
+      expect(r.price.share, 40);
     });
 
     test("Tarek's 44 shows 48 for a wallet rider and 45 for a cash rider; Heba's 40 is daily", () {
@@ -230,8 +270,9 @@ void main() {
         3,
         44,
       ));
-      final wallet = MarketSeed.quote(tarek.contribution);
-      expect((wallet.fee, wallet.total, wallet.cash), (4, 48, 45));
+      // Paid in cash the 44 rounds to 45; Goora's 4 is on top (007 R4).
+      final quote = MarketSeed.quote(tarek.contribution);
+      expect((quote.fee, quote.total, quote.share), (4, 49, 45));
 
       final heba = MarketSeed.offers(now).firstWhere((o) => o.id == MarketSeed.hebaId);
       expect((heba.repeat, heba.leg, heba.departure, heba.seats, heba.contribution), (
@@ -557,7 +598,7 @@ void main() {
 
     /// A once rider on the corridor: no group, no plan.
     Future<_World> once({
-      PaymentMethod? method = PaymentMethod.wallet,
+      PaymentMethod? method = PaymentMethod.instapay,
       int balance = 0,
       Map<String, Object> extra = const {},
       WallTime? start,
@@ -589,7 +630,7 @@ void main() {
     Future<List<SeatOffer>> going(_World w) => w.repo.seatOffers(Leg.going, now: w.clock.now);
 
     group('seatOffers', () {
-      test("prices follow the viewer: 48 wallet, 45 cash, fee-free company — Tarek's 44", () async {
+      test("prices follow the viewer: 48 InstaPay past the trial, 45 cash, fee-free company — Tarek's 44", () async {
         final wallet = await once();
         final a = fromOffer(await going(wallet), MarketSeed.tarekId);
         expect((a.price.contribution, a.price.fee, a.price.total), (44, 4, 48));
@@ -598,11 +639,11 @@ void main() {
 
         final cash = await once(method: PaymentMethod.cash);
         final b = fromOffer(await going(cash), MarketSeed.tarekId);
-        expect((b.price.cash, b.price.payable), (45, 45));
+        expect((b.price.share, b.price.total), (45, 45));
 
         final company = await once(method: null, company: true);
         final c = fromOffer(await going(company), MarketSeed.tarekId);
-        expect((c.price.fee, c.price.total), (0, 44));
+        expect((c.price.fee, c.price.total), (0, 45), reason: 'no method chosen: cash, rounded to 45');
       });
 
       test('route fit: same from/to for the leg — another area and the other leg are left out', () async {
@@ -713,7 +754,7 @@ void main() {
       OfferedTrip trip({int seats = 3}) => _offer('of-1', date: wed, driverId: 'khaled', seats: seats);
 
       Future<_World> world({
-        PaymentMethod? method = PaymentMethod.wallet,
+        PaymentMethod? method = PaymentMethod.instapay,
         int balance = 100,
         bool company = false,
         int seats = 3,
@@ -732,7 +773,7 @@ void main() {
       Booking taken(String riderId) =>
           _booking('bk-9', source: const BookingSource.offer('of-1'), date: wed, riderId: riderId);
 
-      test("wallet 44 is debited once, the seat is kept, and the booking is the rider's", () async {
+      test("only Goora's 4 is debited, once; the seat is kept, and the booking is the rider's (007 R5)", () async {
         final w = await world();
         final offer = await seat(w);
         expect(offer.price.total, 44);
@@ -740,13 +781,13 @@ void main() {
         final result = await w.repo.book(offer, now: w.clock.now);
 
         final booked = (result as Booked).booking;
-        expect((booked.paid, booked.paidBy, booked.status, booked.riderId), (44, PaidBy.wallet, BookingStatus.booked, 'me'));
+        expect((booked.paid, booked.paidBy, booked.status, booked.riderId), (4, PaidBy.wallet, BookingStatus.booked, 'me'));
         expect((booked.date, booked.leg, booked.source), (wed, Leg.going, const BookingSource.offer('of-1')));
         expect(booked.rideId, Booking.offerRideId('of-1'));
-        expect(await w.balance(), 56);
+        expect(await w.balance(), 96, reason: 'the 40 goes to the driver directly');
         final rows = (await w.activity()).where((e) => e.kind == ActivityKind.seatBooked);
         expect(rows, hasLength(1));
-        expect((rows.single.amount, rows.single.fee), (44, 4));
+        expect((rows.single.amount, rows.single.fee, rows.single.toDriver), (4, 4, 40));
         expect(await w.repo.myBookings(now: w.clock.now), hasLength(1));
       });
 
@@ -767,7 +808,7 @@ void main() {
         final offer = await seat(w);
         expect(await w.repo.book(offer, now: w.clock.now), isA<Booked>());
         expect(await w.repo.book(offer, now: w.clock.now), isA<AlreadyRiding>());
-        expect(await w.balance(), 56, reason: 'charged once');
+        expect(await w.balance(), 96, reason: 'charged once');
         expect(await w.repo.myBookings(now: w.clock.now), hasLength(1));
       });
 
@@ -789,16 +830,13 @@ void main() {
         expect(all, hasLength(1));
       });
 
-      test('paymentFailed changes nothing', () async {
+      test("Goora's fee is an internal line: a failing provider doesn't stop the booking (007 R5)", () async {
         final w = await world();
         final offer = await seat(w);
         w.payFails = true;
 
-        expect(await w.repo.book(offer, now: w.clock.now), isA<PaymentFailed>());
-
-        expect(await w.balance(), 100);
-        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatBooked), isEmpty);
-        expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
+        expect(await w.repo.book(offer, now: w.clock.now), isA<Booked>());
+        expect(await w.balance(), 96);
       });
 
       test('needsMethod without a method or plan; nothing changes', () async {
@@ -807,16 +845,23 @@ void main() {
         expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
       });
 
-      test('topUp(44) at balance 0, and the booking goes through once the gap is paid', () async {
+      test('a low balance never blocks: the fee goes on the balance (007 FR-009)', () async {
         final w = await world(balance: 0);
+        expect(await w.repo.book(await seat(w), now: w.clock.now), isA<Booked>());
+        expect(await w.balance(), -4);
+      });
+
+      test('a share the driver marked as not received blocks booking until the driver confirms (007 FR-005)', () async {
+        final w = await world();
+        await _oweKhaled(w);
         final offer = await seat(w);
         final blocked = await w.repo.book(offer, now: w.clock.now);
-        expect((blocked as BookTopUp).gap, 44);
+        expect((blocked as BookOwesDriver).amount, 40);
+        expect(blocked.driverFirstName, MarketSeed.driverById('khaled')?.firstName ?? 'khaled');
         expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
 
-        await w.wallet.topUp('me', method: 'card', amount: 44);
+        await w.wallet.markShare(_owedMark(w, CashOutcome.received));
         expect(await w.repo.book(offer, now: w.clock.now), isA<Booked>());
-        expect(await w.balance(), 0);
       });
 
       test('a company rider at a negative balance is not blocked; no fee', () async {
@@ -826,14 +871,14 @@ void main() {
 
         final booked = (await w.repo.book(offer, now: w.clock.now) as Booked).booking;
 
-        expect((booked.paidBy, booked.paid, booked.isSubscriber), (PaidBy.plan, 40, true));
-        expect(await w.balance(), -40);
+        expect((booked.paidBy, booked.paid, booked.isSubscriber), (PaidBy.plan, 0, true));
+        expect(await w.balance(), 0, reason: 'the 40 goes to the driver directly');
       });
 
       test('cash debits nothing', () async {
         final w = await world(method: PaymentMethod.cash, balance: 0);
         final offer = await seat(w);
-        expect(offer.price.payable, offer.price.cash);
+        expect((offer.price.share, offer.price.fee), (40, 0), reason: 'a trial seat: no Goora fee');
 
         final booked = (await w.repo.book(offer, now: w.clock.now) as Booked).booking;
 
@@ -846,7 +891,7 @@ void main() {
     group('cancelBooking', () {
       Future<(_World, Booking)> booked({
         WallTime? start,
-        PaymentMethod method = PaymentMethod.wallet,
+        PaymentMethod method = PaymentMethod.instapay,
         int balance = 100,
         int seats = 3,
       }) async {
@@ -860,13 +905,13 @@ void main() {
         return (w, (await w.repo.book(offer, now: w.clock.now) as Booked).booking);
       }
 
-      test('before the cut-off the whole 44 comes back, one refund row, and the seat is free again', () async {
+      test('before the cut-off the 4 fee comes back, one refund row, and the seat is free again', () async {
         final (w, b) = await booked(seats: 1);
         w.clock.now = at(_tue, 20, 30);
 
         final result = await w.repo.cancelBooking(b.id, now: w.clock.now);
 
-        expect((result as BookingCancelled).refund, 44);
+        expect((result as BookingCancelled).refund, 4);
         expect(await w.balance(), 100);
         expect((await w.activity()).where((e) => e.kind == ActivityKind.seatRefund), hasLength(1));
         expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
@@ -875,14 +920,14 @@ void main() {
         expect(fromOffer(await going(w), 'of-1').freeSeats, 1);
       });
 
-      test('after the cut-off 24 comes back; owed 20 is a lateCancel charge to the driver, the fee goes back', () async {
+      test('after the cut-off the fee comes back; owed 20 is a lateCancel charge, paid to the driver directly', () async {
         final (w, b) = await booked(start: at(_tue, 21, 30));
         w.clock.now = at(_tue, 21, 45);
 
         final result = await w.repo.cancelBooking(b.id, now: w.clock.now);
 
-        expect((result as BookingCancelled).refund, 24);
-        expect(await w.balance(), 100 - 44 + 24);
+        expect((result as BookingCancelled).refund, 4);
+        expect(await w.balance(), 100);
         final charge = w.repo.charges().single;
         expect((charge.amount, charge.reason, charge.personId, charge.owedTo), (20, ChargeReason.lateCancel, 'me', 'khaled'));
         expect(charge.rideId, b.rideId);
@@ -1232,7 +1277,7 @@ void main() {
     final wed = _tue.addDays(1);
 
     Future<_World> rider({
-      PaymentMethod? method = PaymentMethod.wallet,
+      PaymentMethod? method = PaymentMethod.instapay,
       int balance = 0,
       bool member = false,
       WallTime? start,
@@ -1260,10 +1305,15 @@ void main() {
         expect(await w.repo.post(draft(), now: w.clock.now), isA<PostNeedsMethod>());
       });
 
-      test('the wallet must cover the route price: topUp(gap) with the gap in EGP', () async {
-        final w = await rider(balance: 10);
-        final r = await w.repo.post(draft(), now: w.clock.now);
-        expect((r as PostTopUp).gap, 34, reason: '44 − 10');
+      test('a low balance never blocks posting (007 R5)', () async {
+        final w = await rider(balance: 0);
+        expect(await w.repo.post(draft(), now: w.clock.now), isA<Posted>());
+      });
+
+      test('an unpaid share blocks posting with the amount and the driver (007 FR-005)', () async {
+        final w = await rider();
+        await _oweKhaled(w);
+        expect(await w.repo.post(draft(), now: w.clock.now), isA<PostOwesDriver>());
       });
 
       test('a rider already in a daily group cannot post Every workday, but can post once', () async {
@@ -1289,7 +1339,7 @@ void main() {
         final women = await _make(
           role: Role.rider,
           member: false,
-          method: PaymentMethod.wallet,
+          method: PaymentMethod.instapay,
           gender: Gender.female,
           extra: {FakeTrustRepository.privacyKey: PrivacyPreference.womenOnly.name},
         );
@@ -1332,19 +1382,19 @@ void main() {
         expect(await w.repo.demoDriverAccepts(now: w.clock.now), isA<DemoNothing>());
       });
 
-      test('a once request: the rider pays at accept (−44), is seated, and is told', () async {
+      test("a once request: Goora's 4 is taken at accept, the rider is seated and told", () async {
         final w = await rider(balance: 100);
         await w.repo.post(draft(), now: w.clock.now);
         expect(await w.repo.demoDriverAccepts(now: w.clock.now), isA<DemoDone>());
 
-        expect(await w.balance(), 56);
+        expect(await w.balance(), 96);
         expect((await w.activity()).where((e) => e.kind == ActivityKind.seatBooked), hasLength(1));
         final r = (await w.repo.request('rq-1', now: w.clock.now))!;
         expect((r.status, r.acceptedBy), (RequestStatus.accepted, 'tarek'));
         final trip = (await w.repo.offer(r.tripId!, now: w.clock.now))!;
         expect((trip.origin, trip.seats, trip.riderSeats, trip.contribution), (OfferOrigin.fromRequest, 3, 3, 40));
         final mine = await w.repo.myBookings(now: w.clock.now);
-        expect(mine.map((b) => (b.source, b.paid)), [(BookingSource.offer(trip.id), 44)]);
+        expect(mine.map((b) => (b.source, b.paid)), [(BookingSource.offer(trip.id), 4)]);
         expect(await notices(w, NoticeKind.requestAccepted), hasLength(1));
       });
 
@@ -1364,17 +1414,16 @@ void main() {
         expect((await w.repo.request('rq-1', now: w.clock.now))?.tripId, Ride.idFor('mk-rq-1', wed, Leg.going));
       });
 
-      test('a rider who can no longer pay at accept has the request withdrawn and nothing charged', () async {
+      test('a rider who owes a driver at accept has the request withdrawn and nothing charged (007 FR-005)', () async {
         final w = await rider(balance: 44);
         await w.repo.post(draft(), now: w.clock.now);
-        await w.wallet.debitSeat('me', bookingId: 'bk-x', rideId: 'offer:x', total: 44, fee: 4, date: wed);
-        expect(await w.balance(), 0);
+        await _oweKhaled(w);
         expect(await w.repo.demoDriverAccepts(now: w.clock.now), isA<DemoDone>());
 
         expect((await w.repo.request('rq-1', now: w.clock.now))?.status, RequestStatus.withdrawn);
-        expect(await w.balance(), 0);
-        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatBooked), hasLength(1), reason: 'only the setup debit');
-        expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
+        expect(await w.balance(), 40, reason: "only the owed trip's own 4 fee; nothing for the request");
+        expect((await w.activity()).where((e) => e.kind == ActivityKind.seatBooked), isEmpty);
+        expect(await w.repo.myBookings(now: w.clock.now).then((b) => b.where((x) => x.id != 'bk-owed')), isEmpty);
       });
     });
   });
@@ -1498,7 +1547,7 @@ void main() {
         _stored(FakeMarketplaceRepository.bookingsKey, [for (final b in items) b.toJson()]);
 
     Future<_World> rider({
-      PaymentMethod? method = PaymentMethod.wallet,
+      PaymentMethod? method = PaymentMethod.instapay,
       int balance = 0,
       bool company = false,
       WallTime? start,
@@ -1529,20 +1578,20 @@ void main() {
 
     final khaled = {...offers([_offer('of-9', date: wed, departure: const Clock.hm(9, 0), driverId: 'khaled')])};
 
-    test('before 9 PM the evening before: reclaimed, one refund of 44, the balance is back to what it was (SC-005)',
+    test('before 9 PM the evening before: reclaimed, the 4 fee refunded, the balance is back to what it was (SC-005)',
         () async {
       final w = await rider(balance: 200, extra: khaled);
       final booked = await bookOf(w, 'of-9');
-      expect(await w.balance(), 156);
+      expect(await w.balance(), 196);
 
       final r = await w.repo.reclaim(booked.booking.id, now: w.clock.now);
-      expect((r as Reclaimed).refund, 44);
+      expect((r as Reclaimed).refund, 4);
       expect(await w.balance(), 200);
       final refunds = (await w.activity()).where((e) => e.kind == ActivityKind.seatRefund);
-      expect(refunds.map((e) => e.amount), [44]);
+      expect(refunds.map((e) => e.amount), [4]);
       final told = [for (final n in await w.daily.notices().first) if (n.kind == NoticeKind.seatReclaimed) n.params];
       expect(told, [
-        {'day': wed.toIso(), 'amount': '44'},
+        {'day': wed.toIso(), 'amount': '4'},
       ]);
       expect(await w.repo.myBookings(now: w.clock.now), isEmpty);
     });
@@ -1552,7 +1601,7 @@ void main() {
       final booked = await bookOf(w, 'of-9');
       w.clock.now = at(_tue, 21, 0);
       expect(await w.repo.reclaim(booked.booking.id, now: w.clock.now), isA<ReclaimTooLate>());
-      expect(await w.balance(), 156);
+      expect(await w.balance(), 196);
     });
 
     test('a seat booked after the cut-off can never be reclaimed', () async {

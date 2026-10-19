@@ -1,9 +1,11 @@
 import '../../../core/time/calendar_date.dart';
+import '../../../core/time/wall_time.dart';
 
 enum CashOutcome { received, didNotPay }
 
-/// A driver's record of one cash rider on one ride (brief §6.7 C). One per
-/// (ride, rider); the first mark stands.
+/// A driver's answer for one rider's share on one ride (004 §6.7 C, widened
+/// by 007 research R1 to every paying rider, cash or InstaPay). The latest
+/// mark per (ride, rider) stands while `SharePolicy.canMark` allowed it.
 final class CashMark {
   const CashMark({
     required this.rideId,
@@ -12,6 +14,7 @@ final class CashMark {
     required this.outcome,
     required this.amount,
     required this.date,
+    this.markedAt,
   });
 
   final String rideId;
@@ -19,9 +22,12 @@ final class CashMark {
   final String driverId;
   final CashOutcome outcome;
 
-  /// The contribution in whole EGP.
+  /// The share in whole EGP.
   final int amount;
   final CalendarDate date;
+
+  /// When the driver answered; null on 004 rows (read as [date] at 00:00).
+  final WallTime? markedAt;
 
   Map<String, Object?> toJson() => {
         'rideId': rideId,
@@ -30,6 +36,7 @@ final class CashMark {
         'outcome': outcome.name,
         'amount': amount,
         'date': date.toIso(),
+        if (markedAt != null) 'markedAt': markedAt!.toJson(),
       };
 
   static CashMark fromJson(Map<String, Object?> j) => CashMark(
@@ -39,5 +46,6 @@ final class CashMark {
         outcome: CashOutcome.values.byName(j['outcome']! as String),
         amount: j['amount']! as int,
         date: CalendarDate.parse(j['date']! as String),
+        markedAt: j['markedAt'] == null ? null : WallTime.fromJson(j['markedAt']! as String),
       );
 }

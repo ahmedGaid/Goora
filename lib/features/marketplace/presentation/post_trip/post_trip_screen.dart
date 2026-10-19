@@ -23,6 +23,7 @@ import '../../../commute/presentation/labels.dart';
 import '../../../daily/presentation/labels.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../../wallet/data/providers.dart';
+import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
 import '../../../wallet/presentation/labels.dart';
 import '../../../wallet/presentation/wallet/top_up_sheet.dart';
@@ -50,7 +51,7 @@ class PostTripScreen extends ConsumerStatefulWidget {
   ConsumerState<PostTripScreen> createState() => _PostTripScreenState();
 }
 
-enum _NoticeKind { topUp, daily }
+enum _NoticeKind { owesDriver, daily }
 
 class _PostTripScreenState extends ConsumerState<PostTripScreen> {
   late String? _id = widget.id;
@@ -60,7 +61,8 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
   late Repeat _repeat = widget.draft?.repeat ?? Repeat.once;
   bool _busy = false;
   _NoticeKind? _notice;
-  int _gap = 0;
+  int _owed = 0;
+  String _owedTo = '';
 
   // Nothing to pop (the pay-method detour replaces the stack): a posted request
   // lives on Today; before that, Back is still onboarding's last step (T104 F8b).
@@ -104,9 +106,10 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
         );
         context.push('${Routes.payMethod}?next=${Uri.encodeQueryComponent(back)}');
         return;
-      case PostTopUp(:final gap):
-        _gap = gap;
-        _notice = _NoticeKind.topUp;
+      case PostOwesDriver(:final amount, :final driverFirstName):
+        _owed = amount;
+        _owedTo = driverFirstName;
+        _notice = _NoticeKind.owesDriver;
       case DailyNotAllowed():
         _notice = _NoticeKind.daily;
     }
@@ -150,6 +153,7 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
                 tripCost: MarketSeed.tripCost,
                 riderSeats: MarketSeed.riderSeats,
                 mode: mode,
+                method: ref.watch(riderPayMethodProvider).value ?? PaymentMethod.cash,
               );
         final from = _from ?? s.from;
         final to = _to ?? s.to;
@@ -158,17 +162,12 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (_notice == _NoticeKind.topUp) ...[
+            if (_notice == _NoticeKind.owesDriver) ...[
               GooraBanner(
-                key: const Key('notice-top-up'),
+                key: const Key('notice-owes-driver'),
                 kind: GooraBannerKind.warning,
-                title: l10n.topUpFirst(_gap),
-                body: l10n.needsTopUpBody(_gap),
-                actionLabel: l10n.actTopUp,
-                onAction: () async {
-                  await showTopUpSheet(context);
-                  if (mounted) setState(() => _notice = null);
-                },
+                title: l10n.owesDriver(_owed, _owedTo),
+                body: l10n.owesDriverBody(_owedTo),
               ),
               const SizedBox(height: AppSpacing.md),
             ],

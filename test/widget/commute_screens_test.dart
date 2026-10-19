@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/core/time/calendar_date.dart';
+import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_pill.dart';
 import 'package:goora/core/widgets/goora_route_map.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
@@ -17,7 +19,9 @@ import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
 import 'package:goora/features/wallet/data/providers.dart';
+import 'package:goora/features/wallet/domain/direct_pay.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
+import 'package:goora/features/wallet/domain/share.dart';
 
 import '../helpers/pump_app.dart';
 
@@ -243,7 +247,8 @@ void main() {
         expect(find.text(l.foundGroup), findsOneWidget);
         expect(find.text(l.membersCount(main.group.members.length + 1)), findsOneWidget);
         expect(find.text(l.routeLine(l.areaSheikhZayed, l.areaSmartVillage)), findsOneWidget);
-        expect(find.text(l.priceWithFee(40, 4)), findsOneWidget, reason: 'no method chosen yet: the wallet price');
+        expect(find.text(l.priceCash(40)), findsOneWidget,
+            reason: 'a new rider: the fee-free trial, paid to the driver directly (007 R6)');
         for (final r in main.reasons) {
           await _scrollTo(tester, find.text(l.reason(r)));
         }
@@ -258,6 +263,37 @@ void main() {
         await _accessible(tester);
       });
 
+      testWidgets('007 FR-005: a rider who owes a driver cannot join; the debt is named', (tester) async {
+        final outcome = _outcome(driver: false);
+        await pumpScreen(
+          tester,
+          const MatchResultScreen(),
+          locale: locale,
+          session: _session(Role.rider),
+          overrides: [
+            lastMatchProvider.overrideWith(() => _Seeded(outcome)),
+            myOpenSharesProvider.overrideWith((ref) async => [
+                  Share(
+                    rideId: 'r1',
+                    riderId: 'me',
+                    driverId: 'ahmed',
+                    otherFirstName: 'Ahmed',
+                    amount: 40,
+                    method: PaymentMethod.cash,
+                    tripEnd: WallTime(CalendarDate(2026, 10, 5), const Clock.hm(8, 5)),
+                    status: ShareStatus.notReceived,
+                  ),
+                ]),
+          ],
+        );
+        final join = find.byKey(const Key('join-group'));
+        await tester.ensureVisible(join);
+        await tester.tap(join);
+        await tester.pumpAndSettle();
+        expect(find.text(l.owesDriver(40, 'Ahmed')), findsOneWidget);
+        expect(find.byType(MatchResultScreen), findsOneWidget, reason: 'not joined');
+      });
+
       testWidgets('tapping an alternative swaps it into the shown result', (tester) async {
         final outcome = _outcome(driver: false);
         final main = outcome.result.main!;
@@ -267,7 +303,12 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [lastMatchProvider.overrideWith(() => _Seeded(outcome))],
+          overrides: [
+            // Past the trial, paying the exact share: the fee line shows.
+            riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
+            riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
+            lastMatchProvider.overrideWith(() => _Seeded(outcome)),
+          ],
         );
         await _scrollTo(tester, find.byKey(const Key('toggle-others')));
         await tester.tap(find.byKey(const Key('toggle-others')));
@@ -355,6 +396,8 @@ void main() {
           locale: locale,
           session: _session(Role.rider),
           overrides: [
+            riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
+            riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
               () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
             ),
@@ -371,6 +414,8 @@ void main() {
           locale: locale,
           session: _session(Role.rider),
           overrides: [
+            riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
+            riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
               () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
             ),
@@ -389,7 +434,7 @@ void main() {
             locale: locale,
             session: _session(Role.rider),
             overrides: [
-              riderPricingProvider.overrideWith((ref) => PricingMode.cash),
+              riderPricingProvider.overrideWith((ref) => PricingMode.trial),
               lastMatchProvider.overrideWith(
                 () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
               ),

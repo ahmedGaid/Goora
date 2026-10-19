@@ -81,6 +81,10 @@ Map<String, Object> memberPrefs({
   String groupId = 'sz-0725',
   bool withPlan = true,
   PaymentMethod? method,
+
+  /// A rider past the fee-free trial (a 004 "wallet" rider, 007 R6), so trips
+  /// carry Goora's fee from the first one.
+  bool pastTrial = false,
 }) =>
     {
       LocaleController.storageKey: locale,
@@ -117,6 +121,7 @@ Map<String, Object> memberPrefs({
         ),
       if (method != null) FakeWalletRepository.methodKey(DailySeed.meId): method.name,
       if (method != null) FakeWalletRepository.sinceKey(DailySeed.meId): '2026-10-01',
+      if (pastTrial) FakeWalletRepository.noTrialKey(DailySeed.meId): true,
     };
 
 List<Override> dailyOverrides(TestClock clock, {RecordingDialer? dialer, RecordingSharer? sharer}) => [

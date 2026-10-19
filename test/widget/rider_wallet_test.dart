@@ -58,7 +58,7 @@ Map<String, Object> _balance(int egp) => {'wallet.balance.me': egp};
 Future<ProviderContainer> _openWallet(
   WidgetTester tester,
   String locale, {
-  PaymentMethod method = PaymentMethod.wallet,
+  PaymentMethod method = PaymentMethod.instapay,
   Map<String, Object> extra = const {},
   List<Override> overrides = const [],
   CalendarDate? on,
@@ -66,7 +66,13 @@ Future<ProviderContainer> _openWallet(
   final c = await pumpGooraApp(
     tester,
     prefs: {
-      ...memberPrefs(role: Role.rider, locale: locale, withPlan: false, method: method),
+      ...memberPrefs(
+        role: Role.rider,
+        locale: locale,
+        withPlan: false,
+        method: method,
+        pastTrial: method == PaymentMethod.instapay,
+      ),
       // No 003 demo history unless a test seeds trips: only seeded trips count.
       FakeDailyCommuteRepository.eventsKey: '[]',
       ...extra,
@@ -105,11 +111,13 @@ void main() {
     final l = l10nFor(locale);
     final code = locale.languageCode;
 
-    testWidgets('[$code] US2 AC1: a 40 EGP trip takes 44, its fee shown on its own line', (tester) async {
+    testWidgets('[$code] US2 AC1 / 007 SC-001: a 40 EGP trip takes only the 4 fee; the 40 is paid directly',
+        (tester) async {
       await _openWallet(tester, code, extra: {..._trips(2), ..._balance(200)});
-      expect(find.text(l.egpAmount(112)), findsOneWidget, reason: '200 − 2 × 44');
+      expect(find.text(l.egpAmount(192)), findsOneWidget, reason: '200 − 2 × 4');
       expect(find.text(l.priceWithFee(40, 4)), findsNWidgets(2), reason: 'one caption per trip row');
-      expect(find.text('-${l.egpAmount(44)}'), findsNWidgets(2));
+      expect(find.text('-${l.egpAmount(4)}'), findsNWidgets(2));
+      expect(find.text('-${l.egpAmount(44)}'), findsNothing);
     });
 
     testWidgets('[$code] US2 AC2: topping up 200 gives a balance of exactly 200', (tester) async {
@@ -135,8 +143,8 @@ void main() {
         },
       );
       expect(find.text(l.actLateCancelCharge), findsOneWidget);
-      final list = find.byKey(const Key('activity-list'));
-      expect(find.descendant(of: list, matching: find.text('-${l.egpAmount(20)}')), findsOneWidget);
+      expect(find.text(l.cashPaidLine(20)), findsOneWidget, reason: 'paid to the driver directly (007)');
+      expect(find.text('-${l.egpAmount(20)}'), findsNothing);
       expect(find.text(l.priceWithFee(20, 2)), findsNothing);
     });
 
@@ -245,10 +253,39 @@ void main() {
           reason: 'fees were paid this month, but the rider is subscribed now');
     });
 
-    testWidgets('[$code] a wallet rider below one trip sees "Top up to keep riding"', (tester) async {
-      await _openWallet(tester, code);
-      expect(find.byKey(const Key('needs-top-up')), findsOneWidget);
-      expect(find.text(l.needsTopUpBody(44)), findsOneWidget);
+    testWidgets('[$code] fees past the balance read as owed to Goora, never a block (007 FR-009)', (tester) async {
+      await _openWallet(tester, code, extra: _trips(2));
+      expect(find.byKey(const Key('fee-owed')), findsOneWidget);
+      expect(find.text(l.feeOwed(8)), findsOneWidget);
+      expect(find.text(l.feeOwedBody), findsOneWidget);
+    });
+
+    testWidgets('[$code] 007 US3: a share marked unpaid shows "you owe", and "I paid" makes it disputed',
+        (tester) async {
+      await _openWallet(
+        tester,
+        code,
+        method: PaymentMethod.cash,
+        extra: {
+          ..._trips(1),
+          FakeWalletRepository.marksKey: jsonEncode([
+            CashMark(
+              rideId: _tripId(0),
+              riderId: 'me',
+              driverId: 'ahmed',
+              outcome: CashOutcome.didNotPay,
+              amount: 40,
+              date: Ride.parseId(_tripId(0))!.$1,
+            ).toJson(),
+          ]),
+        },
+      );
+      expect(find.byKey(const Key('share-debts')), findsOneWidget);
+      expect(find.text(l.owesDriver(40, 'Ahmed')), findsOneWidget);
+      await tester.tap(find.text(l.iPaid));
+      await tester.pumpAndSettle();
+      expect(find.text(l.iPaidSent('Ahmed')), findsOneWidget);
+      expect(find.text(l.iPaid), findsNothing);
     });
 
     testWidgets('[$code] US4 AC1: 2 cash trips → "3 cash trips left", no fee, paid-cash rows', (tester) async {
@@ -256,7 +293,7 @@ void main() {
       expect(find.text(l.cashTripsLeft(3)), findsOneWidget);
       expect(find.text(l.cashPaidLine(40)), findsNWidgets(2));
       expect(find.byKey(const Key('cash-top-up-banner')), findsNothing);
-      expect(find.byKey(const Key('needs-top-up')), findsNothing, reason: 'cash riders need no balance');
+      expect(find.byKey(const Key('fee-owed')), findsNothing, reason: 'trial trips carry no fee');
     });
 
     testWidgets('[$code] 005 FR-029: on the demo corridor the cash plan card still reads 40',
@@ -313,7 +350,7 @@ void main() {
       expect(find.text(l.cashOff), findsOneWidget);
     });
 
-    testWidgets('[$code] US4 AC5: a late cancel during the cash trial is not charged', (tester) async {
+    testWidgets('[$code] US4 AC5: a late cancel during the trial moves nothing in the wallet', (tester) async {
       await _openWallet(
         tester,
         code,
@@ -326,7 +363,7 @@ void main() {
           ]),
         },
       );
-      expect(find.text(l.notChargedCash), findsOneWidget);
+      expect(find.text(l.cashPaidLine(20)), findsOneWidget, reason: 'owed to the driver, paid directly (007)');
       expect(find.text('-${l.egpAmount(20)}'), findsNothing);
     });
 

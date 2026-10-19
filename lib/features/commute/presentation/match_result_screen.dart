@@ -14,6 +14,7 @@ import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
+import '../../marketplace/domain/booking_gate.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../wallet/data/providers.dart';
@@ -40,6 +41,18 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
 
   Future<void> _join(GroupMatch main, MatchOutcome outcome) async {
     setState(() => _joining = true);
+    if (!outcome.viewerIsDriver) {
+      // 007 FR-005: a share a driver marked as not received blocks joining.
+      final check = BookingGate.check(hasArrangement: true, openShares: await ref.read(myOpenSharesProvider.future));
+      if (check.kind == BookingCheckKind.owesDriver) {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context);
+        setState(() => _joining = false);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.owesDriver(check.amount, check.driverFirstName))));
+        return;
+      }
+    }
     await ref.read(commuteRepositoryProvider).join(main.group.id);
     if (mounted) context.go(outcome.viewerIsDriver ? Routes.today : Routes.payMethod);
   }
@@ -68,10 +81,14 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
     final from = l10n.area(outcome.profile.home!.area);
     final to = l10n.area(g.destination);
     final secondary = AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
-    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
+    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.perTrip;
     final priceText = viewerIsDriver
         ? l10n.priceDriver(g.price)
-        : l10n.priceLine(SeatPrice.of(g.price, tripCost: g.tripCost, riderSeats: g.riderSeats, mode: mode));
+        : l10n.priceLine(SeatPrice.of(g.price,
+            tripCost: g.tripCost,
+            riderSeats: g.riderSeats,
+            mode: mode,
+            method: ref.watch(riderPayMethodProvider).value ?? PaymentMethod.cash));
 
     return OnboardingScaffold(
       header: GooraChip(key: const Key('match-chip'), label: l10n.matchPercent(main.score)),

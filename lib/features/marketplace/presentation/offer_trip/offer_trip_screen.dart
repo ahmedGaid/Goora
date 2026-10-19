@@ -117,7 +117,9 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
       _form.contribution,
       tripCost: MarketSeed.tripCost,
       riderSeats: _form.seats,
-      mode: PricingMode.wallet,
+      mode: PricingMode.perTrip,
+      // The driver sees the exact share they set, not a cash rounding.
+      method: PaymentMethod.instapay,
     );
     final reason = check == null ? null : _reason(l10n, check);
     return Column(

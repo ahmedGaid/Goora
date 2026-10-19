@@ -97,66 +97,58 @@ final class WalletRepositoryProvider
 
 String _$walletRepositoryHash() => r'bda8b69cabbee44d8704348a0ac10f1a4d413d0d';
 
-/// For a driver's check-in after drop-off (FR-012): is this passenger paying
-/// cash, and has the driver already recorded it? `isCash` false hides the
-/// buttons entirely.
+/// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
+/// passenger's share on this ride and where it stands; null hides the
+/// buttons (no share there).
 
-@ProviderFor(cashStatus)
-final cashStatusProvider = CashStatusFamily._();
+@ProviderFor(driverShare)
+final driverShareProvider = DriverShareFamily._();
 
-/// For a driver's check-in after drop-off (FR-012): is this passenger paying
-/// cash, and has the driver already recorded it? `isCash` false hides the
-/// buttons entirely.
+/// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
+/// passenger's share on this ride and where it stands; null hides the
+/// buttons (no share there).
 
-final class CashStatusProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<({bool isCash, CashOutcome? outcome})>,
-          ({bool isCash, CashOutcome? outcome}),
-          FutureOr<({bool isCash, CashOutcome? outcome})>
-        >
-    with
-        $FutureModifier<({bool isCash, CashOutcome? outcome})>,
-        $FutureProvider<({bool isCash, CashOutcome? outcome})> {
-  /// For a driver's check-in after drop-off (FR-012): is this passenger paying
-  /// cash, and has the driver already recorded it? `isCash` false hides the
-  /// buttons entirely.
-  CashStatusProvider._({
-    required CashStatusFamily super.from,
+final class DriverShareProvider
+    extends $FunctionalProvider<AsyncValue<Share?>, Share?, FutureOr<Share?>>
+    with $FutureModifier<Share?>, $FutureProvider<Share?> {
+  /// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
+  /// passenger's share on this ride and where it stands; null hides the
+  /// buttons (no share there).
+  DriverShareProvider._({
+    required DriverShareFamily super.from,
     required (String, String) super.argument,
   }) : super(
          retry: null,
-         name: r'cashStatusProvider',
+         name: r'driverShareProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
   @override
-  String debugGetCreateSourceHash() => _$cashStatusHash();
+  String debugGetCreateSourceHash() => _$driverShareHash();
 
   @override
   String toString() {
-    return r'cashStatusProvider'
+    return r'driverShareProvider'
         ''
         '$argument';
   }
 
   @$internal
   @override
-  $FutureProviderElement<({bool isCash, CashOutcome? outcome})> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<Share?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  FutureOr<({bool isCash, CashOutcome? outcome})> create(Ref ref) {
+  FutureOr<Share?> create(Ref ref) {
     final argument = this.argument as (String, String);
-    return cashStatus(ref, argument.$1, argument.$2);
+    return driverShare(ref, argument.$1, argument.$2);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is CashStatusProvider && other.argument == argument;
+    return other is DriverShareProvider && other.argument == argument;
   }
 
   @override
@@ -165,37 +157,205 @@ final class CashStatusProvider
   }
 }
 
-String _$cashStatusHash() => r'dbaab5d01a9eac6efc3e5ce5e143e10ae811a5c9';
+String _$driverShareHash() => r'235dc24552781da321791be3b48fea7861632a59';
 
-/// For a driver's check-in after drop-off (FR-012): is this passenger paying
-/// cash, and has the driver already recorded it? `isCash` false hides the
-/// buttons entirely.
+/// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
+/// passenger's share on this ride and where it stands; null hides the
+/// buttons (no share there).
 
-final class CashStatusFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-          FutureOr<({bool isCash, CashOutcome? outcome})>,
-          (String, String)
-        > {
-  CashStatusFamily._()
+final class DriverShareFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Share?>, (String, String)> {
+  DriverShareFamily._()
     : super(
         retry: null,
-        name: r'cashStatusProvider',
+        name: r'driverShareProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
         isAutoDispose: true,
       );
 
-  /// For a driver's check-in after drop-off (FR-012): is this passenger paying
-  /// cash, and has the driver already recorded it? `isCash` false hides the
-  /// buttons entirely.
+  /// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
+  /// passenger's share on this ride and where it stands; null hides the
+  /// buttons (no share there).
 
-  CashStatusProvider call(String rideId, String riderId) =>
-      CashStatusProvider._(argument: (rideId, riderId), from: this);
+  DriverShareProvider call(String rideId, String riderId) =>
+      DriverShareProvider._(argument: (rideId, riderId), from: this);
 
   @override
-  String toString() => r'cashStatusProvider';
+  String toString() => r'driverShareProvider';
 }
+
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+@ProviderFor(driverInstapay)
+final driverInstapayProvider = DriverInstapayFamily._();
+
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+final class DriverInstapayProvider
+    extends $FunctionalProvider<AsyncValue<String?>, String?, FutureOr<String?>>
+    with $FutureModifier<String?>, $FutureProvider<String?> {
+  /// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+  DriverInstapayProvider._({
+    required DriverInstapayFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'driverInstapayProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$driverInstapayHash();
+
+  @override
+  String toString() {
+    return r'driverInstapayProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<String?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<String?> create(Ref ref) {
+    final argument = this.argument as String;
+    return driverInstapay(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DriverInstapayProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$driverInstapayHash() => r'a9bf2f8440181c5291480fe1b10723d3088db93c';
+
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+final class DriverInstapayFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<String?>, String> {
+  DriverInstapayFamily._()
+    : super(
+        retry: null,
+        name: r'driverInstapayProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+
+  DriverInstapayProvider call(String driverId) =>
+      DriverInstapayProvider._(argument: driverId, from: this);
+
+  @override
+  String toString() => r'driverInstapayProvider';
+}
+
+/// The signed-in rider's shares a driver hasn't confirmed, open debts first
+/// (007 US3 debt banner).
+
+@ProviderFor(myOpenShares)
+final myOpenSharesProvider = MyOpenSharesProvider._();
+
+/// The signed-in rider's shares a driver hasn't confirmed, open debts first
+/// (007 US3 debt banner).
+
+final class MyOpenSharesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Share>>,
+          List<Share>,
+          FutureOr<List<Share>>
+        >
+    with $FutureModifier<List<Share>>, $FutureProvider<List<Share>> {
+  /// The signed-in rider's shares a driver hasn't confirmed, open debts first
+  /// (007 US3 debt banner).
+  MyOpenSharesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'myOpenSharesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$myOpenSharesHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Share>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Share>> create(Ref ref) {
+    return myOpenShares(ref);
+  }
+}
+
+String _$myOpenSharesHash() => r'10790c443ed9845e6dd073393e2eaec569aa224e';
+
+/// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+/// price lines read it for the share (007 R4).
+
+@ProviderFor(riderPayMethod)
+final riderPayMethodProvider = RiderPayMethodProvider._();
+
+/// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+/// price lines read it for the share (007 R4).
+
+final class RiderPayMethodProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PaymentMethod>,
+          PaymentMethod,
+          FutureOr<PaymentMethod>
+        >
+    with $FutureModifier<PaymentMethod>, $FutureProvider<PaymentMethod> {
+  /// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+  /// price lines read it for the share (007 R4).
+  RiderPayMethodProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'riderPayMethodProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$riderPayMethodHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<PaymentMethod> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PaymentMethod> create(Ref ref) {
+    return riderPayMethod(ref);
+  }
+}
+
+String _$riderPayMethodHash() => r'88f020ac6351e010ecf8211e9aa0bbcac5df0098';
 
 /// The signed-in rider's current price mode (FR-004). Price lines watch this;
 /// screens that change the arrangement invalidate it.
@@ -242,4 +402,4 @@ final class RiderPricingProvider
   }
 }
 
-String _$riderPricingHash() => r'45b1ce5980d20729cc3bf27d68969387cfe0bc34';
+String _$riderPricingHash() => r'db6afa92c7b69b75146d6ad945e3e5c16a1ea8f4';

@@ -94,13 +94,12 @@ void main() {
   group('PricingMode.of — which price a rider sees (FR-004)', () {
     final today = CalendarDate(2026, 10, 8);
 
-    test('cash while the trial allows it, then wallet', () {
-      expect(PricingMode.of(method: PaymentMethod.cash, plan: null, today: today, cashAvailable: true), PricingMode.cash);
-      expect(PricingMode.of(method: PaymentMethod.cash, plan: null, today: today, cashAvailable: false), PricingMode.wallet);
-      expect(PricingMode.of(method: null, plan: null, today: today, cashAvailable: false), PricingMode.wallet);
+    test('fee-free while the trial allows it, then per trip (007 R6)', () {
+      expect(PricingMode.of(plan: null, today: today, trialAvailable: true), PricingMode.trial);
+      expect(PricingMode.of(plan: null, today: today, trialAvailable: false), PricingMode.perTrip);
     });
 
-    test('a paid-up plan beats the method', () {
+    test('a paid-up plan beats the trial', () {
       final sub = Plan(
         personId: 'me',
         type: PlanType.yearly,
@@ -109,14 +108,14 @@ void main() {
         startDate: _midnight(today),
         untilDate: today.addMonths(12),
       );
-      expect(PricingMode.of(method: PaymentMethod.cash, plan: sub, today: today, cashAvailable: true), PricingMode.subscribed);
+      expect(PricingMode.of(plan: sub, today: today, trialAvailable: true), PricingMode.subscribed);
       const company = Plan(personId: 'me', type: PlanType.company, status: PlanStatus.active, price: 0);
-      expect(PricingMode.of(method: PaymentMethod.wallet, plan: company, today: today, cashAvailable: false), PricingMode.company);
+      expect(PricingMode.of(plan: company, today: today, trialAvailable: false), PricingMode.company);
     });
 
-    test('only the wallet mode pays a fee', () {
-      expect(PricingMode.wallet.isFeeFree, isFalse);
-      expect([PricingMode.cash, PricingMode.subscribed, PricingMode.company].every((m) => m.isFeeFree), isTrue);
+    test('only per trip pays a fee', () {
+      expect(PricingMode.perTrip.isFeeFree, isFalse);
+      expect([PricingMode.trial, PricingMode.subscribed, PricingMode.company].every((m) => m.isFeeFree), isTrue);
     });
   });
 }

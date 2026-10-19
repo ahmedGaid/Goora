@@ -24,7 +24,9 @@ import '../../../marketplace/presentation/today/one_off_section.dart';
 import '../../../wallet/data/providers.dart';
 import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
+import '../../../wallet/presentation/driver_instapay_line.dart';
 import '../../../wallet/presentation/labels.dart';
+import '../../../wallet/presentation/share_debt_banner.dart';
 import '../../data/providers.dart';
 import '../../domain/location_source.dart';
 import '../../domain/ride.dart';
@@ -50,6 +52,7 @@ class RiderToday extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TodayBanners(view: view),
+        const ShareDebtBanners(),
         RideHero(view: view),
         const SizedBox(height: AppSpacing.gap),
         if (day != null) ...[
@@ -60,6 +63,7 @@ class RiderToday extends StatelessWidget {
           if (next?.driver != null) ...[
             DriverCard(view: view, driver: next!.driver!),
             const SizedBox(height: AppSpacing.gap),
+            DriverInstapayLine(driverId: next.driver!.id, driverFirstName: next.driver!.firstName),
           ],
           if (next != null) ...[
             TripTimeline(view: view, leg: next),
@@ -375,8 +379,12 @@ class _Tiles extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final group = view.group!;
-    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
-    final price = SeatPrice.of(group.price, tripCost: group.tripCost, riderSeats: group.riderSeats, mode: mode);
+    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.perTrip;
+    final price = SeatPrice.of(group.price,
+        tripCost: group.tripCost,
+        riderSeats: group.riderSeats,
+        mode: mode,
+        method: ref.watch(riderPayMethodProvider).value ?? PaymentMethod.cash);
     final ret = day.leg(Leg.ret);
     return IntrinsicHeight(
       child: Row(
@@ -393,7 +401,7 @@ class _Tiles extends ConsumerWidget {
             child: GooraStatTile(
               key: const Key('pay-tile'),
               label: l10n.payPerTrip,
-              value: l10n.egpAmount(price.payable),
+              value: l10n.egpAmount(price.total),
               caption: l10n.priceLine(price),
             ),
           ),

@@ -1,46 +1,46 @@
-import '../../wallet/domain/payment_method.dart';
-import '../../wallet/domain/seat_price.dart';
+import '../../wallet/domain/share.dart';
 
-enum BookingCheckKind { ok, needsMethod, topUp }
+enum BookingCheckKind { ok, needsMethod, owesDriver }
 
 final class BookingCheck {
-  const BookingCheck._(this.kind, [this.gap = 0]);
+  const BookingCheck._(this.kind, [this.amount = 0, this.driverFirstName = '']);
 
   static const ok = BookingCheck._(BookingCheckKind.ok);
   static const needsMethod = BookingCheck._(BookingCheckKind.needsMethod);
-  const BookingCheck.topUp(int gap) : this._(BookingCheckKind.topUp, gap);
+  const BookingCheck.owesDriver(int amount, String driverFirstName)
+      : this._(BookingCheckKind.owesDriver, amount, driverFirstName);
 
   final BookingCheckKind kind;
 
-  /// EGP still missing (topUp only).
-  final int gap;
+  /// owesDriver only: EGP still owed and to whom (first name, FR-018).
+  final int amount;
+  final String driverFirstName;
 
   @override
-  bool operator ==(Object other) => other is BookingCheck && other.kind == kind && other.gap == gap;
+  bool operator ==(Object other) =>
+      other is BookingCheck && other.kind == kind && other.amount == amount && other.driverFirstName == driverFirstName;
 
   @override
-  int get hashCode => Object.hash(kind, gap);
+  int get hashCode => Object.hash(kind, amount, driverFirstName);
 
   @override
-  String toString() => 'BookingCheck(${kind.name}, gap: $gap)';
+  String toString() => 'BookingCheck(${kind.name}, $amount, $driverFirstName)';
 }
 
-/// Can this person pay for this seat right now (005 research R8, FR-008,
-/// FR-009)? Checked at Book, at Post and again at accept. Dart-only for now:
-/// the server writes its own check against its own ledger.
+/// May this person take a seat right now (005 FR-008, 007 FR-005)? Checked
+/// at Book, at Post, at accept and at group join. A share a driver marked as
+/// not received blocks first; Goora's own fee never blocks here (it goes on
+/// the balance — 007 research R5; the overdue rule is 008's). Dart-only: the
+/// server writes its own check against its own records.
 abstract final class BookingGate {
-  static BookingCheck check({
-    required bool hasArrangement,
-    required PricingMode mode,
-    required bool cashOffered,
-    required int balance,
-    required SeatPrice price,
-  }) {
+  static BookingCheck check({required bool hasArrangement, required List<Share> openShares}) {
+    final debts = [for (final s in openShares) if (s.status.isOpenDebt) s];
+    if (debts.isNotEmpty) {
+      // The oldest debt names the driver; the amount is everything owed.
+      debts.sort((a, b) => a.tripEnd.compareTo(b.tripEnd));
+      return BookingCheck.owesDriver(debts.fold(0, (sum, s) => sum + s.amount), debts.first.otherFirstName);
+    }
     if (!hasArrangement) return BookingCheck.needsMethod;
-    // Company riders are never blocked and may go below zero (as in 004).
-    if (mode == PricingMode.company) return BookingCheck.ok;
-    if (mode == PricingMode.cash && cashOffered) return BookingCheck.ok;
-    if (balance >= price.total) return BookingCheck.ok;
-    return BookingCheck.topUp(price.total - balance);
+    return BookingCheck.ok;
   }
 }

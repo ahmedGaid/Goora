@@ -2,9 +2,11 @@ import '../../commute/domain/group.dart';
 import 'activity_entry.dart';
 import 'cash_trial_policy.dart';
 import 'payment_method.dart';
+import 'share.dart';
 
-/// A rider's prepaid balance, or a driver's recoverable-this-week total
-/// awaiting Thursday payout.
+/// Goora's own money for one person (007 FR-001): a rider's balance (top-ups
+/// minus Goora's fees and subscriptions; below zero = fees owed) and, for
+/// drivers, only legacy 004 rows. The driver's share never enters it.
 final class Wallet {
   const Wallet({
     required this.ownerId,
@@ -15,6 +17,7 @@ final class Wallet {
     this.cashTrial,
     this.feesThisMonth = 0,
     this.cashReceived = 0,
+    this.shares = const [],
   });
 
   final String ownerId;
@@ -26,20 +29,27 @@ final class Wallet {
   /// Newest first.
   final List<ActivityEntry> activity;
 
-  /// Riders: the method chosen after joining.
+  /// Riders: how they pay the driver (cash / InstaPay).
   final PaymentMethod? method;
 
-  /// Riders who chose cash: where the trial stands (null for wallet riders).
+  /// Riders: where the fee-free trial stands (007 research R6).
   final CashTrialStatus? cashTrial;
 
   /// Service fees paid on this calendar month's trips.
   final int feesThisMonth;
 
-  /// Drivers: cash recorded as received — never part of [balance].
+  /// Drivers: shares confirmed received this month — never part of [balance].
   final int cashReceived;
+
+  /// Riders: shares not yet confirmed (open debts first). Drivers: their
+  /// riders' shares, newest first.
+  final List<Share> shares;
+
+  /// Riders: everything a driver marked as not received.
+  List<Share> get openDebts => [for (final s in shares) if (s.status.isOpenDebt) s];
 }
 
-/// Where a cash rider's trial stands, from their history (research R8).
+/// Where a rider's fee-free trial stands, from their history (004 R8, 007 R6).
 final class CashTrialStatus {
   const CashTrialStatus({required this.tripsDone, required this.strikes});
 

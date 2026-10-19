@@ -1,54 +1,59 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/core/time/calendar_date.dart';
+import 'package:goora/core/time/wall_time.dart';
+import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/marketplace/domain/booking_gate.dart';
+import 'package:goora/features/wallet/domain/direct_pay.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
-import 'package:goora/features/wallet/domain/seat_price.dart';
+import 'package:goora/features/wallet/domain/share.dart';
 
-/// 005 research R8: ok | needsMethod | topUp(gap), in that order.
+/// 005 research R8, 007 FR-005: owesDriver | needsMethod | ok, in that
+/// order. Goora's own fee never blocks (007 research R5).
 void main() {
-  BookingCheck check(
-    PricingMode mode,
-    int contribution,
-    int balance, {
-    bool hasArrangement = true,
-    int tripCost = 160,
-    int riderSeats = 3,
-  }) {
-    final price = SeatPrice.of(contribution, tripCost: tripCost, riderSeats: riderSeats, mode: mode);
-    return BookingGate.check(
-      hasArrangement: hasArrangement,
-      mode: mode,
-      cashOffered: price.cashOffered,
-      balance: balance,
-      price: price,
-    );
-  }
+  Share share(ShareStatus status, {int amount = 40, String name = 'Karim', int day = 1}) => Share(
+        rideId: 'r$day',
+        riderId: 'me',
+        driverId: 'd',
+        otherFirstName: name,
+        amount: amount,
+        method: PaymentMethod.cash,
+        tripEnd: WallTime(CalendarDate(2026, 10, day), const Clock.hm(8, 0)),
+        status: status,
+      );
 
   test('no method and no plan → needsMethod', () {
-    expect(check(PricingMode.wallet, 40, 500, hasArrangement: false), BookingCheck.needsMethod);
+    expect(BookingGate.check(hasArrangement: false, openShares: const []), BookingCheck.needsMethod);
   });
 
-  test('company is never blocked, even at −50', () {
-    expect(check(PricingMode.company, 40, -50), BookingCheck.ok);
+  test('nothing owed → ok', () {
+    expect(BookingGate.check(hasArrangement: true, openShares: const []), BookingCheck.ok);
   });
 
-  test('cash with cash offered → ok at any balance', () {
-    expect(check(PricingMode.cash, 40, 0), BookingCheck.ok);
+  test('pending and received shares never block', () {
+    final shares = [share(ShareStatus.pending), share(ShareStatus.received), share(ShareStatus.autoReceived)];
+    expect(BookingGate.check(hasArrangement: true, openShares: shares), BookingCheck.ok);
   });
 
-  test('cash with no cash amount (range 2–2) at balance 0 → top up the total', () {
-    final price = SeatPrice.of(2, tripCost: 8, riderSeats: 4, mode: PricingMode.cash);
-    expect(price.cash, isNull);
-    expect(check(PricingMode.cash, 2, 0, tripCost: 8, riderSeats: 4), BookingCheck.topUp(price.total));
+  test('a "didn\'t get it" share blocks with the amount and the driver', () {
+    expect(BookingGate.check(hasArrangement: true, openShares: [share(ShareStatus.notReceived)]),
+        const BookingCheck.owesDriver(40, 'Karim'));
   });
 
-  test('wallet 44: balance 0 → top up 44, 30 → 14, 44 → ok', () {
-    // 40 + 4 fee at 160/3.
-    expect(check(PricingMode.wallet, 40, 0), const BookingCheck.topUp(44));
-    expect(check(PricingMode.wallet, 40, 30), const BookingCheck.topUp(14));
-    expect(check(PricingMode.wallet, 40, 44), BookingCheck.ok);
+  test('a disputed share still blocks', () {
+    expect(BookingGate.check(hasArrangement: true, openShares: [share(ShareStatus.disputed)]).kind,
+        BookingCheckKind.owesDriver);
   });
 
-  test('subscribed 40 at 39 → top up 1', () {
-    expect(check(PricingMode.subscribed, 40, 39), const BookingCheck.topUp(1));
+  test('several debts: everything owed, the oldest driver named', () {
+    final shares = [
+      share(ShareStatus.notReceived, day: 5, name: 'Omar', amount: 45),
+      share(ShareStatus.disputed, day: 2, name: 'Karim'),
+    ];
+    expect(BookingGate.check(hasArrangement: true, openShares: shares), const BookingCheck.owesDriver(85, 'Karim'));
+  });
+
+  test('a debt blocks before the missing method', () {
+    expect(BookingGate.check(hasArrangement: false, openShares: [share(ShareStatus.notReceived)]).kind,
+        BookingCheckKind.owesDriver);
   });
 }
