@@ -14,9 +14,11 @@ import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/daily/data/daily_seed.dart';
+import 'package:goora/features/daily/data/fake_trust_repository.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/daily/domain/phone_dialer.dart';
 import 'package:goora/features/daily/domain/trip_sharer.dart';
+import 'package:goora/features/daily/domain/trust.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
@@ -83,6 +85,14 @@ Map<String, Object> memberPrefs({
   String groupId = 'sz-0725',
   bool withPlan = true,
   PaymentMethod? method,
+
+  /// A rider past the fee-free trial (a 004 "wallet" rider, 007 R6), so trips
+  /// carry Goora's fee from the first one.
+  bool pastTrial = false,
+
+  /// 009: riders' ID is checked before the first trip; pre-009 tests ride as
+  /// verified riders unless a test of the ID step passes false.
+  bool idVerified = true,
 }) =>
     {
       LocaleController.storageKey: locale,
@@ -119,6 +129,8 @@ Map<String, Object> memberPrefs({
         ),
       if (method != null) FakeWalletRepository.methodKey(DailySeed.meId): method.name,
       if (method != null) FakeWalletRepository.sinceKey(DailySeed.meId): '2026-10-01',
+      if (pastTrial) FakeWalletRepository.noTrialKey(DailySeed.meId): true,
+      FakeTrustRepository.riderIdKey: (idVerified ? RiderIdStatus.verified : RiderIdStatus.notVerified).name,
     };
 
 List<Override> dailyOverrides(TestClock clock, {RecordingDialer? dialer, RecordingSharer? sharer}) => [

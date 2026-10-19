@@ -152,7 +152,7 @@ void main() {
 
 /// 005 T060: Today for someone with no daily group.
 Map<String, Object> _oncePrefs(String locale) => {
-      ...memberPrefs(role: Role.rider, locale: locale, member: false, withPlan: false, method: PaymentMethod.wallet),
+      ...memberPrefs(role: Role.rider, locale: locale, member: false, withPlan: false, method: PaymentMethod.instapay, pastTrial: true),
       'profile': jsonEncode(
         Profile(
           phone: testPhone,
@@ -218,7 +218,7 @@ void noGroupTodayTests() {
     testWidgets('[$code] cancelling before 9 PM gives everything back and clears the card', (tester) async {
       final c = await _openNoGroupToday(tester, code, book: true);
       final wallet = c.read(walletRepositoryProvider);
-      expect((await wallet.getWallet(DailySeed.meId)).balance, 152);
+      expect((await wallet.getWallet(DailySeed.meId)).balance, 196, reason: "only Goora's 4 at booking (007 R5)");
       await tester.tap(find.text(l.cancelBooking));
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('one-off-section')), findsNothing);

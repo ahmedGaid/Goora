@@ -103,9 +103,10 @@ class DemoSection extends ConsumerWidget {
   Future<CalendarDate?> _nextDuty(WidgetRef ref, {required int from}) async {
     final repo = ref.read(dailyCommuteRepositoryProvider);
     final g = await repo.myGroup();
-    if (g == null) return null;
-    final me = g.member(repo.meId)!;
     final today = ref.read(nowProvider)().date;
+    // No group (a once rider): there is no schedule, so use the next Sun–Thu.
+    if (g == null) return _nextWorkday(today.addDays(from));
+    final me = g.member(repo.meId)!;
     for (final d in await repo.schedule(today.addDays(from), today.addDays(_lookAhead))) {
       final duties = [
         for (final leg in Leg.values)
@@ -115,6 +116,14 @@ class DemoSection extends ConsumerWidget {
       if (duties.contains(wanted)) return d.date;
     }
     return null;
+  }
+
+  static CalendarDate _nextWorkday(CalendarDate from) {
+    var d = from;
+    while (d.weekday == Day.fri || d.weekday == Day.sat) {
+      d = d.addDays(1);
+    }
+    return d;
   }
 
   /// My next trip's driver checks in at my stop at my pickup time, so the

@@ -1,12 +1,22 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/core/storage/preferences.dart';
 import 'package:goora/core/widgets/goora_pill.dart';
+import 'package:goora/features/commute/domain/clock.dart';
+import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/commute/domain/place.dart';
 import 'package:goora/features/daily/data/daily_seed.dart';
+import 'package:goora/features/marketplace/data/fake_marketplace_repository.dart';
+import 'package:goora/features/marketplace/data/market_seed.dart';
 import 'package:goora/features/marketplace/data/providers.dart';
+import 'package:goora/features/marketplace/domain/anonymous_rider.dart';
+import 'package:goora/features/marketplace/domain/booking.dart';
+import 'package:goora/features/marketplace/domain/offered_trip.dart';
 import 'package:goora/features/marketplace/domain/trip_request.dart';
 import 'package:goora/features/marketplace/presentation/post_trip/post_trip_controller.dart';
 import 'package:goora/features/marketplace/presentation/post_trip/post_trip_screen.dart';
@@ -14,8 +24,8 @@ import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
 import 'package:goora/features/wallet/data/providers.dart';
+import 'package:goora/features/wallet/domain/cash_mark.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
-import 'package:goora/features/wallet/domain/wallet_repository.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -59,13 +69,61 @@ Future<_Open> _open(
     PostTripScreen(id: id, draft: draft),
     locale: Locale(locale),
     session: _rider(),
-    prefs: memberPrefs(role: Role.rider, member: member, locale: locale, method: PaymentMethod.wallet),
+    prefs: memberPrefs(role: Role.rider, member: member, locale: locale, method: PaymentMethod.instapay, pastTrial: true),
     overrides: [...dailyOverrides(clock), ...overrides],
   );
   tester.view.physicalSize = const Size(390, 2800);
   if (balance > 0) await c.read(walletRepositoryProvider).topUp(DailySeed.meId, method: 'card', amount: balance);
   await tester.pumpAndSettle();
   return _Open(c, clock);
+}
+
+/// A trial seat on Khaled's trip earlier today that Khaled marked
+/// "ماستلمتش" — an open debt (007 FR-005).
+Future<void> _oweKhaled(_Open o) async {
+  final prefs = o.c.read(sharedPreferencesProvider);
+  final day = o.clock.now.date;
+  final trip = OfferedTrip(
+    id: 'of-owed',
+    driverId: 'khaled',
+    leg: Leg.going,
+    from: Area.sheikhZayed,
+    to: Area.smartVillage,
+    date: day,
+    departure: const Clock.hm(7, 0),
+    seats: 3,
+    riderSeats: 3,
+    tripCost: MarketSeed.tripCost,
+    contribution: 40,
+    repeat: Repeat.once,
+    pickup: MarketSeed.pickupIn(Area.sheikhZayed, 'of-stop-owed', const Clock.hm(7, 0)),
+  );
+  final booking = Booking(
+    id: 'bk-owed',
+    riderId: DailySeed.meId,
+    riderName: 'Omar',
+    rider: const AnonymousRider(isWoman: false, rating: 4.6),
+    source: const BookingSource.offer('of-owed'),
+    date: day,
+    leg: Leg.going,
+    rideId: Booking.offerRideId('of-owed'),
+    price: MarketSeed.quote(40),
+    paidBy: PaidBy.cash,
+    paid: 0,
+    bookedAt: at(day, 6, 0),
+    isSubscriber: false,
+    status: BookingStatus.done,
+  );
+  await prefs.setString(FakeMarketplaceRepository.offersKey, jsonEncode([trip.toJson()]));
+  await prefs.setString(FakeMarketplaceRepository.bookingsKey, jsonEncode([booking.toJson()]));
+  await o.c.read(walletRepositoryProvider).markShare(CashMark(
+        rideId: Booking.offerRideId('of-owed'),
+        riderId: DailySeed.meId,
+        driverId: 'khaled',
+        outcome: CashOutcome.didNotPay,
+        amount: 40,
+        date: day,
+      ));
 }
 
 Future<void> _tap(WidgetTester tester, Finder f) async {
@@ -107,13 +165,10 @@ void main() {
         expect(tester.widget<GooraPill>(find.byKey(const Key('repeat-once'))).selected, isTrue);
       });
 
-      testWidgets('an empty wallet gets the top-up gate, and nothing is posted', (tester) async {
-        final o = await _open(tester, code);
+      testWidgets('an empty wallet still posts: the Goora fee never blocks (007 R5)', (tester) async {
+        await _open(tester, code);
         await _tap(tester, find.byKey(const Key('post')));
-        expect(find.byKey(const Key('notice-top-up')), findsOneWidget);
-        expect(find.text(l.topUpFirst(44)), findsOneWidget);
-        expect(find.byKey(const Key('request-posted')), findsNothing);
-        expect(await o.c.read(marketplaceRepositoryProvider).myRequests(now: o.clock.now), isEmpty);
+        expect(find.byKey(const Key('request-posted')), findsOneWidget);
       });
     });
 
@@ -167,17 +222,15 @@ void main() {
         expect(find.byKey(const Key('post')), findsOneWidget, reason: 'back on the form');
       });
 
-      testWidgets('withdrawn: the balance fell before accept — top up, nothing charged', (tester) async {
+      testWidgets('withdrawn: a driver marked a share unpaid before accept — nothing charged (007 FR-005)',
+          (tester) async {
         final o = await _open(tester, code, balance: 44);
         await _tap(tester, find.byKey(const Key('post')));
-        // Spend the 44 elsewhere so the gate fails at accept.
-        final ledger = o.c.read(walletRepositoryProvider) as SeatLedger;
-        await ledger.debitSeat(DailySeed.meId, bookingId: 'bk-x', rideId: 'offer:x', total: 44, fee: 4, date: _wed);
+        await _oweKhaled(o);
         await o.c.read(marketplaceRepositoryProvider).demoDriverAccepts(now: o.clock.now);
         await _refresh(tester, o.c);
         expect(find.byKey(const Key('request-withdrawn')), findsOneWidget);
         expect(find.text(l.requestWithdrawn), findsOneWidget);
-        expect((await o.c.read(walletRepositoryProvider).getWallet(DailySeed.meId)).balance, 0);
       });
 
       testWidgets('loading is a spinner, not a blank screen (FR-027)', (tester) async {
@@ -188,7 +241,7 @@ void main() {
             const PostTripScreen(id: 'rq-1'),
             locale: Locale(code),
             session: _rider(),
-            prefs: memberPrefs(role: Role.rider, member: false, locale: code, method: PaymentMethod.wallet),
+            prefs: memberPrefs(role: Role.rider, member: false, locale: code, method: PaymentMethod.instapay, pastTrial: true),
             overrides: [postedRequestProvider('rq-1').overrideWith((ref) => never.future)],
           );
         } catch (_) {
@@ -204,7 +257,7 @@ void main() {
           const PostTripScreen(id: 'rq-1'),
           locale: Locale(code),
           session: _rider(),
-          prefs: memberPrefs(role: Role.rider, member: false, locale: code, method: PaymentMethod.wallet),
+          prefs: memberPrefs(role: Role.rider, member: false, locale: code, method: PaymentMethod.instapay, pastTrial: true),
           overrides: [postedRequestProvider('rq-1').overrideWith((ref) => Future<TripRequest?>.error('boom'))],
         );
         expect(find.byKey(const Key('posted-error')), findsOneWidget);

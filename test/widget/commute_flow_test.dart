@@ -27,6 +27,8 @@ Map<String, Object> _prefs(Role role, {CommuteProfile? commute}) => {
         ).toJson(),
       ),
       if (commute != null) 'commute.profile': jsonEncode(commute.toJson()),
+      // Signed up after 009: no ID check yet.
+      'trust.riderId': 'notVerified',
     };
 
 const _corridor = CommuteProfile(
@@ -45,7 +47,8 @@ Future<void> _tapFind(WidgetTester tester) async {
 void main() {
   final a = l10nFor(ar);
 
-  testWidgets('rider: pick places → find → result → join → plan placeholder', (tester) async {
+  testWidgets('rider: pick places → find → result → join → ID check (009) → join → plan placeholder',
+      (tester) async {
     await pumpGooraApp(tester, prefs: _prefs(Role.rider));
     expect(find.text(a.whereGo), findsOneWidget, reason: 'resumes at commute setup');
     await tester.tap(find.byKey(const Key('pick-home')));
@@ -60,6 +63,17 @@ void main() {
 
     expect(find.text(a.foundGroup), findsOneWidget);
     expect(find.byKey(const Key('match-chip')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('join-group')));
+    await tester.pumpAndSettle();
+    // A new rider's ID is checked before their first trip, not at signup (009).
+    expect(find.text(a.idCheckSub), findsOneWidget);
+    await tester.tap(find.byKey(const Key('id-front')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('id-back')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('id-submit')));
+    await tester.pumpAndSettle();
+    expect(find.text(a.foundGroup), findsOneWidget, reason: 'back on the result; nothing joined yet');
     await tester.tap(find.byKey(const Key('join-group')));
     await tester.pumpAndSettle();
     expect(find.text(a.planTitle), findsWidgets);

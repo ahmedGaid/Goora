@@ -21,6 +21,15 @@ enum ActivityKind {
   cashReceived,
   seatBooked,
   seatRefund,
+
+  /// 008: everything owed to Goora paid in one go (+amount).
+  settlement,
+
+  /// 008: a 20-trip bundle bought (amount 75, paid outside the balance).
+  bundle,
+
+  /// 008: a paid trip whose fee a bundle trip covered (amount 0).
+  bundleTrip,
 }
 
 final class ActivityEntry {
@@ -33,13 +42,14 @@ final class ActivityEntry {
     this.notCollected = false,
     this.rideId,
     this.otherPersonId,
+    this.shareToDriver = 0,
   });
 
   final String id;
   final ActivityKind kind;
 
-  /// EGP that moved in this wallet; may be 0 (`freeCancelZero`, `cashTrip`, a
-  /// charge not collected during the cash trial).
+  /// Goora's money that moved in this wallet; may be 0 (`freeCancelZero`, a
+  /// fee-free `cashTrip` trial trip, a charge paid to the driver directly).
   final int amount;
   final CalendarDate date;
 
@@ -55,8 +65,13 @@ final class ActivityEntry {
   /// Set for `feeReceived`/`cashReceived`: which rider it came from.
   final String? otherPersonId;
 
-  /// What went to the driver: the contribution inside a trip's [amount].
-  int get toDriver => amount - fee;
+  /// The share the rider handed the driver directly for this trip (007
+  /// FR-001) — shown, never part of [amount] or the balance. 0 on 004/005
+  /// rows, where the share was inside [amount].
+  final int shareToDriver;
+
+  /// What went to the driver for this trip.
+  int get toDriver => shareToDriver > 0 ? shareToDriver : amount - fee;
 
   Map<String, Object?> toJson() => {
         'id': id,
@@ -67,6 +82,7 @@ final class ActivityEntry {
         'notCollected': notCollected,
         'rideId': rideId,
         'otherPersonId': otherPersonId,
+        if (shareToDriver != 0) 'shareToDriver': shareToDriver,
       };
 
   static ActivityEntry fromJson(Map<String, Object?> j) => ActivityEntry(
@@ -78,5 +94,6 @@ final class ActivityEntry {
         notCollected: (j['notCollected'] as bool?) ?? false,
         rideId: j['rideId'] as String?,
         otherPersonId: j['otherPersonId'] as String?,
+        shareToDriver: (j['shareToDriver'] as int?) ?? 0,
       );
 }

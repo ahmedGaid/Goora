@@ -1,0 +1,33 @@
+{
+  "_doc": "008 pay later (research R2, R3). Run by test/unit/fee_balance_vectors_test.dart and supabase/functions/_shared/fee_balance.test.ts. balance = end-of-day Goora ledger, below zero = owed.",
+  "due": [
+    { "name": "nothing owed", "days": [{ "date": "2026-10-01", "balance": 10 }], "today": "2026-10-20", "expect": null },
+    { "name": "no readings", "days": [], "today": "2026-10-20", "expect": null },
+    { "name": "under 150 mid-month", "days": [{ "date": "2026-10-01", "balance": -4 }, { "date": "2026-10-05", "balance": -40 }], "today": "2026-10-20", "expect": null },
+    { "name": "crosses 150 on the 8th", "days": [{ "date": "2026-10-01", "balance": -100 }, { "date": "2026-10-08", "balance": -152 }, { "date": "2026-10-09", "balance": -160 }], "today": "2026-10-20", "expect": "2026-10-08" },
+    { "name": "exactly 150 is due", "days": [{ "date": "2026-10-03", "balance": -150 }], "today": "2026-10-05", "expect": "2026-10-03" },
+    { "name": "28 at month end carries over", "days": [{ "date": "2026-09-20", "balance": -28 }], "today": "2026-10-10", "expect": null },
+    { "name": "carried, then 36 at the next month end", "days": [{ "date": "2026-09-20", "balance": -28 }, { "date": "2026-10-15", "balance": -36 }], "today": "2026-11-02", "expect": "2026-11-01" },
+    { "name": "30 at month end is due on the 1st", "days": [{ "date": "2026-09-20", "balance": -30 }], "today": "2026-10-02", "expect": "2026-10-01" },
+    { "name": "the 1st itself counts", "days": [{ "date": "2026-09-20", "balance": -30 }], "today": "2026-10-01", "expect": "2026-10-01" },
+    { "name": "cleared, then a new run this month", "days": [{ "date": "2026-09-10", "balance": -40 }, { "date": "2026-09-25", "balance": 0 }, { "date": "2026-10-03", "balance": -30 }], "today": "2026-10-20", "expect": null },
+    { "name": "cleared, then 152 in the new run", "days": [{ "date": "2026-09-10", "balance": -40 }, { "date": "2026-10-02", "balance": 10 }, { "date": "2026-10-05", "balance": -152 }], "today": "2026-10-06", "expect": "2026-10-05" },
+    { "name": "readings after today are ignored", "days": [{ "date": "2026-10-01", "balance": -200 }], "today": "2026-09-30", "expect": null },
+    { "name": "month end comes before 150", "days": [{ "date": "2026-09-20", "balance": -35 }, { "date": "2026-10-10", "balance": -160 }], "today": "2026-10-12", "expect": "2026-10-01" },
+    { "name": "paid down below 30 by month end carries", "days": [{ "date": "2026-09-05", "balance": -60 }, { "date": "2026-09-28", "balance": -20 }], "today": "2026-10-05", "expect": null },
+    { "name": "December rolls into January", "days": [{ "date": "2026-12-10", "balance": -44 }], "today": "2027-01-01", "expect": "2027-01-01" }
+  ],
+  "overdue": [
+    { "name": "no due date", "due": null, "today": "2026-10-20", "expect": false },
+    { "name": "day 2", "due": "2026-10-01", "today": "2026-10-03", "expect": false },
+    { "name": "day 3", "due": "2026-10-01", "today": "2026-10-04", "expect": true },
+    { "name": "same day", "due": "2026-10-04", "today": "2026-10-04", "expect": false },
+    { "name": "across a month", "due": "2026-10-30", "today": "2026-11-02", "expect": true }
+  ],
+  "bundle": [
+    { "name": "fee-free trip keeps the bundle", "fee": 0, "left": 5, "expect": false },
+    { "name": "no trips left", "fee": 4, "left": 0, "expect": false },
+    { "name": "a paid trip uses one", "fee": 4, "left": 1, "expect": true },
+    { "name": "a trimmed fee still uses one", "fee": 2, "left": 20, "expect": true }
+  ]
+}

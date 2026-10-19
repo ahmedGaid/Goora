@@ -3,12 +3,15 @@ import 'cash_mark.dart';
 import 'payment_method.dart';
 import 'payment_provider.dart';
 import 'plan.dart';
+import 'share.dart';
 import 'wallet.dart';
 
 enum SubscribeResult { subscribed, needsTopUp }
 
 /// App-internal interface (contracts/repositories.md) — no network API,
-/// this feature has no server component.
+/// this feature has no server component. Holds only Goora's own money; the
+/// driver's share is paid outside Goora and lives here only as a trust status
+/// (007 FR-001).
 abstract interface class WalletRepository {
   Future<Plan?> getPlan(String personId);
 
@@ -19,6 +22,7 @@ abstract interface class WalletRepository {
   /// Takes effect next billing date (no pro-rating).
   Future<Plan> changePlan(String personId, PlanType newType);
 
+  /// How the rider pays the driver (cash / InstaPay).
   Future<PaymentMethod?> getMethod(String personId);
 
   Future<void> setMethod(String personId, PaymentMethod method);
@@ -26,31 +30,65 @@ abstract interface class WalletRepository {
   /// Another rider's method (seeded in the fakes, research R11).
   Future<PaymentMethod?> methodOf(String riderId);
 
-  Future<List<CashMark>> cashMarks(String rideId);
+  /// The driver's current marks on [rideId], one per rider.
+  Future<List<CashMark>> shareMarks(String rideId);
 
-  /// The first mark for a (ride, rider) stands; later ones are ignored.
-  Future<void> markCash(CashMark mark);
+  /// Sets the driver's answer for one rider's share when
+  /// `SharePolicy.canMark` allows it (007 R2); otherwise ignored.
+  Future<void> markShare(CashMark mark);
+
+  /// The rider's "دفعت" on a share marked as not received (FR-006).
+  Future<void> claimPaid(String rideId, String riderId);
+
+  /// Every share of this rider's that the driver hasn't confirmed, open debts
+  /// first (FR-005 guard and the debt banner).
+  Future<List<Share>> openShares(String riderId);
+
+  /// A driver's shares from their riders, newest first (US4 payments list).
+  Future<List<Share>> driverShares(String driverId);
+
+  /// The signed-in driver's view of one rider's share on one ride (driver
+  /// Today after drop-off); null when that rider has no share there.
+  Future<Share?> driverShareOn(String rideId, String riderId);
+
+  /// Two "didn't pay" marks in 30 days (FR-007).
+  Future<bool> disputeFlagged(String riderId);
+
+  Future<String?> instapayHandleOf(String driverId);
+
+  /// "≤ 40 chars, trimmed; empty → null" (007 research R7).
+  Future<void> setInstapayHandle(String driverId, String? handle);
 
   Future<Wallet> getWallet(String ownerId);
 
   /// Failure leaves balance/activity untouched.
   Future<PaymentResult> topUp(String ownerId, {required String method, required int amount});
 
-  /// Failure leaves balance/activity untouched; never includes cash received.
+  /// Failure leaves balance/activity untouched.
   Future<PaymentResult> withdraw(String ownerId, {required int amount});
+
+  /// 008 FR-003: pays everything owed to Goora in one transaction by
+  /// [method]; nothing owed → success with nothing written; a failure writes
+  /// nothing.
+  Future<PaymentResult> settle(String riderId, {required String method});
+
+  /// 008 FR-007: 20 trips for 75 EGP in one transaction; never touches the
+  /// balance; a failure writes nothing.
+  Future<PaymentResult> buyBundle(String riderId, {required String method});
 }
 
-/// How the marketplace moves money for a one-off seat (005 contracts/repositories.md
-/// "Seams", research R7, R9). Wallet and plan seats are paid at booking; cash
+/// How the marketplace records Goora's fee for a one-off seat (005 research
+/// R7, 007 research R5). The driver's share is never debited here; trial
 /// seats never come here.
 abstract interface class SeatLedger {
-  /// Debits [total] ([fee] recorded); a simulated failure leaves balance and
-  /// activity untouched (SC-006). One debit per [bookingId].
-  Future<PaymentResult> debitSeat(String personId,
+  /// Takes [fee] from the balance at booking (an internal line, so it can't
+  /// fail; a balance below zero is a fee owed). [share] is shown, never
+  /// debited. One row per [bookingId].
+  Future<void> debitSeat(String personId,
       {required String bookingId,
       required String rideId,
-      required int total,
       required int fee,
+      required int share,
       required CalendarDate date});
 
   /// One credit row per [bookingId]; an [amount] of 0 writes no row.

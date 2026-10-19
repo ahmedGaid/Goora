@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/time/now_provider.dart';
 import '../../../../core/time/wall_time.dart';
+import '../../../commute/data/providers.dart';
 import '../../../commute/domain/clock.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/domain/place.dart';
@@ -31,8 +32,10 @@ final class OfferForm {
 
   static const defaultSeats = 3;
 
-  /// The form at its start: the suggested price for the default seats.
-  factory OfferForm.start() => OfferForm(contribution: rangeFor(defaultSeats).suggested);
+  /// The form at its start: the suggested price for the default seats, on the
+  /// given route and time when the driver has a saved commute.
+  factory OfferForm.start({Area? from, Area? to, Clock? departure}) =>
+      OfferForm(contribution: rangeFor(defaultSeats).suggested).copyWith(from: from, to: to, departure: departure);
 
   final Area from;
   final Area to;
@@ -127,6 +130,14 @@ Future<OfferCheck> checkOffer(Ref ref, OfferForm form, {required WallTime now}) 
     ),
   );
   return OfferCheck(missing: missing, fit: fit, trips: day.trips);
+}
+
+/// Where the form starts: the driver's saved commute, home → work at their
+/// time (T104 F22), like Post your trip's `postStart`.
+@riverpod
+Future<OfferForm> offerStart(Ref ref) async {
+  final profile = await ref.watch(commuteRepositoryProvider).loadProfile();
+  return OfferForm.start(from: profile?.home?.area, to: profile?.work?.area, departure: profile?.departure);
 }
 
 /// The form's check, re-read when the form changes.

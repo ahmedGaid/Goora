@@ -7,9 +7,9 @@ import '../../daily/data/providers.dart';
 import '../../marketplace/data/providers.dart';
 import '../../onboarding/domain/choices.dart';
 import '../../onboarding/presentation/session_controller.dart';
-import '../domain/cash_mark.dart';
 import '../domain/payment_method.dart';
 import '../domain/payment_provider.dart';
+import '../domain/share.dart';
 import '../domain/wallet_repository.dart';
 import 'fake_payment_provider.dart';
 import 'fake_wallet_repository.dart';
@@ -33,15 +33,30 @@ WalletRepository walletRepository(Ref ref) => FakeWalletRepository(
       oneOffs: () => ref.read(marketplaceRepositoryProvider).doneOneOffs(),
     );
 
-/// For a driver's check-in after drop-off (FR-012): is this passenger paying
-/// cash, and has the driver already recorded it? `isCash` false hides the
-/// buttons entirely.
+/// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
+/// passenger's share on this ride and where it stands; null hides the
+/// buttons (no share there).
 @riverpod
-Future<({bool isCash, CashOutcome? outcome})> cashStatus(Ref ref, String rideId, String riderId) async {
+Future<Share?> driverShare(Ref ref, String rideId, String riderId) =>
+    ref.watch(walletRepositoryProvider).driverShareOn(rideId, riderId);
+
+/// A driver's InstaPay handle, for a rider with a confirmed ride (007 FR-013).
+@riverpod
+Future<String?> driverInstapay(Ref ref, String driverId) =>
+    ref.watch(walletRepositoryProvider).instapayHandleOf(driverId);
+
+/// The signed-in rider's shares a driver hasn't confirmed, open debts first
+/// (007 US3 debt banner).
+@riverpod
+Future<List<Share>> myOpenShares(Ref ref) =>
+    ref.watch(walletRepositoryProvider).openShares(ref.watch(dailyCommuteRepositoryProvider).meId);
+
+/// How the signed-in rider pays the driver (cash unless they chose InstaPay):
+/// price lines read it for the share (007 R4).
+@riverpod
+Future<PaymentMethod> riderPayMethod(Ref ref) async {
   final repo = ref.watch(walletRepositoryProvider);
-  if (await repo.methodOf(riderId) != PaymentMethod.cash) return (isCash: false, outcome: null);
-  final mark = (await repo.cashMarks(rideId)).where((m) => m.riderId == riderId).firstOrNull;
-  return (isCash: true, outcome: mark?.outcome);
+  return await repo.getMethod(ref.watch(dailyCommuteRepositoryProvider).meId) ?? PaymentMethod.cash;
 }
 
 /// The signed-in rider's current price mode (FR-004). Price lines watch this;
@@ -52,9 +67,8 @@ Future<PricingMode> riderPricing(Ref ref) async {
   final meId = ref.watch(dailyCommuteRepositoryProvider).meId;
   final wallet = await repo.getWallet(meId);
   return PricingMode.of(
-    method: wallet.method,
     plan: await repo.getPlan(meId),
     today: ref.read(nowProvider)().date,
-    cashAvailable: wallet.cashTrial?.available ?? false,
+    trialAvailable: wallet.cashTrial?.available ?? false,
   );
 }

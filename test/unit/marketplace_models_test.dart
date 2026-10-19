@@ -23,7 +23,7 @@ const _rider = AnonymousRider(isWoman: true, rating: 4.8);
 
 /// Thursday; its cut-off is Wednesday 2026-10-14 at 21:00.
 final _date = CalendarDate(2026, 10, 15);
-const _wallet44 = SeatPrice(contribution: 40, fee: 4, cash: null, mode: PricingMode.wallet);
+const _wallet44 = SeatPrice(contribution: 40, share: 40, fee: 4, mode: PricingMode.perTrip);
 
 WallTime _wed(int h, int m) => WallTime(CalendarDate(2026, 10, 14), Clock.hm(h, m));
 
@@ -88,7 +88,7 @@ void main() {
         repeat: Repeat.once,
         pickup: _pickup,
         detourFrom: const {Area.october: 4, Area.sheikhZayed: 12},
-        price: const SeatPrice(contribution: 44, fee: 0, cash: 45, mode: PricingMode.cash),
+        price: const SeatPrice(contribution: 44, share: 45, fee: 0, mode: PricingMode.trial),
         status: RequestStatus.accepted,
         acceptedBy: 'karim',
         tripId: 'of-7',

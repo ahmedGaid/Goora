@@ -2,11 +2,11 @@
 /// completed trips; [strikeLimit] "Didn't pay" marks end it at once (brief
 /// §6.7 C). A "Didn't pay" trip still counts as a cash trip.
 abstract final class CashTrialPolicy {
-  static const tripLimit = 10;
+  static const tripLimit = 5;
   static const strikeLimit = 2;
 
-  /// The banner shows "from cash trip 8": once 7 are done, the next is the 8th.
-  static const bannerAfter = 7;
+  /// The banner shows "from cash trip 4": once 3 are done, the next is the 4th.
+  static const bannerAfter = 3;
 
   static bool available(int tripsDone, int strikes) => tripsDone < tripLimit && strikes < strikeLimit;
 

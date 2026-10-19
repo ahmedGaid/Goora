@@ -9,19 +9,23 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_balance_card.dart';
 import '../../../../core/widgets/goora_banner.dart';
 import '../../../../core/widgets/goora_card.dart';
+import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
 import '../../domain/cash_trial_policy.dart';
 import '../../domain/payment_method.dart';
 import '../../domain/plan.dart';
 import '../../domain/seat_price.dart';
+import '../fee_owed_banner.dart';
 import '../labels.dart';
+import '../share_debt_banner.dart';
 import 'activity_row.dart';
 import 'change_plan_sheet.dart';
+import 'pay_sheet.dart';
 import 'top_up_sheet.dart';
 import 'wallet_controller.dart';
 
-/// A rider's plan, cash trial, balance, top-up, activity and per-trip
-/// breakdown (v2 US2/US4).
+/// A rider's debts to drivers, plan, fee-free trial, balance (Goora's money
+/// only), top-up, activity and per-trip breakdown (004 v2 US2/US4, 007 US3/US4).
 class RiderWallet extends StatelessWidget {
   const RiderWallet({super.key, required this.view});
 
@@ -36,6 +40,7 @@ class RiderWallet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        const ShareDebtBanners(),
         _PlanCard(view: view),
         if (cash != null && cash.available) ...[
           ...gap,
@@ -47,8 +52,8 @@ class RiderWallet extends StatelessWidget {
               kind: GooraBannerKind.info,
               title: l10n.cashTripsLeft(cash.tripsLeft),
               body: l10n.cashTopUpBanner,
-              actionLabel: l10n.topUp,
-              onAction: () => showTopUpSheet(context),
+              actionLabel: l10n.subscribe,
+              onAction: () => context.push(Routes.plan),
             ),
           ],
         ],
@@ -56,22 +61,20 @@ class RiderWallet extends StatelessWidget {
           ...gap,
           GooraBanner(
             key: const Key('cash-ended'),
-            kind: GooraBannerKind.warning,
-            title: l10n.needsTopUp,
+            kind: GooraBannerKind.info,
+            title: l10n.cashTripsLeft(0),
             body: cashEnded == CashTrialEnd.strikes ? l10n.cashOff : l10n.cashEnded,
-            actionLabel: l10n.topUp,
-            onAction: () => showTopUpSheet(context),
+            actionLabel: l10n.subscribe,
+            onAction: () => context.push(Routes.plan),
           ),
-        ] else if (view.needsTopUp) ...[
+        ],
+        if (view.owesGoora) ...[
           ...gap,
-          GooraBanner(
-            key: const Key('needs-top-up'),
-            kind: GooraBannerKind.warning,
-            title: l10n.needsTopUp,
-            body: l10n.needsTopUpBody(view.legTotal),
-            actionLabel: l10n.topUp,
-            onAction: () => showTopUpSheet(context),
-          ),
+          const FeeOwedBanner(),
+        ],
+        if (!view.subscribed) ...[
+          ...gap,
+          _BundleCard(tripsLeft: view.wallet.bundleTripsLeft),
         ],
         if (view.showSavings) ...[
           ...gap,
@@ -132,7 +135,7 @@ class RiderWallet extends StatelessWidget {
             children: [
               Text(l10n.breakdownTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: AppSpacing.sm),
-              _BreakdownRow(label: l10n.breakdownShare, value: l10n.egpAmount(view.legShare)),
+              _BreakdownRow(label: l10n.breakdownShare, value: l10n.egpAmount(view.share)),
               const SizedBox(height: AppSpacing.xs),
               view.fee > 0
                   ? _BreakdownRow(label: l10n.breakdownFee, value: l10n.egpAmount(view.fee))
@@ -163,14 +166,17 @@ class _PlanCard extends StatelessWidget {
     final (String title, String line) = switch (view.mode) {
       PricingMode.company => (l10n.planTypeTitle(PlanType.company), l10n.planCompanyActive),
       PricingMode.subscribed => (l10n.planTypeTitle(plan!.type), l10n.planSubscribedLine(l10n.shortDate(plan.untilDate!))),
-      PricingMode.cash => (
+      PricingMode.trial => (
           l10n.planPayPerTrip,
           view.riderSeats < 1
               ? l10n.priceCash(view.legShare)
               : l10n.priceLine(SeatPrice.of(view.legShare,
-                  tripCost: view.groupTripCost, riderSeats: view.riderSeats, mode: PricingMode.cash)),
+                  tripCost: view.groupTripCost,
+                  riderSeats: view.riderSeats,
+                  mode: PricingMode.trial,
+                  method: view.method)),
         ),
-      PricingMode.wallet => (
+      PricingMode.perTrip => (
           l10n.planPayPerTrip,
           view.lapsed
               ? l10n.planLapsedLine
@@ -197,6 +203,39 @@ class _PlanCard extends StatelessWidget {
                 ? showChangePlanSheet(context, current: plan!.type)
                 : context.push(Routes.plan),
             child: Text(l10n.planChange, style: AppTypography.bodyStrong.copyWith(color: AppColors.greenText)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 008 US4: the 20-trip bundle — what is left, or what it is, and Buy.
+class _BundleCard extends StatelessWidget {
+  const _BundleCard({required this.tripsLeft});
+
+  final int tripsLeft;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return GooraCard(
+      key: const Key('bundle-card'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.bundleTitle, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(
+            tripsLeft > 0 ? l10n.bundleLeft(tripsLeft) : l10n.bundleSub,
+            key: const Key('bundle-line'),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          GooraGhostButton(
+            key: const Key('bundle-buy'),
+            label: l10n.bundleBuy,
+            onPressed: () => showPaySheet(context, PayPurpose.bundle),
           ),
         ],
       ),

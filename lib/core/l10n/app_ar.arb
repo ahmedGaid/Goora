@@ -28,9 +28,9 @@
   "planTitle": "اشترك ومن غير رسوم",
   "planSubline": "من غير رسوم خدمة على أي مشوار أو كرسي.",
   "planMonthlyTitle": "شهري",
-  "planMonthlySub": "129 جنيه/الشهر",
+  "planMonthlySub": "149 جنيه/الشهر",
   "planYearlyTitle": "سنوي",
-  "planYearlySub": "1,290 جنيه/السنة",
+  "planYearlySub": "1,490 جنيه/السنة",
   "planYearlyChip": "شهرين مجانًا",
   "planCompanyTitle": "عن طريق شركتي",
   "planCompanySub": "مجاني — أكّد إيميل الشغل",
@@ -65,9 +65,9 @@
   "planChange": "تغيير",
   "planCompanyActive": "مجانية · شركتك بتدفعها",
   "howPayTitle": "إزاي الدفع بيشتغل",
-  "howPayRule1": "بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم.",
-  "howPayRule2": "البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.",
-  "howPayRule3": "الإلغاء المتأخر والغياب بيروحوا للسواق من غير رسوم خدمة.",
+  "howPayRule1": "بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. جورة بتضيف بس رسوم خدمة لحد 10% على كل مشوار، والمشتركين من غير رسوم.",
+  "howPayRule2": "نصيب السواق بيروحله على طول. جورة مش بتمسكه ولا بتاخد منه نسبة.",
+  "howPayRule3": "الإلغاء المتأخر والغياب بتدفعهم للسواق على طول، من غير رسوم خدمة.",
   "topUpSheetTitle": "اشحن محفظتك",
   "topUpMethodInstaPay": "InstaPay",
   "topUpMethodVodafone": "فودافون كاش",
@@ -131,7 +131,7 @@
   "canDriveSub": "عندي كراسي فاضية وعايز أشارك التكلفة",
   "needRideSub": "بدوّر على حد رايح نفس مكاني",
   "freqSub": "تقدر تعمل التاني في أي وقت بعدين.",
-  "fRegRider": "مجموعة ثابتة لمشوارك اليومي. أول شهر مجاني.",
+  "fRegRider": "مجموعة ثابتة لمشوارك اليومي. أول 5 مشاوير من غير رسوم جورة.",
   "fOnceRider": "احجز كرسي فاضي أو انشر مشوارك. من غير اشتراك.",
   "fRegDriver": "شارك مشوارك اليومي مع مجموعة ثابتة. مجاني دايمًا.",
   "fOnceDriver": "اعرض كراسيك الفاضية في مشوار إنت رايحه أصلًا.",
@@ -1149,7 +1149,7 @@
   "mapLiveAria": "خريطة المشوار · السواق في الطريق",
   "demoDriverArrives": "السواق وصل محطتي",
   "shareNoTrip": "مفيش مشوار تشاركه دلوقتي.",
-  "priceWithFee": "{price} ج للسواق + {fee} ج رسوم خدمة",
+  "priceWithFee": "{price} ج للسواق + {fee} ج رسوم خدمة لجورة",
   "@priceWithFee": {
     "placeholders": {
       "price": {
@@ -1192,11 +1192,11 @@
       }
     }
   },
-  "payMethodTitle": "هتدفع إزاي؟",
-  "payMethodSub": "تقدر تشحن المحفظة أو تشترك في أي وقت.",
-  "payCash": "ادفع كاش للسواق (أول 10 مشاوير)",
-  "payCashSub": "من غير رسوم خدمة على مشاوير الكاش.",
-  "payWallet": "ادفع من المحفظة",
+  "payMethodTitle": "هتدفع للسواق إزاي؟",
+  "payMethodSub": "بتدفع للسواق على طول. أول 5 مشاوير من غير رسوم جورة.",
+  "payCash": "كاش",
+  "payCashSub": "إديها للسواق في العربية.",
+  "payWallet": "InstaPay",
   "subscribeLink": "اشترك ومن غير رسوم",
   "subscribeCta": "اشترك · {price} ج",
   "@subscribeCta": {
@@ -1237,7 +1237,7 @@
     }
   },
   "planLapsedLine": "الاشتراك خلص · رجعت بالمشوار",
-  "cashTripsLeft": "{count, plural, =0{خلصت مشاوير الكاش} =1{فاضل مشوار كاش واحد} =2{فاضل مشوارين كاش} few{فاضل {count} مشاوير كاش} other{فاضل {count} مشوار كاش}}",
+  "cashTripsLeft": "{count, plural, =0{خلصت المشاوير اللي من غير رسوم} =1{فاضل مشوار واحد من غير رسوم} =2{فاضل مشوارين من غير رسوم} few{فاضل {count} مشاوير من غير رسوم} other{فاضل {count} مشوار من غير رسوم}}",
   "@cashTripsLeft": {
     "placeholders": {
       "count": {
@@ -1245,11 +1245,11 @@
       }
     }
   },
-  "cashTopUpBanner": "اشحن محفظتك عشان تكمّل مشاويرك — سواق بديل وكرسي مضمون وفلوسك ترجعلك.",
-  "cashEnded": "مشاوير الكاش خلصت — اشحن محفظتك عشان تكمّل.",
-  "cashOff": "الكاش اتقفل بعد ما مشوارين اتسجّلوا من غير دفع — اشحن محفظتك عشان تكمّل.",
+  "cashTopUpBanner": "بعد كده كل مشوار عليه رسوم خدمة صغيرة لجورة، أو اشترك ومتدفعش رسوم.",
+  "cashEnded": "المشاوير اللي من غير رسوم خلصت. كل مشوار دلوقتي عليه رسوم خدمة صغيرة لجورة.",
+  "cashOff": "المشاوير اللي من غير رسوم خلصت بعد ما مشوارين اتسجّلوا من غير دفع.",
   "needsTopUp": "اشحن عشان تكمّل مشاويرك",
-  "feeSavings": "دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس.",
+  "feeSavings": "دفعت {fees} ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.",
   "@feeSavings": {
     "placeholders": {
       "fees": {
@@ -1258,9 +1258,9 @@
     }
   },
   "actTrip": "مشوار",
-  "actCashTrip": "مشوار كاش",
+  "actCashTrip": "مشوار من غير رسوم",
   "actSubscription": "اشتراك",
-  "cashPaidLine": "دفعت {price} ج كاش للسواق",
+  "cashPaidLine": "{price} ج للسواق على طول",
   "@cashPaidLine": {
     "placeholders": {
       "price": {
@@ -1272,7 +1272,7 @@
   "breakdownShare": "نصيب السواق",
   "breakdownFee": "رسوم الخدمة",
   "breakdownNoFee": "رسوم الخدمة: مفيش",
-  "cashReceived": "استلمت {price} ج كاش",
+  "cashReceived": "استلمت {price} ج",
   "@cashReceived": {
     "placeholders": {
       "price": {
@@ -1280,11 +1280,11 @@
       }
     }
   },
-  "didNotPay": "مدفعش",
-  "cashMarkedReceived": "الكاش وصل",
+  "didNotPay": "ماستلمتش",
+  "cashMarkedReceived": "وصل",
   "cashMarkedUnpaid": "اتسجّل إنه مدفعش",
-  "cashReceivedTitle": "الكاش اللي استلمته",
-  "cashReceivedNote": "متسجّل بس — مش بيتسحب",
+  "cashReceivedTitle": "استلمته على طول الشهر ده",
+  "cashReceivedNote": "الركاب دفعوهولك. جورة مش بتمسكه.",
   "needsTopUpBody": "رصيدك أقل من تمن مشوار واحد ({total} ج).",
   "@needsTopUpBody": {
     "placeholders": {
@@ -1447,7 +1447,7 @@
       }
     }
   },
-  "seatReclaimedCash": "مشترك أخد كرسيك يوم {day}. كنت هتدفع كاش، فمفيش فلوس ترجعلك.",
+  "seatReclaimedCash": "مشترك أخد كرسيك يوم {day}. الكرسي مكانش عليه رسوم، فمفيش حاجة ترجعلك.",
   "@seatReclaimedCash": {
     "placeholders": {
       "day": {
@@ -1485,7 +1485,13 @@
   "offerToLabel": "رايح",
   "offerTimeLabel": "ميعاد الخروج",
   "riderPaysLine": "الراكب بيدفع {amount} ج",
-  "@riderPaysLine": {"placeholders": {"amount": {"type": "int"}}},
+  "@riderPaysLine": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
   "dailyOfferNote": "أول ما حد يحجز، المشوار ده بيبقى مجموعة يومية.",
   "noRidersYet": "لسه محدش حجز. الركاب هيظهروا هنا أول ما يحجزوا.",
   "tripDepartedState": "المشوار ماشي. أسامي الركاب ظاهرة دلوقتي.",
@@ -1498,8 +1504,136 @@
   "demoPostTripFirst": "مفيش حاجة تتعمل لسه. انشر مشوارك الأول.",
   "seeAll": "شوف الكل",
   "acceptConfirm": "أيوه، وافق",
-  "requestWithdrawn": "رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.",
+  "requestWithdrawn": "كان عليك فلوس لسواق لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.",
   "requestGone": "الطلب ده مبقاش مفتوح. دي القايمة بعد التحديث.",
   "dailyBlockedNote": "كل يوم شغل مقفول وإنت راكب في مجموعة يومية.",
-  "findRidersLink": "أو دوّر على ركاب نشروا مشاويرهم"
+  "findRidersLink": "أو دوّر على ركاب نشروا مشاويرهم",
+  "priceInstapay": "ادفع {price} ج للسواق بـ InstaPay",
+  "@priceInstapay": {
+    "placeholders": {
+      "price": {
+        "type": "int"
+      }
+    }
+  },
+  "payInstapaySub": "حوّلها على InstaPay بتاع السواق بعد المشوار.",
+  "owesDriver": "عليك {amount} ج.م لـ {name}",
+  "@owesDriver": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "owesDriverBody": "{name} سجّل إن نصيبك موصلش. ادفع لـ {name} الأول، وبعدها تقدر تحجز تاني.",
+  "@owesDriverBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "iPaid": "دفعت",
+  "iPaidSent": "بلّغنا {name} إنك دفعت. مستنيين يأكّد.",
+  "@iPaidSent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shareDisputed": "{name} بيقول إنه دفع",
+  "@shareDisputed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shareAutoReceived": "اتأكد تلقائي",
+  "sharePending": "مستني ردّك",
+  "shareChange": "غيّر",
+  "paymentsTitle": "فلوس الركاب",
+  "paymentsEmpty": "لسه مفيش. بعد كل مشوار أكّد كل راكب دفعلك ولا لأ.",
+  "feeOwed": "عليك {amount} ج.م رسوم لجورة",
+  "@feeOwed": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "instapayHandleLabel": "حساب InstaPay بتاعك",
+  "instapayHandleHint": "الركاب هيشوفوه بس بعد ما الحجز يتأكد.",
+  "instapaySave": "احفظ",
+  "instapayOfDriver": "InstaPay بتاع {name}: {handle}",
+  "@instapayOfDriver": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "handle": {
+        "type": "String"
+      }
+    }
+  },
+  "copyHandle": "انسخ",
+  "copiedHandle": "اتنسخ",
+  "cashOnly": "كاش بس",
+  "feeOwedBody": "ادفعها في أي وقت. لما توصل 150 ج، أو آخر الشهر من 30 ج، بتبقى مستحقة.",
+  "feeDueLine": "مستحقة من {date}. ادفعها خلال 3 أيام عشان تفضل تحجز.",
+  "@feeDueLine": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "feeOverdueBody": "ادفعها عشان تقدر تحجز تاني. المشاوير اللي حجزتها ماشية عادي.",
+  "payNow": "ادفع",
+  "settleTitle": "ادفع رسوم جورة",
+  "settleConfirm": "ادفع {amount} ج",
+  "@settleConfirm": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "settleFailTitle": "الدفع ماتمّش",
+  "settleFailBody": "مخدناش منك حاجة. جرّب تاني.",
+  "methodFawry": "فوري",
+  "fawryCode": "كود فوري: {code}",
+  "@fawryCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "fawryPaid": "دفعت في فوري",
+  "bundleTitle": "باقة 20 مشوار",
+  "bundleSub": "75 ج مرة واحدة. مبتخلصش أبداً، وبتغطي رسوم جورة بس، مش نصيب السواق.",
+  "bundleLeft": "{count, plural, =0{خلصت مشاوير الباقة} =1{فاضل مشوار واحد في الباقة} =2{فاضل مشوارين في الباقة} few{فاضل {count} مشاوير في الباقة} other{فاضل {count} مشوار في الباقة}}",
+  "@bundleLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bundleBuy": "اشتريها بـ 75 ج",
+  "actSettlement": "دفع رسوم",
+  "actBundle": "باقة مشاوير",
+  "actBundleTrip": "مشوار من الباقة",
+  "idCheckTitle": "التأكد من البطاقة",
+  "idCheckSub": "محتاجين نتأكد من بطاقتك قبل أول مشوار، عشان أمان الكل.",
+  "idFront": "صوّر وش البطاقة",
+  "idBack": "صوّر ضهر البطاقة",
+  "idCaptured": "اتصوّرت",
+  "idSubmit": "ابعتها للتأكيد",
+  "idPending": "بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد."
 }

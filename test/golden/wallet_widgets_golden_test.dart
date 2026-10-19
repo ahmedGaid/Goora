@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
@@ -8,6 +10,7 @@ import 'package:goora/core/theme/app_theme.dart';
 import 'package:goora/core/widgets/goora_balance_card.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
+import 'package:goora/features/wallet/domain/activity_entry.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/presentation/wallet/change_plan_sheet.dart';
 import 'package:goora/features/wallet/presentation/wallet/top_up_sheet.dart';
@@ -109,7 +112,7 @@ void main() {
       final c = await pumpGooraApp(
         tester,
         prefs: {
-          ...memberPrefs(role: Role.rider, locale: code, withPlan: false, method: PaymentMethod.wallet),
+          ...memberPrefs(role: Role.rider, locale: code, withPlan: false, method: PaymentMethod.instapay, pastTrial: true),
           FakeDailyCommuteRepository.eventsKey: '[]',
           'wallet.balance.me': 200,
         },
@@ -170,9 +173,17 @@ void main() {
     testWidgets('withdraw sheet [$dir]', (tester) async {
       await loadAppFonts();
       addTearDown(tester.view.reset);
+      // Only a 004 balance left from before can be withdrawn now (007 R8).
       final c = await pumpGooraApp(
         tester,
-        prefs: memberPrefs(role: Role.driver, locale: code),
+        prefs: {
+          ...memberPrefs(role: Role.driver, locale: code),
+          'wallet.balance.me': 180,
+          'wallet.activity.me': jsonEncode([
+            ActivityEntry(id: 'w-income-1', kind: ActivityKind.tripIncome, amount: 180, date: rideTuesday.addDays(-1))
+                .toJson(),
+          ]),
+        },
         overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
       );
       tester.view.physicalSize = const Size(390, 2600);

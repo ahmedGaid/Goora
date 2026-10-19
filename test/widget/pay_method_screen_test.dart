@@ -31,14 +31,14 @@ void main() {
     final l = l10nFor(locale);
     final code = locale.languageCode;
 
-    testWidgets('[$code] AC1: a rider with no arrangement lands here — cash, wallet and the subscribe link',
+    testWidgets('[$code] AC1: a rider with no arrangement lands here — cash, InstaPay and the subscribe link',
         (tester) async {
       await _openAsNewRider(tester, code);
       expect(find.byType(PayMethodScreen), findsOneWidget);
       expect(find.text(l.payMethodTitle), findsOneWidget);
       expect(find.text(l.payCash), findsOneWidget);
       expect(find.text(l.payWallet), findsOneWidget);
-      expect(find.text(l.priceWithFee(40, 4)), findsOneWidget, reason: 'the wallet option shows its real price');
+      expect(find.text(l.payInstapaySub), findsOneWidget, reason: 'both ways pay the driver directly (007 FR-013)');
       expect(find.text(l.subscribeLink), findsOneWidget);
     });
 
@@ -52,15 +52,18 @@ void main() {
       expect(find.text(l.priceCash(40)), findsOneWidget);
     });
 
-    testWidgets('[$code] AC3: wallet → Today shows "40 EGP to the driver + 4 EGP service fee"', (tester) async {
-      await _openAsNewRider(tester, code);
-      await tester.tap(find.byKey(const Key('pay-wallet')));
+    testWidgets('[$code] AC3: InstaPay → Today shows "Pay 40 EGP to the driver by InstaPay", no fee in the trial',
+        (tester) async {
+      final c = await _openAsNewRider(tester, code);
+      await tester.tap(find.byKey(const Key('pay-instapay')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('pay-continue')));
       await tester.pumpAndSettle();
       expect(find.byType(TodayScreen), findsOneWidget);
-      expect(find.text(l.priceWithFee(40, 4)), findsOneWidget);
-      expect(find.text(l.egpAmount(44)), findsOneWidget, reason: 'the pay tile shows what the rider pays');
+      final meId = c.read(dailyCommuteRepositoryProvider).meId;
+      expect(await c.read(walletRepositoryProvider).getMethod(meId), PaymentMethod.instapay);
+      expect(find.text(l.priceInstapay(40)), findsOneWidget);
+      expect(find.text(l.egpAmount(40)), findsOneWidget, reason: 'the pay tile shows what the rider pays');
     });
 
     testWidgets('[$code] AC4: the link opens the subscription screen', (tester) async {

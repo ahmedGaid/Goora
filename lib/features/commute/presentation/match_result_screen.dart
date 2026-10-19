@@ -14,6 +14,8 @@ import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
+import '../../daily/data/providers.dart';
+import '../../marketplace/domain/booking_gate.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../wallet/data/providers.dart';
@@ -40,6 +42,34 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
 
   Future<void> _join(GroupMatch main, MatchOutcome outcome) async {
     setState(() => _joining = true);
+    if (!outcome.viewerIsDriver) {
+      // 007 FR-005 / 008 FR-005: an unpaid share or overdue Goora fees block joining.
+      final wallet = await ref.read(walletRepositoryProvider).getWallet(ref.read(dailyCommuteRepositoryProvider).meId);
+      final check = BookingGate.check(
+        hasArrangement: true,
+        openShares: await ref.read(myOpenSharesProvider.future),
+        feeOverdue: wallet.feeOverdue ? wallet.owed : 0,
+      );
+      // 009 FR-002: a rider's ID is checked before their first trip.
+      if (!(await ref.read(trustRepositoryProvider).riderIdStatus()).ok &&
+          check.kind != BookingCheckKind.owesDriver &&
+          check.kind != BookingCheckKind.feeOverdue) {
+        if (!mounted) return;
+        setState(() => _joining = false);
+        context.push(Routes.idCheckThen(Routes.match));
+        return;
+      }
+      if (check.kind == BookingCheckKind.owesDriver || check.kind == BookingCheckKind.feeOverdue) {
+        if (!mounted) return;
+        final l10n = AppLocalizations.of(context);
+        setState(() => _joining = false);
+        final text = check.kind == BookingCheckKind.owesDriver
+            ? l10n.owesDriver(check.amount, check.driverFirstName)
+            : l10n.feeOwed(check.amount);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+        return;
+      }
+    }
     await ref.read(commuteRepositoryProvider).join(main.group.id);
     if (mounted) context.go(outcome.viewerIsDriver ? Routes.today : Routes.payMethod);
   }
@@ -68,10 +98,14 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
     final from = l10n.area(outcome.profile.home!.area);
     final to = l10n.area(g.destination);
     final secondary = AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
-    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.wallet;
+    final mode = ref.watch(riderPricingProvider).value ?? PricingMode.perTrip;
     final priceText = viewerIsDriver
         ? l10n.priceDriver(g.price)
-        : l10n.priceLine(SeatPrice.of(g.price, tripCost: g.tripCost, riderSeats: g.riderSeats, mode: mode));
+        : l10n.priceLine(SeatPrice.of(g.price,
+            tripCost: g.tripCost,
+            riderSeats: g.riderSeats,
+            mode: mode,
+            method: ref.watch(riderPayMethodProvider).value ?? PaymentMethod.cash));
 
     return OnboardingScaffold(
       header: GooraChip(key: const Key('match-chip'), label: l10n.matchPercent(main.score)),

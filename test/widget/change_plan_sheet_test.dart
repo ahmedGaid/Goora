@@ -56,7 +56,7 @@ void main() {
       final meId = c.read(dailyCommuteRepositoryProvider).meId;
       final plan = await c.read(walletRepositoryProvider).getPlan(meId);
       expect(plan!.type, PlanType.yearly);
-      expect(plan.price, 1290);
+      expect(plan.price, 1490);
       expect(plan.untilDate, until, reason: 'FR-004: no pro-rating — current period unaffected');
     });
   }

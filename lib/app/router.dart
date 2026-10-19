@@ -14,6 +14,7 @@ import '../features/daily/data/daily_seed.dart';
 import '../features/daily/data/providers.dart';
 import '../features/daily/presentation/shell/app_shell.dart';
 import '../features/daily/presentation/today/today_screen.dart';
+import '../features/daily/presentation/trust/id_check_screen.dart';
 import '../features/daily/presentation/trust/trust_screen.dart';
 import '../features/daily/presentation/week/week_screen.dart';
 import '../features/design_gallery/presentation/design_gallery_screen.dart';
@@ -92,6 +93,10 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: Routes.payMethod,
         builder: (_, state) => PayMethodScreen(next: state.uri.queryParameters['next']),
+      ),
+      GoRoute(
+        path: Routes.idCheck,
+        builder: (_, state) => IdCheckScreen(next: state.uri.queryParameters['next']),
       ),
       GoRoute(
         path: Routes.emptySeats,

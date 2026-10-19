@@ -13,12 +13,11 @@ import '../../../daily/data/providers.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../data/providers.dart';
 import '../../domain/payment_method.dart';
-import '../../domain/seat_price.dart';
-import '../labels.dart';
 import '../wallet/wallet_controller.dart';
 
-/// v2 US1: right after "Join this group" a rider picks cash (first 10 trips)
-/// or the wallet; subscribing is a small link, never a required step.
+/// 004 v2 US1, 007 FR-013: right after "Join this group" a rider says how
+/// they'll pay the driver — cash or InstaPay, both directly, outside Goora;
+/// subscribing is a small link, never a required step.
 /// Drivers never route here (router.dart only sends riders).
 class PayMethodScreen extends ConsumerStatefulWidget {
   const PayMethodScreen({super.key, this.next});
@@ -47,12 +46,6 @@ class _PayMethodScreenState extends ConsumerState<PayMethodScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final view = ref.watch(walletControllerProvider).value;
-    // No quote on the loading frame: riderSeats is 0 until the group loads.
-    final walletPrice = view == null || view.riderSeats < 1
-        ? null
-        : SeatPrice.of(view.legShare,
-            tripCost: view.groupTripCost, riderSeats: view.riderSeats, mode: PricingMode.wallet);
     return OnboardingScaffold(
       title: l10n.payMethodTitle,
       subtitle: l10n.payMethodSub,
@@ -68,11 +61,11 @@ class _PayMethodScreenState extends ConsumerState<PayMethodScreen> {
           ),
           const SizedBox(height: AppSpacing.md),
           GooraRadioCard(
-            key: const Key('pay-wallet'),
+            key: const Key('pay-instapay'),
             title: l10n.payWallet,
-            subtitle: walletPrice == null ? null : l10n.priceLine(walletPrice),
-            selected: _selected == PaymentMethod.wallet,
-            onTap: () => setState(() => _selected = PaymentMethod.wallet),
+            subtitle: l10n.payInstapaySub,
+            selected: _selected == PaymentMethod.instapay,
+            onTap: () => setState(() => _selected = PaymentMethod.instapay),
           ),
         ],
       ),

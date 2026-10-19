@@ -93,13 +93,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planMonthlyTitle => 'شهري';
 
   @override
-  String get planMonthlySub => '129 جنيه/الشهر';
+  String get planMonthlySub => '149 جنيه/الشهر';
 
   @override
   String get planYearlyTitle => 'سنوي';
 
   @override
-  String get planYearlySub => '1,290 جنيه/السنة';
+  String get planYearlySub => '1,490 جنيه/السنة';
 
   @override
   String get planYearlyChip => 'شهرين مجانًا';
@@ -175,15 +175,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get howPayRule1 =>
-      'بتدفع نصيب السواق + رسوم خدمة لحد 10% على كل مشوار. المشتركين من غير رسوم.';
+      'بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. جورة بتضيف بس رسوم خدمة لحد 10% على كل مشوار، والمشتركين من غير رسوم.';
 
   @override
   String get howPayRule2 =>
-      'البنزين والرسوم بتروح كلها للسواق على طول — جورة مالهاش نسبة.';
+      'نصيب السواق بيروحله على طول. جورة مش بتمسكه ولا بتاخد منه نسبة.';
 
   @override
   String get howPayRule3 =>
-      'الإلغاء المتأخر والغياب بيروحوا للسواق من غير رسوم خدمة.';
+      'الإلغاء المتأخر والغياب بتدفعهم للسواق على طول، من غير رسوم خدمة.';
 
   @override
   String get topUpSheetTitle => 'اشحن محفظتك';
@@ -358,7 +358,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get freqSub => 'تقدر تعمل التاني في أي وقت بعدين.';
 
   @override
-  String get fRegRider => 'مجموعة ثابتة لمشوارك اليومي. أول شهر مجاني.';
+  String get fRegRider =>
+      'مجموعة ثابتة لمشوارك اليومي. أول 5 مشاوير من غير رسوم جورة.';
 
   @override
   String get fOnceRider => 'احجز كرسي فاضي أو انشر مشوارك. من غير اشتراك.';
@@ -1638,7 +1639,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String priceWithFee(int price, int fee) {
-    return '$price ج للسواق + $fee ج رسوم خدمة';
+    return '$price ج للسواق + $fee ج رسوم خدمة لجورة';
   }
 
   @override
@@ -1662,19 +1663,20 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get payMethodTitle => 'هتدفع إزاي؟';
+  String get payMethodTitle => 'هتدفع للسواق إزاي؟';
 
   @override
-  String get payMethodSub => 'تقدر تشحن المحفظة أو تشترك في أي وقت.';
+  String get payMethodSub =>
+      'بتدفع للسواق على طول. أول 5 مشاوير من غير رسوم جورة.';
 
   @override
-  String get payCash => 'ادفع كاش للسواق (أول 10 مشاوير)';
+  String get payCash => 'كاش';
 
   @override
-  String get payCashSub => 'من غير رسوم خدمة على مشاوير الكاش.';
+  String get payCashSub => 'إديها للسواق في العربية.';
 
   @override
-  String get payWallet => 'ادفع من المحفظة';
+  String get payWallet => 'InstaPay';
 
   @override
   String get subscribeLink => 'اشترك ومن غير رسوم';
@@ -1716,46 +1718,47 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'فاضل $count مشوار كاش',
-      few: 'فاضل $count مشاوير كاش',
-      two: 'فاضل مشوارين كاش',
-      one: 'فاضل مشوار كاش واحد',
-      zero: 'خلصت مشاوير الكاش',
+      other: 'فاضل $count مشوار من غير رسوم',
+      few: 'فاضل $count مشاوير من غير رسوم',
+      two: 'فاضل مشوارين من غير رسوم',
+      one: 'فاضل مشوار واحد من غير رسوم',
+      zero: 'خلصت المشاوير اللي من غير رسوم',
     );
     return '$_temp0';
   }
 
   @override
   String get cashTopUpBanner =>
-      'اشحن محفظتك عشان تكمّل مشاويرك — سواق بديل وكرسي مضمون وفلوسك ترجعلك.';
+      'بعد كده كل مشوار عليه رسوم خدمة صغيرة لجورة، أو اشترك ومتدفعش رسوم.';
 
   @override
-  String get cashEnded => 'مشاوير الكاش خلصت — اشحن محفظتك عشان تكمّل.';
+  String get cashEnded =>
+      'المشاوير اللي من غير رسوم خلصت. كل مشوار دلوقتي عليه رسوم خدمة صغيرة لجورة.';
 
   @override
   String get cashOff =>
-      'الكاش اتقفل بعد ما مشوارين اتسجّلوا من غير دفع — اشحن محفظتك عشان تكمّل.';
+      'المشاوير اللي من غير رسوم خلصت بعد ما مشوارين اتسجّلوا من غير دفع.';
 
   @override
   String get needsTopUp => 'اشحن عشان تكمّل مشاويرك';
 
   @override
   String feeSavings(int fees) {
-    return 'دفعت $fees ج رسوم الشهر ده. بالاشتراك هتدفع 129 بس.';
+    return 'دفعت $fees ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.';
   }
 
   @override
   String get actTrip => 'مشوار';
 
   @override
-  String get actCashTrip => 'مشوار كاش';
+  String get actCashTrip => 'مشوار من غير رسوم';
 
   @override
   String get actSubscription => 'اشتراك';
 
   @override
   String cashPaidLine(int price) {
-    return 'دفعت $price ج كاش للسواق';
+    return '$price ج للسواق على طول';
   }
 
   @override
@@ -1772,23 +1775,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String cashReceived(int price) {
-    return 'استلمت $price ج كاش';
+    return 'استلمت $price ج';
   }
 
   @override
-  String get didNotPay => 'مدفعش';
+  String get didNotPay => 'ماستلمتش';
 
   @override
-  String get cashMarkedReceived => 'الكاش وصل';
+  String get cashMarkedReceived => 'وصل';
 
   @override
   String get cashMarkedUnpaid => 'اتسجّل إنه مدفعش';
 
   @override
-  String get cashReceivedTitle => 'الكاش اللي استلمته';
+  String get cashReceivedTitle => 'استلمته على طول الشهر ده';
 
   @override
-  String get cashReceivedNote => 'متسجّل بس — مش بيتسحب';
+  String get cashReceivedNote => 'الركاب دفعوهولك. جورة مش بتمسكه.';
 
   @override
   String needsTopUpBody(int total) {
@@ -2018,7 +2021,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String seatReclaimedCash(String day) {
-    return 'مشترك أخد كرسيك يوم $day. كنت هتدفع كاش، فمفيش فلوس ترجعلك.';
+    return 'مشترك أخد كرسيك يوم $day. الكرسي مكانش عليه رسوم، فمفيش حاجة ترجعلك.';
   }
 
   @override
@@ -2125,7 +2128,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get requestWithdrawn =>
-      'رصيدك كان قليل لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.';
+      'كان عليك فلوس لسواق لما سواق وافق، فالطلب اتلغى. ومخدناش منك حاجة.';
 
   @override
   String get requestGone => 'الطلب ده مبقاش مفتوح. دي القايمة بعد التحديث.';
@@ -2135,4 +2138,175 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get findRidersLink => 'أو دوّر على ركاب نشروا مشاويرهم';
+
+  @override
+  String priceInstapay(int price) {
+    return 'ادفع $price ج للسواق بـ InstaPay';
+  }
+
+  @override
+  String get payInstapaySub => 'حوّلها على InstaPay بتاع السواق بعد المشوار.';
+
+  @override
+  String owesDriver(int amount, String name) {
+    return 'عليك $amount ج.م لـ $name';
+  }
+
+  @override
+  String owesDriverBody(String name) {
+    return '$name سجّل إن نصيبك موصلش. ادفع لـ $name الأول، وبعدها تقدر تحجز تاني.';
+  }
+
+  @override
+  String get iPaid => 'دفعت';
+
+  @override
+  String iPaidSent(String name) {
+    return 'بلّغنا $name إنك دفعت. مستنيين يأكّد.';
+  }
+
+  @override
+  String shareDisputed(String name) {
+    return '$name بيقول إنه دفع';
+  }
+
+  @override
+  String get shareAutoReceived => 'اتأكد تلقائي';
+
+  @override
+  String get sharePending => 'مستني ردّك';
+
+  @override
+  String get shareChange => 'غيّر';
+
+  @override
+  String get paymentsTitle => 'فلوس الركاب';
+
+  @override
+  String get paymentsEmpty =>
+      'لسه مفيش. بعد كل مشوار أكّد كل راكب دفعلك ولا لأ.';
+
+  @override
+  String feeOwed(int amount) {
+    return 'عليك $amount ج.م رسوم لجورة';
+  }
+
+  @override
+  String get instapayHandleLabel => 'حساب InstaPay بتاعك';
+
+  @override
+  String get instapayHandleHint => 'الركاب هيشوفوه بس بعد ما الحجز يتأكد.';
+
+  @override
+  String get instapaySave => 'احفظ';
+
+  @override
+  String instapayOfDriver(String name, String handle) {
+    return 'InstaPay بتاع $name: $handle';
+  }
+
+  @override
+  String get copyHandle => 'انسخ';
+
+  @override
+  String get copiedHandle => 'اتنسخ';
+
+  @override
+  String get cashOnly => 'كاش بس';
+
+  @override
+  String get feeOwedBody =>
+      'ادفعها في أي وقت. لما توصل 150 ج، أو آخر الشهر من 30 ج، بتبقى مستحقة.';
+
+  @override
+  String feeDueLine(String date) {
+    return 'مستحقة من $date. ادفعها خلال 3 أيام عشان تفضل تحجز.';
+  }
+
+  @override
+  String get feeOverdueBody =>
+      'ادفعها عشان تقدر تحجز تاني. المشاوير اللي حجزتها ماشية عادي.';
+
+  @override
+  String get payNow => 'ادفع';
+
+  @override
+  String get settleTitle => 'ادفع رسوم جورة';
+
+  @override
+  String settleConfirm(int amount) {
+    return 'ادفع $amount ج';
+  }
+
+  @override
+  String get settleFailTitle => 'الدفع ماتمّش';
+
+  @override
+  String get settleFailBody => 'مخدناش منك حاجة. جرّب تاني.';
+
+  @override
+  String get methodFawry => 'فوري';
+
+  @override
+  String fawryCode(String code) {
+    return 'كود فوري: $code';
+  }
+
+  @override
+  String get fawryPaid => 'دفعت في فوري';
+
+  @override
+  String get bundleTitle => 'باقة 20 مشوار';
+
+  @override
+  String get bundleSub =>
+      '75 ج مرة واحدة. مبتخلصش أبداً، وبتغطي رسوم جورة بس، مش نصيب السواق.';
+
+  @override
+  String bundleLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'فاضل $count مشوار في الباقة',
+      few: 'فاضل $count مشاوير في الباقة',
+      two: 'فاضل مشوارين في الباقة',
+      one: 'فاضل مشوار واحد في الباقة',
+      zero: 'خلصت مشاوير الباقة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bundleBuy => 'اشتريها بـ 75 ج';
+
+  @override
+  String get actSettlement => 'دفع رسوم';
+
+  @override
+  String get actBundle => 'باقة مشاوير';
+
+  @override
+  String get actBundleTrip => 'مشوار من الباقة';
+
+  @override
+  String get idCheckTitle => 'التأكد من البطاقة';
+
+  @override
+  String get idCheckSub =>
+      'محتاجين نتأكد من بطاقتك قبل أول مشوار، عشان أمان الكل.';
+
+  @override
+  String get idFront => 'صوّر وش البطاقة';
+
+  @override
+  String get idBack => 'صوّر ضهر البطاقة';
+
+  @override
+  String get idCaptured => 'اتصوّرت';
+
+  @override
+  String get idSubmit => 'ابعتها للتأكيد';
+
+  @override
+  String get idPending => 'بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.';
 }

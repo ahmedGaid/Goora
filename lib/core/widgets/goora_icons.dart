@@ -33,4 +33,5 @@ abstract final class GooraIcons {
   static const IconData sos = LucideIcons.siren;
   static const IconData delay = LucideIcons.timer;
   static const IconData info = LucideIcons.info;
+  static const IconData camera = LucideIcons.camera;
 }

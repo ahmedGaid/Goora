@@ -47,7 +47,7 @@ Session _rider() => Session(
 Future<ProviderContainer> _open(
   WidgetTester tester,
   String locale, {
-  PaymentMethod? method = PaymentMethod.wallet,
+  PaymentMethod? method = PaymentMethod.instapay,
   bool withPlan = false,
   WallTime? now,
   Leg leg = Leg.going,
@@ -61,7 +61,14 @@ Future<ProviderContainer> _open(
     locale: Locale(locale),
     session: _rider(),
     prefs: {
-      ...memberPrefs(role: Role.rider, member: false, locale: locale, withPlan: false, method: method),
+      ...memberPrefs(
+        role: Role.rider,
+        member: false,
+        locale: locale,
+        withPlan: false,
+        method: method,
+        pastTrial: method == PaymentMethod.instapay,
+      ),
       if (withPlan)
         FakeWalletRepository.planKey: jsonEncode(
           const Plan(personId: DailySeed.meId, type: PlanType.company, status: PlanStatus.active, price: 0).toJson(),
@@ -143,7 +150,7 @@ void main() {
 
     testWidgets('[$code] price by mode: a company rider pays no fee', (tester) async {
       await _open(tester, code, method: null, withPlan: true);
-      expect(find.text(l.priceCompany(44)), findsOneWidget);
+      expect(find.text(l.priceCompany(45)), findsOneWidget, reason: 'no method chosen: cash, 44 rounds to 45');
     });
 
     testWidgets('[$code] the Return toggle lists Heba at 40 + 4', (tester) async {
@@ -179,7 +186,7 @@ void main() {
       expect(find.text(l.priceWithFee(44, 4)), findsOneWidget);
       expect(find.byKey(const Key('upsell-daily')), findsOneWidget);
       expect(find.byKey(const Key('back-to-today')), findsOneWidget);
-      expect(await _balance(c), 152, reason: '200 − 44 − 4');
+      expect(await _balance(c), 196, reason: "200 − Goora's 4; the 44 goes to the driver directly (007 R5)");
     });
 
     testWidgets('[$code] a subscriber sees Back to today and no upsell', (tester) async {
@@ -191,14 +198,13 @@ void main() {
       expect(find.byKey(const Key('back-to-today')), findsOneWidget);
     });
 
-    testWidgets('[$code] top-up gate: "Top up 48 EGP first", nothing charged', (tester) async {
+    testWidgets('[$code] an empty wallet never blocks: booked, the fee goes on the balance (007 FR-009)',
+        (tester) async {
       final c = await _open(tester, code);
       await tester.tap(find.byKey(Key('book-${seatKey(_tarek())}')));
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('notice-top-up')), findsOneWidget);
-      expect(find.text(l.topUpFirst(48)), findsOneWidget);
-      expect(find.byKey(const Key('booked-view')), findsNothing);
-      expect(await _balance(c), 0);
+      expect(find.byKey(const Key('booked-view')), findsOneWidget);
+      expect(await _balance(c), -4);
     });
 
     testWidgets('[$code] the seat just went: a calm banner and a refreshed list', (tester) async {

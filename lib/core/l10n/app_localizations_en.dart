@@ -93,13 +93,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planMonthlyTitle => 'Monthly';
 
   @override
-  String get planMonthlySub => '129 EGP/month';
+  String get planMonthlySub => '149 EGP/month';
 
   @override
   String get planYearlyTitle => 'Yearly';
 
   @override
-  String get planYearlySub => '1,290 EGP/year';
+  String get planYearlySub => '1,490 EGP/year';
 
   @override
   String get planYearlyChip => '2 months free';
@@ -175,15 +175,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get howPayRule1 =>
-      'You pay the driver\'s share + a service fee of up to 10% per trip. Subscribers pay no fee.';
+      'You pay your driver\'s share directly, by cash or InstaPay. Goora adds only a service fee of up to 10% per trip; subscribers pay no fee.';
 
   @override
   String get howPayRule2 =>
-      'Fuel & tolls go straight to your driver — Goora takes no cut.';
+      'The driver\'s share goes straight to them. Goora never holds it or takes a cut.';
 
   @override
   String get howPayRule3 =>
-      'Late cancellations and no-shows go to the driver, with no service fee.';
+      'Late cancellations and no-shows are paid to the driver directly, with no service fee.';
 
   @override
   String get topUpSheetTitle => 'Top up your wallet';
@@ -359,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fRegRider =>
-      'A fixed group for your daily commute. First month free.';
+      'A fixed group for your daily commute. Your first 5 trips have no Goora fee.';
 
   @override
   String get fOnceRider =>
@@ -1608,7 +1608,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String priceWithFee(int price, int fee) {
-    return '$price EGP to the driver + $fee EGP service fee';
+    return '$price EGP to the driver + $fee EGP Goora fee';
   }
 
   @override
@@ -1632,19 +1632,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get payMethodTitle => 'How do you want to pay?';
+  String get payMethodTitle => 'How will you pay the driver?';
 
   @override
-  String get payMethodSub => 'You can top up or subscribe anytime.';
+  String get payMethodSub =>
+      'You pay the driver directly. Your first 5 trips have no Goora fee.';
 
   @override
-  String get payCash => 'Pay cash to the driver (first 10 trips)';
+  String get payCash => 'Cash';
 
   @override
-  String get payCashSub => 'No service fee on cash trips.';
+  String get payCashSub => 'Hand it to the driver in the car.';
 
   @override
-  String get payWallet => 'Use wallet';
+  String get payWallet => 'InstaPay';
 
   @override
   String get subscribeLink => 'Subscribe and pay no fees';
@@ -1686,45 +1687,45 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count cash trips left',
-      one: '1 cash trip left',
-      zero: 'No cash trips left',
+      other: '$count fee-free trips left',
+      one: '1 fee-free trip left',
+      zero: 'No fee-free trips left',
     );
     return '$_temp0';
   }
 
   @override
   String get cashTopUpBanner =>
-      'Top up your wallet to keep riding — get backup drivers, guaranteed seats and refunds.';
+      'After these, each trip has a small Goora fee, or subscribe and pay no fees.';
 
   @override
   String get cashEnded =>
-      'Your cash trips are done — top up your wallet to keep riding.';
+      'Your fee-free trips are done. Each trip now has a small Goora fee.';
 
   @override
   String get cashOff =>
-      'Cash is off after 2 trips were marked unpaid — top up your wallet to keep riding.';
+      'Your fee-free trips ended after 2 trips were marked unpaid.';
 
   @override
   String get needsTopUp => 'Top up to keep riding';
 
   @override
   String feeSavings(int fees) {
-    return 'You paid $fees EGP in fees this month. With a subscription you\'d pay 129.';
+    return 'You paid $fees EGP in fees this month. The subscription is 149, with a guaranteed seat and a backup if your driver can\'t come.';
   }
 
   @override
   String get actTrip => 'Trip';
 
   @override
-  String get actCashTrip => 'Cash trip';
+  String get actCashTrip => 'Fee-free trip';
 
   @override
   String get actSubscription => 'Subscription';
 
   @override
   String cashPaidLine(int price) {
-    return 'Paid $price EGP cash to the driver';
+    return '$price EGP to the driver directly';
   }
 
   @override
@@ -1741,23 +1742,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String cashReceived(int price) {
-    return 'Received $price EGP cash';
+    return 'Received $price EGP';
   }
 
   @override
-  String get didNotPay => 'Didn\'t pay';
+  String get didNotPay => 'Didn\'t get it';
 
   @override
-  String get cashMarkedReceived => 'Cash received';
+  String get cashMarkedReceived => 'Received';
 
   @override
   String get cashMarkedUnpaid => 'Marked unpaid';
 
   @override
-  String get cashReceivedTitle => 'Cash received';
+  String get cashReceivedTitle => 'Received directly this month';
 
   @override
-  String get cashReceivedNote => 'Recorded only — not withdrawable';
+  String get cashReceivedNote =>
+      'Paid to you by passengers. Goora never holds it.';
 
   @override
   String needsTopUpBody(int total) {
@@ -1968,7 +1970,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String seatReclaimedCash(String day) {
-    return 'A subscriber took your seat on $day. You were paying cash, so there\'s nothing to refund.';
+    return 'A subscriber took your seat on $day. There was no fee on it, so there\'s nothing to refund.';
   }
 
   @override
@@ -2080,7 +2082,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requestWithdrawn =>
-      'Your balance was too low when a driver accepted, so the request was withdrawn. Nothing was charged.';
+      'You had an unpaid share when a driver accepted, so the request was withdrawn. Nothing was charged.';
 
   @override
   String get requestGone =>
@@ -2092,4 +2094,176 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get findRidersLink => 'Or find riders who already posted';
+
+  @override
+  String priceInstapay(int price) {
+    return 'Pay $price EGP to the driver by InstaPay';
+  }
+
+  @override
+  String get payInstapaySub =>
+      'Send it to the driver\'s InstaPay after the trip.';
+
+  @override
+  String owesDriver(int amount, String name) {
+    return 'You owe $name $amount EGP';
+  }
+
+  @override
+  String owesDriverBody(String name) {
+    return '$name marked your share as not received. Pay $name first, then you can book again.';
+  }
+
+  @override
+  String get iPaid => 'I paid';
+
+  @override
+  String iPaidSent(String name) {
+    return 'We told $name you paid. Waiting for them to confirm.';
+  }
+
+  @override
+  String shareDisputed(String name) {
+    return '$name says they paid';
+  }
+
+  @override
+  String get shareAutoReceived => 'Confirmed automatically';
+
+  @override
+  String get sharePending => 'Waiting for your answer';
+
+  @override
+  String get shareChange => 'Change';
+
+  @override
+  String get paymentsTitle => 'Payments from passengers';
+
+  @override
+  String get paymentsEmpty =>
+      'No payments yet. After a trip, confirm what each passenger paid you.';
+
+  @override
+  String feeOwed(int amount) {
+    return 'You owe Goora $amount EGP in fees';
+  }
+
+  @override
+  String get instapayHandleLabel => 'Your InstaPay handle';
+
+  @override
+  String get instapayHandleHint =>
+      'Passengers see it only after their booking is confirmed.';
+
+  @override
+  String get instapaySave => 'Save';
+
+  @override
+  String instapayOfDriver(String name, String handle) {
+    return '$name\'s InstaPay: $handle';
+  }
+
+  @override
+  String get copyHandle => 'Copy';
+
+  @override
+  String get copiedHandle => 'Copied';
+
+  @override
+  String get cashOnly => 'Cash only';
+
+  @override
+  String get feeOwedBody =>
+      'Pay it any time. At 150 EGP, or at month end from 30 EGP, it falls due.';
+
+  @override
+  String feeDueLine(String date) {
+    return 'Due $date. Pay within 3 days to keep booking.';
+  }
+
+  @override
+  String get feeOverdueBody =>
+      'Pay it to book again. Trips you already booked still run.';
+
+  @override
+  String get payNow => 'Pay';
+
+  @override
+  String get settleTitle => 'Pay Goora fees';
+
+  @override
+  String settleConfirm(int amount) {
+    return 'Pay $amount EGP';
+  }
+
+  @override
+  String get settleFailTitle => 'The payment didn\'t go through';
+
+  @override
+  String get settleFailBody => 'Nothing was charged. Try again.';
+
+  @override
+  String get methodFawry => 'Fawry';
+
+  @override
+  String fawryCode(String code) {
+    return 'Fawry code: $code';
+  }
+
+  @override
+  String get fawryPaid => 'I paid at Fawry';
+
+  @override
+  String get bundleTitle => '20-trip bundle';
+
+  @override
+  String get bundleSub =>
+      '75 EGP once. It never expires and covers Goora\'s fee, not the driver\'s share.';
+
+  @override
+  String bundleLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bundle trips left',
+      one: '1 bundle trip left',
+      zero: 'No bundle trips left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bundleBuy => 'Buy for 75 EGP';
+
+  @override
+  String get actSettlement => 'Fees paid';
+
+  @override
+  String get actBundle => 'Trip bundle';
+
+  @override
+  String get actBundleTrip => 'Bundle trip';
+
+  @override
+  String get idCheckTitle => 'Check your ID';
+
+  @override
+  String get idCheckSub =>
+      'We need to check your ID before your first trip, for everyone\'s safety.';
+
+  @override
+  String get idFront => 'Photograph the front';
+
+  @override
+  String get idBack => 'Photograph the back';
+
+  @override
+  String get idCaptured => 'Captured';
+
+  @override
+  String get idSubmit => 'Send for checking';
+
+  @override
+  String get idPending =>
+      'We\'re checking your ID. You can book as soon as it\'s confirmed.';
 }

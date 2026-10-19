@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -7,13 +9,23 @@ import 'package:goora/app/routes.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/wallet/data/providers.dart';
+import 'package:goora/features/wallet/domain/activity_entry.dart';
 import 'package:goora/features/wallet/domain/payment_provider.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
 /// US3: the withdraw sheet on its own — success and forced-failure paths
-/// (T040).
+/// (T040). Since 007 Goora holds no driver money, so only a 004 balance left
+/// from before can be withdrawn; it is seeded here as two legacy rows.
+final _legacy = <String, Object>{
+  'wallet.balance.me': 180,
+  'wallet.activity.me': jsonEncode([
+    ActivityEntry(id: 'w-income-1', kind: ActivityKind.tripIncome, amount: 160, date: rideTuesday.addDays(-1)).toJson(),
+    ActivityEntry(id: 'w-fee-1', kind: ActivityKind.feeReceived, amount: 20, date: rideTuesday.addDays(-1)).toJson(),
+  ]),
+};
+
 Future<ProviderContainer> _openSheet(
   WidgetTester tester,
   String locale, {
@@ -21,7 +33,7 @@ Future<ProviderContainer> _openSheet(
 }) async {
   final c = await pumpGooraApp(
     tester,
-    prefs: {...memberPrefs(role: Role.driver, locale: locale)},
+    prefs: {...memberPrefs(role: Role.driver, locale: locale), ..._legacy},
     overrides: [...dailyOverrides(TestClock(at(rideTuesday, 7, 0))), ...overrides],
   );
   tester.view.physicalSize = const Size(390, 2600);

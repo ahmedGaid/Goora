@@ -22,15 +22,15 @@ extension WalletLabels on AppLocalizations {
   /// `d/m`, Western digits in both locales — no month-name infra exists yet.
   String shortDate(CalendarDate d) => '${d.day}/${d.month}';
 
-  /// FR-004: the one price line for a trip, by the rider's arrangement.
-  /// Cash reads the rounded cash amount (005 FR-029); when no cash amount
-  /// fits, the quote is the wallet price and so is the line.
+  /// FR-004, 007 FR-014: the one price line for a trip. It always names the
+  /// share as going to the driver directly; Goora's fee, when there is one,
+  /// is its own part. The trial reads how the rider pays the driver.
   String priceLine(SeatPrice price) => switch (price.mode) {
-        PricingMode.cash when price.cashOffered => priceCash(price.cash!),
-        PricingMode.wallet || PricingMode.cash =>
-          price.fee == 0 ? priceNoFee(price.contribution) : priceWithFee(price.contribution, price.fee),
-        PricingMode.subscribed => priceSubscribed(price.contribution),
-        PricingMode.company => priceCompany(price.contribution),
+        PricingMode.trial =>
+          price.method == PaymentMethod.instapay ? priceInstapay(price.share) : priceCash(price.share),
+        PricingMode.perTrip => price.fee == 0 ? priceNoFee(price.share) : priceWithFee(price.share, price.fee),
+        PricingMode.subscribed => priceSubscribed(price.share),
+        PricingMode.company => priceCompany(price.share),
       };
 
   String activityLabel(ActivityEntry entry) => switch (entry.kind) {
@@ -47,6 +47,9 @@ extension WalletLabels on AppLocalizations {
         ActivityKind.cashReceived => cashMarkedReceived,
         ActivityKind.seatBooked => actSeatBooked,
         ActivityKind.seatRefund => actSeatRefund,
+        ActivityKind.settlement => actSettlement,
+        ActivityKind.bundle => actBundle,
+        ActivityKind.bundleTrip => actBundleTrip,
       };
 
   /// The second line under a row: each trip's fee on its own (FR-011).
@@ -55,7 +58,10 @@ extension WalletLabels on AppLocalizations {
     return switch (entry.kind) {
       ActivityKind.trip || ActivityKind.seatBooked =>
         entry.fee > 0 ? priceWithFee(entry.toDriver, entry.fee) : breakdownNoFee,
-      ActivityKind.cashTrip => cashPaidLine(contribution),
+      ActivityKind.cashTrip => cashPaidLine(entry.shareToDriver > 0 ? entry.shareToDriver : contribution),
+      ActivityKind.bundleTrip => cashPaidLine(entry.shareToDriver),
+      ActivityKind.lateCancelCharge || ActivityKind.tripDeduction when entry.shareToDriver > 0 =>
+        cashPaidLine(entry.shareToDriver),
       _ => null,
     };
   }

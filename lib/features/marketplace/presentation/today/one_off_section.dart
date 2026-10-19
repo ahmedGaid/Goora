@@ -14,7 +14,6 @@ import '../../../../core/widgets/goora_avatar.dart';
 import '../../../../core/widgets/goora_card.dart';
 import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
-import '../../../../core/widgets/goora_status_chip.dart';
 import '../../../commute/presentation/labels.dart';
 import '../../../daily/data/providers.dart';
 import '../../../daily/domain/attendance_rules.dart';
@@ -22,9 +21,8 @@ import '../../../daily/presentation/labels.dart';
 import '../../../daily/presentation/safety/sos_sheet.dart';
 import '../../../daily/presentation/today/today_widgets.dart';
 import '../../../onboarding/presentation/session_controller.dart';
-import '../../../wallet/data/providers.dart';
-import '../../../wallet/domain/cash_mark.dart';
 import '../../../wallet/presentation/labels.dart';
+import '../../../wallet/presentation/share_mark_row.dart';
 import '../../../wallet/presentation/wallet/wallet_controller.dart';
 import '../../data/providers.dart';
 import '../../domain/booking.dart';
@@ -209,10 +207,6 @@ Future<List<OfferLive>> driverOffers(Ref ref) async {
   return [for (final id in ids) await market.live(id, now: now)];
 }
 
-/// Cash the driver marked on an offered trip (`offer:<id>`), by rider.
-@riverpod
-Future<List<CashMark>> offerCashMarks(Ref ref, String rideId) => ref.watch(walletRepositoryProvider).cashMarks(rideId);
-
 /// Re-reads everything a change to the offer [id] touches.
 void refreshDriverOffers(WidgetRef ref, String id) {
   ref
@@ -300,7 +294,7 @@ class _OfferCard extends ConsumerWidget {
     final note = offerStateNote(l10n, trip.status);
     final open = trip.status == OfferStatus.open || trip.status == OfferStatus.full;
     final cashRiders = trip.status == OfferStatus.done
-        ? [for (final r in live.riders) if (r.paidBy == PaidBy.cash && r.riderId != null) r]
+        ? [for (final r in live.riders) if (r.riderId != null) r]
         : const <LiveRider>[];
     return GooraCard(
       key: Key('driver-offer-${trip.id}'),
@@ -363,77 +357,23 @@ class _OfferCard extends ConsumerWidget {
   }
 }
 
-/// A cash rider after an offered trip: "Received N EGP cash" or "Didn't pay".
-/// The mark is stored against `offer:<id>`, like a group trip's (FR-029).
-class _OfferCashRow extends ConsumerWidget {
+/// A passenger after an offered trip: the same receipt row as a group
+/// ride's, stored against `offer:<id>` (005 FR-029, 007 US2).
+class _OfferCashRow extends StatelessWidget {
   const _OfferCashRow({required this.trip, required this.rider});
 
   final OfferedTrip trip;
   final LiveRider rider;
 
-  String get _rideId => Booking.offerRideId(trip.id);
-
-  int get _amount => rider.price?.cash ?? rider.price?.contribution ?? trip.contribution;
-
-  Future<void> _record(WidgetRef ref, CashOutcome outcome) async {
-    await ref.read(walletRepositoryProvider).markCash(CashMark(
-          rideId: _rideId,
-          riderId: rider.riderId!,
-          driverId: trip.driverId,
-          outcome: outcome,
-          amount: _amount,
-          date: trip.date,
-        ));
-    ref
-      ..invalidate(offerCashMarksProvider(_rideId))
-      ..invalidate(walletControllerProvider);
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final id = rider.riderId!;
-    final marks = ref.watch(offerCashMarksProvider(_rideId)).value ?? const <CashMark>[];
-    final outcome = marks.where((m) => m.riderId == id).firstOrNull?.outcome;
-    return Padding(
-      key: Key('cash-$id'),
-      padding: const EdgeInsetsDirectional.only(top: AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(rider.firstName ?? '', style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
-          const SizedBox(height: AppSpacing.sm),
-          if (outcome != null)
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: outcome == CashOutcome.received
-                  ? GooraStatusChip(status: GooraStatus.covered, label: l10n.cashMarkedReceived)
-                  : GooraStatusChip(status: GooraStatus.off, label: l10n.cashMarkedUnpaid),
-            )
-          else
-            Row(
-              children: [
-                Expanded(
-                  child: GooraGhostButton(
-                    key: Key('cash-received-$id'),
-                    label: l10n.cashReceived(_amount),
-                    onPressed: () => _record(ref, CashOutcome.received),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: GooraGhostButton(
-                    key: Key('cash-unpaid-$id'),
-                    label: l10n.didNotPay,
-                    onPressed: () => _record(ref, CashOutcome.didNotPay),
-                  ),
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ShareMarkRow(
+        rideId: Booking.offerRideId(trip.id),
+        riderId: rider.riderId!,
+        driverId: trip.driverId,
+        riderName: rider.firstName ?? '',
+        date: trip.date,
+        fallbackAmount: rider.price?.share ?? trip.contribution,
+      );
 }
 
 /// A trip the rider posted that no driver has taken yet: tap to open it.

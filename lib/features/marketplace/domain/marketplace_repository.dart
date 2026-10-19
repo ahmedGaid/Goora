@@ -140,11 +140,23 @@ final class BookNeedsMethod extends BookResult {
   const BookNeedsMethod();
 }
 
-final class BookTopUp extends BookResult {
-  const BookTopUp(this.gap);
+/// A driver marked a share of this rider's as not received (007 FR-005).
+final class BookOwesDriver extends BookResult {
+  const BookOwesDriver(this.amount, this.driverFirstName);
 
-  /// EGP still missing.
-  final int gap;
+  final int amount;
+  final String driverFirstName;
+}
+
+/// Goora's owed fees are overdue (008 FR-005).
+final class BookFeeOverdue extends BookResult {
+  const BookFeeOverdue(this.amount);
+  final int amount;
+}
+
+/// The rider's ID isn't checked yet (009 FR-002); nothing was booked.
+final class BookNeedsId extends BookResult {
+  const BookNeedsId();
 }
 
 /// No free seat left at the moment of writing (SC-006).
@@ -155,11 +167,6 @@ final class SeatTaken extends BookResult {
 /// One booking per rider per leg-date, and not on a leg they already ride.
 final class AlreadyRiding extends BookResult {
   const AlreadyRiding();
-}
-
-/// The simulated payment failed; nothing changed.
-final class PaymentFailed extends BookResult {
-  const PaymentFailed();
 }
 
 /// Publish on Offer a trip (C).
@@ -225,11 +232,23 @@ final class PostNeedsMethod extends PostResult {
   const PostNeedsMethod();
 }
 
-final class PostTopUp extends PostResult {
-  const PostTopUp(this.gap);
+/// A driver marked a share of this rider's as not received (007 FR-005).
+final class PostOwesDriver extends PostResult {
+  const PostOwesDriver(this.amount, this.driverFirstName);
 
-  /// EGP still missing.
-  final int gap;
+  final int amount;
+  final String driverFirstName;
+}
+
+/// Goora's owed fees are overdue (008 FR-005).
+final class PostFeeOverdue extends PostResult {
+  const PostFeeOverdue(this.amount);
+  final int amount;
+}
+
+/// The rider's ID isn't checked yet (009 FR-002); nothing was posted.
+final class PostNeedsId extends PostResult {
+  const PostNeedsId();
 }
 
 /// The rider is already in a daily group (R10).

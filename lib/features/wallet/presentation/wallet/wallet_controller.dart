@@ -10,6 +10,7 @@ import '../../domain/fee_savings_calculator.dart';
 import '../../domain/payment_method.dart';
 import '../../domain/payment_provider.dart';
 import '../../domain/plan.dart';
+import '../../domain/seat_price.dart';
 import '../../domain/wallet.dart';
 import '../../domain/wallet_repository.dart';
 import '../../domain/wallet_rules.dart';
@@ -23,7 +24,8 @@ final class WalletView {
     required this.wallet,
     required this.today,
     this.plan,
-    this.mode = PricingMode.wallet,
+    this.mode = PricingMode.perTrip,
+    this.method = PaymentMethod.cash,
     this.legShare = 0,
     this.capacitySeats = 0,
     this.filledSeats = 0,
@@ -49,6 +51,9 @@ final class WalletView {
   /// Rider only: which price they pay right now.
   final PricingMode mode;
 
+  /// Rider only: how they pay the driver (cash / InstaPay).
+  final PaymentMethod method;
+
   /// `CommuteGroup.price` — the contribution, EGP per rider per trip (leg).
   final int legShare;
 
@@ -69,25 +74,27 @@ final class WalletView {
   /// driver's wallet do not apply.
   final bool hasGroup;
 
-  /// The service fee on one trip for this rider now (0 unless paying per trip
-  /// from the wallet).
+  /// One trip for this rider now: the share to the driver and Goora's fee.
   ///
   /// Needs at least one rider seat; the controller always supplies one (the
   /// standard corridor basis when there is no group).
-  int get fee => riderSeats < 1
-      ? 0
-      : PricingService.serviceFee(
-          legShare,
-          tripCost: groupTripCost,
-          riderSeats: riderSeats,
-          isSubscriber: mode == PricingMode.subscribed || mode == PricingMode.company,
-          isCashTrial: mode == PricingMode.cash,
-        );
+  SeatPrice? get _price => riderSeats < 1
+      ? null
+      : SeatPrice.of(legShare, tripCost: groupTripCost, riderSeats: riderSeats, mode: mode, method: method);
 
-  /// What one trip costs this rider: 44, or 40 fee-free.
-  int get legTotal => legShare + fee;
+  /// What the rider hands the driver directly for one trip (007 FR-001).
+  int get share => _price?.share ?? legShare;
 
-  int get tripsCovered => legTotal == 0 ? 0 : WalletRules.tripsCovered(wallet.balance, legTotal);
+  /// Goora's service fee on one trip for this rider now (0 unless paying per
+  /// trip).
+  int get fee => _price?.fee ?? 0;
+
+  /// What one trip costs this rider in all: 44, or 40 fee-free.
+  int get legTotal => share + fee;
+
+  /// How many round-trip days of Goora's fees the balance covers (007 R5:
+  /// the balance never pays the driver's share).
+  int get tripsCovered => fee == 0 ? 0 : WalletRules.tripsCovered(wallet.balance, fee);
 
   /// The subscription that is paying for trips today, if any.
   bool get subscribed => mode == PricingMode.subscribed || mode == PricingMode.company;
@@ -97,10 +104,9 @@ final class WalletView {
 
   bool get showSavings => FeeSavingsCalculator.shouldUpsell(wallet.feesThisMonth, isFeeFree: mode.isFeeFree);
 
-  /// "After 10 cash trips, booking requires a wallet balance (or a company
-  /// plan)" — shown, not enforced, in this feature (spec clarification).
-  bool get needsTopUp =>
-      (mode == PricingMode.wallet || mode == PricingMode.subscribed) && legTotal > 0 && wallet.balance < legTotal;
+  /// Goora's fees went past the balance (007 FR-009): owed, shown, never a
+  /// block here (the settle and overdue rules are 008's).
+  bool get owesGoora => wallet.balance < 0;
 
   /// Driver only: what a full round-trip day would cost at capacity.
   int get dayTripCost => groupTripCost * 2;
@@ -130,11 +136,11 @@ class WalletController extends _$WalletController {
       today: today,
       plan: plan,
       mode: PricingMode.of(
-        method: wallet.method,
         plan: plan,
         today: today,
-        cashAvailable: wallet.cashTrial?.available ?? false,
+        trialAvailable: wallet.cashTrial?.available ?? false,
       ),
+      method: wallet.method ?? PaymentMethod.cash,
       legShare: group?.price ?? WalletView.standardLegShare,
       capacitySeats: (group?.riders.length ?? 0) + (group?.freeSeatsGoing ?? 0),
       filledSeats: group?.riders.length ?? 0,
@@ -151,11 +157,27 @@ class WalletController extends _$WalletController {
     return result;
   }
 
-  /// Resets the driver's recoverable balance; a failure leaves balance/
-  /// activity untouched. Cash received is never part of it.
+  /// Takes money out of the balance; a failure leaves balance/activity
+  /// untouched. Shares paid to a driver are never part of it.
   Future<PaymentResult> withdraw({required int amount}) async {
     final meId = ref.read(dailyCommuteRepositoryProvider).meId;
     final result = await ref.read(walletRepositoryProvider).withdraw(meId, amount: amount);
+    if (result == PaymentResult.success) await _refresh();
+    return result;
+  }
+
+  /// 008 FR-003: everything owed to Goora, one transaction.
+  Future<PaymentResult> settle({required String method}) async {
+    final meId = ref.read(dailyCommuteRepositoryProvider).meId;
+    final result = await ref.read(walletRepositoryProvider).settle(meId, method: method);
+    if (result == PaymentResult.success) await _refresh();
+    return result;
+  }
+
+  /// 008 FR-007: 20 trips for 75, never touching the balance.
+  Future<PaymentResult> buyBundle({required String method}) async {
+    final meId = ref.read(dailyCommuteRepositoryProvider).meId;
+    final result = await ref.read(walletRepositoryProvider).buyBundle(meId, method: method);
     if (result == PaymentResult.success) await _refresh();
     return result;
   }
