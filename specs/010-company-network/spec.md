@@ -349,7 +349,8 @@ them out; October's already-issued statement is unchanged.
 **HR statement (US6, P3 — Q6)**
 - **FR-024**: An enrolled employee MUST be able to turn the HR statement on or off for their company;
   it is off by default.
-- **FR-025**: The monthly statement MUST include only employees whose consent was on for that month,
+- **FR-025**: The monthly statement MUST include only employees whose consent was on at the end of
+  that month,
   and for each: date, leg and cost share paid per trip they rode as a rider. Goora fees show as 0.
 - **FR-026**: Shares marked "ماستلمتش", disputed, or still pending MUST NOT appear (Q7).
 - **FR-027**: Withdrawing consent MUST leave the employee out of every later statement; statements

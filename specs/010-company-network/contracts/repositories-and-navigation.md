@@ -66,6 +66,10 @@ types' fields).
   coverage attached (old data, tests) = today's behaviour from `startDate`.
 - **Marketplace** booking: `plan.coversDate(now.date)` → `plan.coversTrip(now)` (fee taken at the
   booking moment).
+- **PricingMode.of** (`payment_method.dart`): gains `required WallTime now` and checks
+  `plan.coversTrip(now)`; callers `wallet/data/providers.dart`, `wallet_controller.dart`,
+  `fake_marketplace_repository.dart` pass the demo-clock now. `coversDate` stays only in the
+  router's pay-method guard (research R2).
 - **Trust**: work-email verification keeps setting `TrustProfile.company`; the employee's work email
   string is needed for the domain → add `TrustProfile.workEmail` (fake: `<first>@valeo.com`).
 - **Notices** (`NoticeSink`): new kinds `companyPlanStarted`, `companyPlanEnded`,

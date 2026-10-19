@@ -25,7 +25,7 @@ attached to the existing company `Plan`, so the six existing plan call sites kee
 **Testing**: `flutter test --concurrency=1` (unit, widget ar+en, golden), `node --test "supabase/functions/_shared/*.test.ts"`
 **Target Platform**: Android (min API 24) + iOS (min 14)
 **Project Type**: mobile app (+ shared TS rules for the future server)
-**Performance Goals**: invoice issue for ≤ 36 missing months on one read < 100 ms on the emulator; dashboard aggregation for 500 employees < 200 ms
+**Performance Goals**: none beyond normal screen responsiveness (fakes over seeded data; the spec sets no timing target)
 **Constraints**: fakes only; money rules twinned; no individual data to HR without consent; legal items behind flags (R0)
 **Scale/Scope**: ~8 new screens/sheets (company home, register, roster, invoices, invoice, dashboard, log, statement) + consent sheet + 2 wallet card changes; ~70 ARB keys (estimate)
 
