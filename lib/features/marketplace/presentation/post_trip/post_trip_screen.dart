@@ -97,6 +97,15 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
           _busy = false;
         });
         return;
+      case PostNeedsId():
+        setState(() => _busy = false);
+        context.push(Routes.idCheckThen(Routes.postTripDraft(
+          from: from.name,
+          to: to.name,
+          at: draft.departure.minutes,
+          repeat: draft.repeat.name,
+        )));
+        return;
       case PostNeedsMethod():
         setState(() => _busy = false);
         final back = Routes.postTripDraft(

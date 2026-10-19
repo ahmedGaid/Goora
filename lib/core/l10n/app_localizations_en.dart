@@ -359,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fRegRider =>
-      'A fixed group for your daily commute. First month free.';
+      'A fixed group for your daily commute. Your first 5 trips have no Goora fee.';
 
   @override
   String get fOnceRider =>
@@ -2207,4 +2207,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actBundleTrip => 'Bundle trip';
+
+  @override
+  String get idCheckTitle => 'Check your ID';
+
+  @override
+  String get idCheckSub =>
+      'We need to check your ID before your first trip, for everyone\'s safety.';
+
+  @override
+  String get idFront => 'Photograph the front';
+
+  @override
+  String get idBack => 'Photograph the back';
+
+  @override
+  String get idCaptured => 'Captured';
+
+  @override
+  String get idSubmit => 'Send for checking';
+
+  @override
+  String get idPending =>
+      'We\'re checking your ID. You can book as soon as it\'s confirmed.';
 }

@@ -761,7 +761,7 @@ abstract class AppLocalizations {
   /// No description provided for @fRegRider.
   ///
   /// In ar, this message translates to:
-  /// **'مجموعة ثابتة لمشوارك اليومي. أول شهر مجاني.'**
+  /// **'مجموعة ثابتة لمشوارك اليومي. أول 5 مشاوير من غير رسوم جورة.'**
   String get fRegRider;
 
   /// No description provided for @fOnceRider.
@@ -3698,6 +3698,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مشوار من الباقة'**
   String get actBundleTrip;
+
+  /// No description provided for @idCheckTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التأكد من البطاقة'**
+  String get idCheckTitle;
+
+  /// No description provided for @idCheckSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'محتاجين نتأكد من بطاقتك قبل أول مشوار، عشان أمان الكل.'**
+  String get idCheckSub;
+
+  /// No description provided for @idFront.
+  ///
+  /// In ar, this message translates to:
+  /// **'صوّر وش البطاقة'**
+  String get idFront;
+
+  /// No description provided for @idBack.
+  ///
+  /// In ar, this message translates to:
+  /// **'صوّر ضهر البطاقة'**
+  String get idBack;
+
+  /// No description provided for @idCaptured.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتصوّرت'**
+  String get idCaptured;
+
+  /// No description provided for @idSubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعتها للتأكيد'**
+  String get idSubmit;
+
+  /// No description provided for @idPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.'**
+  String get idPending;
 }
 
 class _AppLocalizationsDelegate

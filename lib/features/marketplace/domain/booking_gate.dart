@@ -1,12 +1,15 @@
 import '../../wallet/domain/share.dart';
 
-enum BookingCheckKind { ok, needsMethod, owesDriver, feeOverdue }
+enum BookingCheckKind { ok, needsMethod, owesDriver, feeOverdue, needsId }
 
 final class BookingCheck {
   const BookingCheck._(this.kind, [this.amount = 0, this.driverFirstName = '']);
 
   static const ok = BookingCheck._(BookingCheckKind.ok);
   static const needsMethod = BookingCheck._(BookingCheckKind.needsMethod);
+
+  /// 009 FR-002: the rider's ID isn't checked yet.
+  static const needsId = BookingCheck._(BookingCheckKind.needsId);
   const BookingCheck.owesDriver(int amount, String driverFirstName)
       : this._(BookingCheckKind.owesDriver, amount, driverFirstName);
 
@@ -37,7 +40,12 @@ final class BookingCheck {
 /// (008 FR-005) — a fee owed within its grace never blocks. Dart-only: the
 /// server writes its own check against its own records.
 abstract final class BookingGate {
-  static BookingCheck check({required bool hasArrangement, required List<Share> openShares, int feeOverdue = 0}) {
+  static BookingCheck check({
+    required bool hasArrangement,
+    required List<Share> openShares,
+    int feeOverdue = 0,
+    bool idOk = true,
+  }) {
     final debts = [for (final s in openShares) if (s.status.isOpenDebt) s];
     if (debts.isNotEmpty) {
       // The oldest debt names the driver; the amount is everything owed.
@@ -45,6 +53,7 @@ abstract final class BookingGate {
       return BookingCheck.owesDriver(debts.fold(0, (sum, s) => sum + s.amount), debts.first.otherFirstName);
     }
     if (feeOverdue > 0) return BookingCheck.feeOverdue(feeOverdue);
+    if (!idOk) return BookingCheck.needsId;
     if (!hasArrangement) return BookingCheck.needsMethod;
     return BookingCheck.ok;
   }

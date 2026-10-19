@@ -17,6 +17,10 @@ abstract final class Routes {
   static const findRiders = '/find-riders';
   static const plan = '/plan';
   static const payMethod = '/pay-method';
+
+  /// 009: a rider's ID check before their first trip; `?next=` returns them.
+  static const idCheck = '/id-check';
+  static String idCheckThen(String next) => '$idCheck?next=${Uri.encodeQueryComponent(next)}';
   static const today = '/today';
   static const week = '/week';
   static const wallet = '/wallet';

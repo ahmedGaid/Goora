@@ -28,6 +28,13 @@ abstract interface class TrustRepository {
   /// Fake: recorded only.
   Future<SosAlert> sendSos({String? rideId});
 
+  /// 009: where the rider's ID check stands (drivers: always verified).
+  Future<RiderIdStatus> riderIdStatus();
+
+  /// 009 FR-003/FR-004: both sides captured and sent. The fakes verify at
+  /// once; a real check may leave it pending first.
+  Future<RiderIdStatus> submitRiderId();
+
   /// A rider switching to driver mode: license and vehicle wait for
   /// verification, and driver matching waits with them (US6/AC4).
   Future<void> startDriverVerification();

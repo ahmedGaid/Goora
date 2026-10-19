@@ -358,7 +358,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get freqSub => 'تقدر تعمل التاني في أي وقت بعدين.';
 
   @override
-  String get fRegRider => 'مجموعة ثابتة لمشوارك اليومي. أول شهر مجاني.';
+  String get fRegRider =>
+      'مجموعة ثابتة لمشوارك اليومي. أول 5 مشاوير من غير رسوم جورة.';
 
   @override
   String get fOnceRider => 'احجز كرسي فاضي أو انشر مشوارك. من غير اشتراك.';
@@ -2250,4 +2251,26 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get actBundleTrip => 'مشوار من الباقة';
+
+  @override
+  String get idCheckTitle => 'التأكد من البطاقة';
+
+  @override
+  String get idCheckSub =>
+      'محتاجين نتأكد من بطاقتك قبل أول مشوار، عشان أمان الكل.';
+
+  @override
+  String get idFront => 'صوّر وش البطاقة';
+
+  @override
+  String get idBack => 'صوّر ضهر البطاقة';
+
+  @override
+  String get idCaptured => 'اتصوّرت';
+
+  @override
+  String get idSubmit => 'ابعتها للتأكيد';
+
+  @override
+  String get idPending => 'بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.';
 }
