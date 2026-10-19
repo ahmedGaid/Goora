@@ -6,3 +6,14 @@ SCOPE: docs only this step. Rider-side company plan already exists (`PlanType.co
 FIT: Haiku for the merge; Opus for the company-network spec + clarify.
 ALSO OPEN (founder): company price (brief 75 vs model 99) · bill enrolled vs active · minimum seats (20?) · contract length (annual?) · one-off seats covered? · HR statement v1 or later · driver abuse of "ماستلمتش" · lawyer answers (CBE licence, Law 87/2018 fee, pay-later balance) · real InstaPay/Fawry/wallet/card providers · existing subscribers 129/1,290 until renewal (30-day notice job not built) · device walks for 007/008 screens not done.
 BLOCKED, don't re-ask: push only with the founder's OK · emulator only, booted via `D:\Company\99-Ops\start-emulator.ps1` (adb at `%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe`).
+
+---
+## Lane C — company network spec (010), 2026-10-19
+/goal Goora LANE C done: specs/010-company-network (spec, clarify, plan, research, data-model, contracts, quickstart, tasks T001–T054, analyzed) on branch `spec/company-network` (worktree D:/Company/80-Worktrees/Goora-company), docs only, NOT pushed, NOT merged.
+WHERE: verify — `git log --oneline -8 spec/company-network` · `git worktree list`.
+NEXT: founder answers Q1–Q11 (table at the top of specs/010-company-network/spec.md); then founder OK → push branch / merge docs. Implementation (P1 coverage spike first) only after 006 merges.
+READ FIRST: specs/010-company-network/spec.md "Open founder questions" · research.md R0 (lawyer), R2 (coverage risk) · tasks.md analyze note.
+SCOPE: implementation branch `010-company-network` off main after 006; P1–P2 Opus, P3–P9 Sonnet, one phase per session.
+FIT: Opus for P1 + P2. EST: P1 ~60–90 min.
+ALSO OPEN: Q1 price 99 vs 75 · Q2 enrolled peak/day · Q3 minimum 20 · Q4 annual · Q5 one-off seats covered · Q6 HR statement P3 · Q7 disputed shares excluded · Q8 lawyer/ETA/VAT/PDPL · Q9 in-app HR area · Q10 due+15, grace 7 · Q11 pause sub, no trial after leaving. Goora bank details for invoices.
+BLOCKED, don't re-ask: implementation waits for 006 merge · push only with founder OK · brief/constitution amend (T001) needs founder OK.
