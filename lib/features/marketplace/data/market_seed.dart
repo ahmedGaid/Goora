@@ -1,7 +1,9 @@
 import '../../../core/time/wall_time.dart';
 import '../../commute/data/cairo_ismailia_seed.dart';
+import '../../commute/data/corridors.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
+import '../../commute/domain/corridor.dart';
 import '../../commute/domain/geo.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/domain/place.dart';
@@ -68,11 +70,59 @@ abstract final class MarketSeed {
     _RequestRow('e04', Clock.hm(18, 0), AnonymousRider(isWoman: true), Repeat.once, 7, 9),
   ];
 
-  /// Every seeded request, all `posted`, each on its next workday.
-  static List<TripRequest> requests(WallTime now) => [
-    for (final row in _morning) _request(row, Leg.going, now),
-    for (final row in _evening) _request(row, Leg.ret, now),
-  ];
+  /// Every seeded request of [corridor], all `posted`, each on its next
+  /// workday. Both corridors have 12 morning + 4 evening rows (same ids), so
+  /// counts and banners behave alike; the default is the old corridor.
+  static List<TripRequest> requests(WallTime now, {Corridor corridor = Corridors.sheikhZayedSmartVillage}) =>
+      _isCairoIsmailia(corridor)
+      ? [
+          for (final row in _morning) _cairoRequest(row, Leg.going, now),
+          for (final row in _evening) _cairoRequest(row, Leg.ret, now),
+        ]
+      : [
+          for (final row in _morning) _request(row, Leg.going, now),
+          for (final row in _evening) _request(row, Leg.ret, now),
+        ];
+
+  static bool _isCairoIsmailia(Corridor c) => c.id == Corridors.cairoIsmailia.id;
+
+  // Cairo ↔ Ismailia (006): the same 12 + 4 rows move 30 minutes earlier
+  // (06:30–07:30 and 16:30–17:00 → 17:30) and run New Cairo → Ismailia in the
+  // morning, Ismailia → New Cairo in the evening. A row's two detour numbers
+  // spread over the five Cairo-side areas, so some drivers fit it (< 10) and
+  // some do not. Contribution 76 = the suggested price at 300 EGP / 3 seats.
+
+  static const _cairoShift = -30;
+  static const _cairoContribution = 76;
+
+  static TripRequest _cairoRequest(_RequestRow row, Leg leg, WallTime now) {
+    final going = leg == Leg.going;
+    const cairo = Corridors.cairoIsmailia;
+    final departure = row.departure.shift(_cairoShift);
+    final from = going ? Area.newCairo : Area.ismailia;
+    return TripRequest(
+      id: 'rq-seed-${row.id}',
+      riderId: 'seed-${row.id}',
+      rider: row.rider,
+      leg: leg,
+      from: from,
+      to: going ? Area.ismailia : Area.newCairo,
+      date: MarketDay.nextWorkday(departure, now),
+      departure: departure,
+      repeat: row.repeat,
+      pickup: CairoIsmailiaSeed.stopIn(from, 'rq-stop-${row.id}', departure),
+      detourFrom: {
+        Area.newCairo: row.detourSheikhZayed,
+        Area.nasrCity: row.detourSheikhZayed + 1,
+        Area.heliopolis: row.detourOctober,
+        Area.obour: row.detourSheikhZayed + 2,
+        Area.tenthOfRamadan: row.detourOctober + 1,
+        // Evening: the Ismailia driver's own detour; morning: they start there.
+        Area.ismailia: going ? 0 : row.detourSheikhZayed,
+      },
+      price: quote(_cairoContribution, corridor: cairo),
+    );
+  }
 
   static TripRequest _request(_RequestRow row, Leg leg, WallTime now) {
     final going = leg == Leg.going;
@@ -102,8 +152,12 @@ abstract final class MarketSeed {
   }
 
   /// The per-trip quote a seeded request's rider was given.
-  static SeatPrice quote(int contribution) =>
-      SeatPrice.of(contribution, tripCost: tripCost, riderSeats: riderSeats, mode: PricingMode.perTrip);
+  static SeatPrice quote(int contribution, {Corridor? corridor}) => SeatPrice.of(
+    contribution,
+    tripCost: corridor?.tripCost ?? tripCost,
+    riderSeats: corridor?.riderSeats ?? riderSeats,
+    mode: PricingMode.perTrip,
+  );
 
   // -------------------------------------------------------------- offers
 
@@ -114,7 +168,52 @@ abstract final class MarketSeed {
   /// Heba, "Every workday" return 17:10, 3 seats at 40.
   static const hebaId = 'of-seed-heba';
 
-  static List<OfferedTrip> offers(WallTime now) => [
+  static List<OfferedTrip> offers(WallTime now, {Corridor corridor = Corridors.sheikhZayedSmartVillage}) =>
+      _isCairoIsmailia(corridor) ? _cairoOffers(now) : _oldOffers(now);
+
+  /// Tarek "Just once" New Cairo → Ismailia 06:45, 3 seats at 84; Heba "Every
+  /// workday" Ismailia → New Cairo 17:00, 3 seats at 76 (both inside 62–90).
+  static List<OfferedTrip> _cairoOffers(WallTime now) {
+    const going = Clock.hm(6, 45);
+    const back = Clock.hm(17, 0);
+    const cairo = Corridors.cairoIsmailia;
+    return [
+      OfferedTrip(
+        id: tarekId,
+        driverId: 'tarek',
+        leg: Leg.going,
+        from: Area.newCairo,
+        to: Area.ismailia,
+        date: MarketDay.nextWorkday(going, now),
+        departure: going,
+        durationMinutes: cairo.tripMinutes(Area.newCairo, Area.ismailia),
+        seats: cairo.riderSeats,
+        riderSeats: cairo.riderSeats,
+        tripCost: cairo.tripCost,
+        contribution: 84,
+        repeat: Repeat.once,
+        pickup: CairoIsmailiaSeed.stopIn(Area.newCairo, 'of-stop-tarek', going),
+      ),
+      OfferedTrip(
+        id: hebaId,
+        driverId: 'heba',
+        leg: Leg.ret,
+        from: Area.ismailia,
+        to: Area.newCairo,
+        date: MarketDay.nextWorkday(back, now),
+        departure: back,
+        durationMinutes: cairo.tripMinutes(Area.ismailia, Area.newCairo),
+        seats: cairo.riderSeats,
+        riderSeats: cairo.riderSeats,
+        tripCost: cairo.tripCost,
+        contribution: 76,
+        repeat: Repeat.daily,
+        pickup: CairoIsmailiaSeed.stopIn(Area.ismailia, 'of-stop-heba', back),
+      ),
+    ];
+  }
+
+  static List<OfferedTrip> _oldOffers(WallTime now) => [
     OfferedTrip(
       id: tarekId,
       driverId: 'tarek',
