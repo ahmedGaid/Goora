@@ -65,7 +65,8 @@ Key: `company.log.<companyId>` (list, newest first).
 
 ## HR-statement consent (US6)
 `company.hrConsent.<companyId>.<personId>` = list of `{on: bool, at: WallTime}`; a month's statement
-includes the person if consent was on at the moment the statement is made for that month.
+includes the person if consent was on at the end of that month (00:00 on the 1st of the next). The
+history makes an issued month stable after a later withdrawal.
 
 ## HR-facing read models (the only shapes HR gets — research R6)
 - `RosterRow {name, workEmail, enrolledAt, leftAt?}`

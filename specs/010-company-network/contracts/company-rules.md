@@ -19,9 +19,10 @@ abstract final class CompanyRules {
   /// [minute] inside any window.
   static bool covered(List<Window> windows, int minute);
 
-  /// Distinct people enrolled at some single minute of [monthFrom, monthTo); max over the month.
-  /// Each person's windows given as a list; one person counts once.
-  static int peakEnrolled(Map<String, List<Window>> byPerson, int monthFrom, int monthTo);
+  /// For each day of [monthFromDay, monthToDay): distinct people enrolled at any moment of that
+  /// day; returns the max over the month's days (spec Q2/FR-010: "on any day"). Each person's
+  /// windows given as a list; one person counts once per day.
+  static int peakEnrolled(Map<String, List<Window>> byPerson, int monthFromDay, int monthToDay);
 
   static int billedSeats(int peak, int minimumSeats);          // max
   static int invoiceTotal(int billedSeats, int pricePerSeat);  // product
@@ -46,7 +47,7 @@ abstract final class CompanyRules {
 export type Window = { from: number; to: number | null };
 export function coverage(enrolled: Window[], companyActive: Window[]): Window[];
 export function covered(windows: Window[], minute: number): boolean;
-export function peakEnrolled(byPerson: Record<string, Window[]>, monthFrom: number, monthTo: number): number;
+export function peakEnrolled(byPerson: Record<string, Window[]>, monthFromDay: number, monthToDay: number): number;
 export function billedSeats(peak: number, minimumSeats: number): number;
 export function invoiceTotal(billedSeats: number, pricePerSeat: number): number;
 export function dueDay(issueDay: number): number;
@@ -61,7 +62,8 @@ export function suppress(count: number): number | null;
 - coverage: enrolled before approval; enrolled inside a suspension; leave and re-join; open windows.
 - covered: exactly at `from` (true), exactly at `to` (false).
 - peakEnrolled: 12 people all month → 12; one person leaves on the 20th and re-joins on the 25th →
-  counts once; two people with non-overlapping halves → 1; nobody → 0.
+  counts once; two people with non-overlapping halves of the month → 1; A leaves at 10:00 and B
+  joins at 14:00 the same day → 2 (day-based); nobody → 0.
 - billedSeats/invoiceTotal: (12, 20) → 20 → 1,980 at 99; (34, 20) → 34 → 3,366; (0, 20) → 20.
 - dueDay/suspendFromDay: issued 1 Nov → due 16 Nov → suspended from 24 Nov 00:00.
 - activeWindows: paid before suspension (no gap); paid during suspension (gap closes at paidAt);
