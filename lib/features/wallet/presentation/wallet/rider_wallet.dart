@@ -9,15 +9,18 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_balance_card.dart';
 import '../../../../core/widgets/goora_banner.dart';
 import '../../../../core/widgets/goora_card.dart';
+import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
 import '../../domain/cash_trial_policy.dart';
 import '../../domain/payment_method.dart';
 import '../../domain/plan.dart';
 import '../../domain/seat_price.dart';
+import '../fee_owed_banner.dart';
 import '../labels.dart';
 import '../share_debt_banner.dart';
 import 'activity_row.dart';
 import 'change_plan_sheet.dart';
+import 'pay_sheet.dart';
 import 'top_up_sheet.dart';
 import 'wallet_controller.dart';
 
@@ -67,14 +70,11 @@ class RiderWallet extends StatelessWidget {
         ],
         if (view.owesGoora) ...[
           ...gap,
-          GooraBanner(
-            key: const Key('fee-owed'),
-            kind: GooraBannerKind.info,
-            title: l10n.feeOwed(-view.wallet.balance),
-            body: l10n.feeOwedBody,
-            actionLabel: l10n.topUp,
-            onAction: () => showTopUpSheet(context),
-          ),
+          const FeeOwedBanner(),
+        ],
+        if (!view.subscribed) ...[
+          ...gap,
+          _BundleCard(tripsLeft: view.wallet.bundleTripsLeft),
         ],
         if (view.showSavings) ...[
           ...gap,
@@ -203,6 +203,39 @@ class _PlanCard extends StatelessWidget {
                 ? showChangePlanSheet(context, current: plan!.type)
                 : context.push(Routes.plan),
             child: Text(l10n.planChange, style: AppTypography.bodyStrong.copyWith(color: AppColors.greenText)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 008 US4: the 20-trip bundle — what is left, or what it is, and Buy.
+class _BundleCard extends StatelessWidget {
+  const _BundleCard({required this.tripsLeft});
+
+  final int tripsLeft;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return GooraCard(
+      key: const Key('bundle-card'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.bundleTitle, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(
+            tripsLeft > 0 ? l10n.bundleLeft(tripsLeft) : l10n.bundleSub,
+            key: const Key('bundle-line'),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          GooraGhostButton(
+            key: const Key('bundle-buy'),
+            label: l10n.bundleBuy,
+            onPressed: () => showPaySheet(context, PayPurpose.bundle),
           ),
         ],
       ),

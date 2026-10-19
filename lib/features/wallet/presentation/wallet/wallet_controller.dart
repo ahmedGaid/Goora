@@ -166,6 +166,22 @@ class WalletController extends _$WalletController {
     return result;
   }
 
+  /// 008 FR-003: everything owed to Goora, one transaction.
+  Future<PaymentResult> settle({required String method}) async {
+    final meId = ref.read(dailyCommuteRepositoryProvider).meId;
+    final result = await ref.read(walletRepositoryProvider).settle(meId, method: method);
+    if (result == PaymentResult.success) await _refresh();
+    return result;
+  }
+
+  /// 008 FR-007: 20 trips for 75, never touching the balance.
+  Future<PaymentResult> buyBundle({required String method}) async {
+    final meId = ref.read(dailyCommuteRepositoryProvider).meId;
+    final result = await ref.read(walletRepositoryProvider).buyBundle(meId, method: method);
+    if (result == PaymentResult.success) await _refresh();
+    return result;
+  }
+
   /// Takes effect at the next billing date, no pro-rating.
   Future<void> changePlan(PlanType type) async {
     final meId = ref.read(dailyCommuteRepositoryProvider).meId;

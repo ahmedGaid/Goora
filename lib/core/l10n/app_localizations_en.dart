@@ -1675,7 +1675,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String feeSavings(int fees) {
-    return 'You paid $fees EGP in fees this month. With a subscription you\'d pay 149.';
+    return 'You paid $fees EGP in fees this month. The subscription is 149, with a guaranteed seat and a backup if your driver can\'t come.';
   }
 
   @override
@@ -2138,5 +2138,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feeOwedBody =>
-      'Top up any time to settle it. It never stops you riding.';
+      'Pay it any time. At 150 EGP, or at month end from 30 EGP, it falls due.';
+
+  @override
+  String feeDueLine(String date) {
+    return 'Due $date. Pay within 3 days to keep booking.';
+  }
+
+  @override
+  String get feeOverdueBody =>
+      'Pay it to book again. Trips you already booked still run.';
+
+  @override
+  String get payNow => 'Pay';
+
+  @override
+  String get settleTitle => 'Pay Goora fees';
+
+  @override
+  String settleConfirm(int amount) {
+    return 'Pay $amount EGP';
+  }
+
+  @override
+  String get settleFailTitle => 'The payment didn\'t go through';
+
+  @override
+  String get settleFailBody => 'Nothing was charged. Try again.';
+
+  @override
+  String get methodFawry => 'Fawry';
+
+  @override
+  String fawryCode(String code) {
+    return 'Fawry code: $code';
+  }
+
+  @override
+  String get fawryPaid => 'I paid at Fawry';
+
+  @override
+  String get bundleTitle => '20-trip bundle';
+
+  @override
+  String get bundleSub =>
+      '75 EGP once. It never expires and covers Goora\'s fee, not the driver\'s share.';
+
+  @override
+  String bundleLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bundle trips left',
+      one: '1 bundle trip left',
+      zero: 'No bundle trips left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bundleBuy => 'Buy for 75 EGP';
+
+  @override
+  String get actSettlement => 'Fees paid';
+
+  @override
+  String get actBundle => 'Trip bundle';
+
+  @override
+  String get actBundleTrip => 'Bundle trip';
 }

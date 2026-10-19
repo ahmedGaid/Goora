@@ -66,6 +66,15 @@ abstract interface class WalletRepository {
 
   /// Failure leaves balance/activity untouched.
   Future<PaymentResult> withdraw(String ownerId, {required int amount});
+
+  /// 008 FR-003: pays everything owed to Goora in one transaction by
+  /// [method]; nothing owed → success with nothing written; a failure writes
+  /// nothing.
+  Future<PaymentResult> settle(String riderId, {required String method});
+
+  /// 008 FR-007: 20 trips for 75 EGP in one transaction; never touches the
+  /// balance; a failure writes nothing.
+  Future<PaymentResult> buyBundle(String riderId, {required String method});
 }
 
 /// How the marketplace records Goora's fee for a one-off seat (005 research

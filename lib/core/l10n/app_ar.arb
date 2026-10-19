@@ -1237,7 +1237,7 @@
   "cashEnded": "المشاوير اللي من غير رسوم خلصت. كل مشوار دلوقتي عليه رسوم خدمة صغيرة لجورة.",
   "cashOff": "المشاوير اللي من غير رسوم خلصت بعد ما مشوارين اتسجّلوا من غير دفع.",
   "needsTopUp": "اشحن عشان تكمّل مشاويرك",
-  "feeSavings": "دفعت {fees} ج رسوم الشهر ده. بالاشتراك هتدفع 149 بس.",
+  "feeSavings": "دفعت {fees} ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.",
   "@feeSavings": {
     "placeholders": {
       "fees": {
@@ -1571,5 +1571,50 @@
   "copyHandle": "انسخ",
   "copiedHandle": "اتنسخ",
   "cashOnly": "كاش بس",
-  "feeOwedBody": "اشحن في أي وقت عشان تسدّها. ده عمره ما هيوقف مشاويرك."
+  "feeOwedBody": "ادفعها في أي وقت. لما توصل 150 ج، أو آخر الشهر من 30 ج، بتبقى مستحقة.",
+  "feeDueLine": "مستحقة من {date}. ادفعها خلال 3 أيام عشان تفضل تحجز.",
+  "@feeDueLine": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "feeOverdueBody": "ادفعها عشان تقدر تحجز تاني. المشاوير اللي حجزتها ماشية عادي.",
+  "payNow": "ادفع",
+  "settleTitle": "ادفع رسوم جورة",
+  "settleConfirm": "ادفع {amount} ج",
+  "@settleConfirm": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "settleFailTitle": "الدفع ماتمّش",
+  "settleFailBody": "مخدناش منك حاجة. جرّب تاني.",
+  "methodFawry": "فوري",
+  "fawryCode": "كود فوري: {code}",
+  "@fawryCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "fawryPaid": "دفعت في فوري",
+  "bundleTitle": "باقة 20 مشوار",
+  "bundleSub": "75 ج مرة واحدة. مبتخلصش أبداً، وبتغطي رسوم جورة بس، مش نصيب السواق.",
+  "bundleLeft": "{count, plural, =0{خلصت مشاوير الباقة} =1{فاضل مشوار واحد في الباقة} =2{فاضل مشوارين في الباقة} few{فاضل {count} مشاوير في الباقة} other{فاضل {count} مشوار في الباقة}}",
+  "@bundleLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bundleBuy": "اشتريها بـ 75 ج",
+  "actSettlement": "دفع رسوم",
+  "actBundle": "باقة مشاوير",
+  "actBundleTrip": "مشوار من الباقة"
 }

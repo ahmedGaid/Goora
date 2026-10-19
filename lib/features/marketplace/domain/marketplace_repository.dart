@@ -148,6 +148,12 @@ final class BookOwesDriver extends BookResult {
   final String driverFirstName;
 }
 
+/// Goora's owed fees are overdue (008 FR-005).
+final class BookFeeOverdue extends BookResult {
+  const BookFeeOverdue(this.amount);
+  final int amount;
+}
+
 /// No free seat left at the moment of writing (SC-006).
 final class SeatTaken extends BookResult {
   const SeatTaken();
@@ -227,6 +233,12 @@ final class PostOwesDriver extends PostResult {
 
   final int amount;
   final String driverFirstName;
+}
+
+/// Goora's owed fees are overdue (008 FR-005).
+final class PostFeeOverdue extends PostResult {
+  const PostFeeOverdue(this.amount);
+  final int amount;
 }
 
 /// The rider is already in a daily group (R10).

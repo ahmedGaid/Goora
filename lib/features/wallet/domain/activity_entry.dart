@@ -21,6 +21,15 @@ enum ActivityKind {
   cashReceived,
   seatBooked,
   seatRefund,
+
+  /// 008: everything owed to Goora paid in one go (+amount).
+  settlement,
+
+  /// 008: a 20-trip bundle bought (amount 75, paid outside the balance).
+  bundle,
+
+  /// 008: a paid trip whose fee a bundle trip covered (amount 0).
+  bundleTrip,
 }
 
 final class ActivityEntry {

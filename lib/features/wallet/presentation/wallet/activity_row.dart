@@ -23,6 +23,7 @@ class ActivityRow extends StatelessWidget {
     ActivityKind.tripIncome,
     ActivityKind.feeReceived,
     ActivityKind.seatRefund,
+    ActivityKind.settlement,
   };
 
   @override

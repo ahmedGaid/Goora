@@ -19,6 +19,7 @@ import '../domain/cash_mark.dart';
 import '../domain/cash_trial_policy.dart';
 import '../domain/direct_pay.dart';
 import '../domain/done_one_off.dart';
+import '../domain/fee_balance.dart';
 import '../domain/fee_savings_calculator.dart';
 import '../domain/payment_method.dart';
 import '../domain/payment_provider.dart';
@@ -427,16 +428,22 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     }
     final method = await getMethod(ownerId);
     final derived = await _riderTrips(ownerId, method, await getPlan(ownerId), today);
-    final activity = [..._readActivity(ownerId), ...derived.entries]..sort((a, b) => b.date.compareTo(a.date));
+    final stored = _readActivity(ownerId);
+    final activity = [...stored, ...derived.entries]..sort((a, b) => b.date.compareTo(a.date));
+    final balance = _ledger(ownerId) - derived.debits;
+    final due = FeeBalancePolicy.dueDate(_daySeries(stored, derived.entries, balance), today);
     return Wallet(
       ownerId: ownerId,
       role: MemberRole.rider,
-      balance: _ledger(ownerId) - derived.debits,
+      balance: balance,
       activity: activity,
       method: method,
       cashTrial: derived.cashTrial,
       feesThisMonth: FeeSavingsCalculator.feesInMonth(derived.entries, today.monthKey),
       shares: _unconfirmedFirstDebts(derived.shares),
+      bundleTripsLeft: derived.bundleLeft,
+      feeDue: due,
+      feeOverdue: FeeBalancePolicy.isOverdue(due, today),
     );
   }
 
@@ -454,7 +461,10 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
   Future<_Derived> _riderTrips(String ownerId, PaymentMethod? method, Plan? plan, CalendarDate today) async {
     final sinceRaw = _prefs.getString(sinceKey(ownerId));
     final since = sinceRaw == null ? plan?.startDate?.date : CalendarDate.parse(sinceRaw);
-    if (since == null) return const _Derived();
+    if (since == null) {
+      return _Derived(
+          bundleLeft: TripBundle.trips * _readActivity(ownerId).where((e) => e.kind == ActivityKind.bundle).length);
+    }
     final payBy = method ?? PaymentMethod.cash;
     final noTrial = _trialForfeited(ownerId);
     final window = today.addDays(-_window);
@@ -510,6 +520,14 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
 
     final entries = <ActivityEntry>[];
     var debits = 0;
+    // A bundle covers trips from the day it was bought, never earlier ones.
+    final purchases = [
+      for (final e in _readActivity(ownerId))
+        if (e.kind == ActivityKind.bundle) e.date,
+    ];
+    var bundleUsed = 0;
+    int bundleLeftOn(CalendarDate day) =>
+        TripBundle.trips * purchases.where((p) => !p.isAfter(day)).length - bundleUsed;
     var trialDone = 0;
     var strikes = 0;
     for (final item in items) {
@@ -558,16 +576,29 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
         } else {
           final fee = DirectPay.fee(contribution,
               share: share, tripCost: tripCost, riderSeats: riderSeats, feeFree: feeFree);
-          debits += fee;
-          entries.add(ActivityEntry(
-            id: 'trip:${item.rideId}',
-            kind: ActivityKind.trip,
-            amount: fee,
-            fee: fee,
-            date: item.date,
-            rideId: item.rideId,
-            shareToDriver: share,
-          ));
+          if (TripBundle.useBundle(fee, bundleLeftOn(item.date))) {
+            // 008 FR-008: a bundle trip covers Goora's fee; nothing is owed.
+            bundleUsed++;
+            entries.add(ActivityEntry(
+              id: 'bundle-trip:${item.rideId}',
+              kind: ActivityKind.bundleTrip,
+              amount: 0,
+              date: item.date,
+              rideId: item.rideId,
+              shareToDriver: share,
+            ));
+          } else {
+            debits += fee;
+            entries.add(ActivityEntry(
+              id: 'trip:${item.rideId}',
+              kind: ActivityKind.trip,
+              amount: fee,
+              fee: fee,
+              date: item.date,
+              rideId: item.rideId,
+              shareToDriver: share,
+            ));
+          }
         }
       } else {
         entries.add(ActivityEntry(
@@ -593,6 +624,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     return _Derived(
       entries: entries,
       debits: debits,
+      bundleLeft: TripBundle.trips * purchases.length - bundleUsed,
       cashTrial: noTrial ? null : CashTrialStatus(tripsDone: trialDone, strikes: strikes),
       shares: shares,
     );
@@ -660,6 +692,59 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     return result;
   }
 
+  @override
+  Future<PaymentResult> settle(String riderId, {required String method}) async {
+    final owed = (await getWallet(riderId)).owed;
+    if (owed == 0) return PaymentResult.success;
+    final result = await _provider.debit(amount: owed);
+    if (result == PaymentResult.success) await _post(riderId, kind: ActivityKind.settlement, amount: owed);
+    return result;
+  }
+
+  @override
+  Future<PaymentResult> buyBundle(String riderId, {required String method}) async {
+    final result = await _provider.debit(amount: TripBundle.price);
+    if (result == PaymentResult.success) {
+      // Paid outside the balance (008 R4): a row, no delta.
+      await _append(
+        riderId,
+        ActivityEntry(
+          id: 'bundle${DateTime.now().microsecondsSinceEpoch}',
+          kind: ActivityKind.bundle,
+          amount: TripBundle.price,
+          date: _now().date,
+        ),
+        delta: 0,
+      );
+    }
+    return result;
+  }
+
+  /// End-of-day balances for [FeeBalancePolicy.dueDate] (008 R2): the opening
+  /// balance (what the ledger held before any row) plus each day's moves,
+  /// ending at [balance].
+  static List<DayBalance> _daySeries(List<ActivityEntry> stored, List<ActivityEntry> derived, int balance) {
+    int delta(ActivityEntry e) => switch (e.kind) {
+          ActivityKind.topUp || ActivityKind.seatRefund || ActivityKind.settlement => e.amount,
+          ActivityKind.withdrawal || ActivityKind.subscription || ActivityKind.seatBooked || ActivityKind.trip => -e.amount,
+          ActivityKind.tripIncome || ActivityKind.feeReceived => e.amount,
+          _ => 0,
+        };
+    final byDay = <CalendarDate, int>{};
+    var total = 0;
+    for (final e in [...stored, ...derived]) {
+      final d = delta(e);
+      if (d == 0) continue;
+      byDay[e.date] = (byDay[e.date] ?? 0) + d;
+      total += d;
+    }
+    final days = byDay.keys.toList()..sort();
+    var running = balance - total;
+    return [
+      for (final day in days) (date: day, balance: running += byDay[day]!),
+    ];
+  }
+
   int _ledger(String ownerId) => _prefs.getInt(_balanceKey(ownerId)) ?? 0;
 
   Future<void> _post(String ownerId, {required ActivityKind kind, required int amount}) => _append(
@@ -693,6 +778,7 @@ final class _Derived {
   const _Derived({
     this.entries = const [],
     this.debits = 0,
+    this.bundleLeft = 0,
     this.cashTrial = const CashTrialStatus(tripsDone: 0, strikes: 0),
     this.shares = const [],
   });
@@ -701,6 +787,9 @@ final class _Derived {
 
   /// Goora's fees only — never a driver's share.
   final int debits;
+
+  /// Bundle trips not used by the walk (008).
+  final int bundleLeft;
   /// Null when the rider gave up the trial in 004.
   final CashTrialStatus? cashTrial;
   final List<Share> shares;

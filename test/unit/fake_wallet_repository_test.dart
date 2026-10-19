@@ -669,4 +669,98 @@ void main() {
           unorderedEquals(['sara', 'mona', 'youssef']));
     });
   });
+
+  group('pay later and the bundle (008)', () {
+    /// Both legs of every day from 1 Oct to [last]: 2 trips a day.
+    List<String> bothLegs(CalendarDate last) => [
+          for (var d = CalendarDate(2026, 10, 1); !d.isAfter(last); d = d.addDays(1)) ...[
+            rideId(d, Leg.going),
+            rideId(d, Leg.ret),
+          ],
+        ];
+    final oct1 = WallTime(CalendarDate(2026, 10, 1), const Clock.hm(6, 0));
+
+    test('US1: no card, no balance — fees go on the balance as owed, nothing due yet', () async {
+      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(7)));
+      await repo.setMethod('me', PaymentMethod.instapay);
+      final w = await repo.getWallet('me');
+      expect([w.balance, w.owed], [-8, 8]);
+      expect(w.feeDue, isNull);
+      expect(w.feeOverdue, isFalse);
+    });
+
+    test('US2: settle pays exactly what is owed in one row; owed 0 after', () async {
+      final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(7)));
+      await repo.setMethod('me', PaymentMethod.instapay);
+      expect(await repo.settle('me', method: 'instapay'), PaymentResult.success);
+      final w = await repo.getWallet('me');
+      expect(w.owed, 0);
+      expect(w.activity.where((e) => e.kind == ActivityKind.settlement).single.amount, 8);
+    });
+
+    test('US2: nothing owed — settle writes nothing; a failure writes nothing', () async {
+      final repo = _repo(await _prefs());
+      expect(await repo.settle('me', method: 'card'), PaymentResult.success);
+      expect((await repo.getWallet('me')).activity, isEmpty);
+      final failing = _repo(await _prefs(), daily: _StubDailyRepo(kept: trips(7)), fail: true);
+      await failing.setMethod('me', PaymentMethod.cash);
+      expect(await failing.settle('me', method: 'card'), PaymentResult.failure);
+      expect((await failing.getWallet('me')).owed, 8);
+    });
+
+    test('US3: owing 150 falls due that day and is overdue 3 days later', () async {
+      final kept = bothLegs(today);
+      final prefs = await _prefs();
+      final repo = _repo(prefs, daily: _StubDailyRepo(kept: kept));
+      await repo.setMethod('me', PaymentMethod.instapay);
+      final w = await repo.getWallet('me');
+      // 44 trips: 5 in the trial, 39 at 4 EGP; the 38th paid one (152) is today's going leg.
+      expect(w.owed, 156);
+      expect(w.feeDue, today);
+      expect(w.feeOverdue, isFalse);
+      final later = _repo(prefs,
+          daily: _StubDailyRepo(kept: kept), at: WallTime(today.addDays(3), const Clock.hm(9, 0)));
+      expect((await later.getWallet('me')).feeOverdue, isTrue);
+      await later.settle('me', method: 'fawry');
+      final paid = await later.getWallet('me');
+      expect([paid.owed, paid.feeOverdue], [0, false]);
+    });
+
+    test('US4: a bundle costs 75 outside the balance and covers the next paid trips', () async {
+      final prefs = await _prefs();
+      expect(await _repo(prefs, at: oct1).buyBundle('me', method: 'vodafone'), PaymentResult.success);
+      final repo = _repo(prefs, daily: _StubDailyRepo(kept: trips(7)));
+      await repo.setMethod('me', PaymentMethod.cash);
+      final w = await repo.getWallet('me');
+      expect(w.balance, 0, reason: 'the bundle never touches the balance, and covered both fees');
+      expect(w.bundleTripsLeft, 18);
+      expect(w.activity.where((e) => e.kind == ActivityKind.bundleTrip), hasLength(2));
+      expect(w.activity.where((e) => e.kind == ActivityKind.bundleTrip).first.toDriver, 40);
+    });
+
+    test('US4: trial trips keep the bundle; trips before the purchase keep their fee', () async {
+      final prefs = await _prefs();
+      final repo = _repo(prefs, daily: _StubDailyRepo(kept: trips(7)));
+      await repo.setMethod('me', PaymentMethod.cash);
+      await repo.buyBundle('me', method: 'card'); // bought today, after all 7 trips
+      final w = await repo.getWallet('me');
+      expect(w.bundleTripsLeft, 20);
+      expect(w.owed, 8);
+    });
+
+    test('US4: a second bundle adds 20; trips never expire', () async {
+      final prefs = await _prefs();
+      await _repo(prefs, at: oct1).buyBundle('me', method: 'card');
+      await _repo(prefs, at: oct1).buyBundle('me', method: 'card');
+      final far = _repo(prefs, at: WallTime(CalendarDate(2027, 6, 1), const Clock.hm(9, 0)));
+      expect((await far.getWallet('me')).bundleTripsLeft, 40);
+    });
+
+    test('US4: a failed bundle payment changes nothing', () async {
+      final repo = _repo(await _prefs(), fail: true);
+      expect(await repo.buyBundle('me', method: 'card'), PaymentResult.failure);
+      final w = await repo.getWallet('me');
+      expect([w.bundleTripsLeft, w.activity.length], [0, 0]);
+    });
+  });
 }

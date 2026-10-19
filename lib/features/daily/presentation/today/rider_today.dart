@@ -25,6 +25,7 @@ import '../../../wallet/data/providers.dart';
 import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
 import '../../../wallet/presentation/driver_instapay_line.dart';
+import '../../../wallet/presentation/fee_owed_banner.dart';
 import '../../../wallet/presentation/labels.dart';
 import '../../../wallet/presentation/share_debt_banner.dart';
 import '../../data/providers.dart';
@@ -53,6 +54,7 @@ class RiderToday extends StatelessWidget {
       children: [
         TodayBanners(view: view),
         const ShareDebtBanners(),
+        const FeeOwedBanner(onlyWhenOverdue: true, bottomGap: AppSpacing.gap),
         RideHero(view: view),
         const SizedBox(height: AppSpacing.gap),
         if (day != null) ...[

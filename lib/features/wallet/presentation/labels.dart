@@ -47,6 +47,9 @@ extension WalletLabels on AppLocalizations {
         ActivityKind.cashReceived => cashMarkedReceived,
         ActivityKind.seatBooked => actSeatBooked,
         ActivityKind.seatRefund => actSeatRefund,
+        ActivityKind.settlement => actSettlement,
+        ActivityKind.bundle => actBundle,
+        ActivityKind.bundleTrip => actBundleTrip,
       };
 
   /// The second line under a row: each trip's fee on its own (FR-011).
@@ -56,6 +59,7 @@ extension WalletLabels on AppLocalizations {
       ActivityKind.trip || ActivityKind.seatBooked =>
         entry.fee > 0 ? priceWithFee(entry.toDriver, entry.fee) : breakdownNoFee,
       ActivityKind.cashTrip => cashPaidLine(entry.shareToDriver > 0 ? entry.shareToDriver : contribution),
+      ActivityKind.bundleTrip => cashPaidLine(entry.shareToDriver),
       ActivityKind.lateCancelCharge || ActivityKind.tripDeduction when entry.shareToDriver > 0 =>
         cashPaidLine(entry.shareToDriver),
       _ => null,
