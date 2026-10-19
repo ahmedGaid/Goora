@@ -72,6 +72,18 @@ the "Touches" column. Ask in Egyptian Arabic.
   Goora. The cost share, its ±20% range, the cap and "drivers pay nothing" are unchanged.
 - Q: Smallest group the dashboard will show a number for? → A: 5 employees. Any figure built from
   fewer than 5 employees shows "fewer than 5" instead of a number, so one person can't be singled out.
+- Q: How many HR contacts may a company have? → A: One in v1. Goora staff change it (demo action).
+- Q: Which leavers does the roster show? → A: Current employees plus anyone who left this calendar
+  month, marked "left on <date>", so HR can check the invoice; earlier leavers drop off the roster.
+  Invoices keep counts only, never names.
+- Q: Is there a record of who changed what? → A: Yes. Every company-side change (approve, domain
+  added/removed, employee removed, invoice issued/paid, suspension, contract end, HR contact changed)
+  is logged with who did it and when. HR sees their company's log; Goora staff appear as "Goora".
+  Employee self-leave shows as "left" with no reason.
+- Q: Which months does the dashboard show? → A: The current month so far (labelled "so far") and every
+  closed month since the contract start. No week or day view: small slices single people out.
+- Q: What does "share with your HR" send? → A: A fixed text with the app link and one line on the
+  company plan. No employee data, and Goora does not track who shared.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -176,7 +188,8 @@ personal plan days resume, and they are still counted in this month's invoice pe
 **Acceptance Scenarios**:
 
 1. **Given** an active company, **When** HR opens the roster, **Then** it lists name, work email and
-   enrolled-since for each employee — nothing else.
+   enrolled-since for each employee, plus this month's leavers marked "left on <date>" — nothing
+   else.
 2. **Given** HR removes an employee, **When** their next trip settles, **Then** the normal fee applies;
    trips settled before stay fee-free.
 3. **Given** an employee leaves by themselves, **Then** the same happens and HR sees them gone.
@@ -269,7 +282,7 @@ them out; October's already-issued statement is unchanged.
 **Company account**
 - **FR-001**: A signed-in user MUST be able to register a company (name, one or more email domains)
   from a company-account area in the app, after verifying their own work email on one of those
-  domains; they become its HR contact (Q9).
+  domains; they become its one HR contact (Q9). Only Goora staff can change the HR contact.
 - **FR-002**: The system MUST refuse public mail domains and any domain already held by another
   company, each with a reason in words.
 - **FR-003**: A company MUST have one status at a time: pending, active, suspended, ended. Only Goora
@@ -280,7 +293,7 @@ them out; October's already-issued statement is unchanged.
 **Enrollment and coverage**
 - **FR-005**: A rider MUST be offered company enrollment only when their verified work email's domain
   belongs to an active company; otherwise they see that their company isn't on Goora yet, with a
-  share action, and no plan.
+  share action (a fixed text + app link, no employee data, not tracked), and no plan.
 - **FR-006**: Enrollment MUST require explicit consent on a screen that lists what the company sees
   (name, work email, enrolled since) and what it never sees; declining enrolls nothing.
 - **FR-007**: While enrolled and the company is active, Goora's service fee MUST be 0 on every trip
@@ -311,7 +324,8 @@ them out; October's already-issued statement is unchanged.
 
 **Roster and leaving**
 - **FR-016**: The HR contact MUST see a roster of enrolled employees with name, work email and
-  enrolled-since only.
+  enrolled-since only, plus this calendar month's leavers marked "left on <date>"; earlier leavers
+  MUST drop off the roster.
 - **FR-017**: The HR contact MUST be able to remove an employee and remove a domain; an employee MUST
   be able to leave the company plan themselves.
 - **FR-018**: Leaving (any cause) MUST end coverage at that exact moment; trips settled before stay
@@ -322,7 +336,8 @@ them out; October's already-issued statement is unchanged.
   remaining days; an inbox notice MUST explain the change (Q11).
 
 **Dashboard**
-- **FR-021**: The HR contact MUST see, per month: employees enrolled, active this month (≥ 1 completed
+- **FR-021**: The HR contact MUST see, for the current month so far and each closed month since the
+  contract start (no week or day view): employees enrolled, active this month (≥ 1 completed
   trip as rider or driver), carpool rate (active ÷ enrolled), commute groups with ≥ 1 employee,
   trips shared, estimated money saved, estimated CO₂ avoided, parking spaces freed per workday, and
   route-gap areas — totals only.
@@ -347,7 +362,11 @@ them out; October's already-issued statement is unchanged.
 - **FR-030**: The brief (§2 roadmap row, §5 D, "Feature 006: Company network") and the constitution's
   roadmap line MUST be amended to the final number (010) and the founder's price, through the
   founder's approval and a Sync Impact Report, after 006 merges.
-- **FR-031**: All copy MUST be in ARB ar/en, Egyptian colloquial, with the Goora lexicon (مشوار,
+- **FR-031**: Every company-side change (approve, domain added/removed, employee removed, invoice
+  issued/paid, suspension, contract end, HR contact changed) MUST be logged with actor and moment; the
+  HR contact sees their company's log, with Goora staff shown as "Goora" and self-leave shown as
+  "left" with no reason.
+- **FR-032**: All copy MUST be in ARB ar/en, Egyptian colloquial, with the Goora lexicon (مشوار,
   السواق, كرسي); ≥ 44 px targets; statuses in words, never colour alone; RTL/LTR correct.
 
 ### Key Entities
@@ -362,6 +381,7 @@ them out; October's already-issued statement is unchanged.
 - **HR-statement consent**: employee, company, on/off with the moments it changed.
 - **Company dashboard month**: totals only, each with a "fewer than 5" state.
 - **Paused subscription days**: the remaining paid days of a personal plan held while enrolled.
+- **Company log entry**: company, what changed, actor (HR contact · employee · Goora), moment.
 
 ## Success Criteria *(mandatory)*
 
