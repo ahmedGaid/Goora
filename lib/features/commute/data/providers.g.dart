@@ -105,19 +105,22 @@ final class CommuteRepositoryProvider
   }
 }
 
-String _$commuteRepositoryHash() => r'76db8e40eb79a85171e99bc341a94d32b7f025f2';
+String _$commuteRepositoryHash() => r'14fbb50fc86e8dd1c6002296ab28d94d2bdc3df4';
 
-/// Real rates stay off until the founder sets them (brief §8 open item).
+/// Real rates stay off until the founder sets them (brief §8 open item); the
+/// demo trip cost is the active corridor's (006 T024).
 
 @ProviderFor(tripCostConfig)
 final tripCostConfigProvider = TripCostConfigProvider._();
 
-/// Real rates stay off until the founder sets them (brief §8 open item).
+/// Real rates stay off until the founder sets them (brief §8 open item); the
+/// demo trip cost is the active corridor's (006 T024).
 
 final class TripCostConfigProvider
     extends $FunctionalProvider<TripCostConfig, TripCostConfig, TripCostConfig>
     with $Provider<TripCostConfig> {
-  /// Real rates stay off until the founder sets them (brief §8 open item).
+  /// Real rates stay off until the founder sets them (brief §8 open item); the
+  /// demo trip cost is the active corridor's (006 T024).
   TripCostConfigProvider._()
     : super(
         from: null,
@@ -151,7 +154,7 @@ final class TripCostConfigProvider
   }
 }
 
-String _$tripCostConfigHash() => r'b0efe9966e01949eb91bf0ef52bdb1b93c9ca9ea';
+String _$tripCostConfigHash() => r'5605479531839e2e3529ed023e2fe751a091f67f';
 
 /// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
 /// demo setting or a test switches it. "Reset demo data" clears the choice.

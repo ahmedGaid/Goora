@@ -17,12 +17,16 @@ part 'providers.g.dart';
 GroupCatalog groupCatalog(Ref ref) => GroupCatalog(ref.watch(sharedPreferencesProvider));
 
 @Riverpod(keepAlive: true)
-CommuteRepository commuteRepository(Ref ref) =>
-    FakeCommuteRepository(ref.watch(sharedPreferencesProvider), catalog: ref.watch(groupCatalogProvider));
+CommuteRepository commuteRepository(Ref ref) => FakeCommuteRepository(
+      ref.watch(sharedPreferencesProvider),
+      catalog: ref.watch(groupCatalogProvider),
+      corridor: ref.watch(activeCorridorProvider),
+    );
 
-/// Real rates stay off until the founder sets them (brief §8 open item).
+/// Real rates stay off until the founder sets them (brief §8 open item); the
+/// demo trip cost is the active corridor's (006 T024).
 @Riverpod(keepAlive: true)
-TripCostConfig tripCostConfig(Ref ref) => const TripCostConfig();
+TripCostConfig tripCostConfig(Ref ref) => TripCostConfig(demoCorridorCost: ref.watch(activeCorridorProvider).tripCost);
 
 /// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
 /// demo setting or a test switches it. "Reset demo data" clears the choice.

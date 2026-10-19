@@ -8,6 +8,7 @@ import 'package:goora/features/commute/data/cairo_ismailia_seed.dart';
 import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/data/providers.dart';
 import 'package:goora/features/commute/domain/clock.dart';
+import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/geo.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/commute/domain/place.dart';
@@ -180,6 +181,44 @@ void main() {
     test('an unknown saved id falls back to the default', () async {
       await prefs.setString(ActiveCorridor.storageKey, 'gone');
       expect(container().read(activeCorridorProvider), same(Corridors.cairoIsmailia));
+    });
+  });
+
+  group('leg rule (R5)', () {
+    const ci = Corridors.cairoIsmailia;
+    const old = Corridors.sheikhZayedSmartVillage;
+
+    test('leaving home is going, coming home is return', () {
+      expect(ci.legOf(Area.newCairo, Area.ismailia, home: Area.newCairo, work: Area.ismailia), Leg.going);
+      expect(ci.legOf(Area.ismailia, Area.newCairo, home: Area.newCairo, work: Area.ismailia), Leg.ret);
+    });
+
+    test('someone who lives in Ismailia goes to Cairo in the morning', () {
+      expect(ci.legOf(Area.ismailia, Area.nasrCity, home: Area.ismailia, work: Area.nasrCity), Leg.going);
+      expect(ci.legOf(Area.nasrCity, Area.ismailia, home: Area.ismailia, work: Area.nasrCity), Leg.ret);
+    });
+
+    test('no saved commute: from the default origin is going, back is return', () {
+      expect(ci.legOf(ci.defaultFrom, ci.defaultTo), Leg.going);
+      expect(ci.legOf(ci.defaultTo, ci.defaultFrom), Leg.ret);
+    });
+
+    test('no saved commute: another Cairo area towards Ismailia is still going', () {
+      expect(ci.legOf(Area.heliopolis, Area.ismailia), Leg.going);
+      expect(ci.legOf(Area.ismailia, Area.heliopolis), Leg.ret);
+    });
+
+    test('neither end is home: leaving the work end is return', () {
+      expect(ci.legOf(Area.heliopolis, Area.ismailia, home: Area.nasrCity, work: Area.ismailia), Leg.going);
+      expect(ci.legOf(Area.ismailia, Area.heliopolis, home: Area.nasrCity, work: Area.ismailia), Leg.ret);
+    });
+
+    test('old corridor keeps its rule: only leaving Smart Village is return', () {
+      expect(old.legOf(Area.sheikhZayed, Area.smartVillage), Leg.going);
+      expect(old.legOf(Area.october, Area.smartVillage), Leg.going);
+      expect(old.legOf(Area.smartVillage, Area.sheikhZayed), Leg.ret);
+      expect(old.legOf(Area.october, Area.smartVillage, home: Area.sheikhZayed, work: Area.smartVillage), Leg.going);
+      expect(old.legOf(Area.smartVillage, Area.october, home: Area.october, work: Area.smartVillage), Leg.ret);
     });
   });
 }

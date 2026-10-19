@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/time/calendar_date.dart';
 import 'package:goora/core/time/wall_time.dart';
+import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/data/fake_commute_repository.dart';
 import 'package:goora/features/commute/data/group_catalog.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/commute/domain/corridor.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/commute/domain/place.dart';
 import 'package:goora/features/commute/domain/pricing_service.dart';
@@ -77,6 +79,9 @@ Future<_World> _make({
   Gender gender = Gender.male,
   bool withPlan = true,
   PaymentMethod? method,
+
+  /// The tests below were written on the old corridor's data (006 P1 spike).
+  Corridor corridor = Corridors.sheikhZayedSmartVillage,
 }) async {
   SharedPreferences.setMockInitialValues({
     // In this file an InstaPay rider stands for a 004 "wallet" rider: past the
@@ -123,6 +128,7 @@ Future<_World> _make({
     wallet: () => wallet,
     trust: trust,
     now: clock.call,
+    corridor: corridor,
   );
   return _World(repo, daily, prefs, clock, wallet, trust, pay);
 }
@@ -1008,6 +1014,42 @@ void main() {
       contribution: contribution,
       repeat: repeat,
     );
+
+    // 006 T023/T024: trip length and cost come from the active corridor.
+    group('corridor', () {
+      Future<Published> publishOn(Corridor corridor, Area from, Area to, int contribution) async {
+        final w = await _make(role: Role.driver, member: false, corridor: corridor);
+        final d = OfferDraft(
+          leg: Leg.going,
+          from: from,
+          to: to,
+          departure: const Clock.hm(6, 30),
+          seats: 3,
+          contribution: contribution,
+          repeat: Repeat.once,
+        );
+        return await w.repo.publish(d, now: w.clock.now) as Published;
+      }
+
+      test('Cairo district → Ismailia is 105 min on a 300 EGP trip', () async {
+        final t = (await publishOn(Corridors.cairoIsmailia, Area.nasrCity, Area.ismailia, 76)).trip;
+        expect((t.durationMinutes, t.tripCost, t.riderSeats), (105, 300, 3));
+      });
+
+      test('Obour → Ismailia is 90 min', () async {
+        final t = (await publishOn(Corridors.cairoIsmailia, Area.obour, Area.ismailia, 76)).trip;
+        expect(t.durationMinutes, 90);
+      });
+
+      test('the price range follows the corridor cost: 40 is too low on 300 EGP', () async {
+        expect(() => publishOn(Corridors.cairoIsmailia, Area.nasrCity, Area.ismailia, 40), throwsArgumentError);
+      });
+
+      test('the old corridor is still 40 min on 160 EGP', () async {
+        final t = (await publishOn(Corridors.sheikhZayedSmartVillage, Area.sheikhZayed, Area.smartVillage, 40)).trip;
+        expect((t.durationMinutes, t.tripCost), (40, 160));
+      });
+    });
 
     group('publish', () {
       test('a driver with unverified documents is told which, and publishes after the demo verify', () async {

@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/storage/preferences.dart';
 import 'package:goora/core/widgets/goora_pill.dart';
+import 'package:goora/features/commute/data/cairo_ismailia_seed.dart';
+import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/place.dart';
@@ -26,6 +28,7 @@ import 'package:goora/features/onboarding/presentation/session_controller.dart';
 import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/cash_mark.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
+import 'package:goora/features/wallet/domain/seat_price.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -62,6 +65,9 @@ Future<_Open> _open(
   bool member = false,
   int balance = 0,
   List<Override> overrides = const [],
+
+  /// 006: the launch corridor, with this commute, instead of the old one.
+  CommuteProfile? cairo,
 }) async {
   final clock = TestClock(at(_tue, 20, 0));
   final c = await pumpScreen(
@@ -69,8 +75,15 @@ Future<_Open> _open(
     PostTripScreen(id: id, draft: draft),
     locale: Locale(locale),
     session: _rider(),
-    prefs: memberPrefs(role: Role.rider, member: member, locale: locale, method: PaymentMethod.instapay, pastTrial: true),
-    overrides: [...dailyOverrides(clock), ...overrides],
+    prefs: memberPrefs(
+      role: Role.rider,
+      member: member,
+      locale: locale,
+      method: PaymentMethod.instapay,
+      pastTrial: true,
+      commute: cairo,
+    ),
+    overrides: [...dailyOverrides(clock), if (cairo == null) oldCorridor(), ...overrides],
   );
   tester.view.physicalSize = const Size(390, 2800);
   if (balance > 0) await c.read(walletRepositoryProvider).topUp(DailySeed.meId, method: 'card', amount: balance);
@@ -143,6 +156,53 @@ void main() {
   for (final locale in locales) {
     final l = l10nFor(locale);
     final code = locale.languageCode;
+
+    // 006 P4: the launch corridor's areas, route, leg and price.
+    group('[$code] Cairo ↔ Ismailia', () {
+      const heliToIsmailia = CommuteProfile(
+        home: CairoIsmailiaSeed.homeHeliopolis,
+        work: CairoIsmailiaSeed.workIsmailia,
+        departure: Clock.hm(6, 30),
+        ret: CommuteProfile.defaultReturn,
+        days: CommuteProfile.defaultDays,
+      );
+
+      testWidgets('the pills are the six corridor areas, from home to work, priced on 300 EGP', (tester) async {
+        await _open(tester, code, cairo: heliToIsmailia, balance: 200);
+        for (final a in Corridors.cairoIsmailia.areas) {
+          expect(find.byKey(Key('from-${a.name}')), findsOneWidget, reason: '$a');
+        }
+        expect(find.byKey(const Key('from-sheikhZayed')), findsNothing);
+        expect(tester.widget<GooraPill>(find.byKey(const Key('from-heliopolis'))).selected, isTrue);
+        expect(tester.widget<GooraPill>(find.byKey(const Key('to-ismailia'))).selected, isTrue);
+        final price = SeatPrice.of(76, tripCost: 300, riderSeats: 3, mode: PricingMode.perTrip, method: PaymentMethod.instapay);
+        expect(find.text(l.priceWithFee(76, price.fee)), findsOneWidget, reason: '300 ÷ (3 + 1), nearest 2 EGP');
+      });
+
+      testWidgets('with no saved commute it starts New Cairo → Ismailia', (tester) async {
+        final o = await _open(tester, code, cairo: heliToIsmailia);
+        await o.c.read(sharedPreferencesProvider).remove('commute.profile');
+        o.c.invalidate(postStartProvider);
+        await tester.pumpAndSettle();
+        expect(tester.widget<GooraPill>(find.byKey(const Key('from-newCairo'))).selected, isTrue);
+        expect(tester.widget<GooraPill>(find.byKey(const Key('to-ismailia'))).selected, isTrue);
+      });
+
+      testWidgets('home → Ismailia is going; Ismailia → home is the way back', (tester) async {
+        final o = await _open(tester, code, cairo: heliToIsmailia);
+        await _tap(tester, find.byKey(const Key('post')));
+        final market = o.c.read(marketplaceRepositoryProvider);
+        expect((await market.myRequests(now: o.clock.now)).single.leg, Leg.going);
+
+        await _tap(tester, find.byKey(const Key('cancel-request')));
+        await _tap(tester, find.byKey(const Key('post-again')));
+        await _tap(tester, find.byKey(const Key('from-ismailia')));
+        await _tap(tester, find.byKey(const Key('to-heliopolis')));
+        await _tap(tester, find.byKey(const Key('post')));
+        final back = (await market.myRequests(now: o.clock.now)).where((r) => r.from == Area.ismailia);
+        expect(back.single.leg, Leg.ret);
+      });
+    });
 
     group('[$code] form', () {
       testWidgets('starts from the rider\'s route with one fixed price and the three rules', (tester) async {

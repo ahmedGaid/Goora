@@ -20,6 +20,7 @@ import '../domain/offered_trip.dart';
 class RouteForm extends StatelessWidget {
   const RouteForm({
     super.key,
+    required this.areas,
     required this.from,
     required this.to,
     required this.departure,
@@ -32,6 +33,8 @@ class RouteForm extends StatelessWidget {
     this.dailyBlockedReason,
   });
 
+  /// The active corridor's areas, in its order (006 R4).
+  final List<Area> areas;
   final Area from;
   final Area to;
   final Clock departure;
@@ -57,11 +60,11 @@ class RouteForm extends StatelessWidget {
           padding: const EdgeInsetsDirectional.only(top: AppSpacing.md, bottom: AppSpacing.sm),
           child: Text(text, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
         );
-    Widget areas(Area selected, ValueChanged<Area> on, String prefix) => Wrap(
+    Widget pills(Area selected, ValueChanged<Area> on, String prefix) => Wrap(
           spacing: AppSpacing.sm,
           runSpacing: AppSpacing.sm,
           children: [
-            for (final a in Area.values)
+            for (final a in areas)
               GooraPill(key: Key('$prefix-${a.name}'), label: l10n.area(a), selected: selected == a, onTap: () => on(a)),
           ],
         );
@@ -69,9 +72,9 @@ class RouteForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         label(l10n.offerFromLabel),
-        areas(from, onFrom, 'from'),
+        pills(from, onFrom, 'from'),
         label(l10n.offerToLabel),
-        areas(to, onTo, 'to'),
+        pills(to, onTo, 'to'),
         label(l10n.offerTimeLabel),
         Align(
           alignment: AlignmentDirectional.centerStart,

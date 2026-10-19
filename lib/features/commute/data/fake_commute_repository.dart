@@ -4,13 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/commute_profile.dart';
 import '../domain/commute_repository.dart';
+import '../domain/corridor.dart';
 import '../domain/group.dart';
 import '../domain/place.dart';
 import 'corridor_seed.dart';
+import 'corridors.dart';
 import 'group_catalog.dart';
 
 final class FakeCommuteRepository implements CommuteRepository {
-  FakeCommuteRepository(this._prefs, {GroupCatalog? catalog}) : _catalog = catalog ?? GroupCatalog(_prefs);
+  FakeCommuteRepository(this._prefs, {GroupCatalog? catalog, this.corridor = Corridors.cairoIsmailia})
+      : _catalog = catalog ?? GroupCatalog(_prefs);
 
   static const _profileKey = 'commute.profile';
   /// Read synchronously at start-up to resume members at Today (research R1).
@@ -27,11 +30,14 @@ final class FakeCommuteRepository implements CommuteRepository {
   /// Seeded corridor groups plus groups the marketplace created (005 R10).
   final GroupCatalog _catalog;
 
-  @override
-  List<Place> homePlaces() => CorridorSeed.homePlaces;
+  /// The active corridor: the places setup offers (006 R4).
+  final Corridor corridor;
 
   @override
-  List<Place> workPlaces() => CorridorSeed.workPlaces;
+  List<Place> homePlaces() => corridor.homePlaces;
+
+  @override
+  List<Place> workPlaces() => corridor.workPlaces;
 
   @override
   Future<CommuteProfile?> loadProfile() async {

@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/core/storage/preferences.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_pill.dart';
 import 'package:goora/core/widgets/goora_primary_button.dart';
+import 'package:goora/features/commute/data/cairo_ismailia_seed.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
+import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/place.dart';
@@ -54,6 +57,9 @@ Future<ProviderContainer> _open(
   bool member = false,
   Map<String, Object> extra = const {},
   List<Override> overrides = const [],
+
+  /// 006: the launch corridor instead of the old one these tests were written on.
+  bool cairo = false,
 }) async {
   final clock = TestClock(now ?? at(_tue, 20, 0));
   final c = await pumpScreen(
@@ -62,7 +68,7 @@ Future<ProviderContainer> _open(
     locale: Locale(locale),
     session: _driver(),
     prefs: {...memberPrefs(role: Role.driver, member: member, locale: locale), ...extra},
-    overrides: [...dailyOverrides(clock), ...overrides],
+    overrides: [...dailyOverrides(clock), if (!cairo) oldCorridor(), ...overrides],
   );
   tester.view.physicalSize = const Size(390, 2800);
   await tester.pumpAndSettle();
@@ -112,6 +118,13 @@ Future<void> _tap(WidgetTester tester, Finder f) async {
   await tester.pumpAndSettle();
 }
 
+/// The trips this driver published, as stored.
+List<OfferedTrip> _published(ProviderContainer c) => [
+      for (final m in (jsonDecode(c.read(sharedPreferencesProvider).getString(FakeMarketplaceRepository.offersKey)!) as List)
+          .cast<Map<String, dynamic>>())
+        OfferedTrip.fromJson(m),
+    ];
+
 bool _publishOn(WidgetTester tester) =>
     tester.widget<GooraPrimaryButton>(find.byKey(const Key('publish'))).onPressed != null;
 
@@ -119,6 +132,62 @@ void main() {
   for (final locale in locales) {
     final l = l10nFor(locale);
     final code = locale.languageCode;
+
+    // 006 P4: the launch corridor's areas, route, leg, duration and trip cost.
+    group('[$code] Cairo ↔ Ismailia', () {
+      const nasrToIsmailia = CommuteProfile(
+        home: CairoIsmailiaSeed.homeNasrCity,
+        work: CairoIsmailiaSeed.workIsmailia,
+        departure: Clock.hm(6, 30),
+        ret: CommuteProfile.defaultReturn,
+        days: CommuteProfile.defaultDays,
+        driver: DriverOffer(seats: 3, trips: DrivenTrips.both, contribution: 76),
+      );
+      final extra = {'commute.profile': jsonEncode(nasrToIsmailia.toJson())};
+
+      testWidgets('the pills are the six corridor areas, from home to work, priced on 300 EGP', (tester) async {
+        await _open(tester, code, cairo: true, extra: extra);
+        for (final a in Corridors.cairoIsmailia.areas) {
+          expect(find.byKey(Key('from-${a.name}')), findsOneWidget, reason: '$a');
+          expect(find.byKey(Key('to-${a.name}')), findsOneWidget, reason: '$a');
+        }
+        expect(find.byKey(const Key('from-sheikhZayed')), findsNothing);
+        expect(find.byKey(const Key('to-smartVillage')), findsNothing);
+        bool on(String key) => tester.widget<GooraPill>(find.byKey(Key(key))).selected;
+        expect(on('from-nasrCity'), isTrue);
+        expect(on('to-ismailia'), isTrue);
+        expect(find.text(l.egpAmount(76)), findsOneWidget, reason: '300 ÷ (3 + 1), nearest 2 EGP');
+      });
+
+      testWidgets('with no saved commute it starts New Cairo → Ismailia', (tester) async {
+        final c = await _open(tester, code, cairo: true);
+        await c.read(sharedPreferencesProvider).remove('commute.profile');
+        c.invalidate(offerStartProvider);
+        await tester.pumpAndSettle();
+        bool on(String key) => tester.widget<GooraPill>(find.byKey(Key(key))).selected;
+        expect(on('from-newCairo'), isTrue);
+        expect(on('to-ismailia'), isTrue);
+      });
+
+      testWidgets('home → work is going: 105 min on a 300 EGP trip', (tester) async {
+        final c = await _open(tester, code, cairo: true, extra: extra);
+        await _tap(tester, find.byKey(const Key('publish')));
+        final going = _published(c);
+        expect(going.single.leg, Leg.going);
+        expect(going.single.durationMinutes, 105);
+        expect(going.single.tripCost, 300);
+      });
+
+      testWidgets('Ismailia → Nasr City is the way back', (tester) async {
+        final c = await _open(tester, code, cairo: true, extra: extra);
+        await _tap(tester, find.byKey(const Key('from-ismailia')));
+        await _tap(tester, find.byKey(const Key('to-nasrCity')));
+        await _tap(tester, find.byKey(const Key('publish')));
+        final back = _published(c);
+        expect(back.single.leg, Leg.ret);
+        expect(back.single.durationMinutes, 105);
+      });
+    });
 
     group('[$code] form', () {
       testWidgets('starts at the suggested price, shows the rider price and the three rules, with no price field',

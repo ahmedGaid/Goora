@@ -52,7 +52,7 @@ final class OfferStartProvider
   }
 }
 
-String _$offerStartHash() => r'953dc1e5907eec677e8e8d4d74dee48d7a342166';
+String _$offerStartHash() => r'8620b3ca1601e5221600b3035e2a209163fe60f7';
 
 /// The form's check, re-read when the form changes.
 

@@ -1,3 +1,4 @@
+import 'commute_profile.dart';
 import 'place.dart';
 
 /// Minutes a trip takes between two areas of one corridor.
@@ -40,4 +41,15 @@ final class Corridor {
   final TripMinutes minutes;
 
   int tripMinutes(Area from, Area to) => minutes(from, to);
+
+  /// Which leg a trip from [from] to [to] is (research R5): going when it
+  /// leaves the person's [home], return when it ends there. When neither end
+  /// is home (or there is no saved commute), only leaving the work end —
+  /// [work], else [defaultTo] — is return, so a Cairo area other than home
+  /// heading to Ismailia is still going.
+  Leg legOf(Area from, Area to, {Area? home, Area? work}) {
+    if (home != null && from == home) return Leg.going;
+    if (home != null && to == home) return Leg.ret;
+    return from == (work ?? defaultTo) ? Leg.ret : Leg.going;
+  }
 }
