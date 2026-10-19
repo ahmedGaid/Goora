@@ -56,7 +56,7 @@ Build these features in order. Each one is a separate `/speckit-specify` run.
 | 004 | Wallet and subscription | People pay |
 | 005 | Seat marketplace: empty seats, post a trip, offer a trip | One-off demand feeds the daily groups |
 | 006 | Cairo ↔ Ismailia launch corridor (founder decision 2026-10-16) | The first real route has density, and the price stays legal on the longer distance |
-| 007 | Company network (B2B), later | Companies pay |
+| later | Company network (B2B), unnumbered; takes the next free number when started (007–009 are taken by payment changes) | Companies pay |
 
 Section 5 has the specify prompt for each feature, and Section 4 has the plan prompt.
 
@@ -307,9 +307,9 @@ D) Find riders (driver browses requests without posting a trip first). Entry poi
 Driver Today shows "Requests on your route": a demand banner ("12 people want <route> in the morning") and anonymous request cards (verified rider / verified rider (woman), pickup, time, once/daily, rating or New, detour minutes, fixed price, Accept → "Accepted ✓").
 ```
 
-### Feature 007: Company network (later, do not start yet; was 006 before 2026-10-16)
+### Company network (later, unnumbered, do not start yet; was 006 before 2026-10-16)
 
-Companies sign up, employees join with their work email, the company pays 75 EGP per registered employee per month, and employees pay no subscription. The company gets an aggregated dashboard showing active groups, carpool rate, estimated savings, CO₂ reduced, parking demand and route gaps. It never shows individual data without consent.
+Companies sign up, employees join with their work email, the company pays a per-employee monthly fee (price TBD — founder, in `/speckit-clarify`; earlier drafts said 75 EGP, the profit model says 99), and employees pay no subscription. The company gets an aggregated dashboard showing active groups, carpool rate, estimated savings, CO₂ reduced, parking demand and route gaps. It never shows individual data without consent.
 
 ---
 
@@ -377,7 +377,7 @@ Riders get a banner telling them who covers the day. If nobody can cover, riders
 - **Drivers:** never pay any fee or subscription. They always receive 100% of their contribution.
 - **B) Optional subscription (frequent riders):** 129 EGP/month or 1,290 EGP/year. Subscribers pay no per-trip fee: trips and one-off seats cost exactly the driver's contribution. There is no mandatory plan step after "Join this group"; riders go to the payment-method screen instead (C). When a rider's fees this month exceed the subscription price, the Wallet shows "You paid X EGP in fees this month. With a subscription you'd pay 129." with a "Subscribe" button.
 - **C) Cash trial (new riders, first 10 trips):** a new rider can pay the driver in cash for their first 10 completed trips (trips, not days), with no Goora fee. **Cash amounts are always a multiple of 5 EGP so no change is needed (founder decision 2026-10-12):** the contribution is rounded to the nearest 5 (41 → 40, 44 → 45), and the cash amount always stays inside the group's ±20% price range, whose top is never above the rider's equal share (the cap rule below): down when the nearest 5 passes the range top (48 → 45 when the top is 48), up when it falls below the floor (32 → 35 when the floor is 32), and cash is not offered if no multiple of 5 fits (founder, 2026-10-12, Constitution II); wallet prices are not rounded. After each cash trip the driver confirms "Received 40 EGP cash" or taps "Didn't pay"; both are recorded. Two "Didn't pay" marks turn cash off for that rider immediately, and they must top up. Late-cancel and no-show charges are not collected during cash trips; they affect the reliability score only. The rider sees "N cash trips left", and from cash trip 8 a banner: "Top up your wallet to keep riding — get backup drivers, guaranteed seats and refunds." After 10 cash trips, booking requires a wallet balance (or a company plan). Payment-method screen after joining a group: "Pay cash to the driver (first 10 trips)" or "Use wallet", plus a small "Subscribe and pay no fees" link.
-- **D) Company plan (feature 007):** unchanged. 75 EGP per registered employee per month; employees pay no fees.
+- **D) Company plan (company network, later, unnumbered):** the company pays a per-employee monthly fee (price TBD — founder, in `/speckit-clarify`); employees pay no fees.
 - **Wallet:** prepaid top-ups through a licensed partner, and the app keeps a ledger. Payouts to drivers run weekly (Thursday) to InstaPay. Cash a driver receives is recorded only and is not withdrawable.
 - **The fee sits inside the hard cap (founder decision 2026-10-08):** riders' total payments, fees included, never exceed the full trip cost. Each rider's contribution + fee may not go above their equal share of the trip cost (trip cost ÷ rider seats, whole EGP, rounded down). When 10% would go above it, Goora's fee is trimmed, down to 0 if needed; the driver's contribution is never reduced. On the demo corridor nothing changes (160 EGP, 3 riders, 40 → 44); a full 4-rider car priced at the top of the range pays 38 + 2 instead of 38 + 4. This replaces the earlier reading that the fee sat outside the cap.
 

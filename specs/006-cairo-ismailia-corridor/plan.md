@@ -121,4 +121,4 @@ test/
 
 ## Out of scope
 
-Real maps, tolls and fuel rates, per-corridor matching limits, backend deployment, company network (now feature 007), any pricing rule change.
+Real maps, tolls and fuel rates, per-corridor matching limits, backend deployment, company network (later, unnumbered), any pricing rule change.
