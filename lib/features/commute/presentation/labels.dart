@@ -10,6 +10,12 @@ extension CommuteLabels on AppLocalizations {
         Area.sheikhZayed => areaSheikhZayed,
         Area.october => areaOctober,
         Area.smartVillage => areaSmartVillage,
+        Area.newCairo => areaNewCairo,
+        Area.nasrCity => areaNasrCity,
+        Area.heliopolis => areaHeliopolis,
+        Area.obour => areaObour,
+        Area.tenthOfRamadan => areaTenthOfRamadan,
+        Area.ismailia => areaIsmailia,
       };
 
   String day(Day d) => switch (d) {

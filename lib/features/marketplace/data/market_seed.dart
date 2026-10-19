@@ -1,4 +1,5 @@
 import '../../../core/time/wall_time.dart';
+import '../../commute/data/cairo_ismailia_seed.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/geo.dart';
@@ -171,6 +172,7 @@ abstract final class MarketSeed {
     Area.sheikhZayed => Stop(id: id, name: StopName.mainGate, point: _pickupSz, time: time),
     Area.october => Stop(id: id, name: StopName.centralSt, point: _pickupOct, time: time),
     Area.smartVillage => Stop(id: id, name: StopName.smartVillageGate2, point: _pickupSv, time: time),
+    _ => CairoIsmailiaSeed.stopIn(area, id, time),
   };
 
   /// A public point in [area], where a trip into it ends.
@@ -178,6 +180,7 @@ abstract final class MarketSeed {
     Area.sheikhZayed => _pickupSz,
     Area.october => _pickupOct,
     Area.smartVillage => _pickupSv,
+    _ => CairoIsmailiaSeed.meetingPoints[area]!,
   };
 
   static SeatDriver? driverById(String id) => drivers.where((d) => d.id == id).firstOrNull;

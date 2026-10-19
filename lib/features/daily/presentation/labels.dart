@@ -15,6 +15,12 @@ extension DailyLabels on AppLocalizations {
         StopName.centralSt => stopCentralSt,
         StopName.gasStation => stopGasStation,
         StopName.smartVillageGate2 => stopSmartVillageGate2,
+        StopName.newCairoMeet => stopNewCairoMeet,
+        StopName.nasrCityMeet => stopNasrCityMeet,
+        StopName.heliopolisMeet => stopHeliopolisMeet,
+        StopName.obourMeet => stopObourMeet,
+        StopName.tenthOfRamadanMeet => stopTenthOfRamadanMeet,
+        StopName.ismailiaMeet => stopIsmailiaMeet,
       };
 
   String legName(Leg leg) => leg == Leg.going ? legGoing : legReturn;

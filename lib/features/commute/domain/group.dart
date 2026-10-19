@@ -8,7 +8,32 @@ import 'place.dart';
 enum MemberRole { driver, rider }
 
 /// Named pickup / drop points (l10n); people see these, never home points.
-enum StopName { mainGate, centralSt, gasStation, smartVillageGate2 }
+enum StopName {
+  mainGate,
+  centralSt,
+  gasStation,
+  smartVillageGate2,
+  newCairoMeet,
+  nasrCityMeet,
+  heliopolisMeet,
+  obourMeet,
+  tenthOfRamadanMeet,
+  ismailiaMeet;
+
+  /// The named meeting point of [area]: where a group with no named arrival
+  /// ends, so a new-corridor group never shows an old-corridor gate.
+  static StopName meetingPointOf(Area area) => switch (area) {
+        Area.sheikhZayed => mainGate,
+        Area.october => centralSt,
+        Area.smartVillage => smartVillageGate2,
+        Area.newCairo => newCairoMeet,
+        Area.nasrCity => nasrCityMeet,
+        Area.heliopolis => heliopolisMeet,
+        Area.obour => obourMeet,
+        Area.tenthOfRamadan => tenthOfRamadanMeet,
+        Area.ismailia => ismailiaMeet,
+      };
+}
 
 /// A group pickup stop on the going leg, in driving order.
 final class Stop {
@@ -256,7 +281,7 @@ final class CommuteGroup {
   /// Where the return leg starts (and the going leg ends).
   Stop get workStop => Stop(
         id: 'work',
-        name: arrivalName ?? StopName.smartVillageGate2,
+        name: arrivalName ?? StopName.meetingPointOf(destination),
         point: destinationPoint,
         time: ret,
       );

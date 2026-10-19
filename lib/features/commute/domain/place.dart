@@ -1,7 +1,19 @@
 import 'geo.dart';
 
-/// Launch-corridor areas. Shown to people by name only (l10n), never as points.
-enum Area { sheikhZayed, october, smartVillage }
+/// Corridor areas. Shown to people by name only (l10n), never as points.
+/// Old demo corridor first, then Cairo ↔ Ismailia (006). Saved data keeps
+/// the names, so values are only ever added.
+enum Area {
+  sheikhZayed,
+  october,
+  smartVillage,
+  newCairo,
+  nasrCity,
+  heliopolis,
+  obour,
+  tenthOfRamadan,
+  ismailia,
+}
 
 final class Place {
   const Place({required this.id, required this.area, required this.point});

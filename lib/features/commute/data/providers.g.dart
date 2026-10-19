@@ -152,3 +152,65 @@ final class TripCostConfigProvider
 }
 
 String _$tripCostConfigHash() => r'b0efe9966e01949eb91bf0ef52bdb1b93c9ca9ea';
+
+/// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+/// demo setting or a test switches it. "Reset demo data" clears the choice.
+
+@ProviderFor(ActiveCorridor)
+final activeCorridorProvider = ActiveCorridorProvider._();
+
+/// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+/// demo setting or a test switches it. "Reset demo data" clears the choice.
+final class ActiveCorridorProvider
+    extends $NotifierProvider<ActiveCorridor, Corridor> {
+  /// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+  /// demo setting or a test switches it. "Reset demo data" clears the choice.
+  ActiveCorridorProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeCorridorProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeCorridorHash();
+
+  @$internal
+  @override
+  ActiveCorridor create() => ActiveCorridor();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Corridor value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Corridor>(value),
+    );
+  }
+}
+
+String _$activeCorridorHash() => r'69bbd66e5c3dedf60dbc7af076a4c0fa2a72e3f3';
+
+/// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+/// demo setting or a test switches it. "Reset demo data" clears the choice.
+
+abstract class _$ActiveCorridor extends $Notifier<Corridor> {
+  Corridor build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<Corridor, Corridor>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Corridor, Corridor>,
+              Corridor,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

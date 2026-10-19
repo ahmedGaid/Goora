@@ -200,7 +200,11 @@ class DemoSection extends ConsumerWidget {
     final repo = ref.read(dailyCommuteRepositoryProvider);
     if (repo is FakeDailyCommuteRepository) await repo.reset();
     final prefs = ref.read(sharedPreferencesProvider);
-    for (final key in [...FakeTrustRepository.allKeys, ...FakeCommuteRepository.allKeys]) {
+    for (final key in [
+      ...FakeTrustRepository.allKeys,
+      ...FakeCommuteRepository.allKeys,
+      ActiveCorridor.storageKey,
+    ]) {
       await prefs.remove(key);
     }
     await FakeWalletRepository.clearAll(prefs);
@@ -212,6 +216,7 @@ class DemoSection extends ConsumerWidget {
     ref.invalidate(marketplaceRepositoryProvider);
     ref.invalidate(dailyCommuteRepositoryProvider);
     ref.invalidate(commuteRepositoryProvider);
+    ref.invalidate(activeCorridorProvider);
     // Signed out now — go back to the very start, not just show a message.
     if (context.mounted) context.go(Routes.welcome);
   }

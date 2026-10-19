@@ -556,6 +556,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get areaSmartVillage => 'Smart Village';
 
   @override
+  String get areaNewCairo => 'New Cairo';
+
+  @override
+  String get areaNasrCity => 'Nasr City';
+
+  @override
+  String get areaHeliopolis => 'Heliopolis';
+
+  @override
+  String get areaObour => 'Obour';
+
+  @override
+  String get areaTenthOfRamadan => '10th of Ramadan';
+
+  @override
+  String get areaIsmailia => 'Ismailia';
+
+  @override
   String get pickHome => 'Where\'s home?';
 
   @override
@@ -927,6 +945,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stopSmartVillageGate2 => 'Smart Village, Gate 2';
+
+  @override
+  String get stopNewCairoMeet => 'New Cairo meeting point';
+
+  @override
+  String get stopNasrCityMeet => 'Nasr City meeting point';
+
+  @override
+  String get stopHeliopolisMeet => 'Heliopolis meeting point';
+
+  @override
+  String get stopObourMeet => 'Obour meeting point';
+
+  @override
+  String get stopTenthOfRamadanMeet => '10th of Ramadan meeting point';
+
+  @override
+  String get stopIsmailiaMeet => 'Ismailia meeting point';
 
   @override
   String tlPickup(String time) {

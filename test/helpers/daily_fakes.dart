@@ -6,8 +6,10 @@ import 'package:goora/core/time/calendar_date.dart';
 import 'package:goora/core/time/now_provider.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
+import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/data/fake_commute_repository.dart';
 import 'package:goora/features/commute/data/group_catalog.dart';
+import 'package:goora/features/commute/data/providers.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/group.dart';
@@ -124,3 +126,8 @@ List<Override> dailyOverrides(TestClock clock, {RecordingDialer? dialer, Recordi
       if (dialer != null) phoneDialerProvider.overrideWithValue(dialer),
       if (sharer != null) tripSharerProvider.overrideWithValue(sharer),
     ];
+
+/// Pins the old Sheikh Zayed → Smart Village corridor for a test written
+/// before 006 (research "P1 spike result": the app default is Cairo ↔
+/// Ismailia; only tests that need the old areas add this override).
+Override oldCorridor() => activeCorridorProvider.overrideWithBuild((ref, notifier) => Corridors.sheikhZayedSmartVillage);

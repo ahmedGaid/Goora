@@ -71,17 +71,27 @@ node specs/006-cairo-ismailia-corridor/cap_sweep.ts
 
 **Goal**: the new data exists and compiles; nothing yet reads it.
 
-- [ ] T009 Add 6 values to `Area` in `lib/features/commute/domain/place.dart`: `newCairo, nasrCity, heliopolis, obour, tenthOfRamadan, ismailia`. Fix the exhaustive `switch`es the compiler flags (labels, `market_seed` maps) with temporary neutral branches only if needed.
-- [ ] T010 Test first: `test/unit/` — saved demo data with the old three area names still loads (`Area.values.byName`), and a new name round-trips.
-- [ ] T011 [P] [US1] Create `lib/features/commute/domain/corridor.dart`: `Corridor` value (`id, areas, homePlaces, workPlaces, defaultFrom, defaultTo, tripCost (cost, seats), tripMinutes(from,to)`), two instances `cairoIsmailia` and `sheikhZayedSmartVillage` (old data moved over unchanged: cost 160, seats 3, 40 min).
-- [ ] T012 [US1] Corridor unit tests in `test/unit/`: a corridor's `areas` never include another's; `tripMinutes` is symmetric and ≈105 / 90 min by pair (R6); defaults are inside `areas`.
-- [ ] T013 [P] [US1] Create `lib/features/commute/data/cairo_ismailia_seed.dart`: one `Place` per area (ids `home-nc`, `home-nasr`, `home-heli`, `home-obour`, `home-10r`, `home-ism`, work as needed), 1–2 `Stop`s per area, points from R7 each marked `// recalled`. Groups come in P5.
-- [ ] T014 [P] [US1] Add 12 ARB keys to `lib/l10n/app_ar.arb` (Egyptian) and `app_en.arb`: `areaNewCairo, areaNasrCity, areaHeliopolis, areaObour, areaTenthOfRamadan, areaIsmailia, stopNewCairoMeet, stopNasrCityMeet, stopHeliopolisMeet, stopObourMeet, stopTenthOfRamadanMeet, stopIsmailiaMeet`. Copy per `goora-brand`; drafted, marked for founder review. Run codegen for l10n.
-- [ ] T015 [US1] Add 6 `StopName` values in `lib/features/commute/domain/group.dart` (`newCairoMeet … ismailiaMeet`). Remove the old-corridor leak at the default arrival (`arrivalName ?? StopName.smartVillageGate2`, ~line 259): the default must come from the group's own stop, never a fixed old name. Wire labels in `lib/features/commute/presentation/labels.dart` **and** `lib/features/daily/presentation/labels.dart` (both switch on `StopName`). Test: every `Area` value and every seeded stop has a non-empty ar and en label (a missing name fails, spec edge case).
-- [ ] T016 [US1] Active-corridor provider in `lib/features/commute/data/providers.dart`: default `cairoIsmailia`; persisted corridor id (demo setting, SharedPreferences); cleared by "Reset demo data". Test the default, the switch, and the reset.
-- [ ] T017 Add the shared test helper in `test/helpers/daily_fakes.dart` (and `pump_app.dart` if needed): override `activeCorridor` to the old corridor by default for existing tests, per the T003 decision. New-corridor tests opt in explicitly.
+- [x] T009 Add 6 values to `Area` in `lib/features/commute/domain/place.dart`: `newCairo, nasrCity, heliopolis, obour, tenthOfRamadan, ismailia`. Fix the exhaustive `switch`es the compiler flags (labels, `market_seed` maps) with temporary neutral branches only if needed.
+- [x] T010 Test first: `test/unit/` — saved demo data with the old three area names still loads (`Area.values.byName`), and a new name round-trips.
+- [x] T011 [P] [US1] Create `lib/features/commute/domain/corridor.dart`: `Corridor` value (`id, areas, homePlaces, workPlaces, defaultFrom, defaultTo, tripCost (cost, seats), tripMinutes(from,to)`), two instances `cairoIsmailia` and `sheikhZayedSmartVillage` (old data moved over unchanged: cost 160, seats 3, 40 min).
+- [x] T012 [US1] Corridor unit tests in `test/unit/`: a corridor's `areas` never include another's; `tripMinutes` is symmetric and ≈105 / 90 min by pair (R6); defaults are inside `areas`.
+- [x] T013 [P] [US1] Create `lib/features/commute/data/cairo_ismailia_seed.dart`: one `Place` per area (ids `home-nc`, `home-nasr`, `home-heli`, `home-obour`, `home-10r`, `home-ism`, work as needed), 1–2 `Stop`s per area, points from R7 each marked `// recalled`. Groups come in P5.
+- [x] T014 [P] [US1] Add 12 ARB keys to `lib/l10n/app_ar.arb` (Egyptian) and `app_en.arb`: `areaNewCairo, areaNasrCity, areaHeliopolis, areaObour, areaTenthOfRamadan, areaIsmailia, stopNewCairoMeet, stopNasrCityMeet, stopHeliopolisMeet, stopObourMeet, stopTenthOfRamadanMeet, stopIsmailiaMeet`. Copy per `goora-brand`; drafted, marked for founder review. Run codegen for l10n.
+- [x] T015 [US1] Add 6 `StopName` values in `lib/features/commute/domain/group.dart` (`newCairoMeet … ismailiaMeet`). Remove the old-corridor leak at the default arrival (`arrivalName ?? StopName.smartVillageGate2`, ~line 259): the default must come from the group's own stop, never a fixed old name. Wire labels in `lib/features/commute/presentation/labels.dart` **and** `lib/features/daily/presentation/labels.dart` (both switch on `StopName`). Test: every `Area` value and every seeded stop has a non-empty ar and en label (a missing name fails, spec edge case).
+- [x] T016 [US1] Active-corridor provider in `lib/features/commute/data/providers.dart`: default `cairoIsmailia`; persisted corridor id (demo setting, SharedPreferences); cleared by "Reset demo data". Test the default, the switch, and the reset.
+- [x] T017 Add the shared test helper in `test/helpers/daily_fakes.dart` (and `pump_app.dart` if needed): override `activeCorridor` to the old corridor by default for existing tests, per the T003 decision. New-corridor tests opt in explicitly.
 
 **Checkpoint**: analyze 0 issues; ARB parity green; full suite still green (nothing reads the new corridor yet).
+
+**P3 notes (2026-10-19)**:
+- `Corridor` class is in `commute/domain/corridor.dart`; the two instances live in `commute/data/corridors.dart` (`Corridors.cairoIsmailia`, `Corridors.sheikhZayedSmartVillage`), because they hold seed places and domain must not import data.
+- Meeting-point names: `StopName.meetingPointOf(area)` (domain) maps every area to its stop name. `CommuteGroup.workStop` now defaults to the destination's own meeting point (old leak at `StopName.smartVillageGate2` gone; same result for old-corridor groups). `CairoIsmailiaSeed.meetingPoints` holds the recalled points; `stopIn(area, id, time)` builds a stop.
+- `market_seed.pickupIn` / `pointIn` route new areas to `CairoIsmailiaSeed` (real points, not neutral placeholders).
+- Trip minutes: Cairo district ↔ Ismailia 105, Obour / 10th of Ramadan ↔ Ismailia 90, within the Cairo side 30 (guess; nothing reads it until P4). Old corridor 40.
+- `activeCorridorProvider` (key `demo.corridor`) is cleared and invalidated by Reset demo data. No settings button to switch it yet.
+- `oldCorridor()` override added to `test/helpers/daily_fakes.dart`; not applied anywhere yet — P4 applies it in the 6 files from the P1 spike when the screens start reading the corridor.
+- Drafted copy for founder review: areas القاهرة الجديدة / مدينة نصر / مصر الجديدة / العبور / العاشر من رمضان / الإسماعيلية; stops "<area>، نقطة التجمع" / "<area> meeting point".
+- Tests: `test/unit/corridor_test.dart` (18), written in the same pass as the code, not strictly before it.
 
 ---
 
