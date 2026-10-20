@@ -53,3 +53,14 @@ SCOPE: implementation branch `010-company-network` off main after 006; P1–P2 O
 FIT: Opus for P1 + P2. EST: P1 ~60–90 min.
 ALSO OPEN: Q1 price 99 vs 75 · Q2 enrolled peak/day · Q3 minimum 20 · Q4 annual · Q5 one-off seats covered · Q6 HR statement P3 · Q7 disputed shares excluded · Q8 lawyer/ETA/VAT/PDPL · Q9 in-app HR area · Q10 due+15, grace 7 · Q11 pause sub, no trial after leaving. Goora bank details for invoices.
 BLOCKED, don't re-ask: implementation waits for 006 merge · push only with founder OK · brief/constitution amend (T001) needs founder OK.
+
+---
+## Lane B — 010 company network core (new files only), 2026-10-20
+/goal Goora LANE B done: 010 T002 + P2 (T008–T012) + P3 (T013–T016) on branch `010-company-network` (worktree D:/Company/80-Worktrees/Goora-010, cut from `spec/company-network` @ 7c15d40), 3 code commits, NOT pushed, NOT merged. Gates on the branch: analyze 0 · flutter 1305 (was 1208, +97 company tests) · node 264 (was 214, +50).
+WHERE: verify — `git log --oneline spec/company-network..010-company-network` · `git diff --name-only spec/company-network...010-company-network` (new files + tasks.md/research.md/NEXT_GOAL.md only).
+NEXT: after 006 merges into main → rebase `010-company-network` onto main (new files, so only tasks.md/research.md/NEXT_GOAL.md can conflict: keep both), re-run gates, then P1 T003–T007 (coverage windows on `Plan`, `PricingMode.of(now)`, marketplace booking on `coversTrip`) — riskiest, Opus. Then T017–T021 seams.
+READ FIRST: specs/010-company-network/research.md "Lane B notes" (defaults table, 15 choices, what waits for 006) · tasks.md (ticks + "waits for 006 merge" notes) · contracts/repositories-and-navigation.md § Seams.
+SCOPE: P1 + seams edit existing wallet/marketplace/trust/notice/settings files — only after 006 is in main. Could run now, new files only: P7 domain half T041–T043 (`company_dashboard.dart` aggregator + tests; needs a citable CO₂ factor and the SZ ↔ SV km first, R7).
+FIT: Opus for P1. EST: 60–90 min. Sonnet for T017–T021 and for T041–T043.
+ALSO OPEN (founder): Q1–Q11 (spec top table; code uses each default, all numbers in `CompanyTerms`/`CompanyRules`) · seed 12 vs 24 employees (12 chosen, R10/F3) · Goora bank details for invoices (`CompanyTerms.bankDetails` placeholder) · push this branch?
+BLOCKED, don't re-ask: no edits to existing files until 006 merges · push only with founder OK · T001 brief/constitution amend needs founder OK · lawyer answers R0 (flags stay off).
