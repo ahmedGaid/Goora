@@ -561,12 +561,12 @@
   "stopCentralSt": "الشارع الرئيسي",
   "stopGasStation": "بنزينة 26 يوليو",
   "stopSmartVillageGate2": "القرية الذكية، بوابة 2",
-  "stopNewCairoMeet": "القاهرة الجديدة، نقطة التجمع",
-  "stopNasrCityMeet": "مدينة نصر، نقطة التجمع",
-  "stopHeliopolisMeet": "مصر الجديدة، نقطة التجمع",
-  "stopObourMeet": "العبور، نقطة التجمع",
-  "stopTenthOfRamadanMeet": "العاشر من رمضان، نقطة التجمع",
-  "stopIsmailiaMeet": "الإسماعيلية، نقطة التجمع",
+  "stopNewCairoMeet": "القاهرة الجديدة، شارع التسعين",
+  "stopNasrCityMeet": "مدينة نصر، سيتي ستارز",
+  "stopHeliopolisMeet": "مصر الجديدة، ميدان الكوربة",
+  "stopObourMeet": "العبور، سوق العبور",
+  "stopTenthOfRamadanMeet": "العاشر من رمضان، الحي الأول",
+  "stopIsmailiaMeet": "الإسماعيلية، ميدان الممر",
   "tlPickup": "التجمع · {time}",
   "@tlPickup": {
     "placeholders": {

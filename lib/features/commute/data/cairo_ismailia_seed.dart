@@ -34,15 +34,16 @@ abstract final class CairoIsmailiaSeed {
   /// Obour and 10th of Ramadan are road towns: homes, not workplaces.
   static const workPlaces = [workNewCairo, workNasrCity, workHeliopolis, workIsmailia];
 
-  /// The public meeting point of each area (never a home); its name is
-  /// [StopName.meetingPointOf].
+  /// The public meeting point of each area (never a home): a named spot a few
+  /// hundred metres from the area centre (the home point), so the walk is real,
+  /// never 0 m. Its name is [StopName.meetingPointOf].
   static const meetingPoints = <Area, GeoPoint>{
-    Area.newCairo: _newCairo,
-    Area.nasrCity: _nasrCity,
-    Area.heliopolis: _heliopolis,
-    Area.obour: _obour,
-    Area.tenthOfRamadan: _tenthOfRamadan,
-    Area.ismailia: _ismailia,
+    Area.newCairo: GeoPoint(30.0335, 31.4730),
+    Area.nasrCity: GeoPoint(30.0640, 31.3460),
+    Area.heliopolis: GeoPoint(30.0925, 31.3235),
+    Area.obour: GeoPoint(30.2270, 31.4850),
+    Area.tenthOfRamadan: GeoPoint(30.2940, 31.7540),
+    Area.ismailia: GeoPoint(30.6030, 32.2740),
   };
 
   /// Demo groups (T027): 4 each way, 300 EGP a leg across 3 seats, 76 a rider

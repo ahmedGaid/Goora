@@ -947,22 +947,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stopSmartVillageGate2 => 'Smart Village, Gate 2';
 
   @override
-  String get stopNewCairoMeet => 'New Cairo meeting point';
+  String get stopNewCairoMeet => 'New Cairo, 90th Street';
 
   @override
-  String get stopNasrCityMeet => 'Nasr City meeting point';
+  String get stopNasrCityMeet => 'Nasr City, City Stars';
 
   @override
-  String get stopHeliopolisMeet => 'Heliopolis meeting point';
+  String get stopHeliopolisMeet => 'Heliopolis, Korba Square';
 
   @override
-  String get stopObourMeet => 'Obour meeting point';
+  String get stopObourMeet => 'Obour, Obour Market';
 
   @override
-  String get stopTenthOfRamadanMeet => '10th of Ramadan meeting point';
+  String get stopTenthOfRamadanMeet => '10th of Ramadan, 1st District';
 
   @override
-  String get stopIsmailiaMeet => 'Ismailia meeting point';
+  String get stopIsmailiaMeet => 'Ismailia, El Mamar Square';
 
   @override
   String tlPickup(String time) {

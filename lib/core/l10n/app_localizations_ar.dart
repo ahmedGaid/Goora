@@ -953,22 +953,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get stopSmartVillageGate2 => 'القرية الذكية، بوابة 2';
 
   @override
-  String get stopNewCairoMeet => 'القاهرة الجديدة، نقطة التجمع';
+  String get stopNewCairoMeet => 'القاهرة الجديدة، شارع التسعين';
 
   @override
-  String get stopNasrCityMeet => 'مدينة نصر، نقطة التجمع';
+  String get stopNasrCityMeet => 'مدينة نصر، سيتي ستارز';
 
   @override
-  String get stopHeliopolisMeet => 'مصر الجديدة، نقطة التجمع';
+  String get stopHeliopolisMeet => 'مصر الجديدة، ميدان الكوربة';
 
   @override
-  String get stopObourMeet => 'العبور، نقطة التجمع';
+  String get stopObourMeet => 'العبور، سوق العبور';
 
   @override
-  String get stopTenthOfRamadanMeet => 'العاشر من رمضان، نقطة التجمع';
+  String get stopTenthOfRamadanMeet => 'العاشر من رمضان، الحي الأول';
 
   @override
-  String get stopIsmailiaMeet => 'الإسماعيلية، نقطة التجمع';
+  String get stopIsmailiaMeet => 'الإسماعيلية، ميدان الممر';
 
   @override
   String tlPickup(String time) {
