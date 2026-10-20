@@ -141,16 +141,28 @@ node specs/006-cairo-ismailia-corridor/cap_sweep.ts
 
 **Goal**: every touched screen shows only corridor data, ar RTL and en LTR, at 1.3× text.
 
-- [ ] T031 [P] [US1] Widget tests ar + en: onboarding home/work pickers list the six areas only; match result shows driver, pickup meeting point, 06:30, arrival ≈ 08:15, price 76, pay line 76 + 8 (wallet) and 75 cash.
-- [ ] T032 [P] [US1] Widget tests ar + en: no-match screen names the user's route and offers the post-a-request button.
-- [ ] T033 [P] [US3] Widget tests ar + en: Today, Week, Wallet show only corridor names, stops, times and prices (SC-005).
-- [ ] T034 [P] [US3] Widget tests ar + en: Empty seats, Post your trip, Offer a trip, Find riders use corridor areas and defaults; the Ismailia→Cairo offer sits on the return side, ≈ 105 min.
-- [ ] T035 [US3] Text-scale 1.3× and bidi checks on the new strings (names, times, numbers isolated as elsewhere); fix only layout/clipping found.
-- [ ] T036 [US3] Goldens RTL + LTR for the match result and one marketplace card on the new corridor, only where existing screens already have goldens.
-- [ ] T037 [US3] FR-008 + SC-005 guard: also assert no raw coordinates appear on screen (Constitution IV). SC-005 guard test: with the new corridor active, scan rendered text of the walk screens (ar + en) for "Sheikh Zayed", "Smart Village", and the Arabic names; expect none.
-- [ ] T038 Run the `goora-brand` checklist (copy, RTL, 44 px targets, ≥ 4.5:1 contrast). Fix findings.
+- [x] T031 [P] [US1] Widget tests ar + en: onboarding home/work pickers list the six areas only; match result shows driver, pickup meeting point, 06:30, arrival ≈ 08:15, price 76, pay line 76 + 8 (wallet) and 75 cash.
+- [x] T032 [P] [US1] Widget tests ar + en: no-match screen names the user's route and offers the post-a-request button.
+- [x] T033 [P] [US3] Widget tests ar + en: Today, Week, Wallet show only corridor names, stops, times and prices (SC-005).
+- [x] T034 [P] [US3] Widget tests ar + en: Empty seats, Post your trip, Offer a trip, Find riders use corridor areas and defaults; the Ismailia→Cairo offer sits on the return side, ≈ 105 min.
+- [x] T035 [US3] Text-scale 1.3× and bidi checks on the new strings (names, times, numbers isolated as elsewhere); fix only layout/clipping found.
+- [x] T036 [US3] Goldens RTL + LTR for the match result and one marketplace card on the new corridor, only where existing screens already have goldens.
+- [x] T037 [US3] FR-008 + SC-005 guard: also assert no raw coordinates appear on screen (Constitution IV). SC-005 guard test: with the new corridor active, scan rendered text of the walk screens (ar + en) for "Sheikh Zayed", "Smart Village", and the Arabic names; expect none.
+- [x] T038 Run the `goora-brand` checklist (copy, RTL, 44 px targets, ≥ 4.5:1 contrast). Fix findings.
 
 **Checkpoint**: gates green. Brand checklist clean.
+
+**P6 notes (2026-10-20)** — tests in `test/widget/cairo_ismailia_screens_test.dart` (26, ar + en):
+- T031: the match card had no pickup point or arrival (spec US1 AC1). Added two lines under the time, reusing `tlPickup` / `tlArrival` + `stopName` via a new `stopLine` label helper (same "— stop" idiom as `seatPickup`); no new ARB keys. Shown: "Pickup · 6:30 AM — New Cairo meeting point", "Arrival · 8:15 AM — Ismailia meeting point". Test red without the change, green with it. Prices: wallet 76 + 8, cash trial 75; a company-plan member sees 75 (company rounds to 5, existing rule).
+- T031 found a real bug: the home picker sheet (6 places) overflowed by 60 px. Now `isScrollControlled` with a scrolling list.
+- T032: no-match names the route and offers Post a trip (also in commute_screens_test, T025).
+- T033: a member of `ci-nc-0630` sees Today (route, New Cairo meeting point, arrival 8:15, 75), Week, Wallet with corridor data only. Empty seats / Post your trip are walked as a once rider — a member riding today is (correctly) offered no extra seat.
+- T034: Empty seats going = Tarek (New Cairo → Ismailia), return = Heba (Ismailia → New Cairo); Post your trip / Offer a trip default New Cairo → Ismailia; Find riders lists the six areas. The ≈105 min duration is not on these screens; it is asserted in fake_marketplace_repository_test (T023).
+- T035: setup, match, no match at 1.3×; the member, once-rider and driver walks at 1.0× and 1.3×; no overflow. Bidi: no isolation idiom exists in the app and none is needed — each locale's area/stop names are in its own script; the new match lines resolve RTL in ar, LTR in en (asserted).
+- T036: new goldens `screen_match_cairo_{rtl,ltr}`, `marketplace_seat_card_cairo_{rtl,ltr}`; `screen_match_{rtl,ltr}` regenerated (the two new lines). The old match golden now settles before tapping "see others" (it tapped Join once the card grew).
+- T037: `_onlyCorridor` scans every rendered string on every walk screen for the old area and stop names in both languages and for anything coordinate-shaped (`\d{2}\.\d{2,}`). Walk clock is in November so the Arabic date "6 أكتوبر" can't pass for the old area.
+- T038: brand checklist — no new colour, token, string or shadow; directional only; tap-target + label guidelines on the picker and match screens. For founder review: "التجمع · 6:30 ص — القاهرة الجديدة، نقطة التجمع" says التجمع twice (stop names are drafted copy); the seed puts each meeting point on the home point, so "Pickup point 0 m away" shows.
+- Gates: analyze 0 · flutter 1360 green · node 226.
 
 ---
 

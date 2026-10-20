@@ -272,7 +272,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [oldCorridor(), 
+          overrides: [oldCorridor(),
             lastMatchProvider.overrideWith(() => _Seeded(outcome)),
             myOpenSharesProvider.overrideWith((ref) async => [
                   Share(
@@ -305,7 +305,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [oldCorridor(), 
+          overrides: [oldCorridor(),
             // Past the trial, paying the exact share: the fee line shows.
             riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
             riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
@@ -380,7 +380,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [oldCorridor(), 
+          overrides: [oldCorridor(),
             lastMatchProvider.overrideWith(
               () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
             ),
@@ -397,7 +397,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [oldCorridor(), 
+          overrides: [oldCorridor(),
             riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
             riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
@@ -415,7 +415,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [oldCorridor(), 
+          overrides: [oldCorridor(),
             riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
             riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
@@ -435,7 +435,7 @@ void main() {
             const MatchResultScreen(),
             locale: locale,
             session: _session(Role.rider),
-            overrides: [oldCorridor(), 
+            overrides: [oldCorridor(),
               riderPricingProvider.overrideWith((ref) => PricingMode.trial),
               lastMatchProvider.overrideWith(
                 () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),

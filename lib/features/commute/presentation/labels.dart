@@ -30,6 +30,9 @@ extension CommuteLabels on AppLocalizations {
 
   String time(Clock c) => c.isAm ? timeAm(c.h12) : timePm(c.h12);
 
+  /// A timed line and its named stop: "Pickup · 6:30 AM — New Cairo meeting point".
+  String stopLine(String timed, String stop) => '$timed — $stop';
+
   String daysSummary(Set<Day> days) {
     if (days.length == CommuteProfile.defaultDays.length && days.containsAll(CommuteProfile.defaultDays)) {
       return sunThu;

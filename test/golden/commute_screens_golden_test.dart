@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:goora/features/commute/data/cairo_ismailia_seed.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
+import 'package:goora/features/commute/data/corridors.dart';
+import 'package:goora/features/commute/data/providers.dart';
+import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/commute/domain/matching_service.dart';
@@ -72,16 +76,55 @@ void main() {
         const MatchResultScreen(),
         locale: locale,
         session: _session(Role.rider),
-        overrides: [oldCorridor(), 
+        overrides: [oldCorridor(),
           lastMatchProvider.overrideWith(
             () => _Seeded(MatchOutcome(profile: profile, viewerIsDriver: false, result: result)),
           ),
         ],
       );
       tester.view.physicalSize = const Size(390, 1300);
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('toggle-others')));
       await tester.pumpAndSettle();
       await expectLater(find.byType(Scaffold).first, matchesGoldenFile('goldens/screen_match_$dir.png'));
+    });
+
+    // 006 T036: New Cairo → Ismailia on the launch corridor.
+    testWidgets('match result (rider), Cairo ↔ Ismailia [$dir]', (tester) async {
+      const cairo = CommuteProfile(
+        home: CairoIsmailiaSeed.homeNewCairo,
+        work: CairoIsmailiaSeed.workIsmailia,
+        departure: Clock.hm(6, 30),
+        ret: Clock.hm(16, 30),
+        days: CommuteProfile.defaultDays,
+      );
+      final result = MatchingService.match(
+        Seeker(
+          role: MemberRole.rider,
+          home: cairo.home!.point,
+          work: cairo.work!.point,
+          departure: cairo.departure,
+          ret: cairo.ret,
+          days: cairo.days,
+          legs: const {Leg.going, Leg.ret},
+        ),
+        CairoIsmailiaSeed.groups,
+      );
+      await pumpScreen(
+        tester,
+        const MatchResultScreen(),
+        locale: locale,
+        session: _session(Role.rider),
+        overrides: [
+          activeCorridorProvider.overrideWithBuild((ref, notifier) => Corridors.cairoIsmailia),
+          lastMatchProvider.overrideWith(
+            () => _Seeded(MatchOutcome(profile: cairo, viewerIsDriver: false, result: result)),
+          ),
+        ],
+      );
+      tester.view.physicalSize = const Size(390, 1300);
+      await tester.pumpAndSettle();
+      await expectLater(find.byType(Scaffold).first, matchesGoldenFile('goldens/screen_match_cairo_$dir.png'));
     });
   }
 }
