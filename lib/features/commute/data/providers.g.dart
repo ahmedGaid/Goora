@@ -8,21 +8,21 @@ part of 'providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Every commute group the fakes know: the corridor seed plus groups the
+/// Every commute group the fakes know: the active corridor's seed plus groups the
 /// marketplace created (005 research R10). The commute and daily
 /// repositories watch it, so invalidating it rebuilds both.
 
 @ProviderFor(groupCatalog)
 final groupCatalogProvider = GroupCatalogProvider._();
 
-/// Every commute group the fakes know: the corridor seed plus groups the
+/// Every commute group the fakes know: the active corridor's seed plus groups the
 /// marketplace created (005 research R10). The commute and daily
 /// repositories watch it, so invalidating it rebuilds both.
 
 final class GroupCatalogProvider
     extends $FunctionalProvider<GroupCatalog, GroupCatalog, GroupCatalog>
     with $Provider<GroupCatalog> {
-  /// Every commute group the fakes know: the corridor seed plus groups the
+  /// Every commute group the fakes know: the active corridor's seed plus groups the
   /// marketplace created (005 research R10). The commute and daily
   /// repositories watch it, so invalidating it rebuilds both.
   GroupCatalogProvider._()
@@ -58,7 +58,7 @@ final class GroupCatalogProvider
   }
 }
 
-String _$groupCatalogHash() => r'6a40882c54caf200c19c1db8d6fddbde36b565f0';
+String _$groupCatalogHash() => r'45a8b0ce2b18934729ffa2968307ae75eb8c0755';
 
 @ProviderFor(commuteRepository)
 final commuteRepositoryProvider = CommuteRepositoryProvider._();

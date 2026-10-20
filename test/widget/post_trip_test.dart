@@ -83,7 +83,10 @@ Future<_Open> _open(
       pastTrial: true,
       commute: cairo,
     ),
-    overrides: [...dailyOverrides(clock), if (cairo == null) oldCorridor(), ...overrides],
+    overrides: [
+      ...dailyOverrides(clock, corridor: cairo == null ? Corridors.sheikhZayedSmartVillage : Corridors.cairoIsmailia),
+      ...overrides,
+    ],
   );
   tester.view.physicalSize = const Size(390, 2800);
   if (balance > 0) await c.read(walletRepositoryProvider).topUp(DailySeed.meId, method: 'card', amount: balance);
@@ -106,7 +109,7 @@ Future<void> _oweKhaled(_Open o) async {
     departure: const Clock.hm(7, 0),
     seats: 3,
     riderSeats: 3,
-    tripCost: MarketSeed.tripCost,
+    tripCost: Corridors.sheikhZayedSmartVillage.tripCost,
     contribution: 40,
     repeat: Repeat.once,
     pickup: MarketSeed.pickupIn(Area.sheikhZayed, 'of-stop-owed', const Clock.hm(7, 0)),
@@ -188,19 +191,24 @@ void main() {
         expect(tester.widget<GooraPill>(find.byKey(const Key('to-ismailia'))).selected, isTrue);
       });
 
-      testWidgets('home → Ismailia is going; Ismailia → home is the way back', (tester) async {
+      // Two pumps, not cancel → post again: cancel pops the route, and
+      // pumpScreen has no GoRouter.
+      testWidgets('home → Ismailia is going', (tester) async {
         final o = await _open(tester, code, cairo: heliToIsmailia);
         await _tap(tester, find.byKey(const Key('post')));
-        final market = o.c.read(marketplaceRepositoryProvider);
-        expect((await market.myRequests(now: o.clock.now)).single.leg, Leg.going);
+        final mine = await o.c.read(marketplaceRepositoryProvider).myRequests(now: o.clock.now);
+        expect(mine.single.from, Area.heliopolis);
+        expect(mine.single.leg, Leg.going);
+      });
 
-        await _tap(tester, find.byKey(const Key('cancel-request')));
-        await _tap(tester, find.byKey(const Key('post-again')));
+      testWidgets('Ismailia → home is the way back', (tester) async {
+        final o = await _open(tester, code, cairo: heliToIsmailia);
         await _tap(tester, find.byKey(const Key('from-ismailia')));
         await _tap(tester, find.byKey(const Key('to-heliopolis')));
         await _tap(tester, find.byKey(const Key('post')));
-        final back = (await market.myRequests(now: o.clock.now)).where((r) => r.from == Area.ismailia);
-        expect(back.single.leg, Leg.ret);
+        final mine = await o.c.read(marketplaceRepositoryProvider).myRequests(now: o.clock.now);
+        expect(mine.single.from, Area.ismailia);
+        expect(mine.single.leg, Leg.ret);
       });
     });
 

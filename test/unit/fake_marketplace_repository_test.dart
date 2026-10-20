@@ -181,7 +181,7 @@ OfferedTrip _offer(
   departure: departure,
   seats: seats,
   riderSeats: 3,
-  tripCost: MarketSeed.tripCost,
+  tripCost: Corridors.sheikhZayedSmartVillage.tripCost,
   contribution: 40,
   repeat: Repeat.once,
   pickup: MarketSeed.offers(WallTime(date, departure)).first.pickup,
@@ -1048,6 +1048,23 @@ void main() {
       test('the old corridor is still 40 min on 160 EGP', () async {
         final t = (await publishOn(Corridors.sheikhZayedSmartVillage, Area.sheikhZayed, Area.smartVillage, 40)).trip;
         expect((t.durationMinutes, t.tripCost), (40, 160));
+      });
+
+      // 006 P5 wiring: the seeded market is the active corridor's own.
+      test('Cairo ↔ Ismailia: 12 + 4 seeded requests and both offers only on its areas, on 300 EGP', () async {
+        final w = await _make(role: Role.driver, member: false, corridor: Corridors.cairoIsmailia);
+        final areas = Corridors.cairoIsmailia.areas.toSet();
+        final morning = await w.repo.requestsForMe(part: PartOfDay.morning, now: w.clock.now);
+        final evening = await w.repo.requestsForMe(part: PartOfDay.evening, now: w.clock.now);
+        expect((morning.length, evening.length), (12, 4));
+        for (final c in [...morning, ...evening]) {
+          expect({c.from, c.to}.difference(areas), isEmpty, reason: c.requestId);
+        }
+        for (final id in [MarketSeed.tarekId, MarketSeed.hebaId]) {
+          final o = (await w.repo.offer(id, now: w.clock.now))!;
+          expect({o.from, o.to}.difference(areas), isEmpty, reason: id);
+          expect(o.tripCost, 300, reason: id);
+        }
       });
     });
 

@@ -4,6 +4,7 @@ import 'package:goora/core/time/calendar_date.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_pill.dart';
 import 'package:goora/core/widgets/goora_route_map.dart';
+import 'package:goora/features/commute/data/cairo_ismailia_seed.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
@@ -23,6 +24,7 @@ import 'package:goora/features/wallet/domain/direct_pay.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/domain/share.dart';
 
+import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
 final _phone = PhoneNumber.tryParse('01012345678')!;
@@ -128,7 +130,7 @@ void main() {
 
     group('[$tag] commute setup', () {
       testWidgets('rider: defaults, places, no driver fields, find enabled once places set', (tester) async {
-        await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.rider));
+        await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.rider), overrides: [oldCorridor()]);
         expect(find.text(l.whereGo), findsOneWidget);
         expect(find.text(l.time(CommuteProfile.defaultDeparture)), findsOneWidget);
         expect(find.text(l.time(CommuteProfile.defaultReturn)), findsOneWidget);
@@ -156,7 +158,7 @@ void main() {
       });
 
       testWidgets('return before departure shows a hint and blocks find', (tester) async {
-        final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.rider));
+        final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.rider), overrides: [oldCorridor()]);
         c.read(commuteControllerProvider.notifier)
           ..setHome(CorridorSeed.sheikhZayed)
           ..setWork(CorridorSeed.smartVillage)
@@ -168,7 +170,7 @@ void main() {
       });
 
       testWidgets('driver: brief demo pricing 40 (32–48), recovery 240 → 288 → 144', (tester) async {
-        await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver));
+        await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver), overrides: [oldCorridor()]);
         await _scrollTo(tester, find.byKey(const Key('recovery')));
         expect(find.text(l.suggestedPrice), findsOneWidget);
         expect(find.text(l.egpAmount(40)), findsOneWidget);
@@ -199,7 +201,7 @@ void main() {
       });
 
       testWidgets('switching language keeps every entered value', (tester) async {
-        final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver));
+        final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver), overrides: [oldCorridor()]);
         c.read(commuteControllerProvider.notifier)
           ..setHome(CorridorSeed.october)
           ..setWork(CorridorSeed.smartVillage)
@@ -223,7 +225,7 @@ void main() {
       });
 
       testWidgets('driver: fewer seats raises the suggestion and snaps the price', (tester) async {
-        final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver));
+        final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver), overrides: [oldCorridor()]);
         c.read(commuteControllerProvider.notifier).setSeats(1);
         await tester.pumpAndSettle();
         await _scrollTo(tester, find.byKey(const Key('recovery')));
@@ -241,7 +243,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [lastMatchProvider.overrideWith(() => _Seeded(outcome))],
+          overrides: [oldCorridor(), lastMatchProvider.overrideWith(() => _Seeded(outcome))],
         );
         expect(find.text(l.matchPercent(main.score)), findsOneWidget);
         expect(find.text(l.foundGroup), findsOneWidget);
@@ -270,7 +272,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [
+          overrides: [oldCorridor(), 
             lastMatchProvider.overrideWith(() => _Seeded(outcome)),
             myOpenSharesProvider.overrideWith((ref) async => [
                   Share(
@@ -303,7 +305,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [
+          overrides: [oldCorridor(), 
             // Past the trial, paying the exact share: the fee line shows.
             riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
             riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
@@ -378,7 +380,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [
+          overrides: [oldCorridor(), 
             lastMatchProvider.overrideWith(
               () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
             ),
@@ -395,7 +397,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [
+          overrides: [oldCorridor(), 
             riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
             riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
@@ -413,7 +415,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.rider),
-          overrides: [
+          overrides: [oldCorridor(), 
             riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
             riderPayMethodProvider.overrideWith((ref) => PaymentMethod.instapay),
             lastMatchProvider.overrideWith(
@@ -433,7 +435,7 @@ void main() {
             const MatchResultScreen(),
             locale: locale,
             session: _session(Role.rider),
-            overrides: [
+            overrides: [oldCorridor(), 
               riderPricingProvider.overrideWith((ref) => PricingMode.trial),
               lastMatchProvider.overrideWith(
                 () => _Seeded(MatchOutcome(profile: _profile, viewerIsDriver: false, result: result)),
@@ -451,7 +453,7 @@ void main() {
           const MatchResultScreen(),
           locale: locale,
           session: _session(Role.driver),
-          overrides: [lastMatchProvider.overrideWith(() => _Seeded(outcome))],
+          overrides: [oldCorridor(), lastMatchProvider.overrideWith(() => _Seeded(outcome))],
         );
         final handle = tester.ensureSemantics();
         expect(find.bySemanticsLabel(l.verifiedRiderWoman), findsOneWidget); // Sara
@@ -463,7 +465,7 @@ void main() {
     });
 
     testWidgets('[$tag] new screens fit at 1.3× text size', (tester) async {
-      await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver), textScale: 1.3);
+      await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver), textScale: 1.3, overrides: [oldCorridor()]);
       expect(tester.takeException(), isNull);
       for (final screen in const <Widget>[MatchResultScreen(), NoMatchScreen()]) {
         final found = screen is MatchResultScreen;
@@ -473,7 +475,7 @@ void main() {
           locale: locale,
           session: _session(Role.rider),
           textScale: 1.3,
-          overrides: [lastMatchProvider.overrideWith(() => _Seeded(_outcome(driver: false, found: found)))],
+          overrides: [oldCorridor(), lastMatchProvider.overrideWith(() => _Seeded(_outcome(driver: false, found: found)))],
         );
         expect(tester.takeException(), isNull);
       }
@@ -487,9 +489,44 @@ void main() {
         const NoMatchScreen(),
         locale: locale,
         session: _session(Role.rider),
-        overrides: [lastMatchProvider.overrideWith(() => _Seeded(outcome))],
+        overrides: [oldCorridor(), lastMatchProvider.overrideWith(() => _Seeded(outcome))],
       );
       expect(find.text(l.noMatch(7, l.areaSheikhZayed, l.areaSmartVillage)), findsOneWidget);
+      expect(find.text(l.postReq), findsOneWidget);
+      await _accessible(tester);
+    });
+
+    // 006 T025/T032: the waitlist line names the person's own route.
+    testWidgets('[$tag] Cairo ↔ Ismailia no match: "#7 on the Heliopolis → Ismailia list" and post a trip',
+        (tester) async {
+      const heli = CommuteProfile(
+        home: CairoIsmailiaSeed.homeHeliopolis,
+        work: CairoIsmailiaSeed.workIsmailia,
+        departure: Clock.hm(10, 0),
+        ret: CommuteProfile.defaultReturn,
+        days: CommuteProfile.defaultDays,
+      );
+      final seeker = Seeker(
+        role: MemberRole.rider,
+        home: heli.home!.point,
+        work: heli.work!.point,
+        departure: heli.departure,
+        ret: heli.ret,
+        days: heli.days,
+        legs: const {Leg.going, Leg.ret},
+      );
+      final result = MatchingService.match(seeker, CairoIsmailiaSeed.groups);
+      expect(result.found, isFalse, reason: 'no group leaves Heliopolis at 10:00');
+      final outcome = MatchOutcome(profile: heli, viewerIsDriver: false, result: result, waitlistPosition: 7);
+      await pumpScreen(
+        tester,
+        const NoMatchScreen(),
+        locale: locale,
+        session: _session(Role.rider),
+        overrides: [lastMatchProvider.overrideWith(() => _Seeded(outcome))],
+      );
+      expect(find.text(l.noMatch(7, l.areaHeliopolis, l.areaIsmailia)), findsOneWidget);
+      expect(find.text(l.routeLine(l.areaHeliopolis, l.areaIsmailia)), findsOneWidget);
       expect(find.text(l.postReq), findsOneWidget);
       await _accessible(tester);
     });

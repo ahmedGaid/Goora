@@ -10,11 +10,14 @@ import 'group_catalog.dart';
 
 part 'providers.g.dart';
 
-/// Every commute group the fakes know: the corridor seed plus groups the
+/// Every commute group the fakes know: the active corridor's seed plus groups the
 /// marketplace created (005 research R10). The commute and daily
 /// repositories watch it, so invalidating it rebuilds both.
 @Riverpod(keepAlive: true)
-GroupCatalog groupCatalog(Ref ref) => GroupCatalog(ref.watch(sharedPreferencesProvider));
+GroupCatalog groupCatalog(Ref ref) => GroupCatalog(
+      ref.watch(sharedPreferencesProvider),
+      seed: Corridors.groupsOf(ref.watch(activeCorridorProvider)),
+    );
 
 @Riverpod(keepAlive: true)
 CommuteRepository commuteRepository(Ref ref) => FakeCommuteRepository(

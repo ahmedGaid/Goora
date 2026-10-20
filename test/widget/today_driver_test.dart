@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_status_chip.dart';
+import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
 import 'package:goora/features/commute/domain/place.dart';
@@ -240,7 +241,7 @@ void main() {
           departure: const Clock.hm(9, 0),
           seats: 3,
           riderSeats: 3,
-          tripCost: MarketSeed.tripCost,
+          tripCost: Corridors.sheikhZayedSmartVillage.tripCost,
           contribution: 40,
           repeat: Repeat.once,
           pickup: MarketSeed.pickupIn(Area.sheikhZayed, 'of-stop-of-9', const Clock.hm(9, 0)),

@@ -1,4 +1,5 @@
 import '../domain/corridor.dart';
+import '../domain/group.dart';
 import '../domain/place.dart';
 import 'cairo_ismailia_seed.dart';
 import 'corridor_seed.dart';
@@ -32,6 +33,10 @@ abstract final class Corridors {
   );
 
   static const all = [cairoIsmailia, sheikhZayedSmartVillage];
+
+  /// The seeded commute groups of [corridor] (006 P5).
+  static List<CommuteGroup> groupsOf(Corridor corridor) =>
+      corridor.id == cairoIsmailia.id ? CairoIsmailiaSeed.groups : CorridorSeed.groups;
 
   static Corridor? byId(String id) => all.where((c) => c.id == id).firstOrNull;
 

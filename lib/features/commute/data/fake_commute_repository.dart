@@ -13,7 +13,7 @@ import 'group_catalog.dart';
 
 final class FakeCommuteRepository implements CommuteRepository {
   FakeCommuteRepository(this._prefs, {GroupCatalog? catalog, this.corridor = Corridors.cairoIsmailia})
-      : _catalog = catalog ?? GroupCatalog(_prefs);
+      : _catalog = catalog ?? GroupCatalog(_prefs, seed: Corridors.groupsOf(corridor));
 
   static const _profileKey = 'commute.profile';
   /// Read synchronously at start-up to resume members at Today (research R1).

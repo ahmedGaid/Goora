@@ -12,6 +12,7 @@ import 'package:goora/features/commute/data/group_catalog.dart';
 import 'package:goora/features/commute/data/providers.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
+import 'package:goora/features/commute/domain/corridor.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/daily/data/daily_seed.dart';
 import 'package:goora/features/daily/data/fake_trust_repository.dart';
@@ -133,13 +134,23 @@ Map<String, Object> memberPrefs({
       FakeTrustRepository.riderIdKey: (idVerified ? RiderIdStatus.verified : RiderIdStatus.notVerified).name,
     };
 
-List<Override> dailyOverrides(TestClock clock, {RecordingDialer? dialer, RecordingSharer? sharer}) => [
+/// Pins [corridor] too: the daily tests were written on the old corridor's
+/// groups (006 P5 seeds the catalog per corridor); new-corridor tests pass
+/// `corridor: Corridors.cairoIsmailia`.
+List<Override> dailyOverrides(
+  TestClock clock, {
+  RecordingDialer? dialer,
+  RecordingSharer? sharer,
+  Corridor corridor = Corridors.sheikhZayedSmartVillage,
+}) =>
+    [
       nowProvider.overrideWithValue(clock.call),
+      activeCorridorProvider.overrideWithBuild((ref, notifier) => corridor),
       if (dialer != null) phoneDialerProvider.overrideWithValue(dialer),
       if (sharer != null) tripSharerProvider.overrideWithValue(sharer),
     ];
 
 /// Pins the old Sheikh Zayed → Smart Village corridor for a test written
-/// before 006 (research "P1 spike result": the app default is Cairo ↔
-/// Ismailia; only tests that need the old areas add this override).
+/// before 006 that does not use [dailyOverrides] (research "P1 spike
+/// result": the app default is Cairo ↔ Ismailia).
 Override oldCorridor() => activeCorridorProvider.overrideWithBuild((ref, notifier) => Corridors.sheikhZayedSmartVillage);

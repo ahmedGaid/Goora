@@ -12,6 +12,7 @@ import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/onboarding/presentation/session_controller.dart';
 
+import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
 final _phone = PhoneNumber.tryParse('01012345678')!;
@@ -44,7 +45,7 @@ void main() {
     final dir = locale == ar ? 'rtl' : 'ltr';
 
     testWidgets('commute setup (driver) [$dir]', (tester) async {
-      final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver));
+      final c = await pumpScreen(tester, const CommuteSetupScreen(), locale: locale, session: _session(Role.driver), overrides: [oldCorridor()]);
       c.read(commuteControllerProvider.notifier)
         ..setHome(CorridorSeed.sheikhZayed)
         ..setWork(CorridorSeed.smartVillage);
@@ -71,7 +72,7 @@ void main() {
         const MatchResultScreen(),
         locale: locale,
         session: _session(Role.rider),
-        overrides: [
+        overrides: [oldCorridor(), 
           lastMatchProvider.overrideWith(
             () => _Seeded(MatchOutcome(profile: profile, viewerIsDriver: false, result: result)),
           ),

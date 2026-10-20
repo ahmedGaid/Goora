@@ -31,10 +31,9 @@ final class SeedRider {
 /// demo clock — seeded requests are always ahead of it and offers always in
 /// the next running day, so the corridor never looks stale (R13).
 abstract final class MarketSeed {
-  /// The price basis every seeded request and offer shares with the corridor
-  /// groups (160 EGP a leg across 3 seats).
-  static const tripCost = 160;
-  static const riderSeats = 3;
+  /// The old corridor: the price basis (160 EGP a leg across 3 seats) its
+  /// seeded rows share with its groups. Each corridor carries its own (006 T024).
+  static const _old = Corridors.sheikhZayedSmartVillage;
 
   static const _contribution = 40;
 
@@ -154,8 +153,8 @@ abstract final class MarketSeed {
   /// The per-trip quote a seeded request's rider was given.
   static SeatPrice quote(int contribution, {Corridor? corridor}) => SeatPrice.of(
     contribution,
-    tripCost: corridor?.tripCost ?? tripCost,
-    riderSeats: corridor?.riderSeats ?? riderSeats,
+    tripCost: (corridor ?? _old).tripCost,
+    riderSeats: (corridor ?? _old).riderSeats,
     mode: PricingMode.perTrip,
   );
 
@@ -223,8 +222,8 @@ abstract final class MarketSeed {
       date: MarketDay.nextWorkday(const Clock.hm(7, 30), now),
       departure: const Clock.hm(7, 30),
       seats: 3,
-      riderSeats: riderSeats,
-      tripCost: tripCost,
+      riderSeats: _old.riderSeats,
+      tripCost: _old.tripCost,
       contribution: 44,
       repeat: Repeat.once,
       pickup: const Stop(id: 'of-stop-tarek', name: StopName.mainGate, point: _pickupSz, time: Clock.hm(7, 30)),
@@ -238,8 +237,8 @@ abstract final class MarketSeed {
       date: MarketDay.nextWorkday(const Clock.hm(17, 10), now),
       departure: const Clock.hm(17, 10),
       seats: 3,
-      riderSeats: riderSeats,
-      tripCost: tripCost,
+      riderSeats: _old.riderSeats,
+      tripCost: _old.tripCost,
       contribution: 40,
       repeat: Repeat.daily,
       pickup: const Stop(id: 'of-stop-heba', name: StopName.smartVillageGate2, point: _pickupSv, time: Clock.hm(17, 10)),

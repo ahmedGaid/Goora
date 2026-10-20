@@ -63,6 +63,9 @@ Today `offer_trip_controller` and `post_trip_screen` decide the leg with `from =
 
 - **Decision**: leg = **going** when `from` equals the person's own home area (or, with no profile, the corridor's default origin), otherwise **return**. Groups keep `origin → destination` as going; an Ismailia → Cairo group simply has `origin = ismailia`. Needs a test for both directions.
 - **Alternative**: infer from time of day (morning = going). Rejected: breaks the demo clock and evening one-offs.
+- **Refinement (P4, 2026-10-19/20)** — `Corridor.legOf(from, to, {home, work})`: leaving home → going; coming home → return; **neither end is home** (e.g. a Heliopolis person posting New Cairo → Ismailia) → only leaving the work end (or the corridor's default destination with no profile) is return, everything else going. Rejected: "not from home = return" — it turned a Cairo-side trip to the corridor's far end into a return.
+
+- **Test pin (P4 close, 2026-10-20)**: once the group catalog seeds per corridor, every daily test (Today, Week, Wallet, Safety…) written on the old groups went red (157). **Decision**: `dailyOverrides(clock, {corridor = old})` pins the corridor; new-corridor tests pass `corridor: Corridors.cairoIsmailia`. `oldCorridor()` stays for tests that do not use `dailyOverrides`. Rejected: pinning by hand in 17 more files (noise, and the next new test forgets it).
 
 ## R6 — Hard-coded 40-minute trip duration (risk: absurd ETAs)
 

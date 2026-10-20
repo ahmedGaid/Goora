@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/l10n/app_localizations.dart';
 import 'package:goora/core/storage/preferences.dart';
 import 'package:goora/features/commute/data/cairo_ismailia_seed.dart';
+import 'package:goora/features/commute/data/corridor_seed.dart';
 import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/data/providers.dart';
 import 'package:goora/features/commute/domain/clock.dart';
@@ -181,6 +182,13 @@ void main() {
     test('an unknown saved id falls back to the default', () async {
       await prefs.setString(ActiveCorridor.storageKey, 'gone');
       expect(container().read(activeCorridorProvider), same(Corridors.cairoIsmailia));
+    });
+
+    // 006 P5 wiring: the group catalog seeds the active corridor's groups.
+    test('the group catalog holds the active corridor\'s seeded groups', () async {
+      expect(container().read(groupCatalogProvider).all().map((g) => g.id), CairoIsmailiaSeed.groups.map((g) => g.id));
+      await prefs.setString(ActiveCorridor.storageKey, Corridors.sheikhZayedSmartVillage.id);
+      expect(container().read(groupCatalogProvider).all().map((g) => g.id), CorridorSeed.groups.map((g) => g.id));
     });
   });
 

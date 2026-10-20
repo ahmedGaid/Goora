@@ -68,7 +68,10 @@ Future<ProviderContainer> _open(
     locale: Locale(locale),
     session: _driver(),
     prefs: {...memberPrefs(role: Role.driver, member: member, locale: locale), ...extra},
-    overrides: [...dailyOverrides(clock), if (!cairo) oldCorridor(), ...overrides],
+    overrides: [
+      ...dailyOverrides(clock, corridor: cairo ? Corridors.cairoIsmailia : Corridors.sheikhZayedSmartVillage),
+      ...overrides,
+    ],
   );
   tester.view.physicalSize = const Size(390, 2800);
   await tester.pumpAndSettle();
@@ -85,7 +88,7 @@ OfferedTrip _stored(String id, {Clock departure = const Clock.hm(9, 0)}) => Offe
       departure: departure,
       seats: 3,
       riderSeats: 3,
-      tripCost: MarketSeed.tripCost,
+      tripCost: Corridors.sheikhZayedSmartVillage.tripCost,
       contribution: 40,
       repeat: Repeat.once,
       pickup: MarketSeed.pickupIn(Area.sheikhZayed, 'of-stop-$id', departure),

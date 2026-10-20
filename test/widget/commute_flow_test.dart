@@ -9,6 +9,7 @@ import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/phone_number.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 
+import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
 final _phone = PhoneNumber.tryParse('01012345678')!;
@@ -49,7 +50,7 @@ void main() {
 
   testWidgets('rider: pick places → find → result → join → ID check (009) → join → plan placeholder',
       (tester) async {
-    await pumpGooraApp(tester, prefs: _prefs(Role.rider));
+    await pumpGooraApp(tester, prefs: _prefs(Role.rider), overrides: [oldCorridor()]);
     expect(find.text(a.whereGo), findsOneWidget, reason: 'resumes at commute setup');
     await tester.tap(find.byKey(const Key('pick-home')));
     await tester.pumpAndSettle();
@@ -80,7 +81,7 @@ void main() {
   });
 
   testWidgets('driver: find → join → Today placeholder', (tester) async {
-    await pumpGooraApp(tester, prefs: _prefs(Role.driver, commute: _corridor));
+    await pumpGooraApp(tester, prefs: _prefs(Role.driver, commute: _corridor), overrides: [oldCorridor()]);
     expect(find.text(a.areaSheikhZayed), findsWidgets, reason: 'saved profile is restored');
     await _tapFind(tester);
     expect(find.text(a.foundGroup), findsOneWidget);
@@ -105,7 +106,7 @@ void main() {
   });
 
   testWidgets('back from the result returns to the filled setup', (tester) async {
-    await pumpGooraApp(tester, prefs: _prefs(Role.rider, commute: _corridor));
+    await pumpGooraApp(tester, prefs: _prefs(Role.rider, commute: _corridor), overrides: [oldCorridor()]);
     await _tapFind(tester);
     await tester.tap(find.byTooltip(a.back));
     await tester.pumpAndSettle();

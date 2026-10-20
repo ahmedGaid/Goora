@@ -139,7 +139,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final stored = _read(offersKey, OfferedTrip.fromJson);
     final byId = {for (final o in stored) o.id: o};
     return [
-      for (final o in MarketSeed.offers(_now())) byId.remove(o.id) ?? o,
+      for (final o in MarketSeed.offers(_now(), corridor: _corridor)) byId.remove(o.id) ?? o,
       ...byId.values,
     ];
   }
@@ -148,7 +148,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final stored = _read(requestsKey, TripRequest.fromJson);
     final byId = {for (final r in stored) r.id: r};
     return [
-      for (final r in MarketSeed.requests(_now())) byId.remove(r.id) ?? r,
+      for (final r in MarketSeed.requests(_now(), corridor: _corridor)) byId.remove(r.id) ?? r,
       ...byId.values,
     ];
   }
@@ -921,7 +921,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         legs: {leg},
       );
 
-  static Member _driverMember(SeatDriver d, Leg leg) => Member(
+  Member _driverMember(SeatDriver d, Leg leg) => Member(
         id: d.id,
         firstName: d.firstName,
         initials: d.initials,
@@ -930,7 +930,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         rating: d.rating,
         reliability: 100,
         legs: {leg},
-        seats: MarketSeed.riderSeats,
+        seats: _corridor.riderSeats,
         vehicle: const Vehicle(make: 'Kia Cerato', colour: VehicleColour.grey),
       );
 

@@ -99,14 +99,14 @@ node specs/006-cairo-ismailia-corridor/cap_sweep.ts
 
 **Goal**: filters, forms, defaults, leg rule and durations all read the active corridor.
 
-- [ ] T018 [US3] Test first, both directions: leg rule R5 — `leg(from, profile)` is going when `from` equals the person's home area (or the corridor default origin with no profile), else return. Put the rule in `corridor.dart` or a small helper; cover profile and no-profile, going and return.
-- [ ] T019 [US3] Replace the `== Area.smartVillage` check in `lib/features/marketplace/presentation/offer_trip/…controller` and `post_trip/post_trip_screen.dart` with the leg rule. Old-corridor tests stay green.
-- [ ] T020 [P] [US1] `fake_commute_repository.dart`: `homePlaces / workPlaces` come from the active corridor (replaces `CorridorSeed.homePlaces / workPlaces`).
-- [ ] T021 [P] [US3] Replace `Area.values` with `corridor.areas` in `find_riders/find_riders_screen.dart`, `route_form.dart`, and the trip-request model/form. Test: with the new corridor active the filter lists exactly the six areas.
-- [ ] T022 [P] [US3] Defaults in `post_trip_controller.dart` (lines ~51–52 fall back to `Area.sheikhZayed` / `Area.smartVillage`) and `offer_trip_controller.dart` read `corridor.defaultFrom / defaultTo` (replaces `Area.sheikhZayed` / `Area.smartVillage`).
-- [ ] T023 [US3] `fake_marketplace_repository.dart`: replace `_tripMinutes = 40` with `corridor.tripMinutes(from, to)` for all 9 offers and requests (R6). Test: durations on the new corridor are 90–105, old corridor still 40.
-- [ ] T024 [P] [US2] Trip cost comes from the corridor, not the fixed `demoCorridorCost = 160` default in `PricingConfig` (`lib/features/commute/domain/pricing_service.dart`, used at ~line 40). Pass the active corridor's cost into the config where it is built; do not change any formula. Test: new corridor 300, old 160; existing `pricing_service_test.dart` unchanged and green.
-- [ ] T025 [US1] No-match and waitlist copy takes the user's route area names (FR-011). Check whether the existing key already interpolates the route; add or adjust only if not. Test ar + en: "You're #N on the Heliopolis → Ismailia list".
+- [x] T018 [US3] Test first, both directions: leg rule R5 — `leg(from, profile)` is going when `from` equals the person's home area (or the corridor default origin with no profile), else return. Put the rule in `corridor.dart` or a small helper; cover profile and no-profile, going and return.
+- [x] T019 [US3] Replace the `== Area.smartVillage` check in `lib/features/marketplace/presentation/offer_trip/…controller` and `post_trip/post_trip_screen.dart` with the leg rule. Old-corridor tests stay green.
+- [x] T020 [P] [US1] `fake_commute_repository.dart`: `homePlaces / workPlaces` come from the active corridor (replaces `CorridorSeed.homePlaces / workPlaces`).
+- [x] T021 [P] [US3] Replace `Area.values` with `corridor.areas` in `find_riders/find_riders_screen.dart`, `route_form.dart`, and the trip-request model/form. Test: with the new corridor active the filter lists exactly the six areas.
+- [x] T022 [P] [US3] Defaults in `post_trip_controller.dart` (lines ~51–52 fall back to `Area.sheikhZayed` / `Area.smartVillage`) and `offer_trip_controller.dart` read `corridor.defaultFrom / defaultTo` (replaces `Area.sheikhZayed` / `Area.smartVillage`).
+- [x] T023 [US3] `fake_marketplace_repository.dart`: replace `_tripMinutes = 40` with `corridor.tripMinutes(from, to)` for all 9 offers and requests (R6). Test: durations on the new corridor are 90–105, old corridor still 40.
+- [x] T024 [P] [US2] Trip cost comes from the corridor, not the fixed `demoCorridorCost = 160` default in `PricingConfig` (`lib/features/commute/domain/pricing_service.dart`, used at ~line 40). Pass the active corridor's cost into the config where it is built; do not change any formula. Test: new corridor 300, old 160; existing `pricing_service_test.dart` unchanged and green.
+- [x] T025 [US1] No-match and waitlist copy takes the user's route area names (FR-011). Check whether the existing key already interpolates the route; add or adjust only if not. Test ar + en: "You're #N on the Heliopolis → Ismailia list".
 
 **Checkpoint**: full suite green with the old corridor as test default; new unit tests green with the new corridor.
 
@@ -116,13 +116,24 @@ node specs/006-cairo-ismailia-corridor/cap_sweep.ts
 
 **Goal**: ≥ 3 groups per direction and the marketplace re-keyed. Sonnet fits.
 
-- [ ] T026 [US1] Test first (fails until seed exists): seeds contain ≥ 3 groups per direction; one women-only-friendly; one full (waitlist demo); free seats 0–2; times going 06:30–07:30, return 16:30–17:30; Sun–Thu; `arrival` set on every group (none uses `Group.defaultTripMinutes`).
-- [ ] T027 [US1] Seed the groups in `cairo_ismailia_seed.dart`: 3 Cairo→Ismailia, 3 Ismailia→Cairo minimum, `tripCost = 300`, `riderSeats = 3`, `price = 76`. T008 invariants go green.
-- [ ] T028 [P] [US3] `market_seed.dart`: mirror the 12 morning + 4 evening requests and the driver/rider pools with the new areas; `detourFrom` keyed by `corridor.areas`; same row counts so existing counts and banners keep working. Keep old rows for the old corridor.
-- [ ] T029 [US3] Marketplace seed tests: row counts unchanged per corridor; no request or offer on the new corridor references an old-corridor area.
-- [ ] T030 [US1] Match test per direction through `matching_service` with the new seed: New Cairo→Ismailia and Ismailia→Nasr City each return ≥ 1 group; Heliopolis home with a no-group time returns no match. Matching limits unchanged.
+- [x] T026 [US1] Test first (fails until seed exists): seeds contain ≥ 3 groups per direction; one women-only-friendly; one full (waitlist demo); free seats 0–2; times going 06:30–07:30, return 16:30–17:30; Sun–Thu; `arrival` set on every group (none uses `Group.defaultTripMinutes`).
+- [x] T027 [US1] Seed the groups in `cairo_ismailia_seed.dart`: 3 Cairo→Ismailia, 3 Ismailia→Cairo minimum, `tripCost = 300`, `riderSeats = 3`, `price = 76`. T008 invariants go green.
+- [x] T028 [P] [US3] `market_seed.dart`: mirror the 12 morning + 4 evening requests and the driver/rider pools with the new areas; `detourFrom` keyed by `corridor.areas`; same row counts so existing counts and banners keep working. Keep old rows for the old corridor.
+- [x] T029 [US3] Marketplace seed tests: row counts unchanged per corridor; no request or offer on the new corridor references an old-corridor area.
+- [x] T030 [US1] Match test per direction through `matching_service` with the new seed: New Cairo→Ismailia and Ismailia→Nasr City each return ≥ 1 group; Heliopolis home with a no-group time returns no match. Matching limits unchanged.
 
 **Checkpoint**: seed invariants and match tests green; suite green.
+
+**P4 + P5 notes (2026-10-20)**:
+- Leg rule is `Corridor.legOf(from, to, {home, work})`; refinement (neither end home → only leaving the work end is return) is in research.md R5.
+- T019: the post-trip leg test is two pumps (going, return), not cancel → post again: cancel pops the route and `pumpScreen` has no GoRouter.
+- T020/P5 wiring: `groupCatalogProvider` seeds `Corridors.groupsOf(activeCorridor)`; `FakeCommuteRepository`'s own default catalog does too. The fake marketplace reads `MarketSeed.requests/offers(now, corridor: …)`.
+- T024: `MarketSeed.tripCost/riderSeats` (160/3) removed; old rows read `Corridors.sheikhZayedSmartVillage`; `_driverMember` seats come from the active corridor. Tests that built old-corridor trips use `Corridors.sheikhZayedSmartVillage.tripCost`.
+- T025: `noMatch` already took `{from} → {to}` from the profile's areas; no copy change. New ar + en test on Heliopolis → Ismailia in `commute_screens_test.dart`.
+- `oldCorridor()` pinned in the spike files: commute_screens_test, commute_screens_golden_test, commute_flow_test, find_riders_test, marketplace_navigation_test (post_trip/offer_trip pin it unless a test opts into the new corridor).
+- `dailyOverrides(clock, {corridor})` now pins the old corridor by default (research R5 "Test pin"); new-corridor tests opt in.
+- Gates at the P4 checkpoint: analyze 0 · flutter 1330 green · node 226.
+- T026–T030 verified on the merged 006-p5-seed code: corridor_seed_invariant_test, market_seed_test, cairo_ismailia_match_test all green in the full suite.
 
 ---
 
