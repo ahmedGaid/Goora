@@ -79,6 +79,10 @@ class _ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    // The header follows the ID row below it (walk S-5): "verified" only once
+    // the national ID is.
+    final idOk = profile.items.any((i) => i.kind == VerificationKind.nationalId && i.status == VerificationStatus.verified);
+    final rating = profile.rating.toStringAsFixed(1);
     return GooraCard(
       child: Row(
         children: [
@@ -92,11 +96,18 @@ class _ProfileCard extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xxs),
                 Row(
                   children: [
-                    const Icon(GooraIcons.verified, size: AppSizes.iconTiny, color: AppColors.greenText),
-                    const SizedBox(width: AppSpacing.xxs),
+                    if (idOk) ...[
+                      const Icon(
+                        GooraIcons.verified,
+                        key: Key('profile-verified-icon'),
+                        size: AppSizes.iconTiny,
+                        color: AppColors.greenText,
+                      ),
+                      const SizedBox(width: AppSpacing.xxs),
+                    ],
                     Flexible(
                       child: Text(
-                        l10n.verifiedMemberRating(profile.rating.toStringAsFixed(1)),
+                        idOk ? l10n.verifiedMemberRating(rating) : l10n.memberRating(rating),
                         style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
                       ),
                     ),

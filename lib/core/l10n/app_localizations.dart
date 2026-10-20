@@ -383,7 +383,7 @@ abstract class AppLocalizations {
   /// No description provided for @coversTrips.
   ///
   /// In ar, this message translates to:
-  /// **'{count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}}'**
+  /// **'{count, plural, =0{بيدفع رسوم جورة بس، مش نصيب السواق} =1{بيغطي حوالي مشوار واحد} other{بيغطي حوالي {count} مشاوير}}'**
   String coversTrips(int count);
 
   /// No description provided for @planChange.
@@ -485,7 +485,7 @@ abstract class AppLocalizations {
   /// No description provided for @breakdownTitle.
   ///
   /// In ar, this message translates to:
-  /// **'بتدفع كام في الرحلة'**
+  /// **'بتدفع كام في المشوار'**
   String get breakdownTitle;
 
   /// No description provided for @breakdownFuel.
@@ -553,48 +553,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'سحب'**
   String get actWithdrawal;
-
-  /// No description provided for @recoveredTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'اتجمّع الأسبوع ده'**
-  String get recoveredTitle;
-
-  /// No description provided for @payoutNote.
-  ///
-  /// In ar, this message translates to:
-  /// **'بيتصرف كل خميس · من غير أي رسوم عليك'**
-  String get payoutNote;
-
-  /// No description provided for @withdraw.
-  ///
-  /// In ar, this message translates to:
-  /// **'اسحب على InstaPay'**
-  String get withdraw;
-
-  /// No description provided for @withdrawSheetTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'اسحب على InstaPay'**
-  String get withdrawSheetTitle;
-
-  /// No description provided for @withdrawConfirm.
-  ///
-  /// In ar, this message translates to:
-  /// **'أكّد السحب'**
-  String get withdrawConfirm;
-
-  /// No description provided for @withdrawFailTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'السحب ملحقش يتم'**
-  String get withdrawFailTitle;
-
-  /// No description provided for @withdrawFailBody.
-  ///
-  /// In ar, this message translates to:
-  /// **'مفيش حاجة تحرّكت — جرّب تاني.'**
-  String get withdrawFailBody;
 
   /// No description provided for @driverBreakdownTitle.
   ///
@@ -2463,6 +2421,12 @@ abstract class AppLocalizations {
   /// **'{name} (بديل)'**
   String backupName(String name);
 
+  /// No description provided for @memberRating.
+  ///
+  /// In ar, this message translates to:
+  /// **'عضو · {rating} ★'**
+  String memberRating(String rating);
+
   /// No description provided for @verifiedMemberRating.
   ///
   /// In ar, this message translates to:
@@ -2871,6 +2835,12 @@ abstract class AppLocalizations {
   /// **'من غير رسوم خدمة على مشاويرك'**
   String get planPerTripNoFeeLine;
 
+  /// No description provided for @planBundleLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{الباقة بتغطي رسوم مشوارك — فاضل مشوار واحد} =2{الباقة بتغطي رسوم مشاويرك — فاضل مشوارين} few{الباقة بتغطي رسوم مشاويرك — فاضل {count} مشاوير} other{الباقة بتغطي رسوم مشاويرك — فاضل {count} مشوار}}'**
+  String planBundleLine(num count);
+
   /// No description provided for @planSubscribedLine.
   ///
   /// In ar, this message translates to:
@@ -2916,7 +2886,7 @@ abstract class AppLocalizations {
   /// No description provided for @feeSavings.
   ///
   /// In ar, this message translates to:
-  /// **'دفعت {fees} ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.'**
+  /// **'دفعت {fees} ج رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.'**
   String feeSavings(int fees);
 
   /// No description provided for @actTrip.
@@ -3030,7 +3000,7 @@ abstract class AppLocalizations {
   /// No description provided for @seatRule.
   ///
   /// In ar, this message translates to:
-  /// **'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل ٩ بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.'**
+  /// **'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل 9 بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.'**
   String get seatRule;
 
   /// No description provided for @nothingFits.
@@ -3558,7 +3528,7 @@ abstract class AppLocalizations {
   /// No description provided for @owesDriver.
   ///
   /// In ar, this message translates to:
-  /// **'عليك {amount} ج.م لـ {name}'**
+  /// **'عليك {amount} ج لـ {name}'**
   String owesDriver(int amount, String name);
 
   /// No description provided for @owesDriverBody.
@@ -3618,7 +3588,7 @@ abstract class AppLocalizations {
   /// No description provided for @feeOwed.
   ///
   /// In ar, this message translates to:
-  /// **'عليك {amount} ج.م رسوم لجورة'**
+  /// **'عليك {amount} ج رسوم لجورة'**
   String feeOwed(int amount);
 
   /// No description provided for @instapayHandleLabel.
@@ -3638,6 +3608,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'احفظ'**
   String get instapaySave;
+
+  /// No description provided for @instapaySaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحفظ'**
+  String get instapaySaved;
 
   /// No description provided for @instapayOfDriver.
   ///

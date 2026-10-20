@@ -77,6 +77,19 @@ void main() {
       expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 100);
     });
 
+    testWidgets('[$code] S-4: the top-up banner is on screen at phone height, next to the button', (tester) async {
+      await _openSubscription(tester, code, balance: 100);
+      tester.view.physicalSize = const Size(390, 844);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('plan-cta')));
+      await tester.pumpAndSettle();
+      final banner = tester.getRect(find.byKey(const Key('sub-needs-top-up')));
+      expect(banner.bottom, lessThanOrEqualTo(844), reason: 'not below the fold');
+      expect(banner.top, greaterThanOrEqualTo(0));
+      expect(banner.bottom, lessThanOrEqualTo(tester.getRect(find.byKey(const Key('plan-cta'))).top),
+          reason: 'banner sits above the button it explains');
+    });
+
     testWidgets('[$code] AC4: Through my company verifies and costs nothing', (tester) async {
       final c = await _openSubscription(tester, code);
       await tester.tap(find.byKey(const Key('plan-company')));

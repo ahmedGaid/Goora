@@ -159,7 +159,7 @@ class AppLocalizationsEn extends AppLocalizations {
       locale: localeName,
       other: 'Covers about $count trips',
       one: 'Covers about 1 trip',
-      zero: 'Covers no trips yet',
+      zero: 'Pays Goora\'s fee, never the driver\'s share',
     );
     return '$_temp0';
   }
@@ -253,27 +253,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get actWithdrawal => 'Withdrawal';
-
-  @override
-  String get recoveredTitle => 'Recovered this week';
-
-  @override
-  String get payoutNote => 'Paid out every Thursday · no fees taken from you';
-
-  @override
-  String get withdraw => 'Withdraw to InstaPay';
-
-  @override
-  String get withdrawSheetTitle => 'Withdraw to InstaPay';
-
-  @override
-  String get withdrawConfirm => 'Confirm withdrawal';
-
-  @override
-  String get withdrawFailTitle => 'Withdrawal didn\'t go through';
-
-  @override
-  String get withdrawFailBody => 'Nothing moved — try again.';
 
   @override
   String get driverBreakdownTitle => 'Your trip cost';
@@ -1398,6 +1377,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String memberRating(String rating) {
+    return 'Member · $rating ★';
+  }
+
+  @override
   String verifiedMemberRating(String rating) {
     return 'Verified member · $rating ★';
   }
@@ -1673,6 +1657,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planPerTripNoFeeLine => 'No service fee on your trips';
+
+  @override
+  String planBundleLine(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Your bundle covers Goora\'s fee · $count trips left',
+      one: 'Your bundle covers Goora\'s fee · 1 trip left',
+    );
+    return '$_temp0';
+  }
 
   @override
   String planSubscribedLine(String date) {
@@ -2157,6 +2152,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get instapaySave => 'Save';
+
+  @override
+  String get instapaySaved => 'Saved';
 
   @override
   String instapayOfDriver(String name, String handle) {

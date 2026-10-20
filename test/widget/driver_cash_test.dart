@@ -5,6 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
 import 'package:goora/app/routes.dart';
 import 'package:goora/core/widgets/goora_status_chip.dart';
+import 'package:goora/features/commute/domain/commute_profile.dart' show Leg;
+import 'package:goora/features/daily/data/providers.dart';
+import 'package:goora/features/daily/presentation/today/today_controller.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/cash_mark.dart';
@@ -19,7 +22,7 @@ import '../helpers/pump_app.dart';
 /// (rotation from Sun 4 Oct); Youssef pays cash, Sara by InstaPay.
 final _thu = rideTuesday.addDays(2);
 
-Future<ProviderContainer> _driveAndEnd(WidgetTester tester, String locale) async {
+Future<ProviderContainer> _driveAndEnd(WidgetTester tester, String locale, {bool onlyGoing = false}) async {
   final clock = TestClock(at(_thu, 7, 20));
   final c = await pumpGooraApp(
     tester,
@@ -27,6 +30,11 @@ Future<ProviderContainer> _driveAndEnd(WidgetTester tester, String locale) async
     overrides: dailyOverrides(clock),
   );
   tester.view.physicalSize = const Size(390, 3400);
+  if (onlyGoing) {
+    // A one-leg driving day: a cover takes the return (the Mon 30/11 walk shape).
+    await c.read(dailyCommuteRepositoryProvider).cantDrive(_thu, {Leg.ret}, at(_thu.addDays(-2), 20, 0));
+    c.invalidate(todayControllerProvider);
+  }
   await tester.pumpAndSettle();
   Future<void> tap(String key) async {
     await tester.tap(find.byKey(Key(key)));
@@ -67,6 +75,15 @@ void main() {
         expect(find.byKey(Key('cash-unpaid-$id')), findsOneWidget, reason: id);
       }
       expect(find.text(l.cashReceived(40)), findsNWidgets(4));
+    });
+
+    testWidgets('[$code] S-6: a one-leg driving day — ending the going leg still shows the receipt card',
+        (tester) async {
+      await _driveAndEnd(tester, code, onlyGoing: true);
+      expect(find.text(l.tripEndedNote), findsOneWidget, reason: 'the ended trip stays on screen (walk Mon 30/11)');
+      for (final id in ['ahmed', 'sara', 'mohamed', 'youssef']) {
+        expect(find.byKey(Key('cash-received-$id')), findsOneWidget, reason: id);
+      }
     });
 
     testWidgets('[$code] AC2: "Received" is recorded and shown as a status, with a way to change it', (tester) async {

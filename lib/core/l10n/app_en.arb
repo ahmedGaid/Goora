@@ -47,7 +47,7 @@
   "verifyNotVerified": "Verify your work email in Trust first.",
   "balanceLabel": "Wallet balance",
   "topUp": "Top up",
-  "coversTrips": "{count, plural, =0{Covers no trips yet} =1{Covers about 1 trip} other{Covers about {count} trips}}",
+  "coversTrips": "{count, plural, =0{Pays Goora's fee, never the driver's share} =1{Covers about 1 trip} other{Covers about {count} trips}}",
   "planChange": "Change",
   "planCompanyActive": "Free · paid by your company",
   "howPayTitle": "How paying works",
@@ -83,13 +83,6 @@
     }
   },
   "actWithdrawal": "Withdrawal",
-  "recoveredTitle": "Recovered this week",
-  "payoutNote": "Paid out every Thursday · no fees taken from you",
-  "withdraw": "Withdraw to InstaPay",
-  "withdrawSheetTitle": "Withdraw to InstaPay",
-  "withdrawConfirm": "Confirm withdrawal",
-  "withdrawFailTitle": "Withdrawal didn't go through",
-  "withdrawFailBody": "Nothing moved — try again.",
   "driverBreakdownTitle": "Your trip cost",
   "driverBreakdownCost": "Trip cost",
   "driverBreakdownReceived": "You receive from riders",
@@ -400,6 +393,14 @@
   "offNote": "Cancelled before 9 PM · no charge",
   "lateOffNote": "Cancelled after 9 PM · {amount} EGP to the driver",
   "backupName": "{name} (backup)",
+  "memberRating": "Member · {rating} ★",
+  "@memberRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
   "verifiedMemberRating": "Verified member · {rating} ★",
   "reliability": "Reliability",
   "relLateCancels": "{count, plural, =1{1 late cancel this month.} other{{count} late cancels this month.}}",
@@ -453,6 +454,7 @@
   "shareNoTrip": "No trip to share right now.",
   "priceWithFee": "{price} EGP to the driver + {fee} EGP Goora fee",
   "priceNoFee": "{price} EGP to the driver · no service fee",
+  "priceNoFee": "{price} EGP to the driver · no service fee",
   "priceSubscribed": "{price} EGP · no fees (subscribed)",
   "priceCompany": "{price} EGP · no fees (company)",
   "priceCash": "Pay {price} EGP cash to the driver",
@@ -468,6 +470,7 @@
   "planPayPerTrip": "Pay per trip",
   "planPerTripLine": "{fee} EGP service fee per trip",
   "planPerTripNoFeeLine": "No service fee on your trips",
+  "planBundleLine": "{count, plural, =1{Your bundle covers Goora's fee · 1 trip left} other{Your bundle covers Goora's fee · {count} trips left}}",
   "planSubscribedLine": "Subscribed until {date} · no fees",
   "planLapsedLine": "Subscription ended · back to pay per trip",
   "cashTripsLeft": "{count, plural, =0{No fee-free trips left} =1{1 fee-free trip left} other{{count} fee-free trips left}}",
@@ -596,6 +599,7 @@
   "instapayHandleLabel": "Your InstaPay handle",
   "instapayHandleHint": "Passengers see it only after their booking is confirmed.",
   "instapaySave": "Save",
+  "instapaySaved": "Saved",
   "instapayOfDriver": "{name}'s InstaPay: {handle}",
   "copyHandle": "Copy",
   "copiedHandle": "Copied",

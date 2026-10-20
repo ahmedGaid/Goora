@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,11 +9,9 @@ import 'package:goora/core/theme/app_theme.dart';
 import 'package:goora/core/widgets/goora_balance_card.dart';
 import 'package:goora/features/daily/data/fake_daily_commute_repository.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
-import 'package:goora/features/wallet/domain/activity_entry.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/presentation/wallet/change_plan_sheet.dart';
 import 'package:goora/features/wallet/presentation/wallet/top_up_sheet.dart';
-import 'package:goora/features/wallet/presentation/wallet/withdraw_sheet.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -168,30 +165,6 @@ void main() {
       await tester.tap(find.byKey(const Key('plan-change')));
       await tester.pumpAndSettle();
       await expectLater(find.byType(ChangePlanSheet), matchesGoldenFile('goldens/sheet_change_plan_$dir.png'));
-    });
-
-    testWidgets('withdraw sheet [$dir]', (tester) async {
-      await loadAppFonts();
-      addTearDown(tester.view.reset);
-      // Only a 004 balance left from before can be withdrawn now (007 R8).
-      final c = await pumpGooraApp(
-        tester,
-        prefs: {
-          ...memberPrefs(role: Role.driver, locale: code),
-          'wallet.balance.me': 180,
-          'wallet.activity.me': jsonEncode([
-            ActivityEntry(id: 'w-income-1', kind: ActivityKind.tripIncome, amount: 180, date: rideTuesday.addDays(-1))
-                .toJson(),
-          ]),
-        },
-        overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
-      );
-      tester.view.physicalSize = const Size(390, 2600);
-      c.read(routerProvider).go(Routes.wallet);
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('withdraw')));
-      await tester.pumpAndSettle();
-      await expectLater(find.byType(WithdrawSheet), matchesGoldenFile('goldens/sheet_withdraw_$dir.png'));
     });
   }
 }

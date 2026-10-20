@@ -81,6 +81,10 @@ None currently.
 - Update this file at the end of every completed task (position, NEXT ACTION, blocker) — same
   pattern as `atyab-status`/`dukkan-status`.
 
+## Lane B walk-fix block — 2026-10-20 (007–009 walk fixes), branch `fix/walk-007-009` (worktree Goora-walkfix, off main 453e5bd, NOT pushed, NOT merged)
+S-1 driver Withdraw + sheet + keys (`recoveredTitle`, `payoutNote`, `withdraw*`) removed · S-2 fee-free rows say "40 ج للسواق · من غير رسوم خدمة" (`priceNoFee`) · S-3 bundle with trips left → no cash-ended / savings banners, plan card says `planBundleLine`, breakdown shows no fee (fee-owed debt banner kept: real debt) · S-4 plan top-up banner pinned above the CTA · S-5 Trust header says verified only when the ID row does (`memberRating`) · S-6 REPRODUCED on a one-leg driving day (cover takes the return): `drive` moved to the next drive day so the receipt card vanished; fixed with `TodayView.today` · nits N-1,2,3,4,8,9 done. Goldens regenerated (4 wallet PNGs, looked at). Open nits: N-5, N-6, N-7, N-10, N-11, N-12. Gates: analyze 0 · flutter green after golden update · node 226.
+**NEXT ACTION**: founder OK → merge (order C, B, A; ARB/status/NEXT_GOAL conflicts: keep both sides). Push needs OK.
+
 ## Where detail lives
 - Product brief / canon → `GOORA_SPEC_KIT_BRIEF.md` (repo root).
 - Architecture, conventions, gates → [[goora-stack]].

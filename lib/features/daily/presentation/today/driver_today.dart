@@ -35,7 +35,7 @@ class DriverToday extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final drive = view.drive;
-    final drivingToday = drive != null && drive.date == view.now.date ? drive.driving : const <LegPlan>[];
+    final drivingToday = view.today?.driving.toList() ?? const <LegPlan>[];
     final checkIn = drivingToday.where((l) => !l.overAt(view.now)).firstOrNull;
     final ended = drivingToday.where((l) => l.ride?.endedAt != null).lastOrNull;
     final riding = view.display != null && view.display!.date != drive?.date ? view.display : null;

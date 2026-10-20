@@ -43,3 +43,13 @@ SCOPE: done = copy/seed fixes (named meeting spots, no "0 متر", no double ا�
 FIT: Sonnet for the open items; Empty-seats-empty for a member rider may need Opus-level reading of marketplace seed vs filter.
 ALSO OPEN: Empty seats empty for a member rider on New Cairo ↔ Ismailia (unexplained; Lane B files) · no corridor switch in Settings → Demo (Lane A files) · Today's return-leg arrival shows area name only · "461 دقيقة" pickup wording (daily/**) · stop landmark names (90th Street, City Stars, Korba Sq., Obour Market, 1st District, El Mamar Sq.) are recalled, founder review · trip cost 300 EGP · Obour / 10th of Ramadan real pickups · SC-001 (< 2 min) not proven by the scripted walk · 002 specs still say "launch corridor" for the old route (historical, left).
 BLOCKED, don't re-ask: push/merge only with the founder's OK · emulator via D:\Company\99-Ops\start-emulator.ps1, never the personal phone.
+---
+## LANE B walk-fix hand-off (2026-10-20)
+/goal Goora — branch `fix/walk-007-009` (worktree D:/Company/80-Worktrees/Goora-walkfix) off main 453e5bd: S-1…S-6 + N-1,2,3,4,8,9 fixed, tests ar+en. Gates: analyze 0 · flutter green · node 226. Not pushed.
+WHERE: verify — `git -C D:/Company/80-Worktrees/Goora-walkfix log --oneline -8` · `git status --short`.
+NEXT: founder OK → merge in round order C, then this, then Lane A (keep both sides in ARB/goora-status/NEXT_GOAL). Then remaining nits N-5, N-6, N-7, N-10, N-11, N-12.
+READ FIRST: Docs/walks/2026-10-20-007-009.md §5 (on docs/walk-007-009) · goora-status "Lane B walk-fix block".
+SCOPE: nits only, wallet/daily/marketplace presentation + existing ARB keys.
+FIT: Sonnet. EST: 1–2 h.
+ALSO OPEN: S-6 repro was a constructed one-leg day, not the exact Mon 30/11 device state (test uses the old corridor) · wallet_controller.withdraw + repo withdraw now unused (Lane A owns them) · legacy 004 driver balance no longer shown anywhere · new keys `priceNoFee`, `planBundleLine`, `memberRating`, `instapaySaved` sit mid-file.
+BLOCKED, don't re-ask: push/merge only with the founder's OK.

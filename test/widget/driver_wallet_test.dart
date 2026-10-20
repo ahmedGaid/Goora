@@ -80,8 +80,9 @@ void main() {
       expect(find.text(l.instapayHandleHint), findsOneWidget);
     });
 
-    testWidgets('[$code] a 004 balance left from before can still be withdrawn', (tester) async {
-      final c = await _openWallet(
+    testWidgets('[$code] S-1: a 004 balance left from before gives NO withdraw action (Goora holds no driver money)',
+        (tester) async {
+      await _openWallet(
         tester,
         code,
         extra: {
@@ -92,15 +93,20 @@ void main() {
           ]),
         },
       );
-      await tester.tap(find.byKey(const Key('withdraw')));
+      expect(find.byKey(const Key('withdraw')), findsNothing);
+      expect(find.textContaining('InstaPay'), findsWidgets, reason: 'only the handle card mentions it');
+      expect(find.text(code == 'ar' ? 'اسحب على InstaPay' : 'Withdraw to InstaPay'), findsNothing);
+    });
+
+    testWidgets('[$code] N-9: saving the InstaPay handle says it was saved', (tester) async {
+      await _openWallet(tester, code);
+      expect(find.text(l.instapaySaved), findsNothing);
+      final field = find.descendant(of: find.byKey(const Key('instapay-field')), matching: find.byType(TextField));
+      await tester.ensureVisible(field);
+      await tester.enterText(field, 'omar.k@instapay');
+      await tester.tap(find.byKey(const Key('instapay-save')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('withdraw-confirm')));
-      await tester.pumpAndSettle();
-      final meId = c.read(dailyCommuteRepositoryProvider).meId;
-      final wallet = await c.read(walletRepositoryProvider).getWallet(meId);
-      expect(wallet.balance, 0);
-      expect(wallet.activity.first.kind, ActivityKind.withdrawal);
-      expect(find.byKey(const Key('withdraw')), findsNothing, reason: 'nothing left to take out');
+      expect(find.text(l.instapaySaved), findsOneWidget);
     });
   }
 }

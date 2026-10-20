@@ -84,6 +84,7 @@ final class TodayView {
     required this.target,
     required this.drive,
     required this.standing,
+    this.today,
     this.otherLegs = const {},
     this.alerts = const [],
   }) : neverInGroup = false;
@@ -95,6 +96,7 @@ final class TodayView {
         display = null,
         target = null,
         drive = null,
+        today = null,
         standing = NoShowStanding.removal,
         otherLegs = const {},
         alerts = const [],
@@ -107,6 +109,7 @@ final class TodayView {
         display = null,
         target = null,
         drive = null,
+        today = null,
         standing = NoShowStanding.removal,
         otherLegs = const {},
         alerts = const [],
@@ -127,6 +130,11 @@ final class TodayView {
 
   /// Drivers: the next day I drive.
   final DayPlan? drive;
+
+  /// Today's own plan, kept even when every leg of it is over — so a driver's
+  /// ended trip and its cash receipt stay on screen once [drive] has moved on
+  /// to the next drive day (walk S-6).
+  final DayPlan? today;
   final NoShowStanding standing;
 
   /// Rider legs another corridor group serves (US1/AC3): leg → that group's time.
@@ -180,10 +188,12 @@ class TodayController extends _$TodayController {
     DayPlan? display;
     DayPlan? target;
     DayPlan? drive;
+    DayPlan? today;
     for (final d in days) {
       if (display != null && target != null && (drive != null || me.role != MemberRole.driver)) break;
       final plan = await _plan(repo, g, me, myStop, d);
       if (plan.legs.isEmpty) continue;
+      if (d.date == now.date) today = plan;
       if (display == null && plan.legs.any((l) => l.duty != Duty.off && !l.overAt(now))) display = plan;
       if (target == null && d.date.isAfter(now.date)) target = plan;
       if (drive == null && plan.driving.any((l) => !l.overAt(now))) drive = plan;
@@ -196,6 +206,7 @@ class TodayController extends _$TodayController {
       display: display,
       target: target,
       drive: drive,
+      today: today,
       standing: AttendanceRules.standing(await repo.noShowsInMonth(now.date.monthKey)),
       otherLegs: profile == null || me.role == MemberRole.driver ? const {} : await _otherLegs(g, me, profile),
       alerts: [
