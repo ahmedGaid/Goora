@@ -23,3 +23,13 @@ SCOPE: seed data + tests only; Lane A files untouched.
 FIT: Sonnet. EST: merge + P4 wiring 60–90 min.
 ALSO OPEN: seed names/ratings/vehicles are demo copy (not ar/en strings, no ARB) · detour spread for the 12 requests is derived (see `_cairoRequest`) · 300 EGP still unverified.
 BLOCKED, don't re-ask: push/merge only with the founder's OK.
+
+## LANE A — 006 P4 + P6 done (appended 2026-10-20; supersedes the "LANE A hand-off" block above)
+/goal Goora 006 — branch `006-cairo-ismailia-corridor` @ `189b179` (worktree D:/Company/80-Worktrees/Goora-006), 21 commits ahead of main `eda1844`, 0 behind. Origin is at `2d3de70`: P4/P5-merge/P6 NOT pushed. Gates: analyze 0 · flutter 1360 green · node 226.
+WHERE: verify — `git -C D:/Company/80-Worktrees/Goora-006 log --oneline -4` · `git rev-list --count main..006-cairo-ismailia-corridor` · `git -C D:/Company/80-Worktrees/Goora-006 status --short`.
+NEXT: founder OK → push 006. Then P7: T039 device walk (quickstart §0–§7, emulator via D:\Company\99-Ops\start-emulator.ps1 once Lane C frees it), T040 map check, T041 SC-006 docs, T042–T043 close.
+READ FIRST: specs/006-cairo-ismailia-corridor/tasks.md (P4+P5 notes, P6 notes, P7) · research.md R5 (leg rule refinement + test pin) · goora-status "Lane A block 2026-10-20".
+SCOPE: P7 only; no app code unless the walk finds a bug. Merge to main only with the founder's OK; Lane B (010) rebases after 006 merges.
+FIT: Sonnet. EST: 60–90 min incl. walk.
+ALSO OPEN: founder copy review — "التجمع · … — …، نقطة التجمع" repeats التجمع; seed meeting points sit on the home points ("0 m away") · 300 EGP unverified · six centres recalled (T040) · Cairo-side 30 min guess · `006-p5-seed` branch + worktree Goora-006-p5 are merged here and can be deleted (founder OK).
+BLOCKED, don't re-ask: push/merge/delete only with the founder's OK · emulator only via start-emulator.ps1, never the personal phone.
