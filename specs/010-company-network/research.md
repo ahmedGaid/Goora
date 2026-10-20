@@ -184,3 +184,80 @@ did. Lexicon: مشوار, السواق, كرسي, موثّق. Example lines (dra
 | companyConsentNever | عمرها ما هتشوف مشاويرك، مكان ركوبك، ولا مواعيدك | It never sees your trips, pickup point or times |
 | companyPlanPaused | خطة شركتك متوقفة دلوقتي، رسوم المشوار رجعت عادي | Your company plan is paused for now; the usual trip fee applies |
 | fewerThanFive | أقل من 5 | Fewer than 5 |
+
+## Lane B notes — 2026-10-20 (T002, P2, P3 on `010-company-network`, new files only)
+
+Written by the Lane B session of the 2026-10-20 parallel round. The founder chose to start before 006
+merges with **new files only**; every task that edits an existing file is left open in tasks.md with
+"waits for 006 merge". Founder questions Q1–Q11 are still open: the code uses each recommended
+default.
+
+### R0 addendum — where the flags live
+The existing config home is `lib/core/config/env.dart` (an existing file, outside this lane), so
+`CompanyFlags.companyInvoicesLive` and `CompanyFlags.hrStatementExport` are plain `false` constants in
+the new `lib/features/company/company_flags.dart` (test `company_flags_test.dart`). Plain constants,
+not `--dart-define`s, so turning one on is a reviewed code change after the R0 answer is written here.
+Rejected: a `bool.fromEnvironment` next to `Env` (needs the existing file; a build flag could switch
+real invoices on before the lawyer answers). May move next to `Env` after 006 merges.
+
+### Every number a founder answer would change — one constant each
+| Founder item | Default used | Constant |
+|---|---|---|
+| Q1 price per employee per month | 99 EGP | `CompanyTerms.pricePerSeat` |
+| Q2 billing basis | peak enrolled per day, drivers count, no pro-rating | rule shape `CompanyRules.peakEnrolled` (+ twin) |
+| Q3 minimum seats | 20 | `CompanyTerms.minimumSeats` |
+| Q4 contract | 12 months, 30 days' notice | `CompanyTerms.contractMonths`, `CompanyTerms.noticeDays` |
+| Q10 due | issue + 15 days | `CompanyRules.dueAfterDays` = TS `DUE_AFTER_DAYS` |
+| Q10 grace | 7 days, suspended 00:00 on due + 8 | `CompanyRules.graceDays` = TS `GRACE_DAYS` |
+| clarification k | 5 | `CompanyRules.suppressBelow` = TS `SUPPRESS_BELOW` |
+| R4 Goora bank details | placeholder text | `CompanyTerms.bankDetails` (**founder to supply**) |
+| R7 leg km SZ ↔ SV | 20 km, **unverified** | `CompanySeed.legKmPlaceholder` (measure before T043) |
+| R10 seed money saved | 160 − 40 = 120 EGP per rider trip | `CompanySeed._savedPerTrip` |
+
+The three rule constants exist in Dart, TS and `gen_company_vectors.py` by the twin rule; the
+50 vectors fail on either side if one drifts. Q5, Q7, Q9, Q11 carry no number in P2/P3 (they shape
+P4–P8). Q8 = the two flags above.
+
+### Choices the docs left open (picked, with the rejected option)
+1. **Seed = 12 employees**, not the 24 in the round brief: R10 and analyze F3 say 12 so the
+   minimum-20 invoice shows (20 × 99 = 1,980), and the spec's independent tests use 12. Rejected 24:
+   it bills 24 and hides the minimum case.
+2. `register` takes `personId` (the contract had none): the HR contact must be a known person.
+   Rejected: a hidden "current user" seam in the fake.
+3. The pending offer is `PendingCompany(companyName)` (contract: `Pending`). Rejected the bare name:
+   too generic beside other features' imports. The screen shows "not on Goora yet" for it (US1 AC5).
+4. A **suspended** company still offers `CanEnroll` (still a customer; coverage starts once paid);
+   an **ended** one reads `NotOnGoora`. Rejected: refusing to enroll while suspended (punishes the
+   employee for the company's debt, against FR-015's spirit).
+5. Coverage counts only suspensions that **have started** at the moment asked: an unpaid invoice
+   before its suspension day cuts nothing yet (it may still be paid). Rejected: showing the future
+   cut (speculative; would make coverage change when nothing happened).
+6. `Enrollment` keeps the roster `name` from the consent moment (data-model had no name field; the
+   roster needs it, and the employee agreed the company sees it).
+7. `Invoice` stores `paidAt` (exact moment), `paidOn` is derived: coverage returns "from that moment"
+   (FR-014) needs the time of day.
+8. Log `detail` also holds the domain (domain added/removed) and the month (invoice issued/paid) —
+   neither is personal data. data-model said only the roster name for employee entries.
+9. A company ended at 00:00 on a 1st gets its final invoice for the month before (the end month had
+   no active minute). A contract end date that passes ends the company lazily at 00:00 that day,
+   actor Goora (FR-019).
+10. The HR-only check (`NotHrContact`) is defined but not enforced in the fake: the contract's HR
+    methods take no caller id. P4/P6 enforce it at the screen, or add a caller id then.
+11. The seed pays its own closed months on their issue day at 11:00 (`SEED-<month>`), so the demo
+    never opens suspended. Later months are issued lazily and stay unpaid until the demo action.
+12. `providers.dart` gives a person lookup that knows nobody yet ("no work email") until T017 adds
+    `TrustProfile.workEmail`. It imports no wallet or marketplace code (tested), so the T019 seam
+    cannot form a provider cycle.
+13. `dashboard`, `hrConsent`, `setHrConsent`, `statement` throw `UnimplementedError` until P7/P8
+    (005 precedent). `CompanyHome`, `EmployeeMonthFacts` and the read models exist already so P7/P8
+    add no domain churn.
+14. Touching windows merge (`[a, b)` + `[b, c)` = `[a, c)`); empty windows are dropped and never count
+    toward a day's peak (vectors pin both).
+15. Public mail domains: 19 listed in `CompanyDomains.public` (gmail, yahoo, outlook, hotmail, live,
+    msn, icloud, me, mac, aol, proton, gmx, mail, yandex, zoho …). A longer list can replace it.
+
+### What waits for 006 (existing files)
+T001 (brief + constitution, founder OK) · T003–T007 (`plan.dart` coverage, `payment_method.dart`,
+`fake_marketplace_repository.dart` booking on `coversTrip`) · T017 (`trust.dart` workEmail) · T018–T019
+(wallet seam) · T020 (notices + ARB) · T021 (settings reset clears `company.*` — the fake already has
+`FakeCompanyRepository.clearAllKeys(prefs)` for it).

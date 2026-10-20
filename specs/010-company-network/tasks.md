@@ -12,16 +12,16 @@ then commit.
 
 ## Phase 0: Setup (P0)
 
-- [ ] T001 Amend `GOORA_SPEC_KIT_BRIEF.md` (§2 roadmap row, §5 D, "Feature 006: Company network" → 010, price per Q1) and the constitution's roadmap line, with a Sync Impact Report + PATCH bump — **only with the founder's OK** (FR-030). Keep 006's merged text (company network "later, unnumbered, price TBD") as the base.
+- [ ] T001 Amend `GOORA_SPEC_KIT_BRIEF.md` (§2 roadmap row, §5 D, "Feature 006: Company network" → 010, price per Q1) and the constitution's roadmap line, with a Sync Impact Report + PATCH bump — **only with the founder's OK** (FR-030). Keep 006's merged text (company network "later, unnumbered, price TBD") as the base. — **waits for 006 merge — touches `GOORA_SPEC_KIT_BRIEF.md`, `.specify/memory/constitution.md` (+ founder OK)** (Lane B 2026-10-20 did new files only)
 - [x] T002 [P] Feature flags `companyInvoicesLive`, `hrStatementExport` (off) next to the existing flag/config home (find it first; constitution: open legal items behind flags) — research R0 — done 2026-10-20: home is `lib/core/config/env.dart` (existing file, waits for 006), so new `lib/features/company/company_flags.dart` + `test/unit/company_flags_test.dart` (research "Lane B notes")
 
 ## Phase 1: Coverage spike — riskiest first (P1, Opus)
 
-- [ ] T003 Grep `PlanType.company` / `PricingMode.company` under `test/`; list every test that assumes "company covers forever" in research.md under R2 ("P1 spike result")
-- [ ] T004 [P] Unit tests `test/unit/plan_company_coverage_test.dart`: company plan with coverage `[enrolled, ∞)` behaves as today; with `[enrolled, left)` `coversTrip` false at/after `left`; `coversDate` true on a day the window overlaps; no coverage attached = today's behaviour (red first)
-- [ ] T005 `lib/features/wallet/domain/plan.dart`: optional non-persisted `coverage` (`List<Window>`); `coversTrip`/`coversDate` use it for company (research R2); assert unchanged
-- [ ] T006 `fake_marketplace_repository.dart` booking: `plan.coversDate(now.date)` → `plan.coversTrip(now)`; `PricingMode.of` gains `now` and uses `coversTrip(now)` (callers: wallet providers, wallet_controller, marketplace). Tests in `test/unit/plan_company_coverage_test.dart`: a one-off booked one minute after leaving carries the fee; the pricing mode reads perTrip one minute after leaving, same day
-- [ ] T007 Checkpoint P1: full suite green with every existing company test untouched (or each change listed under R2)
+- [ ] T003 Grep `PlanType.company` / `PricingMode.company` under `test/`; list every test that assumes "company covers forever" in research.md under R2 ("P1 spike result") — **waits for 006 merge — touches existing `test/**` (read-only grep, but its result belongs with T004–T007)** (Lane B 2026-10-20 did new files only)
+- [ ] T004 [P] Unit tests `test/unit/plan_company_coverage_test.dart`: company plan with coverage `[enrolled, ∞)` behaves as today; with `[enrolled, left)` `coversTrip` false at/after `left`; `coversDate` true on a day the window overlaps; no coverage attached = today's behaviour (red first) — **waits for 006 merge — touches `lib/features/wallet/domain/plan.dart` (the test drives T005)** (Lane B 2026-10-20 did new files only)
+- [ ] T005 `lib/features/wallet/domain/plan.dart`: optional non-persisted `coverage` (`List<Window>`); `coversTrip`/`coversDate` use it for company (research R2); assert unchanged — **waits for 006 merge — touches `lib/features/wallet/domain/plan.dart`** (Lane B 2026-10-20 did new files only)
+- [ ] T006 `fake_marketplace_repository.dart` booking: `plan.coversDate(now.date)` → `plan.coversTrip(now)`; `PricingMode.of` gains `now` and uses `coversTrip(now)` (callers: wallet providers, wallet_controller, marketplace). Tests in `test/unit/plan_company_coverage_test.dart`: a one-off booked one minute after leaving carries the fee; the pricing mode reads perTrip one minute after leaving, same day — **waits for 006 merge — touches `lib/features/marketplace/data/fake_marketplace_repository.dart`, `lib/features/wallet/domain/payment_method.dart`, wallet providers/controller** (Lane B 2026-10-20 did new files only)
+- [ ] T007 Checkpoint P1: full suite green with every existing company test untouched (or each change listed under R2) — **waits for 006 merge — touches the existing suite after T005–T006** (Lane B 2026-10-20 did new files only)
 
 ## Phase 2: Rules + twin (P2, Opus)
 
@@ -33,15 +33,15 @@ then commit.
 
 ## Phase 3: Model, fake store, seed, seams (P3, Sonnet)
 
-- [ ] T013 [P] Unit tests `test/unit/company_model_test.dart`: JSON round-trip for Company, Enrollment, Invoice, LogEntry; domain rules (public domain refused, one company per domain, lower-case)
-- [ ] T014 [P] `lib/features/company/domain/`: `company.dart`, `enrollment.dart`, `invoice.dart`, `company_log.dart`, read models (`RosterRow`, `DashboardMonth`, `StatementLine`), `company_repository.dart` (interface + sealed results) — data-model + contract
-- [ ] T015 Unit tests `test/unit/fake_company_repository_test.dart`: register/approve, offerFor states, enroll/leave writes windows, coverageFor, lazy invoices idempotent across a 3-month demo-clock jump, a log entry with the right actor for each company-side change (FR-031), clearAll (red)
-- [ ] T016 `lib/features/company/data/fake_company_repository.dart` + `company_seed.dart` (Valeo active, Orange Business pending, 24 seeded employees with month facts — research R10) + `providers.dart`
-- [ ] T017 Trust seam: `TrustProfile.workEmail` + fake value (`<first>@valeo.com`) in `daily/domain/trust.dart`, `daily/data/fake_trust_repository.dart`; tests updated
-- [ ] T018 Wallet seam tests in `test/unit/fake_wallet_repository_test.dart`: company plan read carries windows; `startCompanyPlan` pauses Monthly with 10 days left and sets `noTrial`; `endCompanyPlan` restores Monthly with 10 days from the leave date; bundle and owed balance unchanged (red)
-- [ ] T019 `fake_wallet_repository.dart`: `companyCoverage` function seam, `startCompanyPlan`/`endCompanyPlan`, `company.paused.<id>` (research R8); wallet + company providers wired without a provider cycle (functions, 005 lesson)
-- [ ] T020 [P] `daily/domain/notice.dart`: `companyPlanStarted/Ended/Paused/Resumed` + copy keys
-- [ ] T021 Settings → Reset clears `company.*`; test
+- [x] T013 [P] Unit tests `test/unit/company_model_test.dart`: JSON round-trip for Company, Enrollment, Invoice, LogEntry; domain rules (public domain refused, one company per domain, lower-case) — done 2026-10-20 (16 tests; "one company per domain" is a repository rule, tested in T015)
+- [x] T014 [P] `lib/features/company/domain/`: `company.dart`, `enrollment.dart`, `invoice.dart`, `company_log.dart`, read models (`RosterRow`, `DashboardMonth`, `StatementLine`), `company_repository.dart` (interface + sealed results) — data-model + contract — done 2026-10-20: plus `company_terms.dart` (founder numbers), `hr_views.dart` (read models), `employee_month_facts.dart`; deviations in research "Lane B notes"
+- [x] T015 Unit tests `test/unit/fake_company_repository_test.dart`: register/approve, offerFor states, enroll/leave writes windows, coverageFor, lazy invoices idempotent across a 3-month demo-clock jump, a log entry with the right actor for each company-side change (FR-031), clearAll (red) — done 2026-10-20 (27 tests, red first)
+- [x] T016 `lib/features/company/data/fake_company_repository.dart` + `company_seed.dart` (Valeo active, Orange Business pending, 24 seeded employees with month facts — research R10) + `providers.dart` — done 2026-10-20: seed = **12** employees per R10 / analyze F3 (round brief said 24 — research "Lane B notes" #1); `providers.dart` imports no wallet/marketplace code (`company_providers_test.dart`); person lookup returns nobody until T017
+- [ ] T017 Trust seam: `TrustProfile.workEmail` + fake value (`<first>@valeo.com`) in `daily/domain/trust.dart`, `daily/data/fake_trust_repository.dart`; tests updated — **waits for 006 merge — touches `lib/features/daily/domain/trust.dart`, `lib/features/daily/data/fake_trust_repository.dart`** (Lane B 2026-10-20 did new files only)
+- [ ] T018 Wallet seam tests in `test/unit/fake_wallet_repository_test.dart`: company plan read carries windows; `startCompanyPlan` pauses Monthly with 10 days left and sets `noTrial`; `endCompanyPlan` restores Monthly with 10 days from the leave date; bundle and owed balance unchanged (red) — **waits for 006 merge — touches `test/unit/fake_wallet_repository_test.dart`** (Lane B 2026-10-20 did new files only)
+- [ ] T019 `fake_wallet_repository.dart`: `companyCoverage` function seam, `startCompanyPlan`/`endCompanyPlan`, `company.paused.<id>` (research R8); wallet + company providers wired without a provider cycle (functions, 005 lesson) — **waits for 006 merge — touches `lib/features/wallet/data/fake_wallet_repository.dart`, `lib/features/wallet/data/providers.dart`** (Lane B 2026-10-20 did new files only)
+- [ ] T020 [P] `daily/domain/notice.dart`: `companyPlanStarted/Ended/Paused/Resumed` + copy keys — **waits for 006 merge — touches `lib/features/daily/domain/notice.dart`, `lib/core/l10n/app_{ar,en}.arb`** (Lane B 2026-10-20 did new files only)
+- [ ] T021 Settings → Reset clears `company.*`; test — **waits for 006 merge — touches settings reset (`lib/features/settings/**`)** (Lane B 2026-10-20 did new files only)
 
 ## Phase 4: US1 + US2 — register and enroll (P4, MVP, Sonnet + goora-brand)
 
