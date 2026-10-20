@@ -64,3 +64,14 @@ SCOPE: P1 + seams edit existing wallet/marketplace/trust/notice/settings files �
 FIT: Opus for P1. EST: 60–90 min. Sonnet for T017–T021 and for T041–T043.
 ALSO OPEN (founder): Q1–Q11 (spec top table; code uses each default, all numbers in `CompanyTerms`/`CompanyRules`) · seed 12 vs 24 employees (12 chosen, R10/F3) · Goora bank details for invoices (`CompanyTerms.bankDetails` placeholder) · push this branch?
 BLOCKED, don't re-ask: no edits to existing files until 006 merges · push only with founder OK · T001 brief/constitution amend needs founder OK · lawyer answers R0 (flags stay off).
+
+---
+## Lane A — 010 P1 + P3 seams, 2026-10-20 #2 (rebased on main 453e5bd)
+/goal Goora LANE A done: 010 P1 (T003–T007) + P3 seams (T017–T019, T021; T020 copy only) on `010-company-network` @ `3c3a1fe` (worktree D:/Company/80-Worktrees/Goora-010, rebased onto main 453e5bd, NOT pushed, NOT merged). Gates: analyze 0 · flutter 1484 (+27 on the 1457 baseline) · node 276.
+WHERE: verify — `git -C D:/Company/80-Worktrees/Goora-010 log --oneline main..010-company-network` · `git worktree list`.
+NEXT: round end (merge order C → B → A): rebase `010-company-network` onto the new main, keep both on ARB, re-run `flutter gen-l10n` (never hand-merge generated l10n), gates; founder OK → push/merge. Then P4 (T022–T030): finish T020 (4 `NoticeKind` values + arms in `daily/presentation/labels.dart` + posts), wire who calls `startCompanyPlan`/`endCompanyPlan` (research "Lane A notes" #6), routes, screens, `rider_wallet.dart` company card.
+READ FIRST: specs/010-company-network/research.md R2 "P1 spike result" + "Lane A notes" · tasks.md P3 notes, P4 · contracts/repositories-and-navigation.md § Seams · goora-stack.
+SCOPE: P4 edits Lane B's files of this round (wallet presentation, daily presentation) — only after Lane B merges.
+FIT: Sonnet + goora-brand for P4 (Opus if the start/end wiring choice is reopened). EST: 2–3 h.
+ALSO OPEN (founder): Q1–Q11 (spec top table; defaults in `CompanyTerms`/`CompanyRules`) · R11 copy review (5 new notice keys) · T001 brief/constitution needs OK.
+BLOCKED, don't re-ask: push/merge only with the founder's OK · emulator only via start-emulator.ps1 · router pay-method guard still day-level (`coversDate`, not this lane's file).
