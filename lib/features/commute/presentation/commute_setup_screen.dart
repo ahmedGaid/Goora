@@ -430,7 +430,17 @@ class _TimeRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Row(
       children: [
-        Expanded(child: Text(label, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary))),
+        // At large text sizes the stepper leaves little room: shrink the label
+        // to one line rather than break "Departure" mid-word.
+        Expanded(
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(label, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary), maxLines: 1),
+            ),
+          ),
+        ),
         GooraStepper(
           key: valueKey,
           valueLabel: value,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -178,6 +179,42 @@ void main() {
         }
         _onlyCorridor(tester, 'match result');
         await _accessible(tester);
+      });
+
+      testWidgets('match at 1.3× text: the "5/week" stat is not cut off', (tester) async {
+        await pumpScreen(
+          tester,
+          const MatchResultScreen(),
+          locale: locale,
+          session: _session(Role.rider),
+          textScale: 1.3,
+          overrides: [
+            _cairo(),
+            riderPricingProvider.overrideWith((ref) => PricingMode.perTrip),
+            lastMatchProvider.overrideWith(() => _Seeded(_match(_ncToIsmailia))),
+          ],
+        );
+        final stat = find.text(l.perWeek(5));
+        expect(stat, findsOneWidget);
+        final p = tester.renderObject<RenderParagraph>(stat);
+        expect(p.didExceedMaxLines, isFalse, reason: '"${l.perWeek(5)}" wraps past its one line and is clipped');
+        expect(p.size.width, greaterThanOrEqualTo(p.getMaxIntrinsicWidth(double.infinity) - 0.5), reason: 'text wider than its box');
+      });
+
+      testWidgets('setup at 1.3× text: the time labels stay on one line', (tester) async {
+        await pumpScreen(
+          tester,
+          const CommuteSetupScreen(),
+          locale: locale,
+          session: _session(Role.rider),
+          textScale: 1.3,
+          overrides: [_cairo()],
+        );
+        for (final label in [l.departure, l.returnT]) {
+          final p = tester.renderObject<RenderParagraph>(find.text(label).first);
+          final oneLine = p.text.style!.fontSize! * 1.3 * 1.6;
+          expect(p.size.height, lessThan(oneLine * 1.5), reason: '"$label" wraps onto a second line');
+        }
       });
 
       testWidgets('match, a new cash rider: "Pay 75 EGP cash"', (tester) async {

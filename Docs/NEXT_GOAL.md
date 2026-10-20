@@ -33,3 +33,13 @@ SCOPE: P7 only; no app code unless the walk finds a bug. Merge to main only with
 FIT: Sonnet. EST: 60–90 min incl. walk.
 ALSO OPEN: founder copy review — "التجمع · … — …، نقطة التجمع" repeats التجمع; seed meeting points sit on the home points ("0 m away") · 300 EGP unverified · six centres recalled (T040) · Cairo-side 30 min guess · `006-p5-seed` branch + worktree Goora-006-p5 are merged here and can be deleted (founder OK).
 BLOCKED, don't re-ask: push/merge/delete only with the founder's OK · emulator only via start-emulator.ps1, never the personal phone.
+
+## LANE C — 006 P7 done (appended 2026-10-20; supersedes the P7 line in the LANE A block above)
+/goal Goora 006 P7 done on branch `006-cairo-ismailia-corridor` (worktree D:/Company/80-Worktrees/Goora-006), ahead of main `453e5bd`, not pushed. Gates: analyze 0 · flutter green (full run, `--concurrency=1`) · node green · cap sweep 0 over the cap.
+WHERE: verify — `git -C D:/Company/80-Worktrees/Goora-006 log --oneline -8` · `git rev-list --count main..006-cairo-ismailia-corridor` · `git -C D:/Company/80-Worktrees/Goora-006 status --short`.
+NEXT: founder OK → push, then merge this lane FIRST (round order C → B → A). Then someone looks at the "Open" list in research.md "T039 device walk".
+READ FIRST: specs/006-cairo-ismailia-corridor/research.md ("P7 — Lane C": map check, meeting-spot decision, device-walk table + open list) · walk/ screenshots.
+SCOPE: done = copy/seed fixes (named meeting spots, no "0 متر", no double التجمع) · T040 six centres from OSM · T041 brief row says company network is 010 · two 1.3× bugs fixed (stat clip, "Departure" wrap). Device walk §4 partly, §6 impossible (no corridor switch in Settings → Demo).
+FIT: Sonnet for the open items; Empty-seats-empty for a member rider may need Opus-level reading of marketplace seed vs filter.
+ALSO OPEN: Empty seats empty for a member rider on New Cairo ↔ Ismailia (unexplained; Lane B files) · no corridor switch in Settings → Demo (Lane A files) · Today's return-leg arrival shows area name only · "461 دقيقة" pickup wording (daily/**) · stop landmark names (90th Street, City Stars, Korba Sq., Obour Market, 1st District, El Mamar Sq.) are recalled, founder review · trip cost 300 EGP · Obour / 10th of Ramadan real pickups · SC-001 (< 2 min) not proven by the scripted walk · 002 specs still say "launch corridor" for the old route (historical, left).
+BLOCKED, don't re-ask: push/merge only with the founder's OK · emulator via D:\Company\99-Ops\start-emulator.ps1, never the personal phone.

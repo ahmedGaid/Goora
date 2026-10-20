@@ -87,3 +87,7 @@ None currently.
 - Brand/voice/Arabic lexicon → [[goora-brand]].
 - Resume flow → [[goora-resume]].
 - Feature specs/plans/tasks → `specs/001-*`, `specs/002-*`, `specs/003-*`.
+
+## Lane C block — 006 P7 (2026-10-20), branch `006-cairo-ismailia-corridor`, not pushed
+P7 done: meeting points are named spots with a real 400–600 m walk (no "0 متر", no double التجمع) · six centres map-checked on OpenStreetMap, `// recalled` marks gone · brief roadmap row: company network = 010 · device walk on the emulator (research.md "T039", screenshots in specs/006-…/walk/) found and fixed two 1.3× bugs (match stat "5/أسبوع" clipped; "Departure" broke mid-word). Open: Empty seats empty for member rider; no corridor switch in Settings → Demo; stop landmark names need founder review.
+**NEXT ACTION**: founder OK → push 006, merge Lane C first, then B, then A. Details: Docs/NEXT_GOAL.md "LANE C".
