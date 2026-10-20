@@ -65,9 +65,9 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
     final secondary = AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
     final price = FakeWalletRepository.priceFor(_selected);
     void select(PlanType type) => setState(() {
-          _selected = type;
-          _needsTopUp = false;
-        });
+      _selected = type;
+      _needsTopUp = false;
+    });
     return OnboardingScaffold(
       title: l10n.planTitle,
       subtitle: l10n.planSubline,
@@ -113,7 +113,9 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
                       children: [
                         const Icon(GooraIcons.check, size: 18, color: AppColors.greenText),
                         const SizedBox(width: AppSpacing.sm),
-                        Expanded(child: Text(item, style: AppTypography.body.copyWith(color: AppColors.textBody))),
+                        Expanded(
+                          child: Text(item, style: AppTypography.body.copyWith(color: AppColors.textBody)),
+                        ),
                       ],
                     ),
                   ),
@@ -122,8 +124,13 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
           ),
           const SizedBox(height: AppSpacing.gap),
           Text(l10n.planFuelNote, style: secondary),
+        ],
+      ),
+      bottom: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Above the button, in the pinned bottom area: never below the fold (walk S-4).
           if (_needsTopUp) ...[
-            const SizedBox(height: AppSpacing.gap),
             GooraBanner(
               key: const Key('sub-needs-top-up'),
               kind: GooraBannerKind.warning,
@@ -132,12 +139,8 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
               actionLabel: l10n.topUp,
               onAction: () => showTopUpSheet(context),
             ),
+            const SizedBox(height: AppSpacing.sm),
           ],
-        ],
-      ),
-      bottom: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
           GooraPrimaryButton(
             key: const Key('plan-cta'),
             label: _selected == PlanType.company ? l10n.planCtaVerify : l10n.subscribeCta(price),
