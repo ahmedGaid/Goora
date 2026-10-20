@@ -109,3 +109,27 @@ Pricing formulas, fee rule, cash rule, matching weights, subscription and wallet
 2. Whether road towns (Obour, 10th of Ramadan) are real pick-up areas at launch or demo-only.
 3. Review of the drafted Arabic copy for the six areas and their stops.
 4. Legal: per-trip service fee (brief §8) still open; unchanged by this feature.
+
+## P7 — Lane C (2026-10-20)
+
+### R7 map check (T040) — **verified**, source OpenStreetMap Nominatim (read-only lookup, 2026-10-20)
+
+| Area | Recalled | OSM result used | OSM object |
+|---|---|---|---|
+| New Cairo | 30.03, 31.47 | 30.0278, 31.4757 | way 498580491 (city) |
+| Nasr City | 30.06, 31.34 | 30.0521, 31.3422 | node 768552342 (suburb) |
+| Heliopolis | 30.09, 31.32 | 30.0901, 31.3265 | 1248798299 (quarter "قسم مصر الجديدة"; the suburb nodes sit 1–3 km north) |
+| Obour | 30.23, 31.48 | 30.1914, 31.4505 | 311994035 (city) — the recalled point was ~5 km off |
+| 10th of Ramadan | 30.29, 31.75 | 30.2900, 31.7493 | 605783816 (city) |
+| Ismailia | 30.60, 32.27 | 30.6044, 32.2771 | 768595872 (city; the other hit is the governorate) |
+
+All six points now carry `// OSM, 2026-10-20`; no `// recalled` marks left in `lib/`. Nothing left open here. Distances only feed matching and are never shown.
+
+### Meeting spots and the "0 متر" walk — decision
+
+- Problem 1: pickup line read "التجمع · 6:30 ص — القاهرة الجديدة، نقطة التجمع" (التجمع twice). Cause: the stop names ended in "نقطة التجمع".
+- Problem 2: meeting points had the same coordinates as homes, so the reason read "نقطة التجمع على بعد 0 متر".
+- **Chosen**: each meeting point is a named spot (ar + en) with its own point 400–600 m from the area centre. Spots: 90th Street · City Stars · Korba Square · Obour Market · 1st District (10th of Ramadan) · El Mamar Square. They are **recalled** landmark names, not map-checked; coordinates are the OSM centre plus an offset, **not** the landmark's real location. Founder review of the names stays open (item 3 above). This replaces R7's "generic names, no landmarks" rule.
+- **Rejected**: dropping the distance line when it is 0 — it hides the problem and every demo card would still say "meeting point" twice.
+- Test: `corridor_test.dart` "a meeting point is a named spot … (never 0 m)" and "the pickup line never says meeting twice (ar + en)"; both failed before the change.
+- Goldens regenerated and looked at: `screen_match_cairo_{rtl,ltr}`, `marketplace_seat_card_cairo_{rtl,ltr}`.
