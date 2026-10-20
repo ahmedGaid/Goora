@@ -33,3 +33,14 @@ SCOPE: P7 only; no app code unless the walk finds a bug. Merge to main only with
 FIT: Sonnet. EST: 60–90 min incl. walk.
 ALSO OPEN: founder copy review — "التجمع · … — …، نقطة التجمع" repeats التجمع; seed meeting points sit on the home points ("0 m away") · 300 EGP unverified · six centres recalled (T040) · Cairo-side 30 min guess · `006-p5-seed` branch + worktree Goora-006-p5 are merged here and can be deleted (founder OK).
 BLOCKED, don't re-ask: push/merge/delete only with the founder's OK · emulator only via start-emulator.ps1, never the personal phone.
+
+---
+## LANE B walk-fix hand-off (2026-10-20)
+/goal Goora — branch `fix/walk-007-009` (worktree D:/Company/80-Worktrees/Goora-walkfix) off main 453e5bd: S-1…S-6 + N-1,2,3,4,8,9 fixed, tests ar+en. Gates: analyze 0 · flutter green · node 226. Not pushed.
+WHERE: verify — `git -C D:/Company/80-Worktrees/Goora-walkfix log --oneline -8` · `git status --short`.
+NEXT: founder OK → merge in round order C, then this, then Lane A (keep both sides in ARB/goora-status/NEXT_GOAL). Then remaining nits N-5, N-6, N-7, N-10, N-11, N-12.
+READ FIRST: Docs/walks/2026-10-20-007-009.md §5 (on docs/walk-007-009) · goora-status "Lane B walk-fix block".
+SCOPE: nits only, wallet/daily/marketplace presentation + existing ARB keys.
+FIT: Sonnet. EST: 1–2 h.
+ALSO OPEN: S-6 repro was a constructed one-leg day, not the exact Mon 30/11 device state (test uses the old corridor) · wallet_controller.withdraw + repo withdraw now unused (Lane A owns them) · legacy 004 driver balance no longer shown anywhere · new keys `priceNoFee`, `planBundleLine`, `memberRating`, `instapaySaved` sit mid-file.
+BLOCKED, don't re-ask: push/merge only with the founder's OK.
