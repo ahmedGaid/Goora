@@ -25,11 +25,11 @@ then commit.
 
 ## Phase 2: Rules + twin (P2, Opus)
 
-- [ ] T008 [P] `test/fixtures/gen_company_vectors.py` + `test/fixtures/company_vectors.json` with every case in `contracts/company-rules.md` § Required vector cases
-- [ ] T009 [P] Dart vector test `test/unit/company_vectors_test.dart`; TS test `supabase/functions/_shared/company.test.ts` (both red)
-- [ ] T010 `lib/features/company/domain/company_rules.dart` (`CompanyRules`, `Window`) — contract
-- [ ] T011 `supabase/functions/_shared/company.ts` twin
-- [ ] T012 Re-run the generator: no fixture diff; both suites green
+- [x] T008 [P] `test/fixtures/gen_company_vectors.py` + `test/fixtures/company_vectors.json` with every case in `contracts/company-rules.md` § Required vector cases
+- [x] T009 [P] Dart vector test `test/unit/company_vectors_test.dart`; TS test `supabase/functions/_shared/company.test.ts` (both red)
+- [x] T010 `lib/features/company/domain/company_rules.dart` (`CompanyRules`, `Window`) — contract
+- [x] T011 `supabase/functions/_shared/company.ts` twin
+- [x] T012 Re-run the generator: no fixture diff; both suites green — done 2026-10-20: 50 vectors, Dart 50/50, node 214 → 264, sha1 unchanged on re-run
 
 ## Phase 3: Model, fake store, seed, seams (P3, Sonnet)
 
