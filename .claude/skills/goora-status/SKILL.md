@@ -11,6 +11,11 @@ daily commute and runs it as a trusted recurring group. Cost-sharing only, never
 **Path** `C:\AhmedGaid\Goora` · **Repo** `https://github.com/ahmedGaid/Goora.git` (connected
 2026-10-06) · **App ID** `app.goora.goora`
 
+## Position — 2026-10-20 (two parallel rounds merged), main @ `71235d4` = origin/main
+Merged: 006 Cairo↔Ismailia corridor P0–P7 (done; walk gaps in research.md T039) · walk fixes S-1..S-6 + nits for 007/008/009 · 010 company network core (T002, P1, P2, P3 seams; T020 half). Gates on main: analyze 0 · flutter 1502 · node 276. Kept open: branch `010-company-network` (worktree Goora-010). Unmerged docs: `docs/walk-007-009`, `spec/company-network`.
+**NEXT ACTION**: 010 P4 (register + enroll UI, T022–T030) on 010-company-network; beside it, fix the wallet "covers N trips" caption (round-trip days shown as trips; plural مشوار). Full list → `Docs/NEXT_GOAL.md`.
+**Blocker**: none for P4 (spec defaults stand in for founder Q1–Q11).
+
 ## Position — 2026-10-19 (defaults confirmed, change 7 brief), main @ `e9079b5` = origin/main + branch `docs/change-7-company-plan-brief` (worktree Goora-change7, docs only, not merged, not pushed)
 Founder: all implementer defaults in 007/008/009 stand as built (24 h / 7-day, trial 5 for all, 150 / 30 / 3-day, bundle not covering seat fees, older accounts verified). Change 7 brief written: `Docs/briefs/change-7-company-plan.md`. Finding: company plan does NOT belong in the 006 corridor spec; 006 branch renumbered company network to 007, which main's 007-direct-driver-payment now uses → renumber at 006 merge; brief §5 will conflict (keep both, main wins on trial = 5).
 **NEXT ACTION**: founder OK → merge the docs branch; hand the brief to the 006 session. Company-network spec waits until 006 merges.
