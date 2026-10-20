@@ -133,3 +133,33 @@ All six points now carry `// OSM, 2026-10-20`; no `// recalled` marks left in `l
 - **Rejected**: dropping the distance line when it is 0 — it hides the problem and every demo card would still say "meeting point" twice.
 - Test: `corridor_test.dart` "a meeting point is a named spot … (never 0 m)" and "the pickup line never says meeting twice (ar + en)"; both failed before the change.
 - Goldens regenerated and looked at: `screen_match_cairo_{rtl,ltr}`, `marketplace_seat_card_cairo_{rtl,ltr}`.
+
+### T039 device walk — 2026-10-20 (emulator `Goora_Test`, `emulator-5554`, via `99-Ops\start-emulator.ps1`; debug APK of this branch)
+
+Screenshots: `walk/` (450 × 1000 PNGs, each read as an image). Rider "Omar", demo OTP shown on screen. Text size 1.3× set with `adb shell settings put system font_scale 1.3`.
+
+| § | What | Result |
+|---|---|---|
+| 0 | Gates + cap sweep | See T043 line below |
+| 1 | Rider New Cairo → Ismailia, ar | **Pass.** Pickers list the six corridor areas (work list: four, no Obour / 10th of Ramadan); route map; match shows 6:30 pickup at "القاهرة الجديدة، شارع التسعين", arrival 8:15 "الإسماعيلية، ميدان الممر", **76 ج**, "ادفع 75 ج كاش" (new rider = trial/cash). Pickup line no longer repeats التجمع (`s14`, `s15b`). Join → ID check → pay method → Today: corridor names, times, 75 EGP (`s20`, `s21`). |
+| 1 | Same, en, 1.3× | **Pass.** "Pickup · 6:30 AM — New Cairo, 90th Street" / "Arrival · 8:15 AM — Ismailia, El Mamar Square", 75 EGP cash (`e11`). |
+| 2 | Rider Ismailia → Nasr City | **Pass.** Match at 6:30 → 8:15, price 76, pickup "الإسماعيلية، ميدان الممر", drop "مدينة نصر، سيتي ستارز" (`f04`). |
+| 3 | No match | **Pass (en).** A New Cairo → Ismailia profile with a 5:00 PM return finds no group (the groups return at 16:30; tolerance is 15 min) and shows "You're #7 on the New Cairo → Ismailia list" + "Post your trip" (`e08`). Heliopolis home not walked on the device; covered by `cairo_ismailia_screens_test` (no-match). |
+| 4 | Marketplace | **Partly.** Post your trip opens with New Cairo → Ismailia 6:30 from the profile, only corridor areas (`s24`). Wallet top-up, Offer a trip, Find riders **not walked on the device** (need the driver-verified demo path); covered by the 1.3× widget tests for those screens. **Empty seats showed "no seats on your route" for both Going and Return** for this member rider (`s22`, `s23`); not explained — see "Open" below. |
+| 5 | English / RTL, 1.3× | **Two bugs found and fixed** (below). Otherwise names, times and prices readable in both directions. |
+| 6 | Old corridor regression | **Cannot be walked on the device.** Settings → Demo has no corridor switch (only time, driver and reset buttons, `e14`); `ActiveCorridor.select` exists but nothing calls it. Regression stays covered by the unit/widget suite (`corridor_test` "a switch is saved and survives a restart"). |
+| 7 | Content-filming (SC-005) | **Pass on every screen walked:** no "Sheikh Zayed" / "Smart Village" / "الشيخ زايد" / "سمارت فيليج" anywhere. A full screen-recording was not made. |
+
+SC-001 (< 2 min welcome → match): the scripted walk went welcome → match in about 3 min (`adb` taps and screenshots between steps); a person on a real phone is faster, but this run does not prove 2 min. **Not claimed.**
+
+**Bugs fixed (my files, test first, both red before the fix):**
+1. Match card at 1.3×, Arabic: the "5/أسبوع" stat was clipped to "/5" (`s15` → `s15b`). `_Stat` value now `FittedBox(scaleDown)`. Test: `cairo_ismailia_screens_test` "match at 1.3× text: the 5/week stat is not cut off".
+2. Commute setup at 1.3×, English: the "Departure" label broke mid-word ("Departur / e"). `_TimeRow` label now one line, scaled down. Test: "setup at 1.3× text: the time labels stay on one line".
+
+**Open (listed, not fixed — outside this lane or not understood):**
+- Empty seats is empty for a member rider on New Cairo ↔ Ismailia (both legs). Not investigated: `marketplace/presentation/**` belongs to Lane B. Worth one look: is the rider's own group's seat excluded, or is the seed's departure time outside the window at 8:50 AM demo time?
+- Settings → Demo has no control to switch back to the old corridor (`settings/**` is Lane A's). The quickstart §6 step cannot be done by hand.
+- Today (Ismailia → New Cairo leg) shows the arrival as plain "القاهرة الجديدة" while the going leg says "…، شارع التسعين": cause not checked.
+- Today says "التجمع بعد 461 دقيقة" (minutes, not hours) at 8:49 AM for a 4:30 PM pickup: `daily/**`, not mine.
+- Route map on the setup screen mirrors in Arabic (Ismailia, the east end, is drawn on the left). Looks intended for RTL; flagging for the founder.
+- 10th of Ramadan / Obour as real launch pickups, trip cost 300, copy review: unchanged founder items above.
