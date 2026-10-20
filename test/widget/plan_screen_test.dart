@@ -90,14 +90,18 @@ void main() {
           reason: 'banner sits above the button it explains');
     });
 
-    testWidgets('[$code] AC4: Through my company verifies and costs nothing', (tester) async {
+    // 010: joining goes through the company network, consent first
+    // (company_enroll_test.dart covers every offer state).
+    testWidgets('[$code] AC4: Through my company joins after consent and costs nothing', (tester) async {
       final c = await _openSubscription(tester, code);
       await tester.tap(find.byKey(const Key('plan-company')));
       await tester.pumpAndSettle();
       expect(find.text(l.planCtaVerify), findsOneWidget);
       await tester.tap(find.byKey(const Key('plan-cta')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('verify-confirm')));
+      await tester.tap(find.byKey(const Key('company-join')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('consent-agree')));
       await tester.pumpAndSettle();
       final meId = c.read(dailyCommuteRepositoryProvider).meId;
       expect((await c.read(walletRepositoryProvider).getPlan(meId))!.type, PlanType.company);

@@ -10,6 +10,8 @@ import '../features/commute/domain/commute_profile.dart';
 import '../features/commute/presentation/commute_setup_screen.dart';
 import '../features/commute/presentation/match_result_screen.dart';
 import '../features/commute/presentation/no_match_screen.dart';
+import '../features/company/presentation/company_home_screen.dart';
+import '../features/company/presentation/register_company_screen.dart';
 import '../features/daily/data/daily_seed.dart';
 import '../features/daily/data/providers.dart';
 import '../features/daily/presentation/shell/app_shell.dart';
@@ -146,6 +148,8 @@ GoRouter router(Ref ref) {
         ],
       ),
       GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen()),
+      GoRoute(path: Routes.company, builder: (_, _) => const CompanyHomeScreen()),
+      GoRoute(path: Routes.companyRegister, builder: (_, _) => const RegisterCompanyScreen()),
       if (kDebugMode) GoRoute(path: Routes.gallery, builder: (_, _) => const DesignGalleryScreen()),
     ],
   );

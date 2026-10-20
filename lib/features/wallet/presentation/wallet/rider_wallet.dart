@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_balance_card.dart';
@@ -11,6 +13,8 @@ import '../../../../core/widgets/goora_banner.dart';
 import '../../../../core/widgets/goora_card.dart';
 import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
+import '../../../company/domain/company_repository.dart';
+import '../../../company/presentation/company_controller.dart';
 import '../../domain/cash_trial_policy.dart';
 import '../../domain/payment_method.dart';
 import '../../domain/plan.dart';
@@ -46,7 +50,9 @@ class RiderWallet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const ShareDebtBanners(),
-        _PlanCard(view: view, bundleLeft: bundleLeft),
+        view.mode == PricingMode.company
+            ? _CompanyPlanCard(view: view, bundleLeft: bundleLeft)
+            : _PlanCard(view: view, bundleLeft: bundleLeft),
         if (cash != null && cash.available) ...[
           ...gap,
           _CashTrialCard(tripsLeft: cash.tripsLeft),
@@ -221,6 +227,78 @@ class _PlanCard extends StatelessWidget {
             onPressed: () =>
                 view.subscribed ? showChangePlanSheet(context, current: plan!.type) : context.push(Routes.plan),
             child: Text(l10n.planChange, style: AppTypography.bodyStrong.copyWith(color: AppColors.greenText)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 010 US2: an enrolled employee's plan — "Company · Valeo", the personal
+/// plan their enrollment paused, and Leave (confirmed). A company plan with no
+/// enrollment behind it (before 010) keeps the plain [_PlanCard].
+class _CompanyPlanCard extends ConsumerWidget {
+  const _CompanyPlanCard({required this.view, required this.bundleLeft});
+
+  final WalletView view;
+  final int bundleLeft;
+
+  Future<void> _leave(BuildContext context, WidgetRef ref, String company) async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.companyLeaveTitle(company)),
+        content: Text(l10n.companyLeaveBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.keepIt)),
+          TextButton(
+            key: const Key('company-leave-confirm'),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.companyLeaveConfirm),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) await CompanyEnrollment.leave(ref);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final account = ref.watch(companyAccountProvider).value;
+    final offer = account?.offer;
+    if (offer is! Enrolled) return _PlanCard(view: view, bundleLeft: bundleLeft);
+    final l10n = AppLocalizations.of(context);
+    final paused = account!.paused;
+    final secondary = AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
+    return GooraCard(
+      key: const Key('plan-card'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(GooraIcons.company, size: AppSizes.icon, color: AppColors.greenText),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(
+                  l10n.planCompanyOf(offer.companyName),
+                  style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(l10n.planCompanyActive, key: const Key('plan-line'), style: secondary),
+          if (paused != null) ...[
+            const SizedBox(height: AppSpacing.xxs),
+            Text(l10n.planCompanyPaused(paused.daysLeft), key: const Key('plan-paused'), style: secondary),
+          ],
+          const SizedBox(height: AppSpacing.xs),
+          TextButton(
+            key: const Key('company-leave'),
+            onPressed: () => _leave(context, ref, offer.companyName),
+            child: Text(l10n.companyLeave, style: AppTypography.bodyStrong.copyWith(color: AppColors.greenText)),
           ),
         ],
       ),

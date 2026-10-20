@@ -19,8 +19,11 @@ import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/presentation/labels.dart';
+import '../../company/data/company_seed.dart';
 import '../../company/data/fake_company_repository.dart';
 import '../../company/data/providers.dart';
+import '../../company/domain/company.dart';
+import '../../company/presentation/company_controller.dart';
 import '../../daily/data/fake_daily_commute_repository.dart';
 import '../../daily/data/fake_trust_repository.dart';
 import '../../daily/data/providers.dart';
@@ -75,6 +78,8 @@ class DemoSection extends ConsumerWidget {
             ('demo-rider-books', l10n.demoBookSeat, () => _riderBooks(context, ref)),
             ('demo-driver-accepts', l10n.demoAcceptRequest, () => _driverAccepts(context, ref)),
             ('demo-subscriber-takes', l10n.demoReclaim, () => _subscriberTakes(context, ref)),
+            ('demo-approve-company', l10n.demoApproveCompany, () => _approveCompany(ref)),
+            ('demo-make-me-hr', l10n.demoMakeMeHr, () => _makeMeHr(ref)),
             ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -152,6 +157,26 @@ class DemoSection extends ConsumerWidget {
     final trust = ref.read(trustRepositoryProvider);
     if (trust is FakeTrustRepository) await trust.demoVerifyDriver();
     ref.invalidate(offerCheckProvider);
+  }
+
+  /// Goora staff approve a company (010 US1): mine while it is pending, else
+  /// the seeded pending one (Orange Business).
+  Future<void> _approveCompany(WidgetRef ref) async {
+    final repo = ref.read(companyRepositoryProvider);
+    final now = ref.read(nowProvider)();
+    final mine = await repo.myCompanyAccount(ref.read(dailyCommuteRepositoryProvider).meId, now);
+    final pending = mine != null && mine.status == CompanyStatus.pending
+        ? mine.company
+        : await repo.companyForDomain('orange.com');
+    if (pending != null && pending.status == CompanyStatus.pending) await repo.demoApprove(pending.id, now);
+    ref.invalidate(companyAccountProvider);
+  }
+
+  /// Goora staff name me Valeo's HR contact (010 R5), to see an active home.
+  Future<void> _makeMeHr(WidgetRef ref) async {
+    final meId = ref.read(dailyCommuteRepositoryProvider).meId;
+    await ref.read(companyRepositoryProvider).demoSetHrContact(CompanySeed.valeoId, meId, ref.read(nowProvider)());
+    ref.invalidate(companyAccountProvider);
   }
 
   /// The next fake rider books the driver's latest open offer. A daily offer's

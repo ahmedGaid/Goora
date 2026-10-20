@@ -2312,24 +2312,229 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String nCompanyPlanStarted(String company) {
-    return 'خطة $company شغّالة: مشاويرك من غير رسوم Goora.';
+    return 'خطة $company شغّالة: مشاويرك من غير رسوم جورة.';
   }
 
   @override
   String nCompanyPlanEnded(String company) {
-    return 'خطة $company خلصت. رسوم Goora على المشوار رجعت عادي.';
+    return 'خطة $company خلصت. رسوم جورة على المشوار رجعت عادي.';
   }
 
   @override
   String get nCompanyPlanPaused =>
-      'خطة شركتك متوقفة دلوقتي، رسوم Goora على المشوار رجعت عادي.';
+      'خطة شركتك متوقفة دلوقتي، رسوم جورة على المشوار رجعت عادي.';
 
   @override
   String get nCompanyPlanResumed =>
-      'خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم Goora تاني.';
+      'خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم جورة تاني.';
 
   @override
   String nPersonalPlanBack(int days) {
     return 'اشتراكك رجعلك، وفاضل فيه $days يوم.';
   }
+
+  @override
+  String get companyAccountTitle => 'حساب الشركة';
+
+  @override
+  String get companyAccountSub => 'سجّل شركتك لو إنت HR، أو شوف خطة شركتك';
+
+  @override
+  String get companyRegisterCta => 'سجّل شركتك';
+
+  @override
+  String get companyRegisterIntro =>
+      'إنت من HR؟ سجّل شركتك، وموظفينكم يركبوا من غير رسوم جورة.';
+
+  @override
+  String get companyRegisterSub =>
+      'هنتأكد من إيميل شغلك، وفريق جورة هيفعّل الحساب بعد ما العقد يتمضي.';
+
+  @override
+  String get companyNameLabel => 'اسم الشركة';
+
+  @override
+  String get companyNameError => 'الاسم لازم يكون من 2 لـ 60 حرف';
+
+  @override
+  String get companyWorkEmailLabel => 'إيميل شغلك';
+
+  @override
+  String get companyEmailInvalid => 'اكتب إيميل صحيح، زي name@company.com';
+
+  @override
+  String companyPublicDomain(String domain) {
+    return '$domain إيميل عام أي حد يقدر يعمل عليه حساب. استخدم إيميل الشغل.';
+  }
+
+  @override
+  String companyDomainTaken(String domain) {
+    return '$domain متسجّل لشركة تانية على جورة.';
+  }
+
+  @override
+  String get companySendCode => 'ابعتلي كود';
+
+  @override
+  String companyCodeSent(String email) {
+    return 'بعتنا كود لـ $email';
+  }
+
+  @override
+  String get companyCodeLabel => 'الكود';
+
+  @override
+  String get companySubmit => 'ابعت الطلب';
+
+  @override
+  String get companyStatusPending => 'مستني موافقة جورة';
+
+  @override
+  String get companyStatusActive => 'شغّال';
+
+  @override
+  String get companyStatusSuspended => 'متوقف لحد الدفع';
+
+  @override
+  String get companyStatusEnded => 'العقد خلص';
+
+  @override
+  String companyPendingBody(String company) {
+    return 'طلب $company وصلنا. هنفعّل الحساب أول ما العقد يتمضي.';
+  }
+
+  @override
+  String companyDomainsLine(String domains) {
+    return 'الدومين: $domains';
+  }
+
+  @override
+  String companyMinSeats(int count) {
+    return 'أقل عدد في الفاتورة: $count موظف';
+  }
+
+  @override
+  String companyPriceLine(int amount) {
+    return '$amount ج لجورة عن كل موظف في الشهر';
+  }
+
+  @override
+  String companyContractLine(String start, String end) {
+    return 'العقد من $start لـ $end';
+  }
+
+  @override
+  String get companyHomeNote =>
+      'الشركة عمرها ما بتشوف مشاوير الموظفين ولا أماكن ركوبهم.';
+
+  @override
+  String get companyMineTitle => 'خطة شركتك';
+
+  @override
+  String companyEnrolledLine(String company, String date) {
+    return 'مشترك في خطة $company من $date';
+  }
+
+  @override
+  String companyCanEnrollLine(String company) {
+    return '$company بتدفع رسوم جورة عنك على كل مشوار.';
+  }
+
+  @override
+  String companyJoinCta(String company) {
+    return 'اشترك من خلال $company';
+  }
+
+  @override
+  String get companyNotOnGoora => 'شركتك لسه مش على جورة';
+
+  @override
+  String get companyNotOnGooraBody =>
+      'قول لـ HR بتاعكم عن جورة. لحد ما يشتركوا، تقدر تدفع بالمشوار أو تشترك لوحدك.';
+
+  @override
+  String get companyTellHr => 'ابعت لـ HR بتاعكم';
+
+  @override
+  String companyShareText(String link) {
+    return 'جورة بيجمّع زمايل الشغل في مشوار يومي واحد، وبيقسموا التكلفة. وفيه خطة للشركات: الشركة تدفع رسوم جورة، والموظفين يركبوا من غير رسوم. $link';
+  }
+
+  @override
+  String consentTitle(String company) {
+    return 'قبل ما تشترك من خلال $company';
+  }
+
+  @override
+  String get consentSeesTitle => 'شركتك هتشوف';
+
+  @override
+  String get consentSeesName => 'اسمك';
+
+  @override
+  String get consentSeesEmail => 'إيميل شغلك';
+
+  @override
+  String get consentSeesSince => 'من إمتى مشترك';
+
+  @override
+  String get consentNeverTitle => 'عمرها ما هتشوف';
+
+  @override
+  String get consentNeverTrips => 'مشاويرك ومواعيدها';
+
+  @override
+  String get consentNeverPlace => 'بيتك أو مكان ركوبك';
+
+  @override
+  String get consentNeverWho => 'مين راكب معاك';
+
+  @override
+  String get consentNeverMoney => 'فلوسك أو اللي دفعته للسواق';
+
+  @override
+  String get consentFeeLine =>
+      'رسوم جورة على مشاويرك هتبقى 0. نصيب السواق بتدفعه له زي ما هو.';
+
+  @override
+  String consentPausedLine(int days) {
+    return 'اشتراكك الشخصي (فاضل $days يوم) هيتوقف، ويرجعلك لو سبت الشركة.';
+  }
+
+  @override
+  String get consentAgree => 'موافق، اشترك';
+
+  @override
+  String get consentDecline => 'مش دلوقتي';
+
+  @override
+  String planCompanyOf(String company) {
+    return 'شركة · $company';
+  }
+
+  @override
+  String planCompanyPaused(int days) {
+    return 'اشتراكك الشخصي متوقف: فاضل $days يوم، يرجعلك لو سبت الشركة.';
+  }
+
+  @override
+  String get companyLeave => 'سيب خطة الشركة';
+
+  @override
+  String companyLeaveTitle(String company) {
+    return 'تسيب خطة $company؟';
+  }
+
+  @override
+  String get companyLeaveBody =>
+      'من دلوقتي رسوم جورة هترجع على مشاويرك. المشاوير اللي فاتت مش هتتغير.';
+
+  @override
+  String get companyLeaveConfirm => 'أيوه، سيبها';
+
+  @override
+  String get demoApproveCompany => 'جورة توافق على شركتي';
+
+  @override
+  String get demoMakeMeHr => 'خليني HR بتاع Valeo';
 }

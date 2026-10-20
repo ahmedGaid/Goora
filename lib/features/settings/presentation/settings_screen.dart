@@ -12,6 +12,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_ghost_button.dart';
 import '../../commute/data/providers.dart';
+import '../../company/presentation/company_home_screen.dart';
 import '../../daily/presentation/trust/trust_controller.dart';
 import '../../onboarding/domain/choices.dart';
 import '../../onboarding/presentation/session_controller.dart';
@@ -72,6 +73,11 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ],
+          ),
+          const SizedBox(height: AppSpacing.gap),
+          const GooraCard(
+            padding: EdgeInsetsDirectional.all(AppSpacing.listCardPad),
+            child: CompanyAccountRow(),
           ),
           if (kDebugMode) ...[const SizedBox(height: AppSpacing.gap), const DemoSection()],
         ],

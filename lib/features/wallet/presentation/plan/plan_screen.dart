@@ -40,7 +40,10 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
   Future<void> _subscribe() async {
     if (_selected == PlanType.company) {
       await showCompanyVerifySheet(context);
-      if (!mounted || ref.read(planControllerProvider).value?.type != PlanType.company) return;
+      if (!mounted) return;
+      // Joining reloads the plan; wait for it rather than read a stale value.
+      final plan = await ref.read(planControllerProvider.future);
+      if (!mounted || plan?.type != PlanType.company) return;
       return _leave();
     }
     setState(() => _busy = true);

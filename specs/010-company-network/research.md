@@ -355,3 +355,73 @@ Paused/resumed carry no amount (Q10 "neutral notice"). Founder review pending li
 - The router's pay-method guard still asks `coversDate` (day level, `lib/app/router.dart`, not this
   lane's file): a leaver keeps reaching Today for the rest of the leave day. Fine for P4; revisit if
   the walk shows it.
+
+## P4 notes — 2026-10-20 (US1 + US2, T020 rest, T022–T029)
+
+Founder Q1–Q11 still open: defaults unchanged (99 EGP, minimum 20).
+
+### Choices (picked, with the rejected option)
+1. **Who calls the wallet seam** (Lane A notes #6): `CompanyEnrollment.enroll/leave` in
+   `company/presentation/company_controller.dart` calls `CompanyRepository.enroll/leave`, then
+   `WalletRepository.startCompanyPlan/endCompanyPlan`, then posts the notice. Rejected an
+   `onPlanChange` function on the fake: the HR-side leave paths (remove, domain removed, contract
+   end) happen inside the company fake with no wallet call either way, so P6 (T037) needs a
+   catch-up seam regardless; one presentation helper is the smaller step now.
+2. **Register = name + work email**; the company's domain is the email's domain, more domains
+   later (`addDomain`, P6). A code to that email proves it — fake: `FakeOtpProvider.testCode`
+   (123456); real delivery is server work (R9). Public and taken domains are refused *before* a
+   code is sent, as the email field's error. Rejected a separate domain field (a second input that
+   must match the email anyway).
+3. `companyAccountProvider` = (HR home, offer, paused plan) for the signed-in person. Screens keep
+   the last value while it reloads, so the offer view is never torn down mid-join.
+4. Wallet: a company plan with **no enrollment behind it** (pre-010 seeds, `memberPrefs`) keeps the
+   old plain plan card; only an `Enrolled` offer shows "Company · Valeo", the paused line and
+   Leave. Rejected migrating old plans (they are test seeds only).
+5. **`personalPlanBack` is a fifth notice kind** (the contract listed four): the ARB key existed
+   and the leave flow needs it. Paused/Resumed have kinds and copy but are posted by P5
+   (suspension), not yet.
+6. Settings → Demo: "Goora approves my company" approves my pending company, else the seeded
+   Orange Business; "Make me Valeo's HR contact" = `demoSetHrContact`.
+7. The HR home shows status, domain, minimum, price, contract dates and the privacy note; no
+   buttons for Roster/Invoices/Dashboard/Log until P5–P7 add their screens (no dead ends).
+8. Arabic copy writes the name **جورة** (17 existing keys did; the 4 notice keys drafted in P3 said
+   "Goora" — fixed).
+9. T028 checks the P1 seams (green on first run): fee 0 on a group trip and a one-off seat, share
+   unchanged, reclaim right while covered and gone one minute after leaving, an owed share still
+   blocks. The 008 overdue-fee block is not re-tested here (the gate order is pure,
+   `booking_gate_test.dart`).
+10. `GooraTextField` errors wrap to 3 lines (a refusal reason is a sentence; Arabic runs longer).
+
+### R11 — keys added in P4 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyAccountTitle | حساب الشركة | Company account |
+| companyAccountSub | سجّل شركتك لو إنت HR، أو شوف خطة شركتك | Register your company if you're in HR, or see your company plan |
+| companyRegisterCta | سجّل شركتك | Register your company |
+| companyRegisterIntro | إنت من HR؟ سجّل شركتك، وموظفينكم يركبوا من غير رسوم جورة. | In HR? Register your company so your employees ride with no Goora fee. |
+| companyRegisterSub | هنتأكد من إيميل شغلك، وفريق جورة هيفعّل الحساب بعد ما العقد يتمضي. | We check your work email. The Goora team turns the account on once the contract is signed. |
+| companyNameLabel · companyNameError | اسم الشركة · الاسم لازم يكون من 2 لـ 60 حرف | Company name · Use 2 to 60 characters |
+| companyWorkEmailLabel · companyEmailInvalid | إيميل شغلك · اكتب إيميل صحيح، زي name@company.com | Your work email · Enter a valid email, like name@company.com |
+| companyPublicDomain | {domain} إيميل عام أي حد يقدر يعمل عليه حساب. استخدم إيميل الشغل. | {domain} is a public email service anyone can sign up to. Use your work email. |
+| companyDomainTaken | {domain} متسجّل لشركة تانية على جورة. | {domain} is already registered to another company on Goora. |
+| companySendCode · companyCodeSent · companyCodeLabel · companySubmit | ابعتلي كود · بعتنا كود لـ {email} · الكود · ابعت الطلب | Send me a code · We sent a code to {email} · Code · Send the request |
+| companyStatusPending · Active · Suspended · Ended | مستني موافقة جورة · شغّال · متوقف لحد الدفع · العقد خلص | Waiting for Goora · Active · Paused until paid · Contract ended |
+| companyPendingBody | طلب {company} وصلنا. هنفعّل الحساب أول ما العقد يتمضي. | We got {company}'s request. We'll turn the account on once the contract is signed. |
+| companyDomainsLine · companyMinSeats · companyPriceLine · companyContractLine | الدومين: {domains} · أقل عدد في الفاتورة: {count} موظف · {amount} ج لجورة عن كل موظف في الشهر · العقد من {start} لـ {end} | Domain: {domains} · Billed for at least {count} employees · {amount} EGP to Goora per employee a month · Contract {start} to {end} |
+| companyHomeNote | الشركة عمرها ما بتشوف مشاوير الموظفين ولا أماكن ركوبهم. | The company never sees employees' trips or pickup points. |
+| companyMineTitle · companyEnrolledLine · companyCanEnrollLine · companyJoinCta | خطة شركتك · مشترك في خطة {company} من {date} · {company} بتدفع رسوم جورة عنك على كل مشوار. · اشترك من خلال {company} | Your company plan · On {company}'s plan since {date} · {company} pays Goora's fee for you on every trip. · Join through {company} |
+| companyNotOnGoora · companyNotOnGooraBody · companyTellHr | شركتك لسه مش على جورة · قول لـ HR بتاعكم عن جورة. لحد ما يشتركوا، تقدر تدفع بالمشوار أو تشترك لوحدك. · ابعت لـ HR بتاعكم | Your company isn't on Goora yet · Tell your HR about Goora. Until they join, you can pay per trip or subscribe yourself. · Tell your HR |
+| companyShareText | جورة بيجمّع زمايل الشغل في مشوار يومي واحد، وبيقسموا التكلفة. وفيه خطة للشركات: الشركة تدفع رسوم جورة، والموظفين يركبوا من غير رسوم. {link} | Goora groups colleagues into one daily commute, and they share the cost. With its company plan, the company pays Goora's fee and employees ride with no fee. {link} |
+| consentTitle | قبل ما تشترك من خلال {company} | Before you join through {company} |
+| consentSees* | شركتك هتشوف: اسمك · إيميل شغلك · من إمتى مشترك | Your company will see: Your name · Your work email · Since when you joined |
+| consentNever* | عمرها ما هتشوف: مشاويرك ومواعيدها · بيتك أو مكان ركوبك · مين راكب معاك · فلوسك أو اللي دفعته للسواق | It will never see: Your trips or their times · Your home or pickup point · Who rides with you · Your money or what you paid the driver |
+| consentFeeLine | رسوم جورة على مشاويرك هتبقى 0. نصيب السواق بتدفعه له زي ما هو. | Goora's fee on your trips becomes 0. You still pay the driver's share to the driver. |
+| consentPausedLine | اشتراكك الشخصي (فاضل {days} يوم) هيتوقف، ويرجعلك لو سبت الشركة. | Your own plan ({days} days left) pauses and comes back if you leave your company. |
+| consentAgree · consentDecline | موافق، اشترك · مش دلوقتي | Agree and join · Not now |
+| planCompanyOf · planCompanyPaused | شركة · {company} · اشتراكك الشخصي متوقف: فاضل {days} يوم، يرجعلك لو سبت الشركة. | Company · {company} · Your own plan is paused: {days} days left, back if you leave your company. |
+| companyLeave · companyLeaveTitle · companyLeaveBody · companyLeaveConfirm | سيب خطة الشركة · تسيب خطة {company}؟ · من دلوقتي رسوم جورة هترجع على مشاويرك. المشاوير اللي فاتت مش هتتغير. · أيوه، سيبها | Leave the company plan · Leave {company}'s plan? · From now on Goora's fee applies to your trips. Trips you already took don't change. · Yes, leave |
+| demoApproveCompany · demoMakeMeHr | جورة توافق على شركتي · خليني HR بتاع Valeo | Goora approves my company · Make me Valeo's HR contact |
+
+### Still open after P4
+- T030: emulator walk of quickstart 1–4 (boot via `start-emulator.ps1`).
+- The router's pay-method guard still asks `coversDate` (Lane A notes): unchanged.

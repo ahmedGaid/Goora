@@ -3792,25 +3792,25 @@ abstract class AppLocalizations {
   /// No description provided for @nCompanyPlanStarted.
   ///
   /// In ar, this message translates to:
-  /// **'خطة {company} شغّالة: مشاويرك من غير رسوم Goora.'**
+  /// **'خطة {company} شغّالة: مشاويرك من غير رسوم جورة.'**
   String nCompanyPlanStarted(String company);
 
   /// No description provided for @nCompanyPlanEnded.
   ///
   /// In ar, this message translates to:
-  /// **'خطة {company} خلصت. رسوم Goora على المشوار رجعت عادي.'**
+  /// **'خطة {company} خلصت. رسوم جورة على المشوار رجعت عادي.'**
   String nCompanyPlanEnded(String company);
 
   /// No description provided for @nCompanyPlanPaused.
   ///
   /// In ar, this message translates to:
-  /// **'خطة شركتك متوقفة دلوقتي، رسوم Goora على المشوار رجعت عادي.'**
+  /// **'خطة شركتك متوقفة دلوقتي، رسوم جورة على المشوار رجعت عادي.'**
   String get nCompanyPlanPaused;
 
   /// No description provided for @nCompanyPlanResumed.
   ///
   /// In ar, this message translates to:
-  /// **'خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم Goora تاني.'**
+  /// **'خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم جورة تاني.'**
   String get nCompanyPlanResumed;
 
   /// No description provided for @nPersonalPlanBack.
@@ -3818,6 +3818,336 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اشتراكك رجعلك، وفاضل فيه {days} يوم.'**
   String nPersonalPlanBack(int days);
+
+  /// No description provided for @companyAccountTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب الشركة'**
+  String get companyAccountTitle;
+
+  /// No description provided for @companyAccountSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجّل شركتك لو إنت HR، أو شوف خطة شركتك'**
+  String get companyAccountSub;
+
+  /// No description provided for @companyRegisterCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجّل شركتك'**
+  String get companyRegisterCta;
+
+  /// No description provided for @companyRegisterIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنت من HR؟ سجّل شركتك، وموظفينكم يركبوا من غير رسوم جورة.'**
+  String get companyRegisterIntro;
+
+  /// No description provided for @companyRegisterSub.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنتأكد من إيميل شغلك، وفريق جورة هيفعّل الحساب بعد ما العقد يتمضي.'**
+  String get companyRegisterSub;
+
+  /// No description provided for @companyNameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم الشركة'**
+  String get companyNameLabel;
+
+  /// No description provided for @companyNameError.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم لازم يكون من 2 لـ 60 حرف'**
+  String get companyNameError;
+
+  /// No description provided for @companyWorkEmailLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيميل شغلك'**
+  String get companyWorkEmailLabel;
+
+  /// No description provided for @companyEmailInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب إيميل صحيح، زي name@company.com'**
+  String get companyEmailInvalid;
+
+  /// No description provided for @companyPublicDomain.
+  ///
+  /// In ar, this message translates to:
+  /// **'{domain} إيميل عام أي حد يقدر يعمل عليه حساب. استخدم إيميل الشغل.'**
+  String companyPublicDomain(String domain);
+
+  /// No description provided for @companyDomainTaken.
+  ///
+  /// In ar, this message translates to:
+  /// **'{domain} متسجّل لشركة تانية على جورة.'**
+  String companyDomainTaken(String domain);
+
+  /// No description provided for @companySendCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعتلي كود'**
+  String get companySendCode;
+
+  /// No description provided for @companyCodeSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'بعتنا كود لـ {email}'**
+  String companyCodeSent(String email);
+
+  /// No description provided for @companyCodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكود'**
+  String get companyCodeLabel;
+
+  /// No description provided for @companySubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعت الطلب'**
+  String get companySubmit;
+
+  /// No description provided for @companyStatusPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستني موافقة جورة'**
+  String get companyStatusPending;
+
+  /// No description provided for @companyStatusActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'شغّال'**
+  String get companyStatusActive;
+
+  /// No description provided for @companyStatusSuspended.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوقف لحد الدفع'**
+  String get companyStatusSuspended;
+
+  /// No description provided for @companyStatusEnded.
+  ///
+  /// In ar, this message translates to:
+  /// **'العقد خلص'**
+  String get companyStatusEnded;
+
+  /// No description provided for @companyPendingBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب {company} وصلنا. هنفعّل الحساب أول ما العقد يتمضي.'**
+  String companyPendingBody(String company);
+
+  /// No description provided for @companyDomainsLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدومين: {domains}'**
+  String companyDomainsLine(String domains);
+
+  /// No description provided for @companyMinSeats.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل عدد في الفاتورة: {count} موظف'**
+  String companyMinSeats(int count);
+
+  /// No description provided for @companyPriceLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} ج لجورة عن كل موظف في الشهر'**
+  String companyPriceLine(int amount);
+
+  /// No description provided for @companyContractLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'العقد من {start} لـ {end}'**
+  String companyContractLine(String start, String end);
+
+  /// No description provided for @companyHomeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشركة عمرها ما بتشوف مشاوير الموظفين ولا أماكن ركوبهم.'**
+  String get companyHomeNote;
+
+  /// No description provided for @companyMineTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطة شركتك'**
+  String get companyMineTitle;
+
+  /// No description provided for @companyEnrolledLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشترك في خطة {company} من {date}'**
+  String companyEnrolledLine(String company, String date);
+
+  /// No description provided for @companyCanEnrollLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{company} بتدفع رسوم جورة عنك على كل مشوار.'**
+  String companyCanEnrollLine(String company);
+
+  /// No description provided for @companyJoinCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترك من خلال {company}'**
+  String companyJoinCta(String company);
+
+  /// No description provided for @companyNotOnGoora.
+  ///
+  /// In ar, this message translates to:
+  /// **'شركتك لسه مش على جورة'**
+  String get companyNotOnGoora;
+
+  /// No description provided for @companyNotOnGooraBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'قول لـ HR بتاعكم عن جورة. لحد ما يشتركوا، تقدر تدفع بالمشوار أو تشترك لوحدك.'**
+  String get companyNotOnGooraBody;
+
+  /// No description provided for @companyTellHr.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعت لـ HR بتاعكم'**
+  String get companyTellHr;
+
+  /// No description provided for @companyShareText.
+  ///
+  /// In ar, this message translates to:
+  /// **'جورة بيجمّع زمايل الشغل في مشوار يومي واحد، وبيقسموا التكلفة. وفيه خطة للشركات: الشركة تدفع رسوم جورة، والموظفين يركبوا من غير رسوم. {link}'**
+  String companyShareText(String link);
+
+  /// No description provided for @consentTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قبل ما تشترك من خلال {company}'**
+  String consentTitle(String company);
+
+  /// No description provided for @consentSeesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'شركتك هتشوف'**
+  String get consentSeesTitle;
+
+  /// No description provided for @consentSeesName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسمك'**
+  String get consentSeesName;
+
+  /// No description provided for @consentSeesEmail.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيميل شغلك'**
+  String get consentSeesEmail;
+
+  /// No description provided for @consentSeesSince.
+  ///
+  /// In ar, this message translates to:
+  /// **'من إمتى مشترك'**
+  String get consentSeesSince;
+
+  /// No description provided for @consentNeverTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عمرها ما هتشوف'**
+  String get consentNeverTitle;
+
+  /// No description provided for @consentNeverTrips.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاويرك ومواعيدها'**
+  String get consentNeverTrips;
+
+  /// No description provided for @consentNeverPlace.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيتك أو مكان ركوبك'**
+  String get consentNeverPlace;
+
+  /// No description provided for @consentNeverWho.
+  ///
+  /// In ar, this message translates to:
+  /// **'مين راكب معاك'**
+  String get consentNeverWho;
+
+  /// No description provided for @consentNeverMoney.
+  ///
+  /// In ar, this message translates to:
+  /// **'فلوسك أو اللي دفعته للسواق'**
+  String get consentNeverMoney;
+
+  /// No description provided for @consentFeeLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم جورة على مشاويرك هتبقى 0. نصيب السواق بتدفعه له زي ما هو.'**
+  String get consentFeeLine;
+
+  /// No description provided for @consentPausedLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكك الشخصي (فاضل {days} يوم) هيتوقف، ويرجعلك لو سبت الشركة.'**
+  String consentPausedLine(int days);
+
+  /// No description provided for @consentAgree.
+  ///
+  /// In ar, this message translates to:
+  /// **'موافق، اشترك'**
+  String get consentAgree;
+
+  /// No description provided for @consentDecline.
+  ///
+  /// In ar, this message translates to:
+  /// **'مش دلوقتي'**
+  String get consentDecline;
+
+  /// No description provided for @planCompanyOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'شركة · {company}'**
+  String planCompanyOf(String company);
+
+  /// No description provided for @planCompanyPaused.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكك الشخصي متوقف: فاضل {days} يوم، يرجعلك لو سبت الشركة.'**
+  String planCompanyPaused(int days);
+
+  /// No description provided for @companyLeave.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيب خطة الشركة'**
+  String get companyLeave;
+
+  /// No description provided for @companyLeaveTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسيب خطة {company}؟'**
+  String companyLeaveTitle(String company);
+
+  /// No description provided for @companyLeaveBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'من دلوقتي رسوم جورة هترجع على مشاويرك. المشاوير اللي فاتت مش هتتغير.'**
+  String get companyLeaveBody;
+
+  /// No description provided for @companyLeaveConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيوه، سيبها'**
+  String get companyLeaveConfirm;
+
+  /// No description provided for @demoApproveCompany.
+  ///
+  /// In ar, this message translates to:
+  /// **'جورة توافق على شركتي'**
+  String get demoApproveCompany;
+
+  /// No description provided for @demoMakeMeHr.
+  ///
+  /// In ar, this message translates to:
+  /// **'خليني HR بتاع Valeo'**
+  String get demoMakeMeHr;
 }
 
 class _AppLocalizationsDelegate

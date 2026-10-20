@@ -40,20 +40,20 @@ then commit.
 - [x] T017 Trust seam: `TrustProfile.workEmail` + fake value (`<first>@valeo.com`) in `daily/domain/trust.dart`, `daily/data/fake_trust_repository.dart`; tests updated — done 2026-10-20 (Lane A): `workEmailFor`, non-Latin first name → `employee@`; tests in `company_wallet_seam_test.dart`; company person lookup wired through Trust
 - [x] T018 Wallet seam tests in `test/unit/fake_wallet_repository_test.dart`: company plan read carries windows; `startCompanyPlan` pauses Monthly with 10 days left and sets `noTrial`; `endCompanyPlan` restores Monthly with 10 days from the leave date; bundle and owed balance unchanged (red) — done 2026-10-20 (Lane A): 6 cases in a "company plan seam (010)" group; balance, bundle and every activity row compared before/after (red first)
 - [x] T019 `fake_wallet_repository.dart`: `companyCoverage` function seam, `startCompanyPlan`/`endCompanyPlan`, `company.paused.<id>` (research R8); wallet + company providers wired without a provider cycle (functions, 005 lesson) — done 2026-10-20 (Lane A): + `pausedPlan`, `wallet.coveredBefore.<id>`, `wallet.noTrialFrom.<id>`, `CompanyRepository.hasEnrolled`; provider test `company_wallet_seam_test.dart`; who *calls* start/end is P4/P6 (research "Lane A notes" #6)
-- [ ] T020 [P] `daily/domain/notice.dart`: `companyPlanStarted/Ended/Paused/Resumed` + copy keys — **partly done 2026-10-20 (Lane A): the 5 ARB keys + copy test; the 4 `NoticeKind` values wait for P4 (their label switch is in `daily/presentation/labels.dart`, Lane B's this round) — research "Lane A notes" T020 split**
+- [x] T020 [P] `daily/domain/notice.dart`: `companyPlanStarted/Ended/Paused/Resumed` + copy keys — **partly done 2026-10-20 (Lane A): the 5 ARB keys + copy test; the 4 `NoticeKind` values wait for P4 (their label switch is in `daily/presentation/labels.dart`, Lane B's this round) — research "Lane A notes" T020 split** — rest done 2026-10-20 (P4): 4 kinds + `personalPlanBack`, label arms, posted on join/leave
 - [x] T021 Settings → Reset clears `company.*`; test — done 2026-10-20 (Lane A): `demo_section.dart` + `test/widget/settings_reset_company_test.dart` (red first)
 
 ## Phase 4: US1 + US2 — register and enroll (P4, MVP, Sonnet + goora-brand)
 
-- [ ] T022 [P] [US1] Widget tests `test/widget/company_register_test.dart` (ar+en): public domain refused, taken domain refused, pending state, approve demo → active home with minimum and price (red)
-- [ ] T023 [P] [US2] Widget tests `test/widget/company_enroll_test.dart` (ar+en): not-on-Goora + Tell HR (also for a pending company — US1 AC5); consent lists sees/never-sees; decline enrolls nothing; agree → plan card "Company · Valeo"; paused personal plan shown (red)
-- [ ] T024 [US1] Routes `/company`, `/company/register` in `lib/app/router.dart`; Settings row "Company account"; Settings → Demo: Approve company, Make me Valeo's HR contact
-- [ ] T025 [US1] `company_home_screen.dart` (register / pending / HR home / my enrollment states — every state designed) + `register_company_screen.dart`
-- [ ] T026 [US2] Rework `wallet/presentation/plan/company_verify_sheet.dart` → `offerFor` states; new `company/presentation/consent_sheet.dart`; enroll via `CompanyRepository.enroll`
-- [ ] T027 [US2] Rider Wallet company card: company name, paused-days line, Leave (confirm) in `rider_wallet.dart`
-- [ ] T028 [US2] Fee check: unit test that a covered employee's group trip and one-off seat both carry fee 0 and the driver share unchanged; a covered employee gets the subscriber reclaim right on a full car (005 US6, FR-008) and loses it the minute they leave; 007/008 guard order unchanged (FR-007, FR-008, SC-003)
-- [ ] T029 ARB keys for P4 (ar first, Egyptian colloquial, lexicon) + `flutter gen-l10n`; list keys in research R11
-- [ ] T030 Checkpoint P4: gates green; walk quickstart 1–4 on the emulator
+- [x] T022 [P] [US1] Widget tests `test/widget/company_register_test.dart` (ar+en): public domain refused, taken domain refused, pending state, approve demo → active home with minimum and price (red)
+- [x] T023 [P] [US2] Widget tests `test/widget/company_enroll_test.dart` (ar+en): not-on-Goora + Tell HR (also for a pending company — US1 AC5); consent lists sees/never-sees; decline enrolls nothing; agree → plan card "Company · Valeo"; paused personal plan shown (red)
+- [x] T024 [US1] Routes `/company`, `/company/register` in `lib/app/router.dart`; Settings row "Company account"; Settings → Demo: Approve company, Make me Valeo's HR contact
+- [x] T025 [US1] `company_home_screen.dart` (register / pending / HR home / my enrollment states — every state designed) + `register_company_screen.dart`
+- [x] T026 [US2] Rework `wallet/presentation/plan/company_verify_sheet.dart` → `offerFor` states; new `company/presentation/consent_sheet.dart`; enroll via `CompanyRepository.enroll`
+- [x] T027 [US2] Rider Wallet company card: company name, paused-days line, Leave (confirm) in `rider_wallet.dart`
+- [x] T028 [US2] Fee check: unit test that a covered employee's group trip and one-off seat both carry fee 0 and the driver share unchanged; a covered employee gets the subscriber reclaim right on a full car (005 US6, FR-008) and loses it the minute they leave; 007/008 guard order unchanged (FR-007, FR-008, SC-003)
+- [x] T029 ARB keys for P4 (ar first, Egyptian colloquial, lexicon) + `flutter gen-l10n`; list keys in research R11
+- [ ] T030 Checkpoint P4: gates green; walk quickstart 1–4 on the emulator — gates green 2026-10-20 (research "P4 notes"); **emulator walk still open**
 
 ## Phase 5: US3 — invoices and suspension (P5)
 
