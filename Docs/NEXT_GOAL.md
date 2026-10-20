@@ -13,3 +13,13 @@ BLOCKED, don't re-ask: corridor = Cairo↔Ismailia · areas = New Cairo, Nasr Ci
 DONE (code + tests, not yet full-suite run): T018 `Corridor.legOf` (R5, refined: when neither end is home, only leaving the work end is return) + tests in corridor_test · T019 leg in OfferForm/PostStart · T021 RouteForm `areas` + find_riders reads corridor.areas · T022 defaults from corridor · T020 FakeCommuteRepository `corridor` param · T023 fake marketplace durations via `corridor.tripMinutes` · T024 `tripCostConfig` + marketplace new trips use corridor tripCost.
 NEXT: 1) fix 2 red tests in post_trip_test "[ar|en] Cairo ↔ Ismailia home → Ismailia is going…" (cancel → post-again flow; check keys/ensureVisible). 2) run full `flutter test --concurrency=1`; pin `oldCorridor()` in the other spike files (find_riders_test, commute_screens_test, marketplace_navigation_test, commute_flow_test) and any test constructing FakeMarketplaceRepository (now needs `corridor:`). 3) T025 no-match/waitlist copy. 4) tick tasks.md, note the R5 refinement in research.md, gates, goora-status.
 FIT: Opus. EST: 1–1.5 h. BLOCKED: push only with founder OK; corridor_seed_invariant_test red on purpose until P5.
+
+## Lane B — 006 P5 seed (branch `006-p5-seed`, appended 2026-10-19; the block above is Lane A's)
+/goal Goora 006 P5 done on `006-p5-seed` (worktree D:/Company/80-Worktrees/Goora-006-p5, cut from 006 tip `2d3de70`). Gates: analyze 0 · flutter 1300 green · node 226. Not pushed.
+WHERE: verify — `git -C D:/Company/80-Worktrees/Goora-006-p5 log --oneline -5` · `git rev-list --count 006-p5-seed..006-cairo-ismailia-corridor` (Lane A may be ahead).
+NEXT: founder OK → merge `006-p5-seed` into `006-cairo-ismailia-corridor` (Lane A side). Then Lane A wires: `MarketSeed.requests/offers(now, corridor: …)` in the fake marketplace repo; `CairoIsmailiaSeed.groups` into the group catalog when the new corridor is active; fixed 160/3 `MarketSeed.tripCost/riderSeats` (T024).
+READ FIRST: specs/006-cairo-ismailia-corridor/tasks.md (P5 T026–T030, P4 T022–T024) · goora-status "Lane B block".
+SCOPE: seed data + tests only; Lane A files untouched.
+FIT: Sonnet. EST: merge + P4 wiring 60–90 min.
+ALSO OPEN: seed names/ratings/vehicles are demo copy (not ar/en strings, no ARB) · detour spread for the 12 requests is derived (see `_cairoRequest`) · 300 EGP still unverified.
+BLOCKED, don't re-ask: push/merge only with the founder's OK.
