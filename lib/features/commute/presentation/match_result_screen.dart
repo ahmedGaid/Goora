@@ -15,6 +15,7 @@ import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../daily/data/providers.dart';
+import '../../daily/presentation/labels.dart';
 import '../../marketplace/domain/booking_gate.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
@@ -97,6 +98,7 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
     final sharedDays = outcome.profile.days.intersection(g.days).length;
     final from = l10n.area(outcome.profile.home!.area);
     final to = l10n.area(g.destination);
+    final pickup = g.nearestStop(outcome.profile.home!.point);
     final secondary = AppTypography.bodySmall.copyWith(color: AppColors.textSecondary);
     final mode = ref.watch(riderPricingProvider).value ?? PricingMode.perTrip;
     final priceText = viewerIsDriver
@@ -140,6 +142,20 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
                 const SizedBox(height: AppSpacing.xxs),
                 Text(l10n.routeLine(from, to), style: secondary, textAlign: TextAlign.center),
                 Text(l10n.timeDays(l10n.time(g.going), l10n.daysSummary(g.days)), style: secondary),
+                // 006 US1: on a long corridor the meeting point and the arrival
+                // matter; only the stop is shown, never the home (FR-008).
+                Text(
+                  l10n.stopLine(l10n.tlPickup(l10n.time(pickup.time)), l10n.stopName(pickup.name)),
+                  key: const Key('match-pickup'),
+                  style: secondary,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  l10n.stopLine(l10n.tlArrival(l10n.time(g.arrivalTime)), l10n.stopName(g.workStop.name)),
+                  key: const Key('match-arrival'),
+                  style: secondary,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: AppSpacing.gap),
                 Row(
                   children: [

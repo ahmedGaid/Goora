@@ -16,7 +16,6 @@ import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../commute/domain/clock.dart';
-import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/domain/place.dart';
 import '../../../commute/domain/pricing_service.dart';
 import '../../../commute/presentation/labels.dart';
@@ -79,7 +78,7 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
     final from = _from ?? start.from;
     final to = _to ?? start.to;
     final draft = TripDraft(
-      leg: from == Area.smartVillage ? Leg.ret : Leg.going,
+      leg: start.legOf(from, to),
       from: from,
       to: to,
       departure: _departure ?? start.departure,
@@ -162,9 +161,9 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
         final price = mode == null
             ? null
             : SeatPrice.of(
-                PricingService.range(MarketSeed.tripCost, MarketSeed.riderSeats).suggested,
-                tripCost: MarketSeed.tripCost,
-                riderSeats: MarketSeed.riderSeats,
+                PricingService.range(s.corridor.tripCost, s.corridor.riderSeats).suggested,
+                tripCost: s.corridor.tripCost,
+                riderSeats: s.corridor.riderSeats,
                 mode: mode,
                 method: ref.watch(riderPayMethodProvider).value ?? PaymentMethod.cash,
               );
@@ -203,6 +202,7 @@ class _PostTripScreenState extends ConsumerState<PostTripScreen> {
               const SizedBox(height: AppSpacing.md),
             ],
             RouteForm(
+              areas: s.corridor.areas,
               from: from,
               to: to,
               departure: _departure ?? s.departure,

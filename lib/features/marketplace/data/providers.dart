@@ -35,5 +35,6 @@ MarketplaceRepository marketplaceRepository(Ref ref) {
     wallet: () => ref.read(walletRepositoryProvider),
     trust: ref.watch(trustRepositoryProvider),
     now: ref.watch(nowProvider),
+    corridor: ref.watch(activeCorridorProvider),
   );
 }

@@ -5,6 +5,7 @@ import 'package:goora/core/theme/app_spacing.dart';
 import 'package:goora/core/theme/app_theme.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/core/widgets/goora_card.dart';
+import 'package:goora/features/commute/data/corridors.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/marketplace/data/market_seed.dart';
 import 'package:goora/features/marketplace/domain/anonymous_rider.dart';
@@ -35,6 +36,22 @@ SeatOffer _seat() {
     departure: trip.departure,
     freeSeats: 2,
     price: MarketSeed.quote(44),
+  );
+}
+
+/// 006 T036: Tarek's New Cairo → Ismailia seat on the launch corridor.
+SeatOffer _cairoSeat() {
+  const cairo = Corridors.cairoIsmailia;
+  final trip = MarketSeed.offers(_now, corridor: cairo).first;
+  return SeatOffer(
+    source: BookingSource.offer(trip.id),
+    driver: MarketSeed.driverById(trip.driverId)!,
+    pickup: trip.pickup,
+    date: trip.date,
+    leg: trip.leg,
+    departure: trip.departure,
+    freeSeats: 2,
+    price: MarketSeed.quote(trip.contribution, corridor: cairo),
   );
 }
 
@@ -87,6 +104,11 @@ void main() {
 
     testWidgets('seat card [$dir]', (tester) async {
       await _golden(tester, locale, 'seat_card', (now) => SeatCard(offer: _seat(), now: now, busy: false, onBook: () {}));
+    });
+
+    testWidgets('seat card, Cairo ↔ Ismailia [$dir]', (tester) async {
+      await _golden(
+          tester, locale, 'seat_card_cairo', (now) => SeatCard(offer: _cairoSeat(), now: now, busy: false, onBook: () {}));
     });
 
     testWidgets('request cards: create, join, limit [$dir]', (tester) async {

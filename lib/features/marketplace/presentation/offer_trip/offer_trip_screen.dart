@@ -14,6 +14,7 @@ import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../../core/widgets/goora_stepper.dart';
+import '../../../commute/data/providers.dart';
 import '../../../commute/domain/clock.dart';
 import '../../../commute/domain/pricing_service.dart';
 import '../../../commute/presentation/labels.dart';
@@ -22,7 +23,6 @@ import '../../../daily/presentation/labels.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../../wallet/domain/payment_method.dart';
 import '../../../wallet/domain/seat_price.dart';
-import '../../data/market_seed.dart';
 import '../../data/providers.dart';
 import '../../domain/driver_day_rules.dart';
 import '../../domain/marketplace_repository.dart';
@@ -51,7 +51,8 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
   OfferForm? _edited;
   late String? _id = widget.id;
 
-  OfferForm get _form => _edited ?? ref.read(offerStartProvider).value ?? OfferForm.start();
+  OfferForm get _form =>
+      _edited ?? ref.read(offerStartProvider).value ?? OfferForm.start(ref.read(activeCorridorProvider));
   bool _busy = false;
 
   // A live offer lives on Today; before publishing, Back is onboarding's last
@@ -62,7 +63,7 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
 
   void _set(OfferForm f) => setState(() => _edited = f);
 
-  void _seats(int seats) => _set(_form.copyWith(seats: seats, contribution: OfferForm.rangeFor(seats).suggested));
+  void _seats(int seats) => _set(_form.copyWith(seats: seats, contribution: _form.rangeFor(seats).suggested));
 
   void _step(int dir) {
     final r = _form.range;
@@ -115,7 +116,7 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
     final delta = _form.contribution - range.suggested;
     final price = SeatPrice.of(
       _form.contribution,
-      tripCost: MarketSeed.tripCost,
+      tripCost: _form.corridor.tripCost,
       riderSeats: _form.seats,
       mode: PricingMode.perTrip,
       // The driver sees the exact share they set, not a cash rounding.
@@ -136,6 +137,7 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
             const SizedBox(height: AppSpacing.sm),
           ],
         RouteForm(
+          areas: _form.corridor.areas,
           from: _form.from,
           to: _form.to,
           departure: _form.departure,

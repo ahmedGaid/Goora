@@ -31,4 +31,26 @@ void main() {
     }
     expect(checked, greaterThan(0));
   });
+
+  // 006 Cairo <-> Ismailia: 300 EGP per leg (mirror of specs/006-*/cap_sweep.ts).
+  // Rider total never passes the equal share; a full car never passes the cost.
+  test('300 EGP corridor: every allowed price, seats 1-4, stays inside the cap', () {
+    const tripCost = 300;
+    var checked = 0;
+    for (var riderSeats = 1; riderSeats <= 4; riderSeats++) {
+      final range = PricingService.range(tripCost, riderSeats);
+      final share = PricingService.equalShare(tripCost, riderSeats);
+      for (var c = range.min; c <= range.max; c += 2) {
+        final total = PricingService.riderTotal(c,
+            tripCost: tripCost, riderSeats: riderSeats, isSubscriber: false, isCashTrial: false);
+        final reason = 'riderSeats=$riderSeats contribution=$c total=$total';
+        expect(total, lessThanOrEqualTo(share), reason: reason);
+        expect(riderSeats * total, lessThanOrEqualTo(tripCost), reason: reason);
+        final cash = PricingService.cashAmount(c, tripCost: tripCost, riderSeats: riderSeats);
+        if (cash != null) expect(riderSeats * cash, lessThanOrEqualTo(tripCost), reason: '$reason cash=$cash');
+        checked++;
+      }
+    }
+    expect(checked, 80); // same count as cap_sweep.ts
+  });
 }

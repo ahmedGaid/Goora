@@ -55,7 +55,8 @@ Build these features in order. Each one is a separate `/speckit-specify` run.
 | 003 | Commute groups and the daily commute | Groups actually ride together every day |
 | 004 | Wallet and subscription | People pay |
 | 005 | Seat marketplace: empty seats, post a trip, offer a trip | One-off demand feeds the daily groups |
-| 006 | Company network (B2B), later | Companies pay |
+| 006 | Cairo ↔ Ismailia launch corridor (founder decision 2026-10-16) | The first real route has density, and the price stays legal on the longer distance |
+| later | Company network (B2B), unnumbered; takes the next free number when started (007–009 are taken by payment changes) | Companies pay |
 
 Section 5 has the specify prompt for each feature, and Section 4 has the plan prompt.
 
@@ -252,7 +253,7 @@ Matching (server-side Edge Function, pure logic mirrored in Dart for tests): har
 
 Match result screen: "92% match" chip, "We found your commute group!", stacked avatars, member count, route, time + days, 4 stats (drivers, riders, fixed/wk, EGP/trip), the line "40 EGP to the driver · no per-trip fees", a "Why this group" card listing reasons with check icons, a "See other options" toggle listing alternative matches with %, and the primary CTA "Join this group".
 
-No-match state: "You're #7 on the Sheikh Zayed → Smart Village list — we'll notify you as soon as we have a match", plus a CTA to post a trip request (feature 005).
+No-match state: "You're #7 on the New Cairo → Ismailia list — we'll notify you as soon as we have a match", plus a CTA to post a trip request (feature 005).
 ```
 
 ### Feature 003: Commute groups and the daily commute
@@ -306,9 +307,9 @@ D) Find riders (driver browses requests without posting a trip first). Entry poi
 Driver Today shows "Requests on your route": a demand banner ("12 people want <route> in the morning") and anonymous request cards (verified rider / verified rider (woman), pickup, time, once/daily, rating or New, detour minutes, fixed price, Accept → "Accepted ✓").
 ```
 
-### Feature 006: Company network (later, do not start yet)
+### Company network (later, unnumbered, do not start yet; was 006 before 2026-10-16)
 
-Companies sign up, employees join with their work email, the company pays 75 EGP per registered employee per month, and employees pay no subscription. The company gets an aggregated dashboard showing active groups, carpool rate, estimated savings, CO₂ reduced, parking demand and route gaps. It never shows individual data without consent.
+Companies sign up, employees join with their work email, the company pays a per-employee monthly fee (price TBD — founder, in `/speckit-clarify`; earlier drafts said 75 EGP, the profit model says 99), and employees pay no subscription. The company gets an aggregated dashboard showing active groups, carpool rate, estimated savings, CO₂ reduced, parking demand and route gaps. It never shows individual data without consent.
 
 ---
 
@@ -316,7 +317,7 @@ Companies sign up, employees join with their work email, the company pays 75 EGP
 
 ### 6.1 Positioning
 - Goora solves **"How do I reliably get to work every day?"**, not "find me a ride once".
-- **Launch on one dense corridor**: Sheikh Zayed → Smart Village. Density matters more than user count.
+- **Launch on one dense corridor**: Cairo ↔ Ismailia (founder decision 2026-10-16; before that Sheikh Zayed → Smart Village, which stays as extra demo data). Density matters more than user count. The corridor serves fixed-day work commuting; occasional travel is served only by the one-off seats and trip requests of feature 005.
 - **The brand must not look like a taxi company.** It should read as modern, friendly, trustworthy and premium but accessible.
 
 ### 6.2 Pricing (cost-sharing)
@@ -345,7 +346,7 @@ Companies sign up, employees join with their work email, the company pays 75 EGP
   - Shared days 10
   - Same company or community 10
   - Rating and reliability 10
-- **"Why this group" reasons** are generated from the top factors, for example "Same destination: Smart Village", "5-minute departure difference", "Pickup 600 m from home" and "Same company · similar return time".
+- **"Why this group" reasons** are generated from the top factors, for example "Same destination: Ismailia", "5-minute departure difference", "Pickup 600 m from home" and "Same company · similar return time".
 - **Pickup points:** cluster riders to shared pickup points (gate, main street) instead of door-to-door.
 - **Going and return are matched independently**, so a rider can go with Ahmed and return with Sara.
 
@@ -380,7 +381,7 @@ Riders get a banner telling them who covers the day. If nobody can cover, riders
 - **Driver confirms receipt:** after each trip the driver taps "استلمت" or "ماستلمتش" for every passenger; with no answer for 24 hours the share counts as received. The driver can correct an answer within 24 hours, turn an auto-received share into "ماستلمتش" once within 7 days, and confirm "received" at any time. A rider with an open "ماستلمتش" sees "عليك X ج.م لـ <driver first name>", can tap "دفعت", and can't book, post or be accepted until the driver confirms. Two "ماستلمتش" in 30 days flag the rider for review (no automatic ban).
 - **B) Optional subscription (frequent riders):** 149 EGP/month or 1,490 EGP/year. Subscribers pay no per-trip fee. There is no mandatory plan step after "Join this group"; riders go to the payment-method screen ("How will you pay the driver?": cash or InstaPay) instead. When a rider's fees this month exceed the subscription price, the Wallet shows the savings banner with a "Subscribe" button.
 - **C) Fee-free trial (every new rider, first 5 trips):** no Goora fee and no payment method needed (founder to confirm this meaning, profit change 3). Two "ماستلمتش" marks end it. A 004 rider who chose the wallet gave up the trial and stays out of it. **Cash amounts are a multiple of 5 EGP (founder decision 2026-10-12):** the contribution rounds to the nearest 5 inside the ±20% range (44 → 45, 48 → 45 when the top is 48, 32 → 35 when the floor is 32); InstaPay pays the exact contribution, and so does cash when no multiple of 5 fits.
-- **D) Company plan (feature 006):** unchanged. 75 EGP per registered employee per month; employees pay no fees.
+- **D) Company plan (company network, later, unnumbered):** the company pays a per-employee monthly fee (price TBD — founder, in `/speckit-clarify`; change 7 brief suggests 75 EGP per registered employee); employees pay no fees.
 - **Wallet:** Goora's own money only: top-ups through a licensed partner, Goora's fees and subscriptions. There are no payouts to drivers (they are paid directly); a driver may add an InstaPay handle, shown to a rider only once their ride is confirmed. What a driver received directly is shown on their Wallet tab and is never withdrawable.
 - **The fee sits inside the hard cap (founder decision 2026-10-08):** riders' total payments, fees included, never exceed the full trip cost. Each rider's share actually paid (cash-rounded or exact) + fee may not go above their equal share of the trip cost (trip cost ÷ rider seats, whole EGP, rounded down). When 10% would go above it, Goora's fee is trimmed, down to 0 if needed; the driver's contribution is never reduced. On the demo corridor nothing changes (160 EGP, 3 riders, 40 → 44); a full 4-rider car priced at the top of the range pays 38 + 2 instead of 38 + 4. This replaces the earlier reading that the fee sat outside the cap.
 

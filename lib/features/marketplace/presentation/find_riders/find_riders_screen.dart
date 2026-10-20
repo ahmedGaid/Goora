@@ -11,6 +11,7 @@ import '../../../../core/time/now_provider.dart';
 import '../../../../core/widgets/goora_banner.dart';
 import '../../../../core/widgets/goora_pill.dart';
 import '../../../../core/widgets/goora_primary_button.dart';
+import '../../../commute/data/providers.dart';
 import '../../../commute/domain/place.dart';
 import '../../../commute/presentation/labels.dart';
 import '../../../onboarding/presentation/widgets/onboarding_scaffold.dart';
@@ -77,7 +78,7 @@ class _FindRidersScreenState extends ConsumerState<FindRidersScreen> {
             runSpacing: AppSpacing.sm,
             children: [
               GooraPill(key: const Key('area-all'), label: l10n.allAreas, selected: _from == null, onTap: () => setState(() => _from = null)),
-              for (final a in Area.values)
+              for (final a in ref.watch(activeCorridorProvider).areas)
                 GooraPill(
                   key: Key('area-${a.name}'),
                   label: l10n.area(a),

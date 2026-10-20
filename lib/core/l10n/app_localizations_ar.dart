@@ -552,6 +552,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get areaSmartVillage => 'القرية الذكية';
 
   @override
+  String get areaNewCairo => 'القاهرة الجديدة';
+
+  @override
+  String get areaNasrCity => 'مدينة نصر';
+
+  @override
+  String get areaHeliopolis => 'مصر الجديدة';
+
+  @override
+  String get areaObour => 'العبور';
+
+  @override
+  String get areaTenthOfRamadan => 'العاشر من رمضان';
+
+  @override
+  String get areaIsmailia => 'الإسماعيلية';
+
+  @override
   String get pickHome => 'البيت فين؟';
 
   @override
@@ -933,6 +951,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get stopSmartVillageGate2 => 'القرية الذكية، بوابة 2';
+
+  @override
+  String get stopNewCairoMeet => 'القاهرة الجديدة، نقطة التجمع';
+
+  @override
+  String get stopNasrCityMeet => 'مدينة نصر، نقطة التجمع';
+
+  @override
+  String get stopHeliopolisMeet => 'مصر الجديدة، نقطة التجمع';
+
+  @override
+  String get stopObourMeet => 'العبور، نقطة التجمع';
+
+  @override
+  String get stopTenthOfRamadanMeet => 'العاشر من رمضان، نقطة التجمع';
+
+  @override
+  String get stopIsmailiaMeet => 'الإسماعيلية، نقطة التجمع';
 
   @override
   String tlPickup(String time) {

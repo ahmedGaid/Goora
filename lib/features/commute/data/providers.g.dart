@@ -8,21 +8,21 @@ part of 'providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Every commute group the fakes know: the corridor seed plus groups the
+/// Every commute group the fakes know: the active corridor's seed plus groups the
 /// marketplace created (005 research R10). The commute and daily
 /// repositories watch it, so invalidating it rebuilds both.
 
 @ProviderFor(groupCatalog)
 final groupCatalogProvider = GroupCatalogProvider._();
 
-/// Every commute group the fakes know: the corridor seed plus groups the
+/// Every commute group the fakes know: the active corridor's seed plus groups the
 /// marketplace created (005 research R10). The commute and daily
 /// repositories watch it, so invalidating it rebuilds both.
 
 final class GroupCatalogProvider
     extends $FunctionalProvider<GroupCatalog, GroupCatalog, GroupCatalog>
     with $Provider<GroupCatalog> {
-  /// Every commute group the fakes know: the corridor seed plus groups the
+  /// Every commute group the fakes know: the active corridor's seed plus groups the
   /// marketplace created (005 research R10). The commute and daily
   /// repositories watch it, so invalidating it rebuilds both.
   GroupCatalogProvider._()
@@ -58,7 +58,7 @@ final class GroupCatalogProvider
   }
 }
 
-String _$groupCatalogHash() => r'6a40882c54caf200c19c1db8d6fddbde36b565f0';
+String _$groupCatalogHash() => r'45a8b0ce2b18934729ffa2968307ae75eb8c0755';
 
 @ProviderFor(commuteRepository)
 final commuteRepositoryProvider = CommuteRepositoryProvider._();
@@ -105,19 +105,22 @@ final class CommuteRepositoryProvider
   }
 }
 
-String _$commuteRepositoryHash() => r'76db8e40eb79a85171e99bc341a94d32b7f025f2';
+String _$commuteRepositoryHash() => r'14fbb50fc86e8dd1c6002296ab28d94d2bdc3df4';
 
-/// Real rates stay off until the founder sets them (brief §8 open item).
+/// Real rates stay off until the founder sets them (brief §8 open item); the
+/// demo trip cost is the active corridor's (006 T024).
 
 @ProviderFor(tripCostConfig)
 final tripCostConfigProvider = TripCostConfigProvider._();
 
-/// Real rates stay off until the founder sets them (brief §8 open item).
+/// Real rates stay off until the founder sets them (brief §8 open item); the
+/// demo trip cost is the active corridor's (006 T024).
 
 final class TripCostConfigProvider
     extends $FunctionalProvider<TripCostConfig, TripCostConfig, TripCostConfig>
     with $Provider<TripCostConfig> {
-  /// Real rates stay off until the founder sets them (brief §8 open item).
+  /// Real rates stay off until the founder sets them (brief §8 open item); the
+  /// demo trip cost is the active corridor's (006 T024).
   TripCostConfigProvider._()
     : super(
         from: null,
@@ -151,4 +154,66 @@ final class TripCostConfigProvider
   }
 }
 
-String _$tripCostConfigHash() => r'b0efe9966e01949eb91bf0ef52bdb1b93c9ca9ea';
+String _$tripCostConfigHash() => r'5605479531839e2e3529ed023e2fe751a091f67f';
+
+/// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+/// demo setting or a test switches it. "Reset demo data" clears the choice.
+
+@ProviderFor(ActiveCorridor)
+final activeCorridorProvider = ActiveCorridorProvider._();
+
+/// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+/// demo setting or a test switches it. "Reset demo data" clears the choice.
+final class ActiveCorridorProvider
+    extends $NotifierProvider<ActiveCorridor, Corridor> {
+  /// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+  /// demo setting or a test switches it. "Reset demo data" clears the choice.
+  ActiveCorridorProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeCorridorProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeCorridorHash();
+
+  @$internal
+  @override
+  ActiveCorridor create() => ActiveCorridor();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Corridor value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Corridor>(value),
+    );
+  }
+}
+
+String _$activeCorridorHash() => r'69bbd66e5c3dedf60dbc7af076a4c0fa2a72e3f3';
+
+/// The corridor the app shows (006 research R4): Cairo ↔ Ismailia unless a
+/// demo setting or a test switches it. "Reset demo data" clears the choice.
+
+abstract class _$ActiveCorridor extends $Notifier<Corridor> {
+  Corridor build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<Corridor, Corridor>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Corridor, Corridor>,
+              Corridor,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

@@ -9,6 +9,7 @@ import '../../commute/data/group_catalog.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/commute_repository.dart';
+import '../../commute/domain/corridor.dart';
 import '../../commute/domain/geo.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/domain/place.dart';
@@ -61,6 +62,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     required this.wallet,
     required this.trust,
     required this._now,
+    required this._corridor,
   });
 
   static const offersKey = 'market.offers';
@@ -105,6 +107,9 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   final CommuteRepository _commute;
   final Now _now;
 
+  /// The active corridor (006 R4): new trips' cost, seats and durations.
+  final Corridor _corridor;
+
   /// The seams the story methods use from Phase 5 on: notices and reliability
   /// into 003, money into 004's ledger, the payment gate, the verification
   /// check. Public so a method added later needs no constructor change.
@@ -134,7 +139,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final stored = _read(offersKey, OfferedTrip.fromJson);
     final byId = {for (final o in stored) o.id: o};
     return [
-      for (final o in MarketSeed.offers(_now())) byId.remove(o.id) ?? o,
+      for (final o in MarketSeed.offers(_now(), corridor: _corridor)) byId.remove(o.id) ?? o,
       ...byId.values,
     ];
   }
@@ -143,7 +148,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final stored = _read(requestsKey, TripRequest.fromJson);
     final byId = {for (final r in stored) r.id: r};
     return [
-      for (final r in MarketSeed.requests(_now())) byId.remove(r.id) ?? r,
+      for (final r in MarketSeed.requests(_now(), corridor: _corridor)) byId.remove(r.id) ?? r,
       ...byId.values,
     ];
   }
@@ -773,7 +778,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     if (missing.isNotEmpty) return NotVerified(missing);
 
     // The stepper never lets a price out of range; reaching here with one is a bug (FR-022).
-    final range = PricingService.range(MarketSeed.tripCost, draft.seats);
+    final range = PricingService.range(_corridor.tripCost, draft.seats);
     if (!range.contains(draft.contribution)) {
       throw ArgumentError.value(draft.contribution, 'contribution', 'outside ${range.min}–${range.max} EGP');
     }
@@ -787,7 +792,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         from: draft.from,
         to: draft.to,
         departure: draft.departure.minutes,
-        durationMinutes: _tripMinutes,
+        durationMinutes: _corridor.tripMinutes(draft.from, draft.to),
         daily: draft.repeat == Repeat.daily,
         leadsGroup: day.leadsGroup,
       ),
@@ -804,10 +809,10 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       to: draft.to,
       date: date,
       departure: draft.departure,
-      durationMinutes: _tripMinutes,
+      durationMinutes: _corridor.tripMinutes(draft.from, draft.to),
       seats: draft.seats,
       riderSeats: draft.seats,
-      tripCost: MarketSeed.tripCost,
+      tripCost: _corridor.tripCost,
       contribution: draft.contribution,
       repeat: draft.repeat,
       pickup: MarketSeed.pickupIn(draft.from, 'of-stop-$id', draft.departure),
@@ -815,9 +820,6 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     await _saveOffer(trip);
     return Published(trip);
   }
-
-  /// Minutes a published trip is assumed to take: the corridor's.
-  static const _tripMinutes = 40;
 
   /// open|full → departed → done follow the clock, without being stored.
   static OfferedTrip _onClock(OfferedTrip o, WallTime now) {
@@ -919,7 +921,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         legs: {leg},
       );
 
-  static Member _driverMember(SeatDriver d, Leg leg) => Member(
+  Member _driverMember(SeatDriver d, Leg leg) => Member(
         id: d.id,
         firstName: d.firstName,
         initials: d.initials,
@@ -928,7 +930,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         rating: d.rating,
         reliability: 100,
         legs: {leg},
-        seats: MarketSeed.riderSeats,
+        seats: _corridor.riderSeats,
         vehicle: const Vehicle(make: 'Kia Cerato', colour: VehicleColour.grey),
       );
 
@@ -999,9 +1001,9 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
   /// corridor's standard 3 seats, priced for the rider's arrangement and fixed
   /// from then on (R6, FR-022).
   SeatPrice _requestPrice(_Rider rider) => SeatPrice.of(
-        PricingService.range(MarketSeed.tripCost, MarketSeed.riderSeats).suggested,
-        tripCost: MarketSeed.tripCost,
-        riderSeats: MarketSeed.riderSeats,
+        PricingService.range(_corridor.tripCost, _corridor.riderSeats).suggested,
+        tripCost: _corridor.tripCost,
+        riderSeats: _corridor.riderSeats,
         mode: rider.mode,
         method: rider.method,
       );
@@ -1141,12 +1143,12 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     return cards;
   }
 
-  static Candidate _candidate(TripRequest r, bool leadsGroup) => Candidate(
+  Candidate _candidate(TripRequest r, bool leadsGroup) => Candidate(
         leg: r.leg,
         from: r.from,
         to: r.to,
         departure: r.departure.minutes,
-        durationMinutes: _tripMinutes,
+        durationMinutes: _corridor.tripMinutes(r.from, r.to),
         daily: r.repeat == Repeat.daily,
         leadsGroup: leadsGroup,
       );
@@ -1210,10 +1212,10 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
             from: r.from,
             to: r.to,
             pickup: r.pickup,
-            durationMinutes: _tripMinutes,
+            durationMinutes: _corridor.tripMinutes(r.from, r.to),
             price: r.price.contribution,
-            tripCost: MarketSeed.tripCost,
-            riderSeats: MarketSeed.riderSeats,
+            tripCost: _corridor.tripCost,
+            riderSeats: _corridor.riderSeats,
             seatsTaken: 1,
             members: [_riderMember(r.riderId, name, r.rider, r.leg)],
             date: r.date,
@@ -1231,10 +1233,10 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
           to: r.to,
           date: r.date,
           departure: r.departure,
-          durationMinutes: _tripMinutes,
-          seats: MarketSeed.riderSeats,
-          riderSeats: MarketSeed.riderSeats,
-          tripCost: MarketSeed.tripCost,
+          durationMinutes: _corridor.tripMinutes(r.from, r.to),
+          seats: _corridor.riderSeats,
+          riderSeats: _corridor.riderSeats,
+          tripCost: _corridor.tripCost,
           contribution: r.price.contribution,
           repeat: Repeat.once,
           pickup: r.pickup,
@@ -1360,10 +1362,10 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
         from: r.from,
         to: r.to,
         pickup: r.pickup,
-        durationMinutes: _tripMinutes,
+        durationMinutes: _corridor.tripMinutes(r.from, r.to),
         price: r.price.contribution,
-        tripCost: MarketSeed.tripCost,
-        riderSeats: MarketSeed.riderSeats,
+        tripCost: _corridor.tripCost,
+        riderSeats: _corridor.riderSeats,
         seatsTaken: 1,
         members: [_driverMember(d, r.leg)],
         date: r.date,
@@ -1383,10 +1385,10 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
       to: r.to,
       date: r.date,
       departure: r.departure,
-      durationMinutes: _tripMinutes,
-      seats: MarketSeed.riderSeats,
-      riderSeats: MarketSeed.riderSeats,
-      tripCost: MarketSeed.tripCost,
+      durationMinutes: _corridor.tripMinutes(r.from, r.to),
+      seats: _corridor.riderSeats,
+      riderSeats: _corridor.riderSeats,
+      tripCost: _corridor.tripCost,
       contribution: r.price.contribution,
       repeat: Repeat.once,
       pickup: r.pickup,
@@ -1509,7 +1511,7 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     if (seed == null) return const DemoNothing();
     await _prefs.setInt(seedCursorKey, pool.indexOf(seed) + 1);
 
-    final price = MarketSeed.quote(o.contribution);
+    final price = SeatPrice.of(o.contribution, tripCost: o.tripCost, riderSeats: o.riderSeats, mode: PricingMode.perTrip);
     final booking = Booking(
       id: _nextBookingId(all),
       riderId: seed.id,

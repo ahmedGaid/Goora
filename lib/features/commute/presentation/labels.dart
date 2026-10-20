@@ -10,6 +10,12 @@ extension CommuteLabels on AppLocalizations {
         Area.sheikhZayed => areaSheikhZayed,
         Area.october => areaOctober,
         Area.smartVillage => areaSmartVillage,
+        Area.newCairo => areaNewCairo,
+        Area.nasrCity => areaNasrCity,
+        Area.heliopolis => areaHeliopolis,
+        Area.obour => areaObour,
+        Area.tenthOfRamadan => areaTenthOfRamadan,
+        Area.ismailia => areaIsmailia,
       };
 
   String day(Day d) => switch (d) {
@@ -23,6 +29,9 @@ extension CommuteLabels on AppLocalizations {
       };
 
   String time(Clock c) => c.isAm ? timeAm(c.h12) : timePm(c.h12);
+
+  /// A timed line and its named stop: "Pickup · 6:30 AM — New Cairo meeting point".
+  String stopLine(String timed, String stop) => '$timed — $stop';
 
   String daysSummary(Set<Day> days) {
     if (days.length == CommuteProfile.defaultDays.length && days.containsAll(CommuteProfile.defaultDays)) {

@@ -65,6 +65,9 @@ class _CommuteSetupScreenState extends ConsumerState<CommuteSetupScreen> {
       context: context,
       backgroundColor: AppColors.background,
       showDragHandle: true,
+      // 006: six home areas outgrow the default half-height sheet; the list
+      // scrolls when it still doesn't fit (small phones, large text).
+      isScrollControlled: true,
       builder: (sheetContext) => SafeArea(
         child: Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(AppSpacing.pageH, 0, AppSpacing.pageH, AppSpacing.lg),
@@ -74,15 +77,24 @@ class _CommuteSetupScreenState extends ConsumerState<CommuteSetupScreen> {
             children: [
               Text(home ? l10n.pickHome : l10n.pickWork, style: AppTypography.h2.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: AppSpacing.gap),
-              for (final p in places) ...[
-                GooraRadioCard(
-                  key: Key('place-${p.id}'),
-                  title: l10n.area(p.area),
-                  selected: selected?.id == p.id,
-                  onTap: () => Navigator.of(sheetContext).pop(p),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final p in places) ...[
+                        GooraRadioCard(
+                          key: Key('place-${p.id}'),
+                          title: l10n.area(p.area),
+                          selected: selected?.id == p.id,
+                          onTap: () => Navigator.of(sheetContext).pop(p),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                      ],
+                    ],
+                  ),
                 ),
-                const SizedBox(height: AppSpacing.md),
-              ],
+              ),
             ],
           ),
         ),

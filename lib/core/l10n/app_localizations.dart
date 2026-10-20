@@ -1124,6 +1124,42 @@ abstract class AppLocalizations {
   /// **'القرية الذكية'**
   String get areaSmartVillage;
 
+  /// No description provided for @areaNewCairo.
+  ///
+  /// In ar, this message translates to:
+  /// **'القاهرة الجديدة'**
+  String get areaNewCairo;
+
+  /// No description provided for @areaNasrCity.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدينة نصر'**
+  String get areaNasrCity;
+
+  /// No description provided for @areaHeliopolis.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصر الجديدة'**
+  String get areaHeliopolis;
+
+  /// No description provided for @areaObour.
+  ///
+  /// In ar, this message translates to:
+  /// **'العبور'**
+  String get areaObour;
+
+  /// No description provided for @areaTenthOfRamadan.
+  ///
+  /// In ar, this message translates to:
+  /// **'العاشر من رمضان'**
+  String get areaTenthOfRamadan;
+
+  /// No description provided for @areaIsmailia.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإسماعيلية'**
+  String get areaIsmailia;
+
   /// No description provided for @pickHome.
   ///
   /// In ar, this message translates to:
@@ -1735,6 +1771,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'القرية الذكية، بوابة 2'**
   String get stopSmartVillageGate2;
+
+  /// No description provided for @stopNewCairoMeet.
+  ///
+  /// In ar, this message translates to:
+  /// **'القاهرة الجديدة، نقطة التجمع'**
+  String get stopNewCairoMeet;
+
+  /// No description provided for @stopNasrCityMeet.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدينة نصر، نقطة التجمع'**
+  String get stopNasrCityMeet;
+
+  /// No description provided for @stopHeliopolisMeet.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصر الجديدة، نقطة التجمع'**
+  String get stopHeliopolisMeet;
+
+  /// No description provided for @stopObourMeet.
+  ///
+  /// In ar, this message translates to:
+  /// **'العبور، نقطة التجمع'**
+  String get stopObourMeet;
+
+  /// No description provided for @stopTenthOfRamadanMeet.
+  ///
+  /// In ar, this message translates to:
+  /// **'العاشر من رمضان، نقطة التجمع'**
+  String get stopTenthOfRamadanMeet;
+
+  /// No description provided for @stopIsmailiaMeet.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإسماعيلية، نقطة التجمع'**
+  String get stopIsmailiaMeet;
 
   /// No description provided for @tlPickup.
   ///

@@ -5,11 +5,11 @@ import '../../../../core/time/wall_time.dart';
 import '../../../commute/data/providers.dart';
 import '../../../commute/domain/clock.dart';
 import '../../../commute/domain/commute_profile.dart';
+import '../../../commute/domain/corridor.dart';
 import '../../../commute/domain/place.dart';
 import '../../../commute/domain/pricing_service.dart';
 import '../../../daily/data/providers.dart';
 import '../../../daily/domain/trust.dart';
-import '../../data/market_seed.dart';
 import '../../data/providers.dart';
 import '../../domain/driver_day_rules.dart';
 import '../../domain/market_day.dart';
@@ -22,8 +22,11 @@ part 'offer_trip_controller.g.dart';
 /// it moves in 2 EGP steps inside `PricingService.range` (FR-015, FR-022).
 final class OfferForm {
   const OfferForm({
-    this.from = Area.sheikhZayed,
-    this.to = Area.smartVillage,
+    required this.corridor,
+    required this.from,
+    required this.to,
+    this.home,
+    this.work,
     this.departure = const Clock.hm(7, 30),
     this.seats = defaultSeats,
     this.contribution = 0,
@@ -33,26 +36,44 @@ final class OfferForm {
   static const defaultSeats = 3;
 
   /// The form at its start: the suggested price for the default seats, on the
-  /// given route and time when the driver has a saved commute.
-  factory OfferForm.start({Area? from, Area? to, Clock? departure}) =>
-      OfferForm(contribution: rangeFor(defaultSeats).suggested).copyWith(from: from, to: to, departure: departure);
+  /// driver's saved route and time, else the corridor's default route (006 R4).
+  factory OfferForm.start(Corridor corridor, {Area? home, Area? work, Clock? departure}) => OfferForm(
+        corridor: corridor,
+        from: home ?? corridor.defaultFrom,
+        to: work ?? corridor.defaultTo,
+        home: home,
+        work: work,
+        contribution: PricingService.range(corridor.tripCost, defaultSeats).suggested,
+      ).copyWith(departure: departure);
 
+  /// The active corridor: its trip cost prices the seats.
+  final Corridor corridor;
   final Area from;
   final Area to;
+
+  /// The driver's saved home and work areas, which decide the leg (R5).
+  final Area? home;
+  final Area? work;
   final Clock departure;
   final int seats;
   final int contribution;
   final Repeat repeat;
 
-  /// A trip that leaves Smart Village is the way back; any other is the way there.
-  Leg get leg => from == Area.smartVillage ? Leg.ret : Leg.going;
+  /// Leaving home is the way there, coming home the way back (research R5).
+  Leg get leg => corridor.legOf(from, to, home: home, work: work);
 
   PriceRange get range => rangeFor(seats);
 
+  /// The corridor's trip cost shared across [seats] offered seats.
+  PriceRange rangeFor(int seats) => PricingService.range(corridor.tripCost, seats);
+
   OfferForm copyWith({Area? from, Area? to, Clock? departure, int? seats, int? contribution, Repeat? repeat}) =>
       OfferForm(
+        corridor: corridor,
         from: from ?? this.from,
         to: to ?? this.to,
+        home: home,
+        work: work,
         departure: departure ?? this.departure,
         seats: seats ?? this.seats,
         contribution: contribution ?? this.contribution,
@@ -62,15 +83,18 @@ final class OfferForm {
   @override
   bool operator ==(Object other) =>
       other is OfferForm &&
+      identical(other.corridor, corridor) &&
       other.from == from &&
       other.to == to &&
+      other.home == home &&
+      other.work == work &&
       other.departure == departure &&
       other.seats == seats &&
       other.contribution == contribution &&
       other.repeat == repeat;
 
   @override
-  int get hashCode => Object.hash(from, to, departure.minutes, seats, contribution, repeat);
+  int get hashCode => Object.hash(corridor.id, from, to, home, work, departure.minutes, seats, contribution, repeat);
 
   OfferDraft toDraft() => OfferDraft(
         leg: leg,
@@ -81,9 +105,6 @@ final class OfferForm {
         contribution: contribution,
         repeat: repeat,
       );
-
-  /// The corridor's trip cost shared across the offered seats (R6).
-  static PriceRange rangeFor(int seats) => PricingService.range(MarketSeed.tripCost, seats);
 }
 
 /// Why Publish is on or off, from the repository's own rules (FR-014, FR-019).
@@ -124,7 +145,7 @@ Future<OfferCheck> checkOffer(Ref ref, OfferForm form, {required WallTime now}) 
       from: form.from,
       to: form.to,
       departure: form.departure.minutes,
-      durationMinutes: 40,
+      durationMinutes: form.corridor.tripMinutes(form.from, form.to),
       daily: form.repeat == Repeat.daily,
       leadsGroup: day.leadsGroup,
     ),
@@ -136,8 +157,9 @@ Future<OfferCheck> checkOffer(Ref ref, OfferForm form, {required WallTime now}) 
 /// time (T104 F22), like Post your trip's `postStart`.
 @riverpod
 Future<OfferForm> offerStart(Ref ref) async {
+  final corridor = ref.watch(activeCorridorProvider);
   final profile = await ref.watch(commuteRepositoryProvider).loadProfile();
-  return OfferForm.start(from: profile?.home?.area, to: profile?.work?.area, departure: profile?.departure);
+  return OfferForm.start(corridor, home: profile?.home?.area, work: profile?.work?.area, departure: profile?.departure);
 }
 
 /// The form's check, re-read when the form changes.
