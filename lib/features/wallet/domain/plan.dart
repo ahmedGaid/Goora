@@ -10,6 +10,10 @@ enum PlanType { monthly, yearly, company }
 /// trial).
 enum PlanStatus { active, due }
 
+/// A personal plan set aside while its owner is enrolled in a company (010
+/// research R8): given back on leaving with [daysLeft] paid days.
+typedef PausedPlan = ({PlanType type, int price, int daysLeft});
+
 /// A rider's optional subscription (data-model.md). Drivers have no [Plan].
 final class Plan {
   const Plan({

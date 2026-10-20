@@ -294,3 +294,64 @@ T001 (brief + constitution, founder OK) · T003–T007 (`plan.dart` coverage, `p
 `fake_marketplace_repository.dart` booking on `coversTrip`) · T017 (`trust.dart` workEmail) · T018–T019
 (wallet seam) · T020 (notices + ARB) · T021 (settings reset clears `company.*` — the fake already has
 `FakeCompanyRepository.clearAllKeys(prefs)` for it).
+
+## Lane A notes — 2026-10-20 #2 (P1 T003–T007, P3 seams T017–T021, after the 006 merge)
+
+P1 is written under R2 ("P1 spike result"). Founder Q1–Q11 still open: defaults unchanged.
+
+### Seams as built (choices, with the rejected option)
+1. **Wallet API** (`WalletRepository`): `startCompanyPlan(personId, now)`, `endCompanyPlan(personId, now)`,
+   `pausedPlan(personId)` (`PausedPlan` = type, price, daysLeft). `daysLeft` = paid-until − the enroll
+   date; a lapsed or due plan pauses nothing. On leaving, the paused plan comes back with
+   `startDate = leave moment`, `untilDate = leave date + daysLeft`; no paused plan → the plan key is
+   removed (per trip).
+2. **No re-pricing of past trips.** Wallet activity is derived from the *current* plan, so swapping
+   plans would re-price trips already taken (a Monthly trip turning into a fee, a company trip
+   turning into a fee after leaving). Before a plan is replaced, what it covered up to that moment is
+   kept as windows in `wallet.coveredBefore.<id>`; a trip is fee-free if the current plan or one of
+   those windows covers it. T018 pins it: balance, bundle trips and every activity row are identical
+   before/after start and before/after end.
+3. **No trial from the enroll moment**: `wallet.noTrialFrom.<id>` (a moment), not the old
+   `wallet.noTrial.<id>` bool. Rejected the bool: it turns the trips a rider already took on the
+   trial into fees, moving the owed balance. Trips before the moment keep their trial.
+4. `company.paused.<id>` lives under `company.` (research R8), so Settings → Reset clears it with the
+   company network; the two new wallet keys are `wallet.*` and go with the wallet.
+5. **Coverage seam wiring** (`wallet/data/providers.dart`): `companyCoverage` reads the company
+   provider when called (never while building). It returns null for someone who never enrolled
+   (`CompanyRepository.hasEnrolled`, new), so a company plan from before 010 (the old verify sheet,
+   test seeds) keeps covering from its start until P4 replaces that flow. Rejected: "empty windows →
+   null" (wrong for someone who enrolled while their company was suspended).
+6. **Who calls start/end** is left for P4 (enroll) and P6 (every leave path): the company provider
+   may not import wallet code (`company_providers_test.dart`), so `FakeCompanyRepository` cannot call
+   the wallet itself. Recommended for P4: give `FakeCompanyRepository` an `onPlanChange` function
+   (joined/left, person, moment) and wire it from `wallet/data/providers.dart`'s side, or call both
+   repositories from the enroll/leave controller. Pick one in P4; T037 tests every leave path.
+7. **Person lookup** (`company/data/providers.dart`): the signed-in person only (the fake has no
+   other accounts); roster name = first + last name from the profile, work email from Trust.
+   Signed out → nobody → "no work email".
+8. **Trust work email**: `TrustProfile.workEmail`, fake `<first>@valeo.com`
+   (`FakeTrustRepository.workEmailFor`); a first name with no Latin letters gives
+   `employee@valeo.com`. Rejected: an Arabic local part (valid in theory, unreadable on the HR roster
+   and outside the domain check's tests).
+
+### T020 split — copy now, notice kinds in P4
+The notice copy is rendered by an exhaustive `switch (n.kind)` in `daily/presentation/labels.dart`,
+which is Lane B's file this round; adding `NoticeKind` values without new arms there breaks the
+build. So this lane added only the five ARB keys (end of both files, `flutter gen-l10n` run) and a
+copy test. The four kinds + their label arms + the posts land together in P4, after Lane B merges.
+Rejected: touching labels.dart (outside this lane), a `default` arm (hides a missing notice copy).
+
+| Key | ar | en |
+|---|---|---|
+| nCompanyPlanStarted | خطة {company} شغّالة: مشاويرك من غير رسوم Goora. | Your {company} plan is on: no Goora fee on your trips. |
+| nCompanyPlanEnded | خطة {company} خلصت. رسوم Goora على المشوار رجعت عادي. | Your {company} plan has ended. The usual Goora fee applies to your trips. |
+| nCompanyPlanPaused | خطة شركتك متوقفة دلوقتي، رسوم Goora على المشوار رجعت عادي. | Your company plan is paused for now; the usual Goora fee applies to your trips. |
+| nCompanyPlanResumed | خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم Goora تاني. | Your company plan is back on: no Goora fee on your trips again. |
+| nPersonalPlanBack | اشتراكك رجعلك، وفاضل فيه {days} يوم. | Your own plan is back, with {days} days left. |
+
+Paused/resumed carry no amount (Q10 "neutral notice"). Founder review pending like every R11 line.
+
+### Still open after this lane
+- The router's pay-method guard still asks `coversDate` (day level, `lib/app/router.dart`, not this
+  lane's file): a leaver keeps reaching Today for the rest of the leave day. Fine for P4; revisit if
+  the walk shows it.

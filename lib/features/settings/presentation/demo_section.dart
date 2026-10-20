@@ -19,6 +19,8 @@ import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/presentation/labels.dart';
+import '../../company/data/fake_company_repository.dart';
+import '../../company/data/providers.dart';
 import '../../daily/data/fake_daily_commute_repository.dart';
 import '../../daily/data/fake_trust_repository.dart';
 import '../../daily/data/providers.dart';
@@ -219,10 +221,14 @@ class DemoSection extends ConsumerWidget {
     await FakeWalletRepository.clearAll(prefs);
     // Every market.* key: offers, requests, bookings, and the groups and members the catalog keeps.
     await FakeMarketplaceRepository.clearAll(prefs);
+    // Every company.* key (010 T021): companies, enrollments, invoices, the
+    // log and the personal plans paused while enrolled; the next read re-seeds.
+    await FakeCompanyRepository.clearAllKeys(prefs);
     await ref.read(profileRepositoryProvider).clear();
     await ref.read(sessionControllerProvider.notifier).signOut();
     ref.invalidate(groupCatalogProvider);
     ref.invalidate(marketplaceRepositoryProvider);
+    ref.invalidate(companyRepositoryProvider);
     ref.invalidate(dailyCommuteRepositoryProvider);
     ref.invalidate(commuteRepositoryProvider);
     ref.invalidate(activeCorridorProvider);

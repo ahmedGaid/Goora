@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/storage/preferences.dart';
 import '../../../core/time/now_provider.dart';
 import '../../commute/domain/group.dart';
+import '../../company/data/providers.dart';
 import '../../daily/data/providers.dart';
 import '../../marketplace/data/providers.dart';
 import '../../onboarding/domain/choices.dart';
@@ -31,6 +32,14 @@ WalletRepository walletRepository(Ref ref) => FakeWalletRepository(
       // Read when called, not while building: the marketplace watches this
       // provider back for its ledger (005 research R9).
       oneOffs: () => ref.read(marketplaceRepositoryProvider).doneOneOffs(),
+      // Read when called too (010 T019): the company network never reads the
+      // wallet back while building. Someone who never enrolled gets null, so
+      // a company plan from before 010 keeps covering from its start.
+      companyCoverage: (personId) async {
+        final company = ref.read(companyRepositoryProvider);
+        if (!await company.hasEnrolled(personId)) return null;
+        return company.coverageFor(personId, ref.read(nowProvider)());
+      },
     );
 
 /// For a driver's check-in after drop-off (004 FR-012, 007 US2): this

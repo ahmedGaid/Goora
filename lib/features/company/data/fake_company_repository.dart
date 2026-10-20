@@ -195,6 +195,12 @@ final class FakeCompanyRepository implements CompanyRepository {
     return out..sort((a, b) => a.from.compareTo(b.from));
   }
 
+  @override
+  Future<bool> hasEnrolled(String personId) async {
+    await _ensureSeeded();
+    return _companies().any((c) => _enrollments(c.id).any((e) => e.personId == personId));
+  }
+
   // US3 — invoices
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/time/calendar_date.dart';
 import 'package:goora/core/time/wall_time.dart';
@@ -5,6 +7,7 @@ import 'package:goora/features/commute/data/corridor_seed.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart' show Leg;
 import 'package:goora/features/commute/domain/group.dart';
+import 'package:goora/features/company/domain/company_rules.dart';
 import 'package:goora/features/daily/domain/absence.dart';
 import 'package:goora/features/daily/domain/charge.dart';
 import 'package:goora/features/daily/domain/check_in.dart';
@@ -20,6 +23,7 @@ import 'package:goora/features/wallet/domain/done_one_off.dart';
 import 'package:goora/features/wallet/domain/payment_method.dart';
 import 'package:goora/features/wallet/domain/payment_provider.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
+import 'package:goora/features/wallet/domain/wallet.dart';
 import 'package:goora/features/wallet/domain/wallet_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -761,6 +765,144 @@ void main() {
       expect(await repo.buyBundle('me', method: 'card'), PaymentResult.failure);
       final w = await repo.getWallet('me');
       expect([w.bundleTripsLeft, w.activity.length], [0, 0]);
+    });
+  });
+
+  // 010 T018 (research R8, contracts § Seams): the company plan read carries
+  // the company network's windows; enrolling pauses a personal plan and
+  // leaving restores it, and neither re-prices a trip already taken.
+  group('company plan seam (010)', () {
+    final oct = CalendarDate(2026, 10, 1);
+    final enrollAt = WallTime(today, const Clock.hm(9, 0));
+    final leaveAt = WallTime(today.addDays(3), const Clock.hm(9, 0));
+    int m(WallTime t) => SharePolicy.minuteOf(t);
+
+    late WallTime clock;
+    late List<Window>? windows;
+
+    FakeWalletRepository seamRepo(SharedPreferences prefs, List<String> kept) => FakeWalletRepository(
+          prefs,
+          daily: _StubDailyRepo(kept: kept),
+          role: () => MemberRole.rider,
+          now: () => clock,
+          provider: const _Provider(),
+          companyCoverage: (_) async => windows,
+        );
+
+    Plan monthly({required CalendarDate until}) => Plan(
+          personId: 'me',
+          type: PlanType.monthly,
+          status: PlanStatus.active,
+          price: 149,
+          startDate: WallTime(oct.addDays(13), const Clock.hm(8, 0)),
+          untilDate: until,
+        );
+
+    /// Balance, bundle and every activity row: what must not move.
+    Future<(int, int, String)> money(FakeWalletRepository repo) async {
+      final w = await repo.getWallet('me');
+      return (w.balance, w.bundleTripsLeft, [for (final e in w.activity) (e.id, e.kind, e.amount, e.fee)].join('\n'));
+    }
+
+    ActivityEntry rowFor(Wallet w, String rideId) => w.activity.firstWhere((e) => e.rideId == rideId);
+
+    late List<String> kept;
+
+    /// Trips 1–12 Oct (the trial, then 4 EGP fees: owed; a bundle bought on
+    /// the 10th covers some) and 15–16 Oct, under Monthly when there is one.
+    Future<FakeWalletRepository> rider({Plan? plan}) async {
+      final prefs = await _prefs();
+      kept = [...trips(12), rideId(oct.addDays(14), Leg.going), rideId(oct.addDays(15), Leg.going)];
+      windows = null;
+      clock = WallTime(oct.addDays(9), const Clock.hm(9, 0));
+      final repo = seamRepo(prefs, kept);
+      await repo.setMethod('me', PaymentMethod.instapay);
+      expect(await repo.buyBundle('me', method: 'card'), PaymentResult.success);
+      clock = enrollAt;
+      if (plan != null) await prefs.setString(FakeWalletRepository.planKey, jsonEncode(plan.toJson()));
+      return repo;
+    }
+
+    test('the company plan read carries the windows; null from the seam keeps the old meaning', () async {
+      final repo = await rider();
+      await repo.startCompanyPlan('me', enrollAt);
+      expect((await repo.getPlan('me'))!.coverage, isNull);
+      windows = [(from: m(enrollAt), to: m(leaveAt))];
+      final plan = (await repo.getPlan('me'))!;
+      expect(plan.type, PlanType.company);
+      expect(plan.coverage, windows);
+      expect(plan.coversTrip(leaveAt), isFalse);
+    });
+
+    test('startCompanyPlan pauses Monthly with 10 days left and ends the trial', () async {
+      final repo = await rider(plan: monthly(until: today.addDays(10)));
+      final before = await money(repo);
+      expect((await repo.getWallet('me')).cashTrial, isNotNull);
+
+      await repo.startCompanyPlan('me', enrollAt);
+      windows = [(from: m(enrollAt), to: null)];
+
+      final plan = (await repo.getPlan('me'))!;
+      expect((plan.type, plan.price, plan.untilDate), (PlanType.company, 0, null));
+      expect(await repo.pausedPlan('me'), (type: PlanType.monthly, price: 149, daysLeft: 10));
+      expect((await repo.getWallet('me')).cashTrial, isNull, reason: 'Q11 default: no trial after leaving');
+      expect(await money(repo), before, reason: 'no trip is re-priced, owed balance and bundle unchanged');
+    });
+
+    test('endCompanyPlan restores Monthly with 10 days from the leave date', () async {
+      final repo = await rider(plan: monthly(until: today.addDays(10)));
+      await repo.startCompanyPlan('me', enrollAt);
+      windows = [(from: m(enrollAt), to: m(leaveAt))];
+      kept.add(rideId(oct.addDays(22), Leg.going)); // the 23rd, while enrolled
+      clock = leaveAt;
+      final before = await money(repo);
+
+      await repo.endCompanyPlan('me', leaveAt);
+
+      final plan = (await repo.getPlan('me'))!;
+      expect((plan.type, plan.status, plan.price), (PlanType.monthly, PlanStatus.active, 149));
+      expect(plan.untilDate, leaveAt.date.addDays(10));
+      expect(plan.coversTrip(leaveAt.plusMinutes(1)), isTrue);
+      expect(await repo.pausedPlan('me'), isNull);
+      expect((await repo.getWallet('me')).cashTrial, isNull);
+      expect(await money(repo), before, reason: 'company trips stay fee-free, earlier ones keep their fee');
+    });
+
+    test('no personal plan to restore: back to per trip, no trial', () async {
+      final repo = await rider();
+      final before = await money(repo);
+      await repo.startCompanyPlan('me', enrollAt);
+      expect(await repo.pausedPlan('me'), isNull);
+      expect(await money(repo), before);
+      windows = [(from: m(enrollAt), to: m(leaveAt))];
+      kept.add(rideId(oct.addDays(22), Leg.going)); // the 23rd, while enrolled
+      clock = leaveAt;
+      await repo.endCompanyPlan('me', leaveAt);
+
+      expect(await repo.getPlan('me'), isNull);
+      kept.add(rideId(oct.addDays(25), Leg.going)); // the 26th, after leaving
+      clock = WallTime(oct.addDays(25), const Clock.hm(12, 0));
+      final w = await repo.getWallet('me');
+      expect(w.cashTrial, isNull);
+      expect(PricingMode.of(plan: null, now: clock, trialAvailable: w.cashTrial?.available ?? false),
+          PricingMode.perTrip);
+      final during = rowFor(w, rideId(oct.addDays(22), Leg.going));
+      expect((during.kind, during.fee), (ActivityKind.trip, 0), reason: 'covered by the company');
+      expect(rowFor(w, rideId(oct.addDays(25), Leg.going)).kind, ActivityKind.bundleTrip,
+          reason: 'after leaving the fee is due again; the bundle takes it');
+    });
+
+    test('a lapsed Monthly is not paused (nothing left to give back)', () async {
+      final repo = await rider(plan: monthly(until: today.addDays(-1)));
+      await repo.startCompanyPlan('me', enrollAt);
+      expect(await repo.pausedPlan('me'), isNull);
+    });
+
+    test('endCompanyPlan without a company plan changes nothing', () async {
+      final repo = await rider(plan: monthly(until: today.addDays(10)));
+      await repo.endCompanyPlan('me', enrollAt);
+      expect((await repo.getPlan('me'))!.untilDate, today.addDays(10));
+      expect((await repo.getWallet('me')).cashTrial, isNotNull);
     });
   });
 }

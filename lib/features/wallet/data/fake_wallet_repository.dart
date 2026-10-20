@@ -63,6 +63,18 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
   /// The day the rider set up payment; trips before it are not billed (003's
   /// seeded history is demo standing, not trips the rider owes for).
   static String sinceKey(String personId) => 'wallet.since.$personId';
+  /// 010 research R8: the personal plan paused while enrolled. Under
+  /// `company.` so it goes with the company network's data on reset.
+  static String pausedKey(String personId) => 'company.paused.$personId';
+
+  /// From this moment the rider has no fee-free trial (010 Q11 default: none
+  /// once they joined a company); trips before it keep theirs.
+  static String noTrialFromKey(String personId) => 'wallet.noTrialFrom.$personId';
+
+  /// Windows in which an arrangement that has since been replaced (a
+  /// personal plan until it was paused, a company enrollment once it ended)
+  /// made trips fee-free, so switching never re-prices a trip already taken.
+  static String coveredKey(String personId) => 'wallet.coveredBefore.$personId';
   static String _activityKey(String ownerId) => 'wallet.activity.$ownerId';
   static String _balanceKey(String ownerId) => 'wallet.balance.$ownerId';
 
@@ -147,6 +159,87 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
       startDate: current?.startDate,
       untilDate: newType == PlanType.company ? null : current?.untilDate,
     ));
+  }
+
+  @override
+  Future<void> startCompanyPlan(String personId, WallTime now) async {
+    final current = await getPlan(personId);
+    if (current != null) {
+      await _keepCovered(personId, current, until: now);
+      final until = current.untilDate;
+      final daysLeft = current.type != PlanType.company && current.status == PlanStatus.active && until != null
+          ? now.date.daysUntil(until)
+          : 0;
+      if (daysLeft > 0) {
+        await _prefs.setString(
+          pausedKey(personId),
+          jsonEncode({'type': current.type.name, 'price': current.price, 'daysLeft': daysLeft}),
+        );
+      }
+    }
+    await _markSince(personId, now.date);
+    if (!_prefs.containsKey(noTrialFromKey(personId))) await _prefs.setString(noTrialFromKey(personId), now.toJson());
+    await _savePlan(Plan(personId: personId, type: PlanType.company, status: PlanStatus.active, price: 0, startDate: now));
+  }
+
+  @override
+  Future<void> endCompanyPlan(String personId, WallTime now) async {
+    final current = await getPlan(personId);
+    if (current == null || current.type != PlanType.company) return;
+    await _keepCovered(personId, current, until: now);
+    final paused = await pausedPlan(personId);
+    await _prefs.remove(pausedKey(personId));
+    if (paused == null) {
+      await _prefs.remove(planKey);
+      return;
+    }
+    await _savePlan(Plan(
+      personId: personId,
+      type: paused.type,
+      status: PlanStatus.active,
+      price: paused.price,
+      startDate: now,
+      untilDate: now.date.addDays(paused.daysLeft),
+    ));
+  }
+
+  @override
+  Future<PausedPlan?> pausedPlan(String personId) async {
+    final raw = _prefs.getString(pausedKey(personId));
+    if (raw == null) return null;
+    final j = (jsonDecode(raw) as Map).cast<String, Object?>();
+    return (type: PlanType.values.byName(j['type']! as String), price: j['price']! as int, daysLeft: j['daysLeft']! as int);
+  }
+
+  /// Records what [plan] made fee-free up to [until], before it is replaced.
+  Future<void> _keepCovered(String personId, Plan plan, {required WallTime until}) async {
+    final end = SharePolicy.minuteOf(until);
+    final List<Window> spans;
+    if (plan.coverage != null) {
+      spans = [
+        for (final w in plan.coverage!) (from: w.from, to: w.to == null || w.to! > end ? end : w.to),
+      ];
+    } else {
+      final from = plan.startDate == null ? 0 : SharePolicy.minuteOf(plan.startDate!);
+      final paidTo = plan.untilDate == null ? null : SharePolicy.dayOf(plan.untilDate!.addDays(1)) * 24 * 60;
+      final covers = plan.type == PlanType.company || plan.status == PlanStatus.active;
+      spans = [if (covers) (from: from, to: paidTo == null || paidTo > end ? end : paidTo)];
+    }
+    final kept = [..._covered(personId), for (final w in spans) if (w.to! > w.from) w];
+    await _prefs.setString(coveredKey(personId), jsonEncode([for (final w in kept) [w.from, w.to]]));
+  }
+
+  List<Window> _covered(String personId) {
+    final raw = _prefs.getString(coveredKey(personId));
+    if (raw == null) return const [];
+    return [
+      for (final w in jsonDecode(raw) as List) (from: (w as List)[0] as int, to: w[1] as int?),
+    ];
+  }
+
+  WallTime? _noTrialFrom(String personId) {
+    final raw = _prefs.getString(noTrialFromKey(personId));
+    return raw == null ? null : WallTime.fromJson(raw);
   }
 
   static int priceFor(PlanType type) => switch (type) {
@@ -481,6 +574,8 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     }
     final payBy = method ?? PaymentMethod.cash;
     final noTrial = _trialForfeited(ownerId);
+    final noTrialFrom = _noTrialFrom(ownerId);
+    final coveredBefore = _covered(ownerId);
     final window = today.addDays(-_window);
     final from = since.isAfter(window) ? since : window;
     final marks = _currentMarks().values.where((m) => m.riderId == ownerId).toList();
@@ -551,8 +646,12 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
       final itemAt = oneOff != null
           ? WallTime(item.date, const Clock.hm(0, 0))
           : WallTime(item.date, item.leg == Leg.going ? group!.going : group!.ret);
-      final feeFree = plan != null && plan.coversTrip(itemAt);
-      final inTrial = !feeFree && !noTrial && CashTrialPolicy.available(trialDone, strikes);
+      final feeFree = (plan != null && plan.coversTrip(itemAt)) ||
+          CompanyRules.covered(coveredBefore, SharePolicy.minuteOf(itemAt));
+      final inTrial = !feeFree &&
+          !noTrial &&
+          (noTrialFrom == null || itemAt.isBefore(noTrialFrom)) &&
+          CashTrialPolicy.available(trialDone, strikes);
       final contribution = oneOff?.contribution ?? group!.price;
       final tripCost = oneOff?.tripCost ?? group!.tripCost;
       final riderSeats = oneOff?.riderSeats ?? group!.riderSeats;
@@ -639,7 +738,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
       entries: entries,
       debits: debits,
       bundleLeft: TripBundle.trips * purchases.length - bundleUsed,
-      cashTrial: noTrial ? null : CashTrialStatus(tripsDone: trialDone, strikes: strikes),
+      cashTrial: noTrial || noTrialFrom != null ? null : CashTrialStatus(tripsDone: trialDone, strikes: strikes),
       shares: shares,
     );
   }

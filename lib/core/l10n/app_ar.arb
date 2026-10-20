@@ -1635,5 +1635,31 @@
   "idBack": "صوّر ضهر البطاقة",
   "idCaptured": "اتصوّرت",
   "idSubmit": "ابعتها للتأكيد",
-  "idPending": "بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد."
+  "idPending": "بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.",
+  "nCompanyPlanStarted": "خطة {company} شغّالة: مشاويرك من غير رسوم Goora.",
+  "@nCompanyPlanStarted": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "nCompanyPlanEnded": "خطة {company} خلصت. رسوم Goora على المشوار رجعت عادي.",
+  "@nCompanyPlanEnded": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "nCompanyPlanPaused": "خطة شركتك متوقفة دلوقتي، رسوم Goora على المشوار رجعت عادي.",
+  "nCompanyPlanResumed": "خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم Goora تاني.",
+  "nPersonalPlanBack": "اشتراكك رجعلك، وفاضل فيه {days} يوم.",
+  "@nPersonalPlanBack": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

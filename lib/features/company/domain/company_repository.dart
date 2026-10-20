@@ -117,6 +117,11 @@ abstract interface class CompanyRepository {
   /// Fee-free windows: enrollments ∩ the company's active windows.
   Future<List<Window>> coverageFor(String personId, WallTime now);
 
+  /// Whether [personId] ever enrolled anywhere (open or left). The wallet
+  /// attaches [coverageFor] only then, so a company plan made before 010
+  /// (no enrollment behind it) keeps its old meaning.
+  Future<bool> hasEnrolled(String personId);
+
   // US3 — invoices (issues missing months lazily, idempotent), newest first
   Future<List<Invoice>> invoices(String companyId, WallTime now);
 
