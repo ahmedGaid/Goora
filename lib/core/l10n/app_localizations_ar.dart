@@ -2309,4 +2309,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get idPending => 'بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.';
+
+  @override
+  String nCompanyPlanStarted(String company) {
+    return 'خطة $company شغّالة: مشاويرك من غير رسوم Goora.';
+  }
+
+  @override
+  String nCompanyPlanEnded(String company) {
+    return 'خطة $company خلصت. رسوم Goora على المشوار رجعت عادي.';
+  }
+
+  @override
+  String get nCompanyPlanPaused =>
+      'خطة شركتك متوقفة دلوقتي، رسوم Goora على المشوار رجعت عادي.';
+
+  @override
+  String get nCompanyPlanResumed =>
+      'خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم Goora تاني.';
+
+  @override
+  String nPersonalPlanBack(int days) {
+    return 'اشتراكك رجعلك، وفاضل فيه $days يوم.';
+  }
 }

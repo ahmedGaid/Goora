@@ -53,3 +53,44 @@ SCOPE: nits only, wallet/daily/marketplace presentation + existing ARB keys.
 FIT: Sonnet. EST: 1–2 h.
 ALSO OPEN: S-6 repro was a constructed one-leg day, not the exact Mon 30/11 device state (test uses the old corridor) · wallet_controller.withdraw + repo withdraw now unused (Lane A owns them) · legacy 004 driver balance no longer shown anywhere · new keys `priceNoFee`, `planBundleLine`, `memberRating`, `instapaySaved` sit mid-file.
 BLOCKED, don't re-ask: push/merge only with the founder's OK.
+/goal Goora — main @ e9079b5 = origin/main (007 direct driver pay, 008 pay later + bundle, 009 rider ID before first trip, all merged). Founder 2026-10-19: every 007/008/009 implementer default stands as built. Change 7 (company plan) brief written on branch `docs/change-7-company-plan-brief` (worktree Goora-change7, docs only, not merged, not pushed). Branch `006-cairo-ismailia-corridor` / Goora-006 belongs to another session; don't touch.
+WHERE: verify first — `git log --oneline -12 main` · `git branch --no-merged main` · `git worktree list` · `git status --short`.
+NEXT: founder OK → merge `docs/change-7-company-plan-brief` into main (`--no-ff`), push, delete branch + worktree. Then paste the brief's TL;DR to the 006 session: no company plan in the 006 spec; renumber company network (007 is taken) to the next free number; keep both sides on brief §5 at 006 merge. Company-network spec (`/speckit-specify`) only after 006 merges.
+READ FIRST: `Docs/briefs/change-7-company-plan.md` · `goora-status` top entry · `GOORA_PROFIT_CHANGES.md` §7, §10.3 (untracked, main checkout).
+SCOPE: docs only this step. Rider-side company plan already exists (`PlanType.company`, work-email verify sheet, fee-free via `direct_pay`). Missing: company sign-up, roster, invoice, leaving rule, aggregated dashboard, HR statement + consent.
+FIT: Haiku for the merge; Opus for the company-network spec + clarify.
+ALSO OPEN (founder): company price (brief 75 vs model 99) · bill enrolled vs active · minimum seats (20?) · contract length (annual?) · one-off seats covered? · HR statement v1 or later · driver abuse of "ماستلمتش" · lawyer answers (CBE licence, Law 87/2018 fee, pay-later balance) · real InstaPay/Fawry/wallet/card providers · existing subscribers 129/1,290 until renewal (30-day notice job not built) · device walks for 007/008 screens not done.
+BLOCKED, don't re-ask: push only with the founder's OK · emulator only, booted via `D:\Company\99-Ops\start-emulator.ps1` (adb at `%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe`).
+
+---
+## Lane C — company network spec (010), 2026-10-19
+/goal Goora LANE C done: specs/010-company-network (spec, clarify, plan, research, data-model, contracts, quickstart, tasks T001–T054, analyzed) on branch `spec/company-network` (worktree D:/Company/80-Worktrees/Goora-company), docs only, NOT pushed, NOT merged.
+WHERE: verify — `git log --oneline -8 spec/company-network` · `git worktree list`.
+NEXT: founder answers Q1–Q11 (table at the top of specs/010-company-network/spec.md); then founder OK → push branch / merge docs. Implementation (P1 coverage spike first) only after 006 merges.
+READ FIRST: specs/010-company-network/spec.md "Open founder questions" · research.md R0 (lawyer), R2 (coverage risk) · tasks.md analyze note.
+SCOPE: implementation branch `010-company-network` off main after 006; P1–P2 Opus, P3–P9 Sonnet, one phase per session.
+FIT: Opus for P1 + P2. EST: P1 ~60–90 min.
+ALSO OPEN: Q1 price 99 vs 75 · Q2 enrolled peak/day · Q3 minimum 20 · Q4 annual · Q5 one-off seats covered · Q6 HR statement P3 · Q7 disputed shares excluded · Q8 lawyer/ETA/VAT/PDPL · Q9 in-app HR area · Q10 due+15, grace 7 · Q11 pause sub, no trial after leaving. Goora bank details for invoices.
+BLOCKED, don't re-ask: implementation waits for 006 merge · push only with founder OK · brief/constitution amend (T001) needs founder OK.
+
+---
+## Lane B — 010 company network core (new files only), 2026-10-20
+/goal Goora LANE B done: 010 T002 + P2 (T008–T012) + P3 (T013–T016) on branch `010-company-network` (worktree D:/Company/80-Worktrees/Goora-010, cut from `spec/company-network` @ 7c15d40), 3 code commits, NOT pushed, NOT merged. Gates on the branch: analyze 0 · flutter 1305 (was 1208, +97 company tests) · node 264 (was 214, +50).
+WHERE: verify — `git log --oneline spec/company-network..010-company-network` · `git diff --name-only spec/company-network...010-company-network` (new files + tasks.md/research.md/NEXT_GOAL.md only).
+NEXT: after 006 merges into main → rebase `010-company-network` onto main (new files, so only tasks.md/research.md/NEXT_GOAL.md can conflict: keep both), re-run gates, then P1 T003–T007 (coverage windows on `Plan`, `PricingMode.of(now)`, marketplace booking on `coversTrip`) — riskiest, Opus. Then T017–T021 seams.
+READ FIRST: specs/010-company-network/research.md "Lane B notes" (defaults table, 15 choices, what waits for 006) · tasks.md (ticks + "waits for 006 merge" notes) · contracts/repositories-and-navigation.md § Seams.
+SCOPE: P1 + seams edit existing wallet/marketplace/trust/notice/settings files — only after 006 is in main. Could run now, new files only: P7 domain half T041–T043 (`company_dashboard.dart` aggregator + tests; needs a citable CO₂ factor and the SZ ↔ SV km first, R7).
+FIT: Opus for P1. EST: 60–90 min. Sonnet for T017–T021 and for T041–T043.
+ALSO OPEN (founder): Q1–Q11 (spec top table; code uses each default, all numbers in `CompanyTerms`/`CompanyRules`) · seed 12 vs 24 employees (12 chosen, R10/F3) · Goora bank details for invoices (`CompanyTerms.bankDetails` placeholder) · push this branch?
+BLOCKED, don't re-ask: no edits to existing files until 006 merges · push only with founder OK · T001 brief/constitution amend needs founder OK · lawyer answers R0 (flags stay off).
+
+---
+## Lane A — 010 P1 + P3 seams, 2026-10-20 #2 (rebased on main 453e5bd)
+/goal Goora LANE A done: 010 P1 (T003–T007) + P3 seams (T017–T019, T021; T020 copy only) on `010-company-network` @ `3c3a1fe` (worktree D:/Company/80-Worktrees/Goora-010, rebased onto main 453e5bd, NOT pushed, NOT merged). Gates: analyze 0 · flutter 1484 (+27 on the 1457 baseline) · node 276.
+WHERE: verify — `git -C D:/Company/80-Worktrees/Goora-010 log --oneline main..010-company-network` · `git worktree list`.
+NEXT: round end (merge order C → B → A): rebase `010-company-network` onto the new main, keep both on ARB, re-run `flutter gen-l10n` (never hand-merge generated l10n), gates; founder OK → push/merge. Then P4 (T022–T030): finish T020 (4 `NoticeKind` values + arms in `daily/presentation/labels.dart` + posts), wire who calls `startCompanyPlan`/`endCompanyPlan` (research "Lane A notes" #6), routes, screens, `rider_wallet.dart` company card.
+READ FIRST: specs/010-company-network/research.md R2 "P1 spike result" + "Lane A notes" · tasks.md P3 notes, P4 · contracts/repositories-and-navigation.md § Seams · goora-stack.
+SCOPE: P4 edits Lane B's files of this round (wallet presentation, daily presentation) — only after Lane B merges.
+FIT: Sonnet + goora-brand for P4 (Opus if the start/end wiring choice is reopened). EST: 2–3 h.
+ALSO OPEN (founder): Q1–Q11 (spec top table; defaults in `CompanyTerms`/`CompanyRules`) · R11 copy review (5 new notice keys) · T001 brief/constitution needs OK.
+BLOCKED, don't re-ask: push/merge only with the founder's OK · emulator only via start-emulator.ps1 · router pay-method guard still day-level (`coversDate`, not this lane's file).

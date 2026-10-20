@@ -1,4 +1,4 @@
-import '../../../core/time/calendar_date.dart';
+import '../../../core/time/wall_time.dart';
 import 'plan.dart';
 
 /// How a rider pays the driver their share — directly, outside Goora (007
@@ -26,13 +26,15 @@ enum PricingMode {
   bool get isFeeFree => this != perTrip;
 
   /// A company plan or a paid-up subscription beats the trial; the trial
-  /// lasts while CashTrialPolicy allows it.
+  /// lasts while CashTrialPolicy allows it. Judged at the exact moment [now]
+  /// (010 research R2): Wallet and Today stop saying "Company" the minute
+  /// someone leaves or their company is suspended, same day.
   static PricingMode of({
     required Plan? plan,
-    required CalendarDate today,
+    required WallTime now,
     required bool trialAvailable,
   }) {
-    if (plan != null && plan.coversDate(today)) return plan.type == PlanType.company ? company : subscribed;
+    if (plan != null && plan.coversTrip(now)) return plan.type == PlanType.company ? company : subscribed;
     if (trialAvailable) return trial;
     return perTrip;
   }

@@ -31,6 +31,16 @@ final class FakeTrustRepository implements TrustRepository {
 
   static const allKeys = [privacyKey, contactsKey, sosKey, docsPendingKey, docsVerifiedKey, riderIdKey];
 
+  /// The seeded employer's mail domain ([DailySeed.company] = Valeo).
+  static const workEmailDomain = 'valeo.com';
+
+  /// The fake verified work address: `<first>@valeo.com` (010 T017). A
+  /// first name with no Latin letters (an Arabic name) gets `employee@`.
+  static String workEmailFor(String firstName) {
+    final local = firstName.toLowerCase().replaceAll(RegExp('[^a-z0-9.]'), '');
+    return '${local.isEmpty ? 'employee' : local}@$workEmailDomain';
+  }
+
   final SharedPreferences _prefs;
   final Profile? Function() _person;
   final Now _now;
@@ -62,6 +72,7 @@ final class FakeTrustRepository implements TrustRepository {
       isWoman: p.gender == Gender.female,
       privacy: PrivacyPreference.values.asNameMap()[_prefs.getString(privacyKey)] ?? PrivacyPreference.verifiedUsers,
       company: workEmail ? DailySeed.company : null,
+      workEmail: workEmail ? workEmailFor(p.firstName) : null,
     );
   }
 

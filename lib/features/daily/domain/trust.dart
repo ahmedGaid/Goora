@@ -34,6 +34,7 @@ final class TrustProfile {
     required this.isWoman,
     required this.privacy,
     this.company,
+    this.workEmail,
     this.compound,
   });
 
@@ -46,6 +47,10 @@ final class TrustProfile {
 
   /// Set only when the work email is verified.
   final String? company;
+
+  /// The verified work address itself (010 T017): the company network reads
+  /// its domain to find the employer. Set only when [company] is.
+  final String? workEmail;
   final String? compound;
 
   PersonFacts get facts => PersonFacts(isWoman: isWoman, company: company, compound: compound);

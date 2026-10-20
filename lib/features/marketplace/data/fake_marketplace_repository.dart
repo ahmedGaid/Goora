@@ -316,10 +316,12 @@ final class FakeMarketplaceRepository implements MarketplaceRepository {
     final w = wallet();
     final data = await w.getWallet(me);
     final plan = await w.getPlan(me);
-    final covered = plan != null && plan.coversDate(now.date);
+    // The fee is taken at the booking moment (010 research R2): one minute
+    // after leaving a company, the seat carries it.
+    final covered = plan != null && plan.coversTrip(now);
     final mode = PricingMode.of(
       plan: plan,
-      today: now.date,
+      now: now,
       trialAvailable: data.cashTrial?.available ?? false,
     );
     return _Rider(

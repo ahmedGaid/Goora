@@ -1,0 +1,1021 @@
+{
+ "coverage": [
+  {
+   "name": "coverage: enrolled before approval starts at approval",
+   "enrolled": [
+    {
+     "from": 14008920,
+     "to": null
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "coverage: enrolled inside a suspension starts when it is paid",
+   "enrolled": [
+    {
+     "from": 14148480,
+     "to": null
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": 14146560
+    },
+    {
+     "from": 14151600,
+     "to": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14151600,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "coverage: suspension cuts an open enrollment in two",
+   "enrolled": [
+    {
+     "from": 14072160,
+     "to": null
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": 14146560
+    },
+    {
+     "from": 14151600,
+     "to": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14072160,
+     "to": 14146560
+    },
+    {
+     "from": 14151600,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "coverage: leave and re-join keep two windows",
+   "enrolled": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "coverage: both open stays open",
+   "enrolled": [
+    {
+     "from": 14072160,
+     "to": null
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14072160,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "coverage: left before approval -> nothing",
+   "enrolled": [
+    {
+     "from": 13980960,
+     "to": 14024160
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ],
+   "expect": []
+  },
+  {
+   "name": "coverage: ended contract closes an open enrollment",
+   "enrolled": [
+    {
+     "from": 14072160,
+     "to": null
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": 14551200
+    }
+   ],
+   "expect": [
+    {
+     "from": 14072160,
+     "to": 14551200
+    }
+   ]
+  },
+  {
+   "name": "coverage: touching windows merge",
+   "enrolled": [
+    {
+     "from": 14071680,
+     "to": 14074560
+    },
+    {
+     "from": 14074560,
+     "to": null
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14071680,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "coverage: no company window -> nothing",
+   "enrolled": [
+    {
+     "from": 14071680,
+     "to": null
+    }
+   ],
+   "companyActive": [],
+   "expect": []
+  },
+  {
+   "name": "coverage: empty window dropped",
+   "enrolled": [
+    {
+     "from": 14071680,
+     "to": 14071680
+    }
+   ],
+   "companyActive": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ],
+   "expect": []
+  }
+ ],
+ "covered": [
+  {
+   "name": "covered: exactly at from",
+   "windows": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ],
+   "minute": 14072160,
+   "expect": true
+  },
+  {
+   "name": "covered: one minute before from",
+   "windows": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ],
+   "minute": 14072159,
+   "expect": false
+  },
+  {
+   "name": "covered: exactly at to",
+   "windows": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ],
+   "minute": 14097180,
+   "expect": false
+  },
+  {
+   "name": "covered: one minute before to",
+   "windows": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ],
+   "minute": 14097179,
+   "expect": true
+  },
+  {
+   "name": "covered: in the gap",
+   "windows": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ],
+   "minute": 14099760,
+   "expect": false
+  },
+  {
+   "name": "covered: open window far ahead",
+   "windows": [
+    {
+     "from": 14072160,
+     "to": 14097180
+    },
+    {
+     "from": 14103900,
+     "to": null
+    }
+   ],
+   "minute": 15779520,
+   "expect": true
+  },
+  {
+   "name": "covered: no windows",
+   "windows": [],
+   "minute": 14081760,
+   "expect": false
+  }
+ ],
+ "peakEnrolled": [
+  {
+   "name": "peak: 12 people all month -> 12",
+   "byPerson": {
+    "e01": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e02": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e03": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e04": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e05": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e06": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e07": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e08": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e09": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e10": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e11": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ],
+    "e12": [
+     {
+      "from": 14046300,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 12
+  },
+  {
+   "name": "peak: leave on the 20th, re-join on the 25th counts once",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14069340,
+      "to": 14096880
+     },
+     {
+      "from": 14103900,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 1
+  },
+  {
+   "name": "peak: non-overlapping halves of the month -> 1",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14068800,
+      "to": 14090400
+     }
+    ],
+    "b": [
+     {
+      "from": 14090400,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 1
+  },
+  {
+   "name": "peak: A leaves 10:00, B joins 14:00 same day -> 2 (day-based)",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14068800,
+      "to": 14085240
+     }
+    ],
+    "b": [
+     {
+      "from": 14085480,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 2
+  },
+  {
+   "name": "peak: nobody -> 0",
+   "byPerson": {},
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 0
+  },
+  {
+   "name": "peak: leaving at 00:00 does not count that day",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14068800,
+      "to": 14084640
+     }
+    ],
+    "b": [
+     {
+      "from": 14085120,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 1
+  },
+  {
+   "name": "peak: enrolled only on the last day counts",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14113439,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 1
+  },
+  {
+   "name": "peak: joined next month does not count",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14113440,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 0
+  },
+  {
+   "name": "peak: left before the month does not count",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14025600,
+      "to": 14068800
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 0
+  },
+  {
+   "name": "peak: empty window does not count",
+   "byPerson": {
+    "a": [
+     {
+      "from": 14075100,
+      "to": 14075100
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 0
+  },
+  {
+   "name": "peak: 34 people -> 34",
+   "byPerson": {
+    "p00": [
+     {
+      "from": 14069340,
+      "to": null
+     }
+    ],
+    "p01": [
+     {
+      "from": 14070780,
+      "to": null
+     }
+    ],
+    "p02": [
+     {
+      "from": 14072220,
+      "to": null
+     }
+    ],
+    "p03": [
+     {
+      "from": 14073660,
+      "to": null
+     }
+    ],
+    "p04": [
+     {
+      "from": 14075100,
+      "to": null
+     }
+    ],
+    "p05": [
+     {
+      "from": 14076540,
+      "to": null
+     }
+    ],
+    "p06": [
+     {
+      "from": 14077980,
+      "to": null
+     }
+    ],
+    "p07": [
+     {
+      "from": 14079420,
+      "to": null
+     }
+    ],
+    "p08": [
+     {
+      "from": 14080860,
+      "to": null
+     }
+    ],
+    "p09": [
+     {
+      "from": 14082300,
+      "to": null
+     }
+    ],
+    "p10": [
+     {
+      "from": 14083740,
+      "to": null
+     }
+    ],
+    "p11": [
+     {
+      "from": 14085180,
+      "to": null
+     }
+    ],
+    "p12": [
+     {
+      "from": 14086620,
+      "to": null
+     }
+    ],
+    "p13": [
+     {
+      "from": 14088060,
+      "to": null
+     }
+    ],
+    "p14": [
+     {
+      "from": 14089500,
+      "to": null
+     }
+    ],
+    "p15": [
+     {
+      "from": 14090940,
+      "to": null
+     }
+    ],
+    "p16": [
+     {
+      "from": 14092380,
+      "to": null
+     }
+    ],
+    "p17": [
+     {
+      "from": 14093820,
+      "to": null
+     }
+    ],
+    "p18": [
+     {
+      "from": 14095260,
+      "to": null
+     }
+    ],
+    "p19": [
+     {
+      "from": 14096700,
+      "to": null
+     }
+    ],
+    "p20": [
+     {
+      "from": 14098140,
+      "to": null
+     }
+    ],
+    "p21": [
+     {
+      "from": 14099580,
+      "to": null
+     }
+    ],
+    "p22": [
+     {
+      "from": 14101020,
+      "to": null
+     }
+    ],
+    "p23": [
+     {
+      "from": 14102460,
+      "to": null
+     }
+    ],
+    "p24": [
+     {
+      "from": 14103900,
+      "to": null
+     }
+    ],
+    "p25": [
+     {
+      "from": 14105340,
+      "to": null
+     }
+    ],
+    "p26": [
+     {
+      "from": 14106780,
+      "to": null
+     }
+    ],
+    "p27": [
+     {
+      "from": 14108220,
+      "to": null
+     }
+    ],
+    "p28": [
+     {
+      "from": 14069340,
+      "to": null
+     }
+    ],
+    "p29": [
+     {
+      "from": 14070780,
+      "to": null
+     }
+    ],
+    "p30": [
+     {
+      "from": 14072220,
+      "to": null
+     }
+    ],
+    "p31": [
+     {
+      "from": 14073660,
+      "to": null
+     }
+    ],
+    "p32": [
+     {
+      "from": 14075100,
+      "to": null
+     }
+    ],
+    "p33": [
+     {
+      "from": 14076540,
+      "to": null
+     }
+    ]
+   },
+   "monthFromDay": 9770,
+   "monthToDay": 9801,
+   "expect": 34
+  }
+ ],
+ "billing": [
+  {
+   "name": "billing: 12 enrolled, minimum 20 -> 20 x 99",
+   "peak": 12,
+   "minimumSeats": 20,
+   "pricePerSeat": 99,
+   "billedSeats": 20,
+   "total": 1980
+  },
+  {
+   "name": "billing: 34 enrolled, minimum 20 -> 34 x 99",
+   "peak": 34,
+   "minimumSeats": 20,
+   "pricePerSeat": 99,
+   "billedSeats": 34,
+   "total": 3366
+  },
+  {
+   "name": "billing: nobody enrolled still pays the minimum",
+   "peak": 0,
+   "minimumSeats": 20,
+   "pricePerSeat": 99,
+   "billedSeats": 20,
+   "total": 1980
+  },
+  {
+   "name": "billing: exactly the minimum",
+   "peak": 20,
+   "minimumSeats": 20,
+   "pricePerSeat": 99,
+   "billedSeats": 20,
+   "total": 1980
+  },
+  {
+   "name": "billing: price 75 (Q1 alternative)",
+   "peak": 34,
+   "minimumSeats": 20,
+   "pricePerSeat": 75,
+   "billedSeats": 34,
+   "total": 2550
+  }
+ ],
+ "due": [
+  {
+   "name": "due: issued 1 Nov -> due 16 Nov -> suspended 24 Nov",
+   "issueDay": 9801,
+   "dueDay": 9816,
+   "suspendFromDay": 9824
+  },
+  {
+   "name": "due: issued 1 Dec -> due 16 Dec -> suspended 24 Dec",
+   "issueDay": 9831,
+   "dueDay": 9846,
+   "suspendFromDay": 9854
+  },
+  {
+   "name": "due: issued 1 Feb 2027 -> due 16 Feb -> suspended 24 Feb",
+   "issueDay": 9893,
+   "dueDay": 9908,
+   "suspendFromDay": 9916
+  }
+ ],
+ "activeWindows": [
+  {
+   "name": "active: never overdue stays open",
+   "approvedAt": 14026140,
+   "endedAt": null,
+   "overdue": [],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "active: paid before suspension leaves no gap",
+   "approvedAt": 14026140,
+   "endedAt": null,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": 14127060
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "active: paid exactly at suspension leaves no gap",
+   "approvedAt": 14026140,
+   "endedAt": null,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": 14146560
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "active: paid during suspension closes the gap at paidAt",
+   "approvedAt": 14026140,
+   "endedAt": null,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": 14151600
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": 14146560
+    },
+    {
+     "from": 14151600,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "active: never paid leaves an open gap",
+   "approvedAt": 14026140,
+   "endedAt": null,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": 14146560
+    }
+   ]
+  },
+  {
+   "name": "active: contract ended",
+   "approvedAt": 14026140,
+   "endedAt": 14551200,
+   "overdue": [],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": 14551200
+    }
+   ]
+  },
+  {
+   "name": "active: suspended then ended",
+   "approvedAt": 14026140,
+   "endedAt": 14156640,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": 14146560
+    }
+   ]
+  },
+  {
+   "name": "active: two overdue invoices, one payment each",
+   "approvedAt": 14026140,
+   "endedAt": null,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": 14149980
+    },
+    {
+     "suspendFrom": 14189760,
+     "paidAt": 14196420
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": 14146560
+    },
+    {
+     "from": 14149980,
+     "to": 14189760
+    },
+    {
+     "from": 14196420,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "active: second invoice overdue while the first is still unpaid",
+   "approvedAt": 14026140,
+   "endedAt": null,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": 14203320
+    },
+    {
+     "suspendFrom": 14189760,
+     "paidAt": 14199000
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": 14146560
+    },
+    {
+     "from": 14203320,
+     "to": null
+    }
+   ]
+  },
+  {
+   "name": "active: suspension after the end changes nothing",
+   "approvedAt": 14026140,
+   "endedAt": 14140800,
+   "overdue": [
+    {
+     "suspendFrom": 14146560,
+     "paidAt": null
+    }
+   ],
+   "expect": [
+    {
+     "from": 14026140,
+     "to": 14140800
+    }
+   ]
+  }
+ ],
+ "suppress": [
+  {
+   "name": "suppress: 4 -> fewer than 5",
+   "count": 4,
+   "expect": null
+  },
+  {
+   "name": "suppress: 5 -> 5",
+   "count": 5,
+   "expect": 5
+  },
+  {
+   "name": "suppress: 0 -> fewer than 5",
+   "count": 0,
+   "expect": null
+  },
+  {
+   "name": "suppress: 120 -> 120",
+   "count": 120,
+   "expect": 120
+  }
+ ]
+}

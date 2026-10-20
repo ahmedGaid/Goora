@@ -628,5 +628,10 @@
   "idBack": "Photograph the back",
   "idCaptured": "Captured",
   "idSubmit": "Send for checking",
-  "idPending": "We're checking your ID. You can book as soon as it's confirmed."
+  "idPending": "We're checking your ID. You can book as soon as it's confirmed.",
+  "nCompanyPlanStarted": "Your {company} plan is on: no Goora fee on your trips.",
+  "nCompanyPlanEnded": "Your {company} plan has ended. The usual Goora fee applies to your trips.",
+  "nCompanyPlanPaused": "Your company plan is paused for now; the usual Goora fee applies to your trips.",
+  "nCompanyPlanResumed": "Your company plan is back on: no Goora fee on your trips again.",
+  "nPersonalPlanBack": "Your own plan is back, with {days} days left."
 }

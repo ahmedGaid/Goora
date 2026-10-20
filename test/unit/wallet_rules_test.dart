@@ -95,8 +95,8 @@ void main() {
     final today = CalendarDate(2026, 10, 8);
 
     test('fee-free while the trial allows it, then per trip (007 R6)', () {
-      expect(PricingMode.of(plan: null, today: today, trialAvailable: true), PricingMode.trial);
-      expect(PricingMode.of(plan: null, today: today, trialAvailable: false), PricingMode.perTrip);
+      expect(PricingMode.of(plan: null, now: _midnight(today), trialAvailable: true), PricingMode.trial);
+      expect(PricingMode.of(plan: null, now: _midnight(today), trialAvailable: false), PricingMode.perTrip);
     });
 
     test('a paid-up plan beats the trial', () {
@@ -108,9 +108,9 @@ void main() {
         startDate: _midnight(today),
         untilDate: today.addMonths(12),
       );
-      expect(PricingMode.of(plan: sub, today: today, trialAvailable: true), PricingMode.subscribed);
+      expect(PricingMode.of(plan: sub, now: _midnight(today), trialAvailable: true), PricingMode.subscribed);
       const company = Plan(personId: 'me', type: PlanType.company, status: PlanStatus.active, price: 0);
-      expect(PricingMode.of(plan: company, today: today, trialAvailable: false), PricingMode.company);
+      expect(PricingMode.of(plan: company, now: _midnight(today), trialAvailable: false), PricingMode.company);
     });
 
     test('only per trip pays a fee', () {

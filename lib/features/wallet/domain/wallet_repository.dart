@@ -1,4 +1,5 @@
 import '../../../core/time/calendar_date.dart';
+import '../../../core/time/wall_time.dart';
 import 'cash_mark.dart';
 import 'payment_method.dart';
 import 'payment_provider.dart';
@@ -21,6 +22,20 @@ abstract interface class WalletRepository {
 
   /// Takes effect next billing date (no pro-rating).
   Future<Plan> changePlan(String personId, PlanType newType);
+
+  /// 010 research R8 — called by the company network when [personId]
+  /// enrolls at [now]: the company plan replaces a personal one, whose paid
+  /// days left are paused; no fee-free trial from now on (Q11 default).
+  /// Trips already taken keep the price they had.
+  Future<void> startCompanyPlan(String personId, WallTime now);
+
+  /// 010 research R8 — when [personId] leaves (any path) at [now]: the
+  /// paused plan comes back with its days counted from [now]'s date, else
+  /// they pay per trip. Trips taken while covered stay fee-free.
+  Future<void> endCompanyPlan(String personId, WallTime now);
+
+  /// The personal plan paused by [startCompanyPlan], if any.
+  Future<PausedPlan?> pausedPlan(String personId);
 
   /// How the rider pays the driver (cash / InstaPay).
   Future<PaymentMethod?> getMethod(String personId);

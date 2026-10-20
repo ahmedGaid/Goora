@@ -95,7 +95,7 @@ final class WalletRepositoryProvider
   }
 }
 
-String _$walletRepositoryHash() => r'bda8b69cabbee44d8704348a0ac10f1a4d413d0d';
+String _$walletRepositoryHash() => r'2c030c0a6585e18ea7bdc16963de0ac255bd1cea';
 
 /// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
 /// passenger's share on this ride and where it stands; null hides the
@@ -402,4 +402,4 @@ final class RiderPricingProvider
   }
 }
 
-String _$riderPricingHash() => r'db6afa92c7b69b75146d6ad945e3e5c16a1ea8f4';
+String _$riderPricingHash() => r'4e0c2cbec05ced3e5f7d5dca451df7cd1f5a9667';

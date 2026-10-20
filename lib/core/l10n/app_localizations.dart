@@ -3788,6 +3788,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.'**
   String get idPending;
+
+  /// No description provided for @nCompanyPlanStarted.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطة {company} شغّالة: مشاويرك من غير رسوم Goora.'**
+  String nCompanyPlanStarted(String company);
+
+  /// No description provided for @nCompanyPlanEnded.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطة {company} خلصت. رسوم Goora على المشوار رجعت عادي.'**
+  String nCompanyPlanEnded(String company);
+
+  /// No description provided for @nCompanyPlanPaused.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطة شركتك متوقفة دلوقتي، رسوم Goora على المشوار رجعت عادي.'**
+  String get nCompanyPlanPaused;
+
+  /// No description provided for @nCompanyPlanResumed.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم Goora تاني.'**
+  String get nCompanyPlanResumed;
+
+  /// No description provided for @nPersonalPlanBack.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراكك رجعلك، وفاضل فيه {days} يوم.'**
+  String nPersonalPlanBack(int days);
 }
 
 class _AppLocalizationsDelegate

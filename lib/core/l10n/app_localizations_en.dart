@@ -2264,4 +2264,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get idPending =>
       'We\'re checking your ID. You can book as soon as it\'s confirmed.';
+
+  @override
+  String nCompanyPlanStarted(String company) {
+    return 'Your $company plan is on: no Goora fee on your trips.';
+  }
+
+  @override
+  String nCompanyPlanEnded(String company) {
+    return 'Your $company plan has ended. The usual Goora fee applies to your trips.';
+  }
+
+  @override
+  String get nCompanyPlanPaused =>
+      'Your company plan is paused for now; the usual Goora fee applies to your trips.';
+
+  @override
+  String get nCompanyPlanResumed =>
+      'Your company plan is back on: no Goora fee on your trips again.';
+
+  @override
+  String nPersonalPlanBack(int days) {
+    return 'Your own plan is back, with $days days left.';
+  }
 }
