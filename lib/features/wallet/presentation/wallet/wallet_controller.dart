@@ -124,7 +124,8 @@ class WalletController extends _$WalletController {
   Future<WalletView> build() async {
     final daily = ref.watch(dailyCommuteRepositoryProvider);
     final meId = daily.meId;
-    final today = ref.watch(nowProvider)().date;
+    final now = ref.watch(nowProvider)();
+    final today = now.date;
     final repo = ref.watch(walletRepositoryProvider);
     final wallet = await repo.getWallet(meId);
     final group = await daily.myGroup();
@@ -137,7 +138,7 @@ class WalletController extends _$WalletController {
       plan: plan,
       mode: PricingMode.of(
         plan: plan,
-        today: today,
+        now: now,
         trialAvailable: wallet.cashTrial?.available ?? false,
       ),
       method: wallet.method ?? PaymentMethod.cash,

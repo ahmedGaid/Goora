@@ -68,7 +68,7 @@ Future<PricingMode> riderPricing(Ref ref) async {
   final wallet = await repo.getWallet(meId);
   return PricingMode.of(
     plan: await repo.getPlan(meId),
-    today: ref.read(nowProvider)().date,
+    now: ref.read(nowProvider)(),
     trialAvailable: wallet.cashTrial?.available ?? false,
   );
 }

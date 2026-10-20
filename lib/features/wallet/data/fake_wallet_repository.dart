@@ -8,6 +8,7 @@ import '../../../core/time/wall_time.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart' show Leg;
 import '../../commute/domain/group.dart';
+import '../../company/domain/company_rules.dart';
 import '../../daily/domain/absence.dart';
 import '../../daily/domain/charge.dart';
 import '../../daily/domain/check_in.dart';
@@ -46,6 +47,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     required this._now,
     required this._provider,
     this._oneOffs = _noOneOffs,
+    this._companyCoverage = _noCompanyCoverage,
   });
 
   static const planKey = 'wallet.plan';
@@ -82,6 +84,15 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
 
   static Future<List<DoneOneOff>> _noOneOffs() async => const [];
 
+  /// The company network's fee-free windows for a person (010 research R2,
+  /// contracts § Seams); null = the network does not know them, so a stored
+  /// company plan keeps its pre-010 meaning (covered from its start). A
+  /// function read when called, never a provider watched while building, so
+  /// wallet and company cannot form a provider cycle (005 lesson).
+  final Future<List<Window>?> Function(String personId) _companyCoverage;
+
+  static Future<List<Window>?> _noCompanyCoverage(String _) async => null;
+
   /// Settings → "Reset demo data" clears every wallet key.
   static Future<void> clearAll(SharedPreferences prefs) async {
     for (final key in prefs.getKeys().where((k) => k.startsWith('wallet.')).toList()) {
@@ -96,7 +107,10 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
     final raw = _prefs.getString(planKey);
     if (raw == null) return null;
     final plan = Plan.fromJson((jsonDecode(raw) as Map).cast<String, Object?>());
-    return plan.personId == personId ? plan : null;
+    if (plan.personId != personId) return null;
+    if (plan.type != PlanType.company) return plan;
+    final windows = await _companyCoverage(personId);
+    return windows == null ? plan : plan.withCoverage(windows);
   }
 
   @override

@@ -64,6 +64,39 @@ Spike (task T003): list the tests that assume "company covers forever" (grep `Pl
 under `test/`) and run them against windows = `[enrolledAt, ∞)` — must stay green before any
 leaving/suspension logic lands.
 
+### P1 spike result — Lane A, 2026-10-20 (T003–T007)
+Grep `PlanType.company` / `PricingMode.company` under `test/` (after the 006 merge). Every hit stores
+or builds a company `Plan` **without coverage windows**, so each keeps today's meaning ("covered from
+`startDate`, forever") through the null-coverage path and needed no change:
+- `test/helpers/daily_fakes.dart` (`memberPrefs(withPlan: true)` seeds a company plan for every
+  pre-004 rider test) → all widget/golden tests that use it.
+- `test/widget/empty_seats_test.dart`, `test/widget/top_up_sheet_test.dart`,
+  `test/widget/plan_screen_test.dart` (subscribes Company through the old verify sheet).
+- `test/unit/fake_marketplace_repository_test.dart` (two `company: true` riders),
+  `test/unit/fake_wallet_repository_test.dart` (`subscribe(PlanType.company)`),
+  `test/unit/seat_price_test.dart` (mode only), `test/unit/wallet_rules_test.dart`.
+
+The one change to an existing test: `wallet_rules_test.dart` "PricingMode.of" group, 4 calls
+`today: today` → `now: _midnight(today)` (the signature now takes the exact moment). Same
+expectations.
+
+What changed in code:
+- `Plan.coverage` (`List<Window>?`, never in JSON) + `withCoverage`. Company with coverage:
+  `coversTrip(at)` = `CompanyRules.covered(coverage, minuteOf(at))`; `coversDate(d)` = a non-empty
+  window overlaps day `d`. Without coverage, or any other plan type: unchanged.
+- `PricingMode.of(plan, now, trialAvailable)` — `today` replaced by `now`, asks `coversTrip(now)`
+  for every plan type. For Monthly/Yearly this equals the old `coversDate(today)` whenever `now` is
+  at or after the subscribe moment, which is always true outside a rewound demo clock. Callers:
+  `riderPricing` (wallet providers), `WalletController.build`, marketplace `_rider`.
+- Marketplace booking: `coversDate(now.date)` → `coversTrip(now)` (`hasArrangement` uses it too).
+- `coversDate` is left only in the router's pay-method guard and `WalletView.lapsed` (Monthly only).
+- `FakeWalletRepository(companyCoverage:)` function seam: a stored company plan comes back from
+  `getPlan` with the windows attached; the seam returns null by default (tests, old data) so the
+  plan keeps its pre-010 meaning. Wiring it to the company network is T019.
+
+Rejected: keeping `today` and adding an optional `now` (two ways to ask one question; a caller
+that forgets `now` silently keeps "company covers all day").
+
 ## R3 — Money rules and the twin
 
 Rules that decide money (spec FR-029) live in pure Dart `lib/features/company/domain/company_rules.dart`

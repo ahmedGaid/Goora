@@ -1,6 +1,8 @@
 import '../../../core/time/calendar_date.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/domain/clock.dart';
+import '../../company/domain/company_rules.dart';
+import 'direct_pay.dart';
 
 enum PlanType { monthly, yearly, company }
 
@@ -17,6 +19,7 @@ final class Plan {
     required this.price,
     this.startDate,
     this.untilDate,
+    this.coverage,
   }) : assert(
           type != PlanType.company || (price == 0 && untilDate == null),
           'Company never bills the rider',
@@ -39,11 +42,37 @@ final class Plan {
   /// Paid-until; null for Company.
   final CalendarDate? untilDate;
 
+  /// Company only (010 research R2): the fee-free windows, attached on read
+  /// from the company network and never stored. Null = not known (a plan
+  /// stored before 010, or a test): covered from [startDate] on, as before.
+  final List<Window>? coverage;
+
+  /// This plan with [windows] attached; every other field unchanged.
+  Plan withCoverage(List<Window> windows) => Plan(
+        personId: personId,
+        type: type,
+        status: status,
+        price: price,
+        startDate: startDate,
+        untilDate: untilDate,
+        coverage: windows,
+      );
+
+  static const _minutesPerDay = 24 * 60;
+
   /// Whether a trip happening "today" is fee-free under this plan — for
   /// forward-looking pricing (the Today tile, the pay-method screen), where
   /// day granularity is right: once subscribed, every trip for the rest of
   /// today is covered.
+  ///
+  /// A company plan with [coverage] covers a day any window overlaps (only
+  /// the router's pay-method guard asks this; prices ask [coversTrip]).
   bool coversDate(CalendarDate date) {
+    if (type == PlanType.company && coverage != null) {
+      final from = SharePolicy.dayOf(date) * _minutesPerDay;
+      final to = from + _minutesPerDay;
+      return coverage!.any((w) => w.from < to && (w.to == null || (w.to! > from && w.to! > w.from)));
+    }
     if (startDate != null && date.isBefore(startDate!.date)) return false;
     if (type == PlanType.company) return true;
     return status == PlanStatus.active && untilDate != null && !date.isAfter(untilDate!);
@@ -52,8 +81,12 @@ final class Plan {
   /// Whether a trip that settled at [at] was already fee-free — for deriving
   /// past wallet activity, where a trip settled before the exact subscribe
   /// moment must keep the fee it was charged, even if that was earlier the
-  /// same day.
+  /// same day. A company plan with [coverage] covers exactly its windows
+  /// (enrolled → left, minus suspensions).
   bool coversTrip(WallTime at) {
+    if (type == PlanType.company && coverage != null) {
+      return CompanyRules.covered(coverage!, SharePolicy.minuteOf(at));
+    }
     if (startDate != null && at.isBefore(startDate!)) return false;
     if (type == PlanType.company) return true;
     return status == PlanStatus.active && untilDate != null && !at.date.isAfter(untilDate!);
