@@ -554,48 +554,6 @@ abstract class AppLocalizations {
   /// **'سحب'**
   String get actWithdrawal;
 
-  /// No description provided for @recoveredTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'اتجمّع الأسبوع ده'**
-  String get recoveredTitle;
-
-  /// No description provided for @payoutNote.
-  ///
-  /// In ar, this message translates to:
-  /// **'بيتصرف كل خميس · من غير أي رسوم عليك'**
-  String get payoutNote;
-
-  /// No description provided for @withdraw.
-  ///
-  /// In ar, this message translates to:
-  /// **'اسحب على InstaPay'**
-  String get withdraw;
-
-  /// No description provided for @withdrawSheetTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'اسحب على InstaPay'**
-  String get withdrawSheetTitle;
-
-  /// No description provided for @withdrawConfirm.
-  ///
-  /// In ar, this message translates to:
-  /// **'أكّد السحب'**
-  String get withdrawConfirm;
-
-  /// No description provided for @withdrawFailTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'السحب ملحقش يتم'**
-  String get withdrawFailTitle;
-
-  /// No description provided for @withdrawFailBody.
-  ///
-  /// In ar, this message translates to:
-  /// **'مفيش حاجة تحرّكت — جرّب تاني.'**
-  String get withdrawFailBody;
-
   /// No description provided for @driverBreakdownTitle.
   ///
   /// In ar, this message translates to:
@@ -3638,6 +3596,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'احفظ'**
   String get instapaySave;
+
+  /// No description provided for @instapaySaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتحفظ'**
+  String get instapaySaved;
 
   /// No description provided for @instapayOfDriver.
   ///

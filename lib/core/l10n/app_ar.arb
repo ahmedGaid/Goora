@@ -97,13 +97,6 @@
     }
   },
   "actWithdrawal": "سحب",
-  "recoveredTitle": "اتجمّع الأسبوع ده",
-  "payoutNote": "بيتصرف كل خميس · من غير أي رسوم عليك",
-  "withdraw": "اسحب على InstaPay",
-  "withdrawSheetTitle": "اسحب على InstaPay",
-  "withdrawConfirm": "أكّد السحب",
-  "withdrawFailTitle": "السحب ملحقش يتم",
-  "withdrawFailBody": "مفيش حاجة تحرّكت — جرّب تاني.",
   "driverBreakdownTitle": "تكلفة رحلتك",
   "driverBreakdownCost": "تكلفة الرحلة",
   "driverBreakdownReceived": "بتستلم من الركاب",
@@ -1569,6 +1562,7 @@
   "instapayHandleLabel": "حساب InstaPay بتاعك",
   "instapayHandleHint": "الركاب هيشوفوه بس بعد ما الحجز يتأكد.",
   "instapaySave": "احفظ",
+  "instapaySaved": "اتحفظ",
   "instapayOfDriver": "InstaPay بتاع {name}: {handle}",
   "@instapayOfDriver": {
     "placeholders": {

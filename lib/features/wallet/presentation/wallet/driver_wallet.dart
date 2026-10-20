@@ -7,7 +7,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/goora_card.dart';
 import '../../../../core/widgets/goora_ghost_button.dart';
-import '../../../../core/widgets/goora_primary_button.dart';
 import '../../../../core/widgets/goora_status_chip.dart';
 import '../../../../core/widgets/goora_text_field.dart';
 import '../../../daily/data/providers.dart';
@@ -18,13 +17,11 @@ import '../../domain/share.dart';
 import '../labels.dart';
 import 'activity_row.dart';
 import 'wallet_controller.dart';
-import 'withdraw_sheet.dart';
 
 /// A driver's side of direct pay (007 US4): what passengers paid them
 /// directly this month, each passenger's share and where it stands, their
 /// InstaPay handle, and the trip-cost breakdown. Goora holds none of the
-/// driver's money, so there is no balance to withdraw — except a 004 balance
-/// left from before, which can still be taken out.
+/// driver's money, so there is nothing to withdraw.
 class DriverWallet extends StatelessWidget {
   const DriverWallet({super.key, required this.view});
 
@@ -33,7 +30,6 @@ class DriverWallet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final legacy = view.wallet.balance;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -47,15 +43,6 @@ class DriverWallet extends StatelessWidget {
               Text(l10n.egpAmount(view.wallet.cashReceived), style: AppTypography.display.copyWith(color: AppColors.white)),
               const SizedBox(height: AppSpacing.xxs),
               Text(l10n.cashReceivedNote, style: AppTypography.bodySmall.copyWith(color: AppColors.onDarkBody)),
-              if (legacy > 0) ...[
-                const SizedBox(height: AppSpacing.gap),
-                GooraPrimaryButton(
-                  key: const Key('withdraw'),
-                  label: l10n.withdraw,
-                  variant: GooraPrimaryVariant.onDark,
-                  onPressed: () => showWithdrawSheet(context, amount: legacy),
-                ),
-              ],
             ],
           ),
         ),
@@ -164,6 +151,7 @@ class InstapayHandleCard extends ConsumerStatefulWidget {
 class _InstapayHandleCardState extends ConsumerState<InstapayHandleCard> {
   final _controller = TextEditingController();
   bool _loaded = false;
+  bool _saved = false;
 
   @override
   void initState() {
@@ -185,6 +173,7 @@ class _InstapayHandleCardState extends ConsumerState<InstapayHandleCard> {
     final meId = ref.read(dailyCommuteRepositoryProvider).meId;
     await ref.read(walletRepositoryProvider).setInstapayHandle(meId, _controller.text);
     await _load();
+    if (mounted) setState(() => _saved = true);
   }
 
   @override
@@ -216,6 +205,14 @@ class _InstapayHandleCardState extends ConsumerState<InstapayHandleCard> {
             label: l10n.instapaySave,
             onPressed: _loaded ? _save : null,
           ),
+          if (_saved) ...[
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              l10n.instapaySaved,
+              key: const Key('instapay-saved'),
+              style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+            ),
+          ],
         ],
       ),
     );

@@ -255,27 +255,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actWithdrawal => 'Withdrawal';
 
   @override
-  String get recoveredTitle => 'Recovered this week';
-
-  @override
-  String get payoutNote => 'Paid out every Thursday · no fees taken from you';
-
-  @override
-  String get withdraw => 'Withdraw to InstaPay';
-
-  @override
-  String get withdrawSheetTitle => 'Withdraw to InstaPay';
-
-  @override
-  String get withdrawConfirm => 'Confirm withdrawal';
-
-  @override
-  String get withdrawFailTitle => 'Withdrawal didn\'t go through';
-
-  @override
-  String get withdrawFailBody => 'Nothing moved — try again.';
-
-  @override
   String get driverBreakdownTitle => 'Your trip cost';
 
   @override
@@ -2157,6 +2136,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get instapaySave => 'Save';
+
+  @override
+  String get instapaySaved => 'Saved';
 
   @override
   String instapayOfDriver(String name, String handle) {
