@@ -57,7 +57,7 @@ extension WalletLabels on AppLocalizations {
     if (entry.notCollected) return notChargedCash;
     return switch (entry.kind) {
       ActivityKind.trip || ActivityKind.seatBooked =>
-        entry.fee > 0 ? priceWithFee(entry.toDriver, entry.fee) : breakdownNoFee,
+        entry.fee > 0 ? priceWithFee(entry.toDriver, entry.fee) : priceNoFee(entry.toDriver),
       ActivityKind.cashTrip => cashPaidLine(entry.shareToDriver > 0 ? entry.shareToDriver : contribution),
       ActivityKind.bundleTrip => cashPaidLine(entry.shareToDriver),
       ActivityKind.lateCancelCharge || ActivityKind.tripDeduction when entry.shareToDriver > 0 =>

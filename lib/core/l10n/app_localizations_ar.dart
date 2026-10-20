@@ -157,9 +157,9 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'بيغطي حوالي $count رحلات',
-      one: 'بيغطي حوالي رحلة واحدة',
-      zero: 'لسه مش بيغطي أي رحلة',
+      other: 'بيغطي حوالي $count مشاوير',
+      one: 'بيغطي حوالي مشوار واحد',
+      zero: 'بيدفع رسوم جورة بس، مش نصيب السواق',
     );
     return '$_temp0';
   }
@@ -217,7 +217,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePlanConfirm => 'أكّد التغيير';
 
   @override
-  String get breakdownTitle => 'بتدفع كام في الرحلة';
+  String get breakdownTitle => 'بتدفع كام في المشوار';
 
   @override
   String get breakdownFuel => 'البنزين والرسوم';
@@ -1685,6 +1685,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planPerTripNoFeeLine => 'من غير رسوم خدمة على مشاويرك';
 
   @override
+  String planBundleLine(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'الباقة بتغطي رسوم مشاويرك — فاضل $count مشوار',
+      few: 'الباقة بتغطي رسوم مشاويرك — فاضل $count مشاوير',
+      two: 'الباقة بتغطي رسوم مشاويرك — فاضل مشوارين',
+      one: 'الباقة بتغطي رسوم مشوارك — فاضل مشوار واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String planSubscribedLine(String date) {
     return 'مشترك لحد $date · من غير رسوم';
   }
@@ -1723,7 +1736,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String feeSavings(int fees) {
-    return 'دفعت $fees ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.';
+    return 'دفعت $fees ج رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.';
   }
 
   @override
@@ -1800,7 +1813,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get seatRule =>
-      'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل ٩ بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.';
+      'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل 9 بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.';
 
   @override
   String get nothingFits => 'مفيش حاجة على ميعادك؟ انشر مشوارك';
@@ -2167,7 +2180,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String feeOwed(int amount) {
-    return 'عليك $amount ج.م رسوم لجورة';
+    return 'عليك $amount ج رسوم لجورة';
   }
 
   @override

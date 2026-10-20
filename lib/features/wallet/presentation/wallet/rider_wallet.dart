@@ -36,12 +36,17 @@ class RiderWallet extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final cash = view.wallet.cashTrial;
     final cashEnded = cash?.endedBy;
+    // 008: while a bundle has trips left, Goora's fee is covered — no banner or
+    // line may say a fee is due (walk S-3).
+    final bundleLeft = view.subscribed ? 0 : view.wallet.bundleTripsLeft;
+    final bundleCovers = bundleLeft > 0;
+    final fee = bundleCovers ? 0 : view.fee;
     final gap = <Widget>[const SizedBox(height: AppSpacing.gap)];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const ShareDebtBanners(),
-        _PlanCard(view: view),
+        _PlanCard(view: view, bundleLeft: bundleLeft),
         if (cash != null && cash.available) ...[
           ...gap,
           _CashTrialCard(tripsLeft: cash.tripsLeft),
@@ -57,26 +62,25 @@ class RiderWallet extends StatelessWidget {
             ),
           ],
         ],
-        if (cashEnded != null && !view.subscribed) ...[
+        if (cashEnded != null && !view.subscribed && !bundleCovers) ...[
           ...gap,
           GooraBanner(
             key: const Key('cash-ended'),
             kind: GooraBannerKind.info,
             title: l10n.cashTripsLeft(0),
-            body: cashEnded == CashTrialEnd.strikes ? l10n.cashOff : l10n.cashEnded,
+            body: cashEnded == CashTrialEnd.strikes
+                ? l10n.cashOff
+                : l10n.cashEnded,
             actionLabel: l10n.subscribe,
             onAction: () => context.push(Routes.plan),
           ),
         ],
-        if (view.owesGoora) ...[
-          ...gap,
-          const FeeOwedBanner(),
-        ],
+        if (view.owesGoora) ...[...gap, const FeeOwedBanner()],
         if (!view.subscribed) ...[
           ...gap,
           _BundleCard(tripsLeft: view.wallet.bundleTripsLeft),
         ],
-        if (view.showSavings) ...[
+        if (view.showSavings && !bundleCovers) ...[
           ...gap,
           GooraBanner(
             key: const Key('fee-savings'),
@@ -100,17 +104,39 @@ class RiderWallet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.howPayTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
+              Text(
+                l10n.howPayTitle,
+                style: AppTypography.section.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
               const SizedBox(height: AppSpacing.sm),
-              for (final rule in [l10n.howPayRule1, l10n.howPayRule2, l10n.howPayRule3])
+              for (final rule in [
+                l10n.howPayRule1,
+                l10n.howPayRule2,
+                l10n.howPayRule3,
+              ])
                 Padding(
-                  padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.xs),
+                  padding: const EdgeInsetsDirectional.only(
+                    bottom: AppSpacing.xs,
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(GooraIcons.check, size: 18, color: AppColors.greenText),
+                      const Icon(
+                        GooraIcons.check,
+                        size: 18,
+                        color: AppColors.greenText,
+                      ),
                       const SizedBox(width: AppSpacing.sm),
-                      Expanded(child: Text(rule, style: AppTypography.body.copyWith(color: AppColors.textBody))),
+                      Expanded(
+                        child: Text(
+                          rule,
+                          style: AppTypography.body.copyWith(
+                            color: AppColors.textBody,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -118,14 +144,27 @@ class RiderWallet extends StatelessWidget {
           ),
         ),
         ...gap,
-        Text(l10n.activityTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
+        Text(
+          l10n.activityTitle,
+          style: AppTypography.section.copyWith(color: AppColors.textPrimary),
+        ),
         const SizedBox(height: AppSpacing.sm),
         if (view.wallet.activity.isEmpty)
-          GooraCard(child: Text(l10n.activityEmpty, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)))
+          GooraCard(
+            child: Text(
+              l10n.activityEmpty,
+              style: AppTypography.bodySmall.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          )
         else
           GooraCard.rows(
             key: const Key('activity-list'),
-            rows: [for (final e in view.wallet.activity) ActivityRow(entry: e, contribution: view.legShare)],
+            rows: [
+              for (final e in view.wallet.activity)
+                ActivityRow(entry: e, contribution: view.legShare),
+            ],
           ),
         ...gap,
         GooraCard(
@@ -133,18 +172,35 @@ class RiderWallet extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.breakdownTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
+              Text(
+                l10n.breakdownTitle,
+                style: AppTypography.section.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
               const SizedBox(height: AppSpacing.sm),
-              _BreakdownRow(label: l10n.breakdownShare, value: l10n.egpAmount(view.share)),
+              _BreakdownRow(
+                label: l10n.breakdownShare,
+                value: l10n.egpAmount(view.share),
+              ),
               const SizedBox(height: AppSpacing.xs),
-              view.fee > 0
-                  ? _BreakdownRow(label: l10n.breakdownFee, value: l10n.egpAmount(view.fee))
+              fee > 0
+                  ? _BreakdownRow(
+                      label: l10n.breakdownFee,
+                      value: l10n.egpAmount(fee),
+                    )
                   : _BreakdownRow(label: l10n.breakdownNoFee, value: null),
               const Padding(
-                padding: EdgeInsetsDirectional.symmetric(vertical: AppSpacing.xs),
+                padding: EdgeInsetsDirectional.symmetric(
+                  vertical: AppSpacing.xs,
+                ),
                 child: Divider(height: 1, color: AppColors.divider),
               ),
-              _BreakdownRow(label: l10n.breakdownTotal, value: l10n.egpAmount(view.legTotal), strong: true),
+              _BreakdownRow(
+                label: l10n.breakdownTotal,
+                value: l10n.egpAmount(view.share + fee),
+                strong: true,
+              ),
             ],
           ),
         ),
@@ -155,33 +211,50 @@ class RiderWallet extends StatelessWidget {
 
 /// Pay per trip / Subscribed until … / Company, with Change (v2 US2 AC5).
 class _PlanCard extends StatelessWidget {
-  const _PlanCard({required this.view});
+  const _PlanCard({required this.view, required this.bundleLeft});
 
   final WalletView view;
+
+  /// Bundle trips left; > 0 means the bundle covers Goora's fee right now.
+  final int bundleLeft;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final plan = view.plan;
     final (String title, String line) = switch (view.mode) {
-      PricingMode.company => (l10n.planTypeTitle(PlanType.company), l10n.planCompanyActive),
-      PricingMode.subscribed => (l10n.planTypeTitle(plan!.type), l10n.planSubscribedLine(l10n.shortDate(plan.untilDate!))),
+      PricingMode.company => (
+        l10n.planTypeTitle(PlanType.company),
+        l10n.planCompanyActive,
+      ),
+      PricingMode.subscribed => (
+        l10n.planTypeTitle(plan!.type),
+        l10n.planSubscribedLine(l10n.shortDate(plan.untilDate!)),
+      ),
       PricingMode.trial => (
-          l10n.planPayPerTrip,
-          view.riderSeats < 1
-              ? l10n.priceCash(view.legShare)
-              : l10n.priceLine(SeatPrice.of(view.legShare,
+        l10n.planPayPerTrip,
+        view.riderSeats < 1
+            ? l10n.priceCash(view.legShare)
+            : l10n.priceLine(
+                SeatPrice.of(
+                  view.legShare,
                   tripCost: view.groupTripCost,
                   riderSeats: view.riderSeats,
                   mode: PricingMode.trial,
-                  method: view.method)),
-        ),
+                  method: view.method,
+                ),
+              ),
+      ),
       PricingMode.perTrip => (
-          l10n.planPayPerTrip,
-          view.lapsed
-              ? l10n.planLapsedLine
-              : (view.fee == 0 ? l10n.planPerTripNoFeeLine : l10n.planPerTripLine(view.fee)),
-        ),
+        l10n.planPayPerTrip,
+        view.lapsed
+            ? l10n.planLapsedLine
+            : bundleLeft > 0
+            ? l10n.planBundleLine(bundleLeft)
+            : (view.fee == 0
+                  ? l10n.planPerTripNoFeeLine
+                  : l10n.planPerTripLine(view.fee)),
+      ),
     };
     return GooraCard(
       key: const Key('plan-card'),
@@ -191,9 +264,20 @@ class _PlanCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+                Text(
+                  title,
+                  style: AppTypography.bodyStrong.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.xxs),
-                Text(line, key: const Key('plan-line'), style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+                Text(
+                  line,
+                  key: const Key('plan-line'),
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -202,7 +286,12 @@ class _PlanCard extends StatelessWidget {
             onPressed: () => view.subscribed
                 ? showChangePlanSheet(context, current: plan!.type)
                 : context.push(Routes.plan),
-            child: Text(l10n.planChange, style: AppTypography.bodyStrong.copyWith(color: AppColors.greenText)),
+            child: Text(
+              l10n.planChange,
+              style: AppTypography.bodyStrong.copyWith(
+                color: AppColors.greenText,
+              ),
+            ),
           ),
         ],
       ),
@@ -224,12 +313,19 @@ class _BundleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(l10n.bundleTitle, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+          Text(
+            l10n.bundleTitle,
+            style: AppTypography.bodyStrong.copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
           const SizedBox(height: AppSpacing.xxs),
           Text(
             tripsLeft > 0 ? l10n.bundleLeft(tripsLeft) : l10n.bundleSub,
             key: const Key('bundle-line'),
-            style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary),
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: AppSpacing.sm),
           GooraGhostButton(
@@ -256,9 +352,19 @@ class _CashTrialCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.cashTripsLeft(tripsLeft), style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)),
+          Text(
+            l10n.cashTripsLeft(tripsLeft),
+            style: AppTypography.bodyStrong.copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
           const SizedBox(height: AppSpacing.xxs),
-          Text(l10n.payCashSub, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+          Text(
+            l10n.payCashSub,
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
         ],
       ),
     );
@@ -266,7 +372,11 @@ class _CashTrialCard extends StatelessWidget {
 }
 
 class _BreakdownRow extends StatelessWidget {
-  const _BreakdownRow({required this.label, required this.value, this.strong = false});
+  const _BreakdownRow({
+    required this.label,
+    required this.value,
+    this.strong = false,
+  });
 
   final String label;
   final String? value;
@@ -274,7 +384,8 @@ class _BreakdownRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = (strong ? AppTypography.bodyStrong : AppTypography.body).copyWith(color: AppColors.textPrimary);
+    final style = (strong ? AppTypography.bodyStrong : AppTypography.body)
+        .copyWith(color: AppColors.textPrimary);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

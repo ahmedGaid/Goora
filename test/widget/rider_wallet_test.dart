@@ -423,6 +423,27 @@ void main() {
       expect(find.text('-${l.egpAmount(20)}'), findsNothing);
     });
 
+    testWidgets('[$code] S-3: while a bundle covers trips, no fee banners or fee lines', (tester) async {
+      await _openWallet(tester, code, method: PaymentMethod.cash, extra: _trips(5));
+      expect(find.text(l.cashEnded), findsOneWidget, reason: 'sanity: cash is over, no bundle yet');
+      final buy = find.byKey(const Key('bundle-buy'));
+      await tester.ensureVisible(buy);
+      await tester.tap(buy);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.text(l.bundleLeft(20)), findsWidgets);
+      expect(find.byKey(const Key('cash-ended')), findsNothing);
+      expect(find.text(l.cashEnded), findsNothing);
+      expect(find.byKey(const Key('fee-savings')), findsNothing);
+      expect(find.text(l.planPerTripLine(4)), findsNothing, reason: 'the bundle pays the fee');
+      expect(find.text(l.planBundleLine(20)), findsOneWidget, reason: 'plan card says the bundle covers trips');
+      final breakdown = find.byKey(const Key('breakdown'));
+      await tester.ensureVisible(breakdown);
+      expect(find.descendant(of: breakdown, matching: find.text(l.breakdownNoFee)), findsOneWidget);
+      expect(find.descendant(of: breakdown, matching: find.text(l.egpAmount(40))), findsWidgets);
+    });
+
     testWidgets('[$code] a top-up failure leaves the balance unchanged with an inline retry', (tester) async {
       final c = await _openWallet(
         tester,

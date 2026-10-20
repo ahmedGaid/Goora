@@ -383,7 +383,7 @@ abstract class AppLocalizations {
   /// No description provided for @coversTrips.
   ///
   /// In ar, this message translates to:
-  /// **'{count, plural, =0{لسه مش بيغطي أي رحلة} =1{بيغطي حوالي رحلة واحدة} other{بيغطي حوالي {count} رحلات}}'**
+  /// **'{count, plural, =0{بيدفع رسوم جورة بس، مش نصيب السواق} =1{بيغطي حوالي مشوار واحد} other{بيغطي حوالي {count} مشاوير}}'**
   String coversTrips(int count);
 
   /// No description provided for @planChange.
@@ -485,7 +485,7 @@ abstract class AppLocalizations {
   /// No description provided for @breakdownTitle.
   ///
   /// In ar, this message translates to:
-  /// **'بتدفع كام في الرحلة'**
+  /// **'بتدفع كام في المشوار'**
   String get breakdownTitle;
 
   /// No description provided for @breakdownFuel.
@@ -2829,6 +2829,12 @@ abstract class AppLocalizations {
   /// **'من غير رسوم خدمة على مشاويرك'**
   String get planPerTripNoFeeLine;
 
+  /// No description provided for @planBundleLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{الباقة بتغطي رسوم مشوارك — فاضل مشوار واحد} =2{الباقة بتغطي رسوم مشاويرك — فاضل مشوارين} few{الباقة بتغطي رسوم مشاويرك — فاضل {count} مشاوير} other{الباقة بتغطي رسوم مشاويرك — فاضل {count} مشوار}}'**
+  String planBundleLine(num count);
+
   /// No description provided for @planSubscribedLine.
   ///
   /// In ar, this message translates to:
@@ -2874,7 +2880,7 @@ abstract class AppLocalizations {
   /// No description provided for @feeSavings.
   ///
   /// In ar, this message translates to:
-  /// **'دفعت {fees} ج.م رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.'**
+  /// **'دفعت {fees} ج رسوم الشهر ده، الاشتراك بـ 149 ومعاه مكان مضمون وبديل لو السواق غاب.'**
   String feeSavings(int fees);
 
   /// No description provided for @actTrip.
@@ -2988,7 +2994,7 @@ abstract class AppLocalizations {
   /// No description provided for @seatRule.
   ///
   /// In ar, this message translates to:
-  /// **'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل ٩ بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.'**
+  /// **'المشتركين ليهم الأولوية في الكراسي الفاضية. لو مشترك أخد كرسيك قبل 9 بالليل اليوم اللي قبله، فلوسك كلها بترجعلك.'**
   String get seatRule;
 
   /// No description provided for @nothingFits.
@@ -3576,7 +3582,7 @@ abstract class AppLocalizations {
   /// No description provided for @feeOwed.
   ///
   /// In ar, this message translates to:
-  /// **'عليك {amount} ج.م رسوم لجورة'**
+  /// **'عليك {amount} ج رسوم لجورة'**
   String feeOwed(int amount);
 
   /// No description provided for @instapayHandleLabel.

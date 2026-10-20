@@ -35,9 +35,11 @@ void main() {
     });
   }
 
-  test('a fee-free seat (subscriber) says so', () {
+  test('S-2: a fee-free seat (subscriber) still names the driver share', () {
     final l10n = l10nFor(const Locale('en'));
     final free = ActivityEntry(id: 'seat:bk-2', kind: ActivityKind.seatBooked, amount: 40, date: CalendarDate(2026, 10, 22));
-    expect(l10n.activityCaption(free, contribution: 40), l10n.breakdownNoFee);
+    expect(l10n.activityCaption(free, contribution: 40), l10n.priceNoFee(40));
+    
+    expect(l10n.priceNoFee(40), startsWith('40 EGP to the driver'));
   });
 }
