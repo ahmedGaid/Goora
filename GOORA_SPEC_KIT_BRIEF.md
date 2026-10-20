@@ -56,7 +56,7 @@ Build these features in order. Each one is a separate `/speckit-specify` run.
 | 004 | Wallet and subscription | People pay |
 | 005 | Seat marketplace: empty seats, post a trip, offer a trip | One-off demand feeds the daily groups |
 | 006 | Cairo ↔ Ismailia launch corridor (founder decision 2026-10-16) | The first real route has density, and the price stays legal on the longer distance |
-| later | Company network (B2B), unnumbered; takes the next free number when started (007–009 are taken by payment changes) | Companies pay |
+| later | Company network (B2B), now numbered 010 (007–009 are the payment changes); being built on branch `010-company-network` | Companies pay |
 
 Section 5 has the specify prompt for each feature, and Section 4 has the plan prompt.
 
