@@ -13,7 +13,7 @@ then commit.
 ## Phase 0: Setup (P0)
 
 - [ ] T001 Amend `GOORA_SPEC_KIT_BRIEF.md` (§2 roadmap row, §5 D, "Feature 006: Company network" → 010, price per Q1) and the constitution's roadmap line, with a Sync Impact Report + PATCH bump — **only with the founder's OK** (FR-030). Keep 006's merged text (company network "later, unnumbered, price TBD") as the base.
-- [ ] T002 [P] Feature flags `companyInvoicesLive`, `hrStatementExport` (off) next to the existing flag/config home (find it first; constitution: open legal items behind flags) — research R0
+- [x] T002 [P] Feature flags `companyInvoicesLive`, `hrStatementExport` (off) next to the existing flag/config home (find it first; constitution: open legal items behind flags) — research R0 — done 2026-10-20: home is `lib/core/config/env.dart` (existing file, waits for 006), so new `lib/features/company/company_flags.dart` + `test/unit/company_flags_test.dart` (research "Lane B notes")
 
 ## Phase 1: Coverage spike — riskiest first (P1, Opus)
 
