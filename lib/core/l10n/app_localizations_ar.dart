@@ -1392,6 +1392,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String memberRating(String rating) {
+    return 'عضو · $rating ★';
+  }
+
+  @override
   String verifiedMemberRating(String rating) {
     return 'عضو موثّق · $rating ★';
   }

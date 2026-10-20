@@ -2421,6 +2421,12 @@ abstract class AppLocalizations {
   /// **'{name} (بديل)'**
   String backupName(String name);
 
+  /// No description provided for @memberRating.
+  ///
+  /// In ar, this message translates to:
+  /// **'عضو · {rating} ★'**
+  String memberRating(String rating);
+
   /// No description provided for @verifiedMemberRating.
   ///
   /// In ar, this message translates to:

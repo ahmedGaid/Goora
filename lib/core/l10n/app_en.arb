@@ -393,6 +393,14 @@
   "offNote": "Cancelled before 9 PM · no charge",
   "lateOffNote": "Cancelled after 9 PM · {amount} EGP to the driver",
   "backupName": "{name} (backup)",
+  "memberRating": "Member · {rating} ★",
+  "@memberRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
   "verifiedMemberRating": "Verified member · {rating} ★",
   "reliability": "Reliability",
   "relLateCancels": "{count, plural, =1{1 late cancel this month.} other{{count} late cancels this month.}}",

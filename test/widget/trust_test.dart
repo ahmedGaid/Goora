@@ -15,10 +15,11 @@ import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
 /// US6 on the Trust tab (FR-023 – FR-027, FR-036), ar + en.
-Future<ProviderContainer> _openTrust(WidgetTester tester, Role role, String locale, {Gender gender = Gender.male}) async {
+Future<ProviderContainer> _openTrust(WidgetTester tester, Role role, String locale,
+    {Gender gender = Gender.male, bool idVerified = true}) async {
   final c = await pumpGooraApp(
     tester,
-    prefs: memberPrefs(role: role, locale: locale, gender: gender),
+    prefs: memberPrefs(role: role, locale: locale, gender: gender, idVerified: idVerified),
     overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
   );
   tester.view.physicalSize = const Size(390, 2600);
@@ -50,6 +51,20 @@ void main() {
       expect(find.text(l.relLateCancels(1)), findsOneWidget);
       expect(find.text(l.relRule), findsOneWidget);
       expect(find.text(l.toDriver), findsOneWidget);
+    });
+
+    testWidgets('[$code] S-5: the header never says "verified" while the ID row says not verified', (tester) async {
+      await _openTrust(tester, Role.rider, code, idVerified: false);
+      expect(check('nationalId', l.notVerified), findsOneWidget);
+      expect(find.text(l.verifiedMemberRating('4.9')), findsNothing);
+      expect(find.text(l.memberRating('4.9')), findsOneWidget);
+      expect(find.byKey(const Key('profile-verified-icon')), findsNothing);
+    });
+
+    testWidgets('[$code] S-5: with the ID verified the header says verified member', (tester) async {
+      await _openTrust(tester, Role.rider, code);
+      expect(find.text(l.verifiedMemberRating('4.9')), findsOneWidget);
+      expect(find.byKey(const Key('profile-verified-icon')), findsOneWidget);
     });
 
     testWidgets('[$code] driver: all five verified', (tester) async {

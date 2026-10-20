@@ -1377,6 +1377,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String memberRating(String rating) {
+    return 'Member · $rating ★';
+  }
+
+  @override
   String verifiedMemberRating(String rating) {
     return 'Verified member · $rating ★';
   }

@@ -975,6 +975,14 @@
       }
     }
   },
+  "memberRating": "عضو · {rating} ★",
+  "@memberRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
   "verifiedMemberRating": "عضو موثّق · {rating} ★",
   "@verifiedMemberRating": {
     "placeholders": {
