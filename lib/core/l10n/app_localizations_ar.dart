@@ -2146,7 +2146,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String owesDriver(int amount, String name) {
-    return 'عليك $amount ج.م لـ $name';
+    return 'عليك $amount ج لـ $name';
   }
 
   @override

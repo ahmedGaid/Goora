@@ -31,5 +31,6 @@ void main() {
     expect(ar.feeOwed(30), isNot(contains('ج.م')));
     expect(ar.feeOwed(30), contains('30 ج'));
     expect(ar.feeSavings(160), isNot(contains('ج.م')));
+    expect(ar.owesDriver(40, 'Ahmed'), isNot(contains('ج.م')));
   });
 }

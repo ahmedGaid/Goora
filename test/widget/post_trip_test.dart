@@ -301,6 +301,27 @@ void main() {
         expect(find.text(l.requestWithdrawn), findsOneWidget);
       });
 
+      testWidgets('N-8: the owe-a-driver notice on the form has an "I paid" action', (tester) async {
+        final o = await _open(tester, code, balance: 44);
+        await _oweKhaled(o);
+        // Khaled's mark is stamped after the trip, so Omar's claim comes after it.
+        await o.c.read(walletRepositoryProvider).markShare(CashMark(
+              rideId: Booking.offerRideId('of-owed'),
+              riderId: DailySeed.meId,
+              driverId: 'khaled',
+              outcome: CashOutcome.didNotPay,
+              amount: 40,
+              date: o.clock.now.date,
+              markedAt: at(o.clock.now.date, 9, 0),
+            ));
+        await _tap(tester, find.byKey(const Key('post')));
+        expect(find.text(l.owesDriver(40, 'Khaled')), findsOneWidget);
+        expect(find.text(l.iPaid), findsOneWidget);
+        await _tap(tester, find.text(l.iPaid));
+        expect(find.text(l.iPaidSent('Khaled')), findsOneWidget, reason: 'the claim is recorded and shown');
+        expect(find.text(l.iPaid), findsNothing);
+      });
+
       testWidgets('loading is a spinner, not a blank screen (FR-027)', (tester) async {
         final never = Completer<TripRequest?>();
         try {

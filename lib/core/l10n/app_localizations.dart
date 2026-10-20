@@ -3528,7 +3528,7 @@ abstract class AppLocalizations {
   /// No description provided for @owesDriver.
   ///
   /// In ar, this message translates to:
-  /// **'عليك {amount} ج.م لـ {name}'**
+  /// **'عليك {amount} ج لـ {name}'**
   String owesDriver(int amount, String name);
 
   /// No description provided for @owesDriverBody.

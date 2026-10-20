@@ -1520,7 +1520,7 @@
     }
   },
   "payInstapaySub": "حوّلها على InstaPay بتاع السواق بعد المشوار.",
-  "owesDriver": "عليك {amount} ج.م لـ {name}",
+  "owesDriver": "عليك {amount} ج لـ {name}",
   "@owesDriver": {
     "placeholders": {
       "amount": {
