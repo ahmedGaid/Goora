@@ -1775,37 +1775,37 @@ abstract class AppLocalizations {
   /// No description provided for @stopNewCairoMeet.
   ///
   /// In ar, this message translates to:
-  /// **'القاهرة الجديدة، نقطة التجمع'**
+  /// **'القاهرة الجديدة، شارع التسعين'**
   String get stopNewCairoMeet;
 
   /// No description provided for @stopNasrCityMeet.
   ///
   /// In ar, this message translates to:
-  /// **'مدينة نصر، نقطة التجمع'**
+  /// **'مدينة نصر، سيتي ستارز'**
   String get stopNasrCityMeet;
 
   /// No description provided for @stopHeliopolisMeet.
   ///
   /// In ar, this message translates to:
-  /// **'مصر الجديدة، نقطة التجمع'**
+  /// **'مصر الجديدة، ميدان الكوربة'**
   String get stopHeliopolisMeet;
 
   /// No description provided for @stopObourMeet.
   ///
   /// In ar, this message translates to:
-  /// **'العبور، نقطة التجمع'**
+  /// **'العبور، سوق العبور'**
   String get stopObourMeet;
 
   /// No description provided for @stopTenthOfRamadanMeet.
   ///
   /// In ar, this message translates to:
-  /// **'العاشر من رمضان، نقطة التجمع'**
+  /// **'العاشر من رمضان، الحي الأول'**
   String get stopTenthOfRamadanMeet;
 
   /// No description provided for @stopIsmailiaMeet.
   ///
   /// In ar, this message translates to:
-  /// **'الإسماعيلية، نقطة التجمع'**
+  /// **'الإسماعيلية، ميدان الممر'**
   String get stopIsmailiaMeet;
 
   /// No description provided for @tlPickup.

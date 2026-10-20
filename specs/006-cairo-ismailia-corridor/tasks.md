@@ -171,8 +171,8 @@ node specs/006-cairo-ismailia-corridor/cap_sweep.ts
 - [ ] T039 Boot the emulator with `D:\Company\99-Ops\start-emulator.ps1` (never the personal phone). Walk `quickstart.md` §0–§7. Record results in `research.md` (what passed, anything off). Check SC-001 (< 2 min welcome → match).
 - [ ] T040 [P] [US1] Map check of the six recalled centres (R7). Fix the points, drop the `// recalled` marks, re-run T030. Founder may do this check; if not done, leave the marks and list it as open.
 - [ ] T041 [P] [US4] Verify SC-006: search brief, constitution and roadmap for the old corridor as "the launch corridor"; none unmarked. Brief and constitution 1.0.1 were amended on this branch already — confirm the roadmap row and company-network number.
-- [ ] T042 Update `goora-status` (position, NEXT ACTION, blocker). Write `Docs/NEXT_GOAL.md` from live git (`git log --oneline -12 main`, `git branch --merged main`, `git status`).
-- [ ] T043 Final gates (4 commands above). Commit. Push **only with the founder's OK**. Merge only with the founder's OK.
+- [x] T042 Update `goora-status` (position, NEXT ACTION, blocker). Write `Docs/NEXT_GOAL.md` from live git (`git log --oneline -12 main`, `git branch --merged main`, `git status`).
+- [x] T043 Final gates (4 commands above). Commit. Push **only with the founder's OK**. Merge only with the founder's OK.
 
 ---
 

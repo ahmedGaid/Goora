@@ -260,7 +260,12 @@ class _Stat extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Text(value, style: AppTypography.stat.copyWith(color: AppColors.textPrimary), maxLines: 1),
+          // At large text sizes a value like "5/أسبوع" is wider than its quarter
+          // of the row; shrink it to fit instead of clipping.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(value, style: AppTypography.stat.copyWith(color: AppColors.textPrimary), maxLines: 1),
+          ),
           Text(label, style: AppTypography.micro.copyWith(color: AppColors.textSecondary)),
         ],
       ),

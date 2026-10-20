@@ -6,16 +6,17 @@ import '../domain/place.dart';
 import 'corridor_seed.dart';
 
 /// Cairo ↔ Ismailia launch corridor (006): one place and one named meeting
-/// point per area, plus the demo groups. Points are approximate area centres,
-/// recalled (not map-checked, research R7), used only for matching distances
-/// and never shown.
+/// point per area, plus the demo groups. Home points are the OpenStreetMap
+/// centres of each area (map-checked 2026-10-20, research R7); meeting spots
+/// are placed a few hundred metres away. Used only for matching distances,
+/// never shown.
 abstract final class CairoIsmailiaSeed {
-  static const _newCairo = GeoPoint(30.03, 31.47); // recalled
-  static const _nasrCity = GeoPoint(30.06, 31.34); // recalled
-  static const _heliopolis = GeoPoint(30.09, 31.32); // recalled
-  static const _obour = GeoPoint(30.23, 31.48); // recalled
-  static const _tenthOfRamadan = GeoPoint(30.29, 31.75); // recalled
-  static const _ismailia = GeoPoint(30.60, 32.27); // recalled
+  static const _newCairo = GeoPoint(30.0278, 31.4757); // OSM, 2026-10-20
+  static const _nasrCity = GeoPoint(30.0521, 31.3422); // OSM, 2026-10-20
+  static const _heliopolis = GeoPoint(30.0901, 31.3265); // OSM, 2026-10-20
+  static const _obour = GeoPoint(30.1914, 31.4505); // OSM, 2026-10-20
+  static const _tenthOfRamadan = GeoPoint(30.29, 31.7493); // OSM, 2026-10-20
+  static const _ismailia = GeoPoint(30.6044, 32.2771); // OSM, 2026-10-20
 
   static const homeNewCairo = Place(id: 'home-nc', area: Area.newCairo, point: _newCairo);
   static const homeNasrCity = Place(id: 'home-nasr', area: Area.nasrCity, point: _nasrCity);
@@ -34,15 +35,16 @@ abstract final class CairoIsmailiaSeed {
   /// Obour and 10th of Ramadan are road towns: homes, not workplaces.
   static const workPlaces = [workNewCairo, workNasrCity, workHeliopolis, workIsmailia];
 
-  /// The public meeting point of each area (never a home); its name is
-  /// [StopName.meetingPointOf].
+  /// The public meeting point of each area (never a home): a named spot a few
+  /// hundred metres from the area centre (the home point), so the walk is real,
+  /// never 0 m. Its name is [StopName.meetingPointOf].
   static const meetingPoints = <Area, GeoPoint>{
-    Area.newCairo: _newCairo,
-    Area.nasrCity: _nasrCity,
-    Area.heliopolis: _heliopolis,
-    Area.obour: _obour,
-    Area.tenthOfRamadan: _tenthOfRamadan,
-    Area.ismailia: _ismailia,
+    Area.newCairo: GeoPoint(30.0313, 31.4787),
+    Area.nasrCity: GeoPoint(30.0551, 31.3457),
+    Area.heliopolis: GeoPoint(30.0936, 31.3290),
+    Area.obour: GeoPoint(30.1944, 31.4540),
+    Area.tenthOfRamadan: GeoPoint(30.2935, 31.7523),
+    Area.ismailia: GeoPoint(30.6074, 32.2801),
   };
 
   /// Demo groups (T027): 4 each way, 300 EGP a leg across 3 seats, 76 a rider

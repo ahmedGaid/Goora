@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/l10n/app_localizations.dart';
+import 'package:goora/core/l10n/app_localizations_ar.dart';
+import 'package:goora/core/l10n/app_localizations_en.dart';
 import 'package:goora/core/storage/preferences.dart';
 import 'package:goora/features/commute/data/cairo_ismailia_seed.dart';
 import 'package:goora/features/commute/data/corridor_seed.dart';
@@ -102,6 +104,24 @@ void main() {
         final stop = CairoIsmailiaSeed.stopIn(a, 's', const Clock.hm(6, 30));
         expect(stop.name, StopName.meetingPointOf(a));
         expect(stop.point, CairoIsmailiaSeed.meetingPoints[a]);
+      }
+    });
+
+    test('a meeting point is a named spot a short, real walk from home (never 0 m)', () {
+      for (final a in Corridors.cairoIsmailia.areas) {
+        final home = CairoIsmailiaSeed.homePlaces.firstWhere((p) => p.area == a);
+        final walk = CairoIsmailiaSeed.meetingPoints[a]!.distanceTo(home.point);
+        expect(walk, inInclusiveRange(200, 900), reason: '$a walk is ${walk.round()} m');
+      }
+    });
+
+    test('the pickup line never says "meeting" twice (ar + en)', () {
+      for (final l in [AppLocalizationsAr(), AppLocalizationsEn()]) {
+        for (final a in Corridors.cairoIsmailia.areas) {
+          final line = l.stopLine(l.tlPickup('6:30'), l.stopName(StopName.meetingPointOf(a)));
+          final word = l is AppLocalizationsAr ? 'التجمع' : RegExp('meeting', caseSensitive: false);
+          expect(word is String ? word.allMatches(line).length : (word as RegExp).allMatches(line).length, lessThanOrEqualTo(1), reason: line);
+        }
       }
     });
 
