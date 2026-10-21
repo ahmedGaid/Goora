@@ -423,5 +423,5 @@ Founder Q1–Q11 still open: defaults unchanged (99 EGP, minimum 20).
 | demoApproveCompany · demoMakeMeHr | جورة توافق على شركتي · خليني HR بتاع Valeo | Goora approves my company · Make me Valeo's HR contact |
 
 ### Still open after P4
-- T030: emulator walk of quickstart 1–4 (boot via `start-emulator.ps1`).
+- T030 done 2026-10-21: walk report `walk/README.md` (F-1 contract dates lack the year, F-2 wallet rules still mention a 10% fee on a company plan, F-3 stale top-up banner).
 - The router's pay-method guard still asks `coversDate` (Lane A notes): unchanged.

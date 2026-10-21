@@ -53,7 +53,7 @@ then commit.
 - [x] T027 [US2] Rider Wallet company card: company name, paused-days line, Leave (confirm) in `rider_wallet.dart`
 - [x] T028 [US2] Fee check: unit test that a covered employee's group trip and one-off seat both carry fee 0 and the driver share unchanged; a covered employee gets the subscriber reclaim right on a full car (005 US6, FR-008) and loses it the minute they leave; 007/008 guard order unchanged (FR-007, FR-008, SC-003)
 - [x] T029 ARB keys for P4 (ar first, Egyptian colloquial, lexicon) + `flutter gen-l10n`; list keys in research R11
-- [ ] T030 Checkpoint P4: gates green; walk quickstart 1–4 on the emulator — gates green 2026-10-20 (research "P4 notes"); **emulator walk still open**
+- [x] T030 Checkpoint P4: gates green; walked quickstart 1, 3, 4 on the emulator 2026-10-21 (specs/010-company-network/walk/README.md): 0 blockers, 3 should-fix F-1..F-3, quickstart 2 not walkable
 
 ## Phase 5: US3 — invoices and suspension (P5)
 
