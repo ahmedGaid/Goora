@@ -2498,4 +2498,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoMakeMeHr => 'Make me Valeo\'s HR contact';
+
+  @override
+  String get companyInvoicesCta => 'Invoices';
+
+  @override
+  String get companyInvoicesTitle => 'Company invoices';
+
+  @override
+  String get companyInvoicesEmpty =>
+      'No invoices yet. The first one is issued at the start of next month.';
+
+  @override
+  String companyInvoiceMonthLabel(String month) {
+    return 'Invoice $month';
+  }
+
+  @override
+  String companyInvoiceMath(int seats, int price, String total) {
+    return '$seats employees × $price EGP = $total EGP';
+  }
+
+  @override
+  String companyInvoicePeak(int count) {
+    return 'Most employees enrolled in the month: $count';
+  }
+
+  @override
+  String get companyInvoicePaid => 'Paid';
+
+  @override
+  String get companyInvoiceWaiting => 'Waiting for payment';
+
+  @override
+  String get companyInvoiceOverdue => 'Overdue';
+
+  @override
+  String companyInvoiceDue(String date) {
+    return 'Pay by $date';
+  }
+
+  @override
+  String get companyInvoiceReferenceTitle => 'Write this on the transfer';
+
+  @override
+  String get companyInvoiceBankTitle => 'Goora\'s bank account';
+
+  @override
+  String companyInvoiceSuspendNote(String date) {
+    return 'If this is still unpaid on $date, the company plan pauses until it is paid and Goora\'s fee applies to employees\' trips.';
+  }
+
+  @override
+  String companyInvoicePaidOn(String date, String ref) {
+    return 'Paid on $date · bank reference $ref';
+  }
+
+  @override
+  String get demoMarkInvoicePaid => 'Goora marks the invoice paid';
+
+  @override
+  String get demoSkipToSuspension => 'Skip to the day the company plan pauses';
 }

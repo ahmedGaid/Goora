@@ -30,6 +30,8 @@ abstract final class Routes {
   /// 010: the company account (register / pending / HR home / my enrollment).
   static const company = '/company';
   static const companyRegister = '/company/register';
+  static const companyInvoices = '/company/invoices';
+  static const companyInvoice = '/company/invoice';
   static const gallery = '/debug/gallery';
 
   static const phoneParam = 'phone';

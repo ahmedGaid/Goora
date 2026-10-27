@@ -688,5 +688,21 @@
   "companyLeaveBody": "From now on Goora's fee applies to your trips. Trips you already took don't change.",
   "companyLeaveConfirm": "Yes, leave",
   "demoApproveCompany": "Goora approves my company",
-  "demoMakeMeHr": "Make me Valeo's HR contact"
+  "demoMakeMeHr": "Make me Valeo's HR contact",
+  "companyInvoicesCta": "Invoices",
+  "companyInvoicesTitle": "Company invoices",
+  "companyInvoicesEmpty": "No invoices yet. The first one is issued at the start of next month.",
+  "companyInvoiceMonthLabel": "Invoice {month}",
+  "companyInvoiceMath": "{seats} employees × {price} EGP = {total} EGP",
+  "companyInvoicePeak": "Most employees enrolled in the month: {count}",
+  "companyInvoicePaid": "Paid",
+  "companyInvoiceWaiting": "Waiting for payment",
+  "companyInvoiceOverdue": "Overdue",
+  "companyInvoiceDue": "Pay by {date}",
+  "companyInvoiceReferenceTitle": "Write this on the transfer",
+  "companyInvoiceBankTitle": "Goora's bank account",
+  "companyInvoiceSuspendNote": "If this is still unpaid on {date}, the company plan pauses until it is paid and Goora's fee applies to employees' trips.",
+  "companyInvoicePaidOn": "Paid on {date} · bank reference {ref}",
+  "demoMarkInvoicePaid": "Goora marks the invoice paid",
+  "demoSkipToSuspension": "Skip to the day the company plan pauses"
 }

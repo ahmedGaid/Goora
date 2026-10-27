@@ -2541,4 +2541,65 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoMakeMeHr => 'خليني HR بتاع Valeo';
+
+  @override
+  String get companyInvoicesCta => 'الفواتير';
+
+  @override
+  String get companyInvoicesTitle => 'فواتير الشركة';
+
+  @override
+  String get companyInvoicesEmpty =>
+      'لسه مفيش فواتير. أول فاتورة بتتعمل أول الشهر الجاي.';
+
+  @override
+  String companyInvoiceMonthLabel(String month) {
+    return 'فاتورة $month';
+  }
+
+  @override
+  String companyInvoiceMath(int seats, int price, String total) {
+    return '$seats موظف × $price ج = $total ج';
+  }
+
+  @override
+  String companyInvoicePeak(int count) {
+    return 'أكتر عدد موظفين اتسجلوا في الشهر: $count';
+  }
+
+  @override
+  String get companyInvoicePaid => 'اتدفعت';
+
+  @override
+  String get companyInvoiceWaiting => 'مستنية الدفع';
+
+  @override
+  String get companyInvoiceOverdue => 'متأخرة';
+
+  @override
+  String companyInvoiceDue(String date) {
+    return 'آخر ميعاد للدفع $date';
+  }
+
+  @override
+  String get companyInvoiceReferenceTitle => 'اكتب الرقم ده في التحويل';
+
+  @override
+  String get companyInvoiceBankTitle => 'حساب جورة';
+
+  @override
+  String companyInvoiceSuspendNote(String date) {
+    return 'لو الفاتورة لسه ماتدفعتش في $date، خطة الشركة بتتوقف لحد الدفع، ورسوم جورة بترجع على مشاوير الموظفين.';
+  }
+
+  @override
+  String companyInvoicePaidOn(String date, String ref) {
+    return 'اتدفعت يوم $date · مرجع البنك $ref';
+  }
+
+  @override
+  String get demoMarkInvoicePaid => 'جورة تأكد دفع الفاتورة';
+
+  @override
+  String get demoSkipToSuspension => 'قدّم الساعة لحد يوم إيقاف خطة الشركة';
 }

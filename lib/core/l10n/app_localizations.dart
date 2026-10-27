@@ -4154,6 +4154,102 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'خليني HR بتاع Valeo'**
   String get demoMakeMeHr;
+
+  /// No description provided for @companyInvoicesCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير'**
+  String get companyInvoicesCta;
+
+  /// No description provided for @companyInvoicesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'فواتير الشركة'**
+  String get companyInvoicesTitle;
+
+  /// No description provided for @companyInvoicesEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لسه مفيش فواتير. أول فاتورة بتتعمل أول الشهر الجاي.'**
+  String get companyInvoicesEmpty;
+
+  /// No description provided for @companyInvoiceMonthLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة {month}'**
+  String companyInvoiceMonthLabel(String month);
+
+  /// No description provided for @companyInvoiceMath.
+  ///
+  /// In ar, this message translates to:
+  /// **'{seats} موظف × {price} ج = {total} ج'**
+  String companyInvoiceMath(int seats, int price, String total);
+
+  /// No description provided for @companyInvoicePeak.
+  ///
+  /// In ar, this message translates to:
+  /// **'أكتر عدد موظفين اتسجلوا في الشهر: {count}'**
+  String companyInvoicePeak(int count);
+
+  /// No description provided for @companyInvoicePaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتدفعت'**
+  String get companyInvoicePaid;
+
+  /// No description provided for @companyInvoiceWaiting.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستنية الدفع'**
+  String get companyInvoiceWaiting;
+
+  /// No description provided for @companyInvoiceOverdue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخرة'**
+  String get companyInvoiceOverdue;
+
+  /// No description provided for @companyInvoiceDue.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر ميعاد للدفع {date}'**
+  String companyInvoiceDue(String date);
+
+  /// No description provided for @companyInvoiceReferenceTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب الرقم ده في التحويل'**
+  String get companyInvoiceReferenceTitle;
+
+  /// No description provided for @companyInvoiceBankTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب جورة'**
+  String get companyInvoiceBankTitle;
+
+  /// No description provided for @companyInvoiceSuspendNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لو الفاتورة لسه ماتدفعتش في {date}، خطة الشركة بتتوقف لحد الدفع، ورسوم جورة بترجع على مشاوير الموظفين.'**
+  String companyInvoiceSuspendNote(String date);
+
+  /// No description provided for @companyInvoicePaidOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتدفعت يوم {date} · مرجع البنك {ref}'**
+  String companyInvoicePaidOn(String date, String ref);
+
+  /// No description provided for @demoMarkInvoicePaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'جورة تأكد دفع الفاتورة'**
+  String get demoMarkInvoicePaid;
+
+  /// No description provided for @demoSkipToSuspension.
+  ///
+  /// In ar, this message translates to:
+  /// **'قدّم الساعة لحد يوم إيقاف خطة الشركة'**
+  String get demoSkipToSuspension;
 }
 
 class _AppLocalizationsDelegate

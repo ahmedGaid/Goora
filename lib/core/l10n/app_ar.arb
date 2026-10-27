@@ -1845,5 +1845,72 @@
   "companyLeaveBody": "من دلوقتي رسوم جورة هترجع على مشاويرك. المشاوير اللي فاتت مش هتتغير.",
   "companyLeaveConfirm": "أيوه، سيبها",
   "demoApproveCompany": "جورة توافق على شركتي",
-  "demoMakeMeHr": "خليني HR بتاع Valeo"
+  "demoMakeMeHr": "خليني HR بتاع Valeo",
+  "companyInvoicesCta": "الفواتير",
+  "companyInvoicesTitle": "فواتير الشركة",
+  "companyInvoicesEmpty": "لسه مفيش فواتير. أول فاتورة بتتعمل أول الشهر الجاي.",
+  "companyInvoiceMonthLabel": "فاتورة {month}",
+  "@companyInvoiceMonthLabel": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoiceMath": "{seats} موظف × {price} ج = {total} ج",
+  "@companyInvoiceMath": {
+    "placeholders": {
+      "seats": {
+        "type": "int"
+      },
+      "price": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoicePeak": "أكتر عدد موظفين اتسجلوا في الشهر: {count}",
+  "@companyInvoicePeak": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "companyInvoicePaid": "اتدفعت",
+  "companyInvoiceWaiting": "مستنية الدفع",
+  "companyInvoiceOverdue": "متأخرة",
+  "companyInvoiceDue": "آخر ميعاد للدفع {date}",
+  "@companyInvoiceDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoiceReferenceTitle": "اكتب الرقم ده في التحويل",
+  "companyInvoiceBankTitle": "حساب جورة",
+  "companyInvoiceSuspendNote": "لو الفاتورة لسه ماتدفعتش في {date}، خطة الشركة بتتوقف لحد الدفع، ورسوم جورة بترجع على مشاوير الموظفين.",
+  "@companyInvoiceSuspendNote": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoicePaidOn": "اتدفعت يوم {date} · مرجع البنك {ref}",
+  "@companyInvoicePaidOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "demoMarkInvoicePaid": "جورة تأكد دفع الفاتورة",
+  "demoSkipToSuspension": "قدّم الساعة لحد يوم إيقاف خطة الشركة"
 }

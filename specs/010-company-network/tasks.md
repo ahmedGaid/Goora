@@ -57,11 +57,11 @@ then commit.
 
 ## Phase 5: US3 — invoices and suspension (P5)
 
-- [ ] T031 [P] [US3] Widget tests `test/widget/company_invoices_test.dart` (ar+en): list per closed month, 20 × 99 = 1,980 at 12 enrolled, 34 × 99 at 34, invoice screen shows reference + bank details + due date, paid state after demo (red)
-- [ ] T032 [P] [US3] Unit tests: suspension from due + 8 days 00:00; employee trip on the 24th carries the fee and books fine (FR-015, SC-006); paid → covered from that moment; fees during suspension stay (red)
-- [ ] T033 [US3] `invoices_screen.dart`, `invoice_screen.dart`; Settings → Demo: Mark invoice paid (bank ref)
-- [ ] T034 [US3] Suspend/resume notices to enrolled employees (neutral copy, no amounts)
-- [ ] T035 Checkpoint P5: gates green; quickstart 5
+- [x] T031 [P] [US3] Widget tests `test/widget/company_invoices_test.dart` (ar+en): list per closed month, 20 × 99 = 1,980 at 12 enrolled, 34 × 99 at 34, invoice screen shows reference + bank details + due date, paid state after demo (red) — done: 5 tests x ar+en (list, 20 × 99, invoice screen, waiting→paid, overdue note)
+- [x] T032 [P] [US3] Unit tests: suspension from due + 8 days 00:00; employee trip on the 24th carries the fee and books fine (FR-015, SC-006); paid → covered from that moment; fees during suspension stay (red) — done: `company_suspension_test.dart` (6) passed first run, the rules existed from P2/P3
+- [x] T033 [US3] `invoices_screen.dart`, `invoice_screen.dart`; Settings → Demo: Mark invoice paid (bank ref) — done: + Demo "skip to suspension day" (needed to walk quickstart 5)
+- [x] T034 [US3] Suspend/resume notices to enrolled employees (neutral copy, no amounts) — done: sync in `companyAccount` provider (runs when the Wallet company card or company area loads), `company_suspension_notice_test.dart`
+- [x] T035 Checkpoint P5: gates green (analyze 0 · flutter 1567 · node 276); quickstart 5 NOT yet walked on the emulator — Demo "skip to suspension" + "mark paid" are the way in
 
 ## Phase 6: US4 — roster, leaving, log (P6)
 

@@ -23,6 +23,7 @@ import '../../company/data/company_seed.dart';
 import '../../company/data/fake_company_repository.dart';
 import '../../company/data/providers.dart';
 import '../../company/domain/company.dart';
+import '../../company/domain/invoice.dart';
 import '../../company/presentation/company_controller.dart';
 import '../../daily/data/fake_daily_commute_repository.dart';
 import '../../daily/data/fake_trust_repository.dart';
@@ -40,6 +41,7 @@ import '../../marketplace/presentation/today/one_off_section.dart';
 import '../../onboarding/data/providers.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../wallet/data/fake_wallet_repository.dart';
+import '../../wallet/data/providers.dart';
 import '../../wallet/presentation/wallet/wallet_controller.dart';
 
 /// Debug builds only (research R11): move the demo clock to the moments the
@@ -80,6 +82,8 @@ class DemoSection extends ConsumerWidget {
             ('demo-subscriber-takes', l10n.demoReclaim, () => _subscriberTakes(context, ref)),
             ('demo-approve-company', l10n.demoApproveCompany, () => _approveCompany(ref)),
             ('demo-make-me-hr', l10n.demoMakeMeHr, () => _makeMeHr(ref)),
+            ('demo-skip-to-suspension', l10n.demoSkipToSuspension, () => _skipToSuspension(ref)),
+            ('demo-mark-invoice-paid', l10n.demoMarkInvoicePaid, () => _markInvoicePaid(ref)),
             ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -177,6 +181,48 @@ class DemoSection extends ConsumerWidget {
     final meId = ref.read(dailyCommuteRepositoryProvider).meId;
     await ref.read(companyRepositoryProvider).demoSetHrContact(CompanySeed.valeoId, meId, ref.read(nowProvider)());
     ref.invalidate(companyAccountProvider);
+  }
+
+  /// Valeo's invoices: issued lazily up to [now], newest first.
+  Future<List<Invoice>> _valeoInvoices(WidgetRef ref, WallTime now) =>
+      ref.read(companyRepositoryProvider).invoices(CompanySeed.valeoId, now);
+
+  /// Goora staff mark Valeo's oldest unpaid invoice paid (010 US3, FR-012).
+  /// Coverage returns from this moment, and the employee's notice follows.
+  Future<void> _markInvoicePaid(WidgetRef ref) async {
+    final now = ref.read(nowProvider)();
+    final unpaid = (await _valeoInvoices(ref, now)).where((i) => i.paidAt == null).toList();
+    if (unpaid.isNotEmpty) {
+      await ref
+          .read(companyRepositoryProvider)
+          .demoMarkPaid(unpaid.last.id, bankRef: 'DEMO-${unpaid.last.month}', now: now);
+    }
+    await _refreshCompany(ref);
+  }
+
+  /// Moves the clock to 10:00 on the day Valeo's plan pauses for the invoice
+  /// that falls due next (the 24th), so the unpaid case can be walked.
+  Future<void> _skipToSuspension(WidgetRef ref) async {
+    final now = ref.read(nowProvider)();
+    final invoices = await _valeoInvoices(ref, now);
+    final open = invoices.where((i) => i.paidAt == null).toList();
+    // The oldest unpaid one, or the one issued next month.
+    final issued = open.isNotEmpty ? open.last.issuedOn : invoices.first.issuedOn.addMonths(1);
+    final suspendOn = Invoice.issue(
+      company: (await ref.read(companyRepositoryProvider).companyForDomain('valeo.com'))!,
+      month: issued.addMonths(-1),
+      peakEnrolled: 0,
+    ).suspendFrom.date;
+    await _setClock(ref, WallTime(suspendOn, const Clock.hm(10, 0)));
+    await _refreshCompany(ref);
+  }
+
+  /// Re-reads the company area so the employee's notice follows the clock.
+  Future<void> _refreshCompany(WidgetRef ref) async {
+    ref.invalidate(companyAccountProvider);
+    ref.invalidate(riderPricingProvider);
+    ref.invalidate(walletControllerProvider);
+    await ref.read(companyAccountProvider.future);
   }
 
   /// The next fake rider books the driver's latest open offer. A daily offer's

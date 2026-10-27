@@ -173,6 +173,12 @@ class _HrCard extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: AppSpacing.md),
+            GooraGhostButton(
+              key: const Key('company-invoices'),
+              label: l10n.companyInvoicesCta,
+              onPressed: () => context.push(Routes.companyInvoices),
+            ),
           ],
         ],
       ),
