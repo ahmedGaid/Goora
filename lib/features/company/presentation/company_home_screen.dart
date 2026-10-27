@@ -158,7 +158,7 @@ class _HrCard extends StatelessWidget {
             line(l10n.companyPriceLine(c.pricePerSeat)),
             if (c.contractStart != null && c.contractEnd != null)
               line(
-                l10n.companyContractLine(l10n.shortDate(c.contractStart!), l10n.shortDate(c.contractEnd!)),
+                l10n.companyContractLine(l10n.shortDateYear(c.contractStart!), l10n.shortDateYear(c.contractEnd!)),
                 key: const Key('company-contract'),
               ),
             const SizedBox(height: AppSpacing.md),

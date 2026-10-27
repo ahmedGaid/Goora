@@ -10,6 +10,7 @@ import 'package:goora/features/company/domain/company.dart';
 import 'package:goora/features/company/domain/company_terms.dart';
 import 'package:goora/features/daily/data/providers.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
+import 'package:goora/features/wallet/presentation/labels.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -126,6 +127,18 @@ void main() {
       expect(find.text(l.companyPriceLine(CompanyTerms.pricePerSeat)), findsOneWidget);
       expect(find.byKey(const Key('company-contract')), findsOneWidget);
       expect(find.text(l.companyHomeNote), findsOneWidget);
+    });
+
+    testWidgets('[$code] F-1: the contract line carries the year, so 12 months never reads 21/10 to 21/10',
+        (tester) async {
+      final c = await _openCompany(tester, code);
+      await _register(tester, l);
+      await _demo(tester, c, 'demo-approve-company');
+      final acme = (await c.read(companyRepositoryProvider).companyForDomain('acme.com'))!;
+      final start = acme.contractStart!;
+      final end = acme.contractEnd!;
+      expect(l.shortDateYear(start), isNot(l.shortDateYear(end)));
+      expect(find.text(l.companyContractLine(l.shortDateYear(start), l.shortDateYear(end))), findsOneWidget);
     });
 
     testWidgets("[$code] demo: Make me Valeo's HR contact → Valeo's home", (tester) async {
