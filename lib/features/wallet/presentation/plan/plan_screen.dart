@@ -133,7 +133,8 @@ class _PlanScreenState extends ConsumerState<PlanScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Above the button, in the pinned bottom area: never below the fold (walk S-4).
-          if (_needsTopUp) ...[
+          // Gone once a top-up covers the price (walk F-3).
+          if (_needsTopUp && balance < price) ...[
             GooraBanner(
               key: const Key('sub-needs-top-up'),
               kind: GooraBannerKind.warning,

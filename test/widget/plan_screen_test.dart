@@ -77,6 +77,20 @@ void main() {
       expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 100);
     });
 
+    testWidgets('[$code] F-3: after a top-up that covers the price, the "top up first" banner is gone', (tester) async {
+      final c = await _openSubscription(tester, code, balance: 100);
+      await tester.tap(find.byKey(const Key('plan-cta')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('sub-needs-top-up')), findsOneWidget);
+      await tester.tap(find.descendant(of: find.byKey(const Key('sub-needs-top-up')), matching: find.text(l.topUp)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('top-up-confirm')));
+      await tester.pumpAndSettle();
+      final meId = c.read(dailyCommuteRepositoryProvider).meId;
+      expect((await c.read(walletRepositoryProvider).getWallet(meId)).balance, 300);
+      expect(find.byKey(const Key('sub-needs-top-up')), findsNothing, reason: '300 covers the 149');
+    });
+
     testWidgets('[$code] S-4: the top-up banner is on screen at phone height, next to the button', (tester) async {
       await _openSubscription(tester, code, balance: 100);
       tester.view.physicalSize = const Size(390, 844);
