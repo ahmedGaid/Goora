@@ -410,6 +410,12 @@ abstract class AppLocalizations {
   /// **'بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. جورة بتضيف بس رسوم خدمة لحد 10% على كل مشوار، والمشتركين من غير رسوم.'**
   String get howPayRule1;
 
+  /// No description provided for @howPayRule1Company.
+  ///
+  /// In ar, this message translates to:
+  /// **'بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. خطة شركتك بتغطي رسوم جورة، فمفيش عليك رسوم خدمة.'**
+  String get howPayRule1Company;
+
   /// No description provided for @howPayRule2.
   ///
   /// In ar, this message translates to:

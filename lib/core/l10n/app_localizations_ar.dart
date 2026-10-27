@@ -178,6 +178,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. جورة بتضيف بس رسوم خدمة لحد 10% على كل مشوار، والمشتركين من غير رسوم.';
 
   @override
+  String get howPayRule1Company =>
+      'بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. خطة شركتك بتغطي رسوم جورة، فمفيش عليك رسوم خدمة.';
+
+  @override
   String get howPayRule2 =>
       'نصيب السواق بيروحله على طول. جورة مش بتمسكه ولا بتاخد منه نسبة.';
 

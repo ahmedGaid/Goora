@@ -178,6 +178,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You pay your driver\'s share directly, by cash or InstaPay. Goora adds only a service fee of up to 10% per trip; subscribers pay no fee.';
 
   @override
+  String get howPayRule1Company =>
+      'You pay your driver\'s share directly, by cash or InstaPay. Your company plan covers Goora\'s fee, so you pay no service fee.';
+
+  @override
   String get howPayRule2 =>
       'The driver\'s share goes straight to them. Goora never holds it or takes a cut.';
 

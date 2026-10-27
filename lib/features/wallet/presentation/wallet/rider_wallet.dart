@@ -107,7 +107,11 @@ class RiderWallet extends StatelessWidget {
             children: [
               Text(l10n.howPayTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: AppSpacing.sm),
-              for (final rule in [l10n.howPayRule1, l10n.howPayRule2, l10n.howPayRule3])
+              for (final rule in [
+                view.mode == PricingMode.company ? l10n.howPayRule1Company : l10n.howPayRule1,
+                l10n.howPayRule2,
+                l10n.howPayRule3,
+              ])
                 Padding(
                   padding: const EdgeInsetsDirectional.only(bottom: AppSpacing.xs),
                   child: Row(
