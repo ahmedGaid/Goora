@@ -383,7 +383,7 @@ abstract class AppLocalizations {
   /// No description provided for @coversTrips.
   ///
   /// In ar, this message translates to:
-  /// **'{count, plural, =0{بيدفع رسوم جورة بس، مش نصيب السواق} =1{بيغطي حوالي مشوار واحد} other{بيغطي حوالي {count} مشاوير}}'**
+  /// **'{count, plural, =0{بيدفع رسوم جورة بس، مش نصيب السواق} =1{بيغطي حوالي مشوار واحد} =2{بيغطي حوالي مشوارين} few{بيغطي حوالي {count} مشاوير} many{بيغطي حوالي {count} مشوار} other{بيغطي حوالي {count} مشوار}}'**
   String coversTrips(int count);
 
   /// No description provided for @planChange.
@@ -2588,6 +2588,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'الوقت الحقيقي'**
   String get demoRealTime;
+
+  /// No description provided for @demoCorridor.
+  ///
+  /// In ar, this message translates to:
+  /// **'المسار التجريبي: {name} (دوس للتبديل)'**
+  String demoCorridor(String name);
 
   /// No description provided for @demoReset.
   ///

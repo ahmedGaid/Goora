@@ -13,10 +13,12 @@ import '../../../core/time/now_provider.dart';
 import '../../../core/time/wall_time.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_ghost_button.dart';
+import '../../commute/data/corridors.dart';
 import '../../commute/data/fake_commute_repository.dart';
 import '../../commute/data/providers.dart';
 import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart';
+import '../../commute/domain/corridor.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/presentation/labels.dart';
 import '../../company/data/company_seed.dart';
@@ -56,6 +58,7 @@ class DemoSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final now = ref.watch(nowProvider)();
+    final corridor = ref.watch(activeCorridorProvider);
     return GooraCard(
       key: const Key('demo-section'),
       padding: const EdgeInsetsDirectional.all(AppSpacing.listCardPad),
@@ -86,6 +89,7 @@ class DemoSection extends ConsumerWidget {
             ('demo-mark-invoice-paid', l10n.demoMarkInvoicePaid, () => _markInvoicePaid(ref)),
             ('demo-end-contract', l10n.demoEndContract, () => _endContract(ref)),
             ('demo-hr-left', l10n.demoHrLeft, () => _hrLeft(ref)),
+            ('demo-corridor', l10n.demoCorridor(_corridorName(l10n, corridor)), () => _switchCorridor(ref, corridor)),
             ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -94,6 +98,22 @@ class DemoSection extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  static String _corridorName(AppLocalizations l10n, Corridor c) => '${l10n.area(c.defaultFrom)} ↔ ${l10n.area(c.defaultTo)}';
+
+  /// Cycles to the next demo corridor (006 quickstart §6). Fake data and trip
+  /// cost follow it through [activeCorridorProvider]; Reset restores the default.
+  Future<void> _switchCorridor(WidgetRef ref, Corridor current) async {
+    const all = Corridors.all;
+    final next = all[(all.indexWhere((c) => c.id == current.id) + 1) % all.length];
+    await ref.read(activeCorridorProvider.notifier).select(next);
+    ref
+      ..invalidate(groupCatalogProvider)
+      ..invalidate(commuteRepositoryProvider)
+      ..invalidate(marketplaceRepositoryProvider)
+      ..invalidate(dailyCommuteRepositoryProvider)
+      ..invalidate(todayControllerProvider);
   }
 
   Future<void> _setClock(WidgetRef ref, WallTime? at) async {

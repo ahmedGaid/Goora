@@ -1486,6 +1486,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get demoRealTime => 'Real time';
 
   @override
+  String demoCorridor(String name) {
+    return 'Demo corridor: $name (tap to switch)';
+  }
+
+  @override
   String get demoReset => 'Reset demo data';
 
   @override
