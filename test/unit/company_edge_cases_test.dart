@@ -301,4 +301,29 @@ void main() {
       expect(invoice.billedSeats, 21);
     });
   });
+
+  group('a month with nobody enrolled, and an HR contact who also rides (spec edge cases)', () {
+    test('a company with zero enrolled for a month is still billed the minimum', () async {
+      final w = await _world();
+      await w.repo.demoApprove(CompanySeed.orangeId, w.now);
+      w.clock.now = _at(2026, 11, 2, 10);
+      final invoices = await w.repo.invoices(CompanySeed.orangeId, w.now);
+      expect(invoices.map((i) => i.month), ['2026-10']);
+      expect(invoices.single.peakEnrolled, 0);
+      expect(invoices.single.billedSeats, 20);
+      expect(invoices.single.total, 20 * invoices.single.pricePerSeat);
+    });
+
+    test('the HR contact who rides is on the roster like anyone, and keeps the HR home', () async {
+      final w = await _world({'hala': (name: 'Hala', workEmail: 'hala@valeo.com')});
+      await w.repo.demoSetHrContact(CompanySeed.valeoId, 'hala', w.now);
+      await w.repo.enroll('hala', now: w.now);
+
+      final rows = (await w.repo.roster(CompanySeed.valeoId, w.now)).where((r) => r.name == 'Hala').toList();
+      expect(rows, hasLength(1));
+      expect((rows.single.workEmail, rows.single.leftAt), ('hala@valeo.com', null));
+      expect((await w.repo.myCompanyAccount('hala', w.now))!.company.id, CompanySeed.valeoId);
+      expect(await w.repo.offerFor('hala', w.now), isA<Enrolled>());
+    });
+  });
 }
