@@ -135,5 +135,5 @@ Open for the founder, not changed: A1 (FR-025 "fees show as 0" vs FR-013, one he
 (headcount hidden under 5 while the roster lists every name) · SC-001/SC-002 untimed · the constitution's roadmap
 line and `feature/00X-name` branch wording (T001; every feature since 001 uses `NNN-name`) · Arabic copy:
 حصة vs نصيب, masculine-default lines, اشترك/مشترك used for both enrolling and the personal subscription (R11).
-Left as LOW: the statement screen has no golden (T050 note); a non-HR user who types `/company/statement` sees
+Left as LOW: a non-HR user who types `/company/statement` sees
 "the first statement appears once the first month has ended" (no entry reaches it from the UI).
