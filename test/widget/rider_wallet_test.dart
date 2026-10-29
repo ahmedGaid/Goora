@@ -224,7 +224,7 @@ void main() {
           ).toJson()),
         },
       );
-      expect(find.text(l.planSubscribedLine('1/11')), findsOneWidget);
+      expect(find.text(l.planSubscribedLine(code == 'ar' ? '1 نوفمبر' : '1 Nov')), findsOneWidget);
       expect(find.text(l.breakdownNoFee), findsOneWidget);
     });
 

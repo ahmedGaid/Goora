@@ -2930,4 +2930,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get companyStatementNoMonths => 'أول كشف بيظهر بعد ما أول شهر يخلص.';
+
+  @override
+  String dayAndMonth(int day, String month) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'يناير',
+      '2': 'فبراير',
+      '3': 'مارس',
+      '4': 'أبريل',
+      '5': 'مايو',
+      '6': 'يونيو',
+      '7': 'يوليو',
+      '8': 'أغسطس',
+      '9': 'سبتمبر',
+      '10': 'أكتوبر',
+      '11': 'نوفمبر',
+      '12': 'ديسمبر',
+      'other': '$month',
+    });
+    return '$day $_temp0';
+  }
 }
