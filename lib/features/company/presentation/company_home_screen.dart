@@ -193,6 +193,7 @@ class _HrCard extends StatelessWidget {
               ('company-roster', l10n.companyRosterCta, Routes.companyRoster),
               ('company-invoices', l10n.companyInvoicesCta, Routes.companyInvoices),
               ('company-dashboard', l10n.companyDashboardCta, Routes.companyDashboard),
+              ('company-statement', l10n.companyStatementCta, Routes.companyStatement),
               ('company-log', l10n.companyLogCta, Routes.companyLog),
             ]) ...[
               const SizedBox(height: AppSpacing.sm),

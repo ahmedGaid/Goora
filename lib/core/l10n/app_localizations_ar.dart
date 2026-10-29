@@ -2853,4 +2853,73 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get companyDashboardGapsEmpty =>
       'مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة.';
+
+  @override
+  String get companyHrShareTitle => 'ابعت مشاويري لـ HR';
+
+  @override
+  String get companyHrShareSees =>
+      'الشركة هتشوف: اسمك، وتاريخ كل مشوار ركبته كراكب، الذهاب ولا الرجوع، والحصة اللي دفعتها للسواق. مش هتشوف مكان الركوب ولا الميعاد ولا السواق.';
+
+  @override
+  String get companyHrShareOffLine => 'مقفول. الشركة مش بتشوف مشاويرك.';
+
+  @override
+  String get companyHrShareOnLine =>
+      'شغال. الشركة بتستلم كشف الشهر اللي فات أول كل شهر.';
+
+  @override
+  String get companyHrShareStopTitle => 'توقّف إرسال مشاويرك لـ HR؟';
+
+  @override
+  String get companyHrShareStopBody =>
+      'الكشوف اللي الشركة استلمتها قبل كده هتفضل زي ما هي. الكشف الجاي وأي كشف بعده مش هيشمل مشاويرك.';
+
+  @override
+  String get companyHrShareStopConfirm => 'أيوه، وقّف';
+
+  @override
+  String get companyStatementCta => 'كشف المشاوير';
+
+  @override
+  String get companyStatementTitle => 'كشف المشاوير الشهري';
+
+  @override
+  String get companyStatementNote =>
+      'الموظفين اللي وافقوا يشاركوا مشاويرهم بس هما اللي بيظهروا هنا. أي حد تاني مش موجود، ولا حتى اسمه.';
+
+  @override
+  String companyStatementFee(String amount) {
+    return 'رسوم جورة على المشاوير دي: $amount. كل حصة اتدفعت للسواق على طول.';
+  }
+
+  @override
+  String companyStatementPerson(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مشوار',
+      few: '$count مشاوير',
+      two: 'مشوارين',
+      one: 'مشوار واحد',
+    );
+    return '$_temp0 · $amount ج';
+  }
+
+  @override
+  String companyStatementShare(String amount) {
+    return '$amount ج للسواق';
+  }
+
+  @override
+  String companyStatementTotal(String amount) {
+    return 'إجمالي الحصص: $amount ج';
+  }
+
+  @override
+  String get companyStatementEmpty =>
+      'مفيش موظف وافق يشارك مشاويره في الشهر ده.';
+
+  @override
+  String get companyStatementNoMonths => 'أول كشف بيظهر بعد ما أول شهر يخلص.';
 }

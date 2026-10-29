@@ -514,6 +514,59 @@ Founder Q1–Q11 still open: defaults unchanged.
 ### P7 notes — N-16 check (2026-10-29, autonomous session)
 Savings formula `Σ(leg cost − share)` is right: checked by hand against R7/R10 (160 − 160/4 = 120 per rider trip; 132 rider trips × 120 = 15,840) and pinned in `test/unit/company_dashboard_test.dart`. The "208 per trip" in the walk was 15,840 ÷ 76 *shared legs*, a different count — not an error in the formula.
 
+## P8 notes — 2026-10-29 (US6 HR statement, T046–T049)
+
+Founder Q6, Q7 still open: the spec defaults were taken. Q8 b (Law 151/2020 wording of the opt-in) is the
+open legal item: the copy below is a draft for the lawyer.
+
+### Choices (picked, with the rejected option)
+1. **Consent is a history, read at the month end.** `company.hrConsent.<companyId>.<personId>` = list of
+   `{on, at}` (data-model). A month's statement includes a person if they were enrolled AND consent was on
+   at 00:00 on the 1st of the next month (`HrStatement.build`). So withdrawing on the 15th leaves that
+   month out and earlier ones unchanged. Rejected: a stored on/off flag (an issued month would change).
+2. **A statement exists only for a closed month.** `statement()` returns nothing while the month runs;
+   the screen lists closed months only, newest first. Rejected: a "so far" statement (consent can still change).
+3. **Joining again starts from off.** `enroll` appends an `off` if the last change was `on`; leaving ends
+   it for `hrConsent` (no open enrollment = false). Rejected: carrying the old yes over a leave.
+4. **Only received / auto-received shares, rider trips only** (Q7, AC6): `TripShare.asRider == false` and
+   pending / not received / disputed never reach a line. HR sees name, date, leg, share — nothing else
+   (`StatementLine`, field list pinned in a test next to the privacy test).
+5. **The statement's source is a seam**, `TripSharesSource`, defaulting to `CompanySeed.sharesFor`. The seed
+   gives Valeo shares from the same facts as the dashboard (one going + one return per workday, 40 EGP each);
+   the signed-in person's real shares wait for the server (R9). Rejected: reading the wallet from the company
+   network (R8: it may not).
+6. **Seed consents (placeholders):** Dina, Hossam, Yasmin and Karim agreed; Yasmin withdrew on the 15th of the
+   second month; Karim drives, so he has no line; Hossam has 3 shares that stay off (not received, disputed,
+   pending) and 1 auto-received that counts.
+7. **No export.** `CompanyFlags.hrStatementExport` stays false; the screen has no export or share control and
+   a test pins both (constitution VIII). Goora's fee is shown as `0` in one line.
+8. **Where the switch lives:** `HrConsentToggle` on the Wallet's company card (above Leave), off by default,
+   the "what HR sees" text always visible under it. Turning it off asks first ("statements already issued
+   stay"); turning it on needs no confirm. Rejected: a confirm on turning on (the sentence is already on screen).
+9. The HR home gets a fifth button "Trips statement" next to Numbers; route `/company/statement`.
+
+### R11 — keys added in P8 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyHrShareTitle | ابعت مشاويري لـ HR | Share my trips with HR |
+| companyHrShareSees | الشركة هتشوف: اسمك، وتاريخ كل مشوار ركبته كراكب، الذهاب ولا الرجوع، والحصة اللي دفعتها للسواق. مش هتشوف مكان الركوب ولا الميعاد ولا السواق. | Your company will see: your name, the date of each trip you rode as a passenger, going or return, and the share you paid the driver. It never sees the pickup point, the time or the driver. |
+| companyHrShareOffLine · OnLine | مقفول. الشركة مش بتشوف مشاويرك. · شغال. الشركة بتستلم كشف الشهر اللي فات أول كل شهر. | Off. Your company doesn't see your trips. · On. Your company gets last month's statement on the 1st of each month. |
+| companyHrShareStopTitle · Body · Confirm | توقّف إرسال مشاويرك لـ HR؟ · الكشوف اللي الشركة استلمتها قبل كده هتفضل زي ما هي. الكشف الجاي وأي كشف بعده مش هيشمل مشاويرك. · أيوه، وقّف | Stop sharing your trips with HR? · Statements your company already received stay as they are. The next one, and every one after, leaves your trips out. · Yes, stop |
+| companyStatementCta · Title | كشف المشاوير · كشف المشاوير الشهري | Trips statement · Monthly trips statement |
+| companyStatementNote | الموظفين اللي وافقوا يشاركوا مشاويرهم بس هما اللي بيظهروا هنا. أي حد تاني مش موجود، ولا حتى اسمه. | Only employees who agreed to share their trips appear here. No one else is listed, not even a name. |
+| companyStatementFee | رسوم جورة على المشاوير دي: {amount}. كل حصة اتدفعت للسواق على طول. | Goora's fee on these trips: {amount}. Each share was paid straight to the driver. |
+| companyStatementPerson · Share · Total | {count} مشوار · {amount} ج · {amount} ج للسواق · إجمالي الحصص: {amount} ج | {count} trips · {amount} EGP · {amount} EGP to the driver · Total shares: {amount} EGP |
+| companyStatementEmpty · NoMonths | مفيش موظف وافق يشارك مشاويره في الشهر ده. · أول كشف بيظهر بعد ما أول شهر يخلص. | No employee shared their trips for this month. · The first statement appears once the first month has ended. |
+
+Arabic notes for founder review: "أيوه، وقّف" is a masculine imperative, like the existing "شيل" and "سيبها" (same register,
+same open gender question as "خرج من الخطة"). "الشركة بتستلم كشف ... أول كل شهر" promises a delivery the fake does not do
+(HR opens the screen; nothing is sent), so the copy may need "تقدر تشوف" once the real flow is known. Wording waits for Q8 b.
+
+### Not done / not walked
+- **T049 quickstart 8: not walked** (no emulator this run). Covered by widget tests ar + en only.
+- Red-first was not observed for T046/T048: the tests were written before the code but not run against
+  a missing implementation (both would have failed to compile).
+
 ### R11 — full list of 010 ARB keys, all phases (T053, **for founder review**, ar first)
 
 Every key 010 added to `app_ar.arb` / `app_en.arb` on this branch compared with main at b198795 (139 keys), ar and en side by side. P8 keys (`companyHrShare*`, `companyStatement*`) are listed in "R11 — keys added in P8" once that phase is committed. Nothing here is founder-approved yet.

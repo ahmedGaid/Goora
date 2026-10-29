@@ -15,6 +15,7 @@ import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
 import '../../../company/domain/company_repository.dart';
 import '../../../company/presentation/company_controller.dart';
+import '../../../company/presentation/hr_consent_toggle.dart';
 import '../../domain/cash_trial_policy.dart';
 import '../../domain/payment_method.dart';
 import '../../domain/plan.dart';
@@ -298,6 +299,8 @@ class _CompanyPlanCard extends ConsumerWidget {
             const SizedBox(height: AppSpacing.xxs),
             Text(l10n.planCompanyPaused(paused.daysLeft), key: const Key('plan-paused'), style: secondary),
           ],
+          const SizedBox(height: AppSpacing.sm),
+          const HrConsentToggle(),
           const SizedBox(height: AppSpacing.xs),
           TextButton(
             key: const Key('company-leave'),

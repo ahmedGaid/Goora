@@ -2811,4 +2811,73 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get companyDashboardGapsEmpty =>
       'No area has 5 or more employees waiting for a group.';
+
+  @override
+  String get companyHrShareTitle => 'Share my trips with HR';
+
+  @override
+  String get companyHrShareSees =>
+      'Your company will see: your name, the date of each trip you rode as a passenger, going or return, and the share you paid the driver. It never sees the pickup point, the time or the driver.';
+
+  @override
+  String get companyHrShareOffLine =>
+      'Off. Your company doesn\'t see your trips.';
+
+  @override
+  String get companyHrShareOnLine =>
+      'On. Your company gets last month\'s statement on the 1st of each month.';
+
+  @override
+  String get companyHrShareStopTitle => 'Stop sharing your trips with HR?';
+
+  @override
+  String get companyHrShareStopBody =>
+      'Statements your company already received stay as they are. The next one, and every one after, leaves your trips out.';
+
+  @override
+  String get companyHrShareStopConfirm => 'Yes, stop';
+
+  @override
+  String get companyStatementCta => 'Trips statement';
+
+  @override
+  String get companyStatementTitle => 'Monthly trips statement';
+
+  @override
+  String get companyStatementNote =>
+      'Only employees who agreed to share their trips appear here. No one else is listed, not even a name.';
+
+  @override
+  String companyStatementFee(String amount) {
+    return 'Goora\'s fee on these trips: $amount. Each share was paid straight to the driver.';
+  }
+
+  @override
+  String companyStatementPerson(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trips',
+      one: '1 trip',
+    );
+    return '$_temp0 · $amount EGP';
+  }
+
+  @override
+  String companyStatementShare(String amount) {
+    return '$amount EGP to the driver';
+  }
+
+  @override
+  String companyStatementTotal(String amount) {
+    return 'Total shares: $amount EGP';
+  }
+
+  @override
+  String get companyStatementEmpty =>
+      'No employee shared their trips for this month.';
+
+  @override
+  String get companyStatementNoMonths =>
+      'The first statement appears once the first month has ended.';
 }

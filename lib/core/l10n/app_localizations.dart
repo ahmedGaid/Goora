@@ -4652,6 +4652,102 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة.'**
   String get companyDashboardGapsEmpty;
+
+  /// No description provided for @companyHrShareTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابعت مشاويري لـ HR'**
+  String get companyHrShareTitle;
+
+  /// No description provided for @companyHrShareSees.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشركة هتشوف: اسمك، وتاريخ كل مشوار ركبته كراكب، الذهاب ولا الرجوع، والحصة اللي دفعتها للسواق. مش هتشوف مكان الركوب ولا الميعاد ولا السواق.'**
+  String get companyHrShareSees;
+
+  /// No description provided for @companyHrShareOffLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقفول. الشركة مش بتشوف مشاويرك.'**
+  String get companyHrShareOffLine;
+
+  /// No description provided for @companyHrShareOnLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'شغال. الشركة بتستلم كشف الشهر اللي فات أول كل شهر.'**
+  String get companyHrShareOnLine;
+
+  /// No description provided for @companyHrShareStopTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'توقّف إرسال مشاويرك لـ HR؟'**
+  String get companyHrShareStopTitle;
+
+  /// No description provided for @companyHrShareStopBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكشوف اللي الشركة استلمتها قبل كده هتفضل زي ما هي. الكشف الجاي وأي كشف بعده مش هيشمل مشاويرك.'**
+  String get companyHrShareStopBody;
+
+  /// No description provided for @companyHrShareStopConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيوه، وقّف'**
+  String get companyHrShareStopConfirm;
+
+  /// No description provided for @companyStatementCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'كشف المشاوير'**
+  String get companyStatementCta;
+
+  /// No description provided for @companyStatementTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'كشف المشاوير الشهري'**
+  String get companyStatementTitle;
+
+  /// No description provided for @companyStatementNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموظفين اللي وافقوا يشاركوا مشاويرهم بس هما اللي بيظهروا هنا. أي حد تاني مش موجود، ولا حتى اسمه.'**
+  String get companyStatementNote;
+
+  /// No description provided for @companyStatementFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسوم جورة على المشاوير دي: {amount}. كل حصة اتدفعت للسواق على طول.'**
+  String companyStatementFee(String amount);
+
+  /// No description provided for @companyStatementPerson.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج'**
+  String companyStatementPerson(int count, String amount);
+
+  /// No description provided for @companyStatementShare.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} ج للسواق'**
+  String companyStatementShare(String amount);
+
+  /// No description provided for @companyStatementTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الحصص: {amount} ج'**
+  String companyStatementTotal(String amount);
+
+  /// No description provided for @companyStatementEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش موظف وافق يشارك مشاويره في الشهر ده.'**
+  String get companyStatementEmpty;
+
+  /// No description provided for @companyStatementNoMonths.
+  ///
+  /// In ar, this message translates to:
+  /// **'أول كشف بيظهر بعد ما أول شهر يخلص.'**
+  String get companyStatementNoMonths;
 }
 
 class _AppLocalizationsDelegate

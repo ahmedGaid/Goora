@@ -16,6 +16,7 @@ import '../domain/company_rules.dart';
 import '../domain/company_terms.dart';
 import '../domain/employee_month_facts.dart';
 import '../domain/enrollment.dart';
+import '../domain/hr_statement.dart';
 import '../domain/hr_views.dart';
 import '../domain/invoice.dart';
 import 'company_seed.dart';
@@ -23,6 +24,10 @@ import 'company_seed.dart';
 /// What the company network needs to know about a person who is not in the
 /// seed: the roster name and their verified work email (null = none yet).
 typedef PersonLookup = Future<({String name, String? workEmail})?> Function(String personId);
+
+/// Where the HR statement's trip shares of one month come from (US6). The
+/// seed has Valeo's; the signed-in person's real ones need the server.
+typedef TripSharesSource = Future<List<TripShare>> Function(String companyId, String month);
 
 /// The company network on fake data over shared_preferences (010
 /// data-model.md). Seeded from [CompanySeed] on the first read, anchored at
@@ -34,15 +39,15 @@ typedef PersonLookup = Future<({String name, String? workEmail})?> Function(Stri
 /// are logged. So a demo-clock jump over several months issues each month
 /// once (SC-004).
 ///
-/// P3 builds US1–US4's data side. [dashboard] (P7) and the HR statement
-/// (P8) throw [UnimplementedError] until their phase. HR-only methods take
-/// no caller id in the contract, so the "is HR contact" check stays with the
-/// screen until a later phase adds one (research "Lane B notes").
+/// HR-only methods take no caller id in the contract, so the "is HR contact"
+/// check stays with the screen (research "Lane B notes").
 final class FakeCompanyRepository implements CompanyRepository {
-  FakeCompanyRepository(this._prefs, {required this._person, required this._now});
+  FakeCompanyRepository(this._prefs, {required this._person, required this._now, TripSharesSource? shares})
+      : _shares = shares ?? CompanySeed.sharesFor;
 
   final SharedPreferences _prefs;
   final PersonLookup _person;
+  final TripSharesSource _shares;
 
   /// Only anchors the seed; every method takes its own moment.
   final Now _now;
@@ -56,6 +61,7 @@ final class FakeCompanyRepository implements CompanyRepository {
   static String enrollmentsKey(String companyId) => 'company.enrollments.$companyId';
   static String invoiceKey(String companyId, String monthKey) => 'company.invoice.$companyId.$monthKey';
   static String logKey(String companyId) => 'company.log.$companyId';
+  static String hrConsentKey(String companyId, String personId) => 'company.hrConsent.$companyId.$personId';
 
   static Future<void> clearAllKeys(SharedPreferences prefs) async {
     for (final key in prefs.getKeys().where((k) => k.startsWith(keyPrefix)).toList()) {
@@ -164,6 +170,11 @@ final class FakeCompanyRepository implements CompanyRepository {
         enrolledAt: now,
       ),
     ]);
+    // Joining again never carries the old yes over: the opt-in starts from off.
+    final old = _consent(company.id, personId);
+    if (old.isNotEmpty && old.last.on) {
+      await _saveConsent(company.id, personId, [...old, ConsentChange(on: false, at: now)]);
+    }
   }
 
   @override
@@ -318,7 +329,7 @@ final class FakeCompanyRepository implements CompanyRepository {
     return [for (final (_, e) in indexed) e];
   }
 
-  // US5, US6 — later phases
+  // US5 — dashboard
 
   @override
   Future<List<({String month, bool soFar})>> dashboardMonths(String companyId, WallTime now) async {
@@ -360,16 +371,44 @@ final class FakeCompanyRepository implements CompanyRepository {
     );
   }
 
-  @override
-  Future<bool> hrConsent(String personId) => throw UnimplementedError('US6 HR statement: tasks.md P8');
+  // US6 — HR statement
 
   @override
-  Future<void> setHrConsent(String personId, bool on, WallTime now) =>
-      throw UnimplementedError('US6 HR statement: tasks.md P8');
+  Future<bool> hrConsent(String personId) async {
+    await _ensureSeeded();
+    final companyId = _openCompanyOf(personId);
+    if (companyId == null) return false;
+    final history = _consent(companyId, personId);
+    return history.isNotEmpty && history.last.on;
+  }
 
   @override
-  Future<List<StatementLine>> statement(String companyId, String month, WallTime now) =>
-      throw UnimplementedError('US6 HR statement: tasks.md P8');
+  Future<void> setHrConsent(String personId, bool on, WallTime now) async {
+    await _ensureSeeded();
+    final companyId = _openCompanyOf(personId);
+    if (companyId == null) throw StateError('$personId is not enrolled in any company');
+    final history = _consent(companyId, personId);
+    if ((history.isNotEmpty && history.last.on) == on) return;
+    await _saveConsent(companyId, personId, [...history, ConsentChange(on: on, at: now)]);
+  }
+
+  /// A month's statement exists once the month has ended; before that there
+  /// is nothing to read, since consent can still change.
+  @override
+  Future<List<StatementLine>> statement(String companyId, String month, WallTime now) async {
+    await _ensureSeeded();
+    final company = _company(companyId);
+    if (company == null) return const [];
+    await _catchUp(company, now);
+    if (HrStatement.monthEnd(month).isAfter(now)) return const [];
+    final enrollments = _enrollments(companyId);
+    return HrStatement.build(
+      month: month,
+      enrollments: enrollments,
+      consent: {for (final e in enrollments) e.personId: _consent(companyId, e.personId)},
+      shares: await _shares(companyId, month),
+    );
+  }
 
   // Goora staff (demo actions)
 
@@ -545,6 +584,9 @@ final class FakeCompanyRepository implements CompanyRepository {
       }
     }
     await _saveEnrollments(valeo.id, CompanySeed.valeoEnrollments(valeo.approvedAt!));
+    for (final e in CompanySeed.valeoConsents(valeo.approvedAt!).entries) {
+      await _saveConsent(valeo.id, e.key, e.value);
+    }
     await _log(LogEntry(companyId: valeo.id, at: valeo.approvedAt!, actor: LogActor.goora, kind: LogKind.approved));
     // The months already closed were paid on their issue day.
     await _issueMissing(valeo, anchor);
@@ -589,6 +631,20 @@ final class FakeCompanyRepository implements CompanyRepository {
     if (raw == null) return [];
     return [for (final j in jsonDecode(raw) as List) Enrollment.fromJson((j as Map).cast<String, Object?>())];
   }
+
+  /// The company a person is enrolled in now, if any.
+  String? _openCompanyOf(String personId) => _companies()
+      .where((c) => _enrollments(c.id).any((e) => e.personId == personId && e.isOpen))
+      .map((c) => c.id)
+      .firstOrNull;
+
+  List<ConsentChange> _consent(String companyId, String personId) {
+    final raw = _prefs.getString(hrConsentKey(companyId, personId));
+    return raw == null ? [] : HrStatement.historyFromJson(raw);
+  }
+
+  Future<void> _saveConsent(String companyId, String personId, List<ConsentChange> history) =>
+      _prefs.setString(hrConsentKey(companyId, personId), HrStatement.historyToJson(history));
 
   Future<void> _saveEnrollments(String companyId, List<Enrollment> rows) =>
       _prefs.setString(enrollmentsKey(companyId), jsonEncode([for (final e in rows) e.toJson()]));

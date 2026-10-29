@@ -2106,5 +2106,42 @@
       "count": {"type": "int"}
     }
   },
-  "companyDashboardGapsEmpty": "مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة."
+  "companyDashboardGapsEmpty": "مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة.",
+  "companyHrShareTitle": "ابعت مشاويري لـ HR",
+  "companyHrShareSees": "الشركة هتشوف: اسمك، وتاريخ كل مشوار ركبته كراكب، الذهاب ولا الرجوع، والحصة اللي دفعتها للسواق. مش هتشوف مكان الركوب ولا الميعاد ولا السواق.",
+  "companyHrShareOffLine": "مقفول. الشركة مش بتشوف مشاويرك.",
+  "companyHrShareOnLine": "شغال. الشركة بتستلم كشف الشهر اللي فات أول كل شهر.",
+  "companyHrShareStopTitle": "توقّف إرسال مشاويرك لـ HR؟",
+  "companyHrShareStopBody": "الكشوف اللي الشركة استلمتها قبل كده هتفضل زي ما هي. الكشف الجاي وأي كشف بعده مش هيشمل مشاويرك.",
+  "companyHrShareStopConfirm": "أيوه، وقّف",
+  "companyStatementCta": "كشف المشاوير",
+  "companyStatementTitle": "كشف المشاوير الشهري",
+  "companyStatementNote": "الموظفين اللي وافقوا يشاركوا مشاويرهم بس هما اللي بيظهروا هنا. أي حد تاني مش موجود، ولا حتى اسمه.",
+  "companyStatementFee": "رسوم جورة على المشاوير دي: {amount}. كل حصة اتدفعت للسواق على طول.",
+  "@companyStatementFee": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "companyStatementPerson": "{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج",
+  "@companyStatementPerson": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "amount": {"type": "String"}
+    }
+  },
+  "companyStatementShare": "{amount} ج للسواق",
+  "@companyStatementShare": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "companyStatementTotal": "إجمالي الحصص: {amount} ج",
+  "@companyStatementTotal": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "companyStatementEmpty": "مفيش موظف وافق يشارك مشاويره في الشهر ده.",
+  "companyStatementNoMonths": "أول كشف بيظهر بعد ما أول شهر يخلص."
 }
