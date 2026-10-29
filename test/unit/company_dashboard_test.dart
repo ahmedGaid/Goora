@@ -123,4 +123,33 @@ void main() {
       expect(list, [(month: '2026-10', soFar: true)]);
     });
   });
+
+  group('N-16: money saved = Σ(leg cost − share paid)', () {
+    // Hand-worked, R7/R10: a 160 EGP leg split over 4 seats is a 40 EGP share,
+    // so driving alone would cost 160 and the rider pays 40 → saves 120.
+    const legCost = 160;
+    const share = legCost ~/ 4;
+    const perRiderTrip = legCost - share;
+
+    test('one rider trip saves 120', () {
+      expect(share, 40);
+      expect(perRiderTrip, 120);
+      expect(CompanySeed.shareEgp, share);
+    });
+
+    test('five riders with 2, 3, 4, 5 and 6 trips = 20 trips × 120 = 2,400', () {
+      final facts = [for (final (i, t) in [2, 3, 4, 5, 6].indexed) _rider('p$i', t)];
+      final m = CompanyDashboard.build(month: '2026-09', soFar: false, facts: facts, workdays: 21);
+      expect(m.moneySaved, 20 * perRiderTrip);
+      expect(m.moneySaved, 2400);
+    });
+
+    test('Valeo September: 132 rider trips × 120 = 15,840; 208 is ÷ 76 shared legs, not a per-trip figure', () {
+      final m = CompanyDashboard.build(month: '2026-09', soFar: false, facts: CompanySeed.valeoFacts, workdays: 21);
+      expect(m.moneySaved, 132 * perRiderTrip);
+      expect(m.moneySaved, 15840);
+      expect(m.tripsShared, 76);
+      expect(15840 / 76, closeTo(208.4, 0.05));
+    });
+  });
 }

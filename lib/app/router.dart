@@ -17,6 +17,7 @@ import '../features/company/presentation/invoice_screen.dart';
 import '../features/company/presentation/invoices_screen.dart';
 import '../features/company/presentation/register_company_screen.dart';
 import '../features/company/presentation/roster_screen.dart';
+import '../features/company/presentation/statement_screen.dart';
 import '../features/daily/data/daily_seed.dart';
 import '../features/daily/data/providers.dart';
 import '../features/daily/presentation/shell/app_shell.dart';
@@ -163,6 +164,7 @@ GoRouter router(Ref ref) {
       GoRoute(path: Routes.companyRoster, builder: (_, _) => const RosterScreen()),
       GoRoute(path: Routes.companyLog, builder: (_, _) => const CompanyLogScreen()),
       GoRoute(path: Routes.companyDashboard, builder: (_, _) => const CompanyDashboardScreen()),
+      GoRoute(path: Routes.companyStatement, builder: (_, _) => const StatementScreen()),
       if (kDebugMode) GoRoute(path: Routes.gallery, builder: (_, _) => const DesignGalleryScreen()),
     ],
   );

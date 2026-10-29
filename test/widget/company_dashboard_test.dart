@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
 import 'package:goora/app/routes.dart';
+import 'package:goora/core/format/grouped_number.dart';
 import 'package:goora/features/company/data/company_seed.dart';
 import 'package:goora/features/company/data/providers.dart';
 import 'package:goora/features/company/domain/company_dashboard.dart';
@@ -54,8 +55,10 @@ void main() {
       expect(_value(tester, 'carpool'), l.companyDashboardPercent(67));
       expect(_value(tester, 'groups'), '2');
       expect(_value(tester, 'trips'), '76');
-      expect(_value(tester, 'saved'), l.egpAmount(132 * 120));
-      expect(_value(tester, 'co2'), l.companyDashboardKg((132 * CompanySeed.legKm * CompanyDashboardTerms.co2KgPerKm).round()));
+      // N-13: thousands get a comma, Western digits in both languages.
+      expect(_value(tester, 'saved'), code == 'ar' ? '15,840 ج' : '15,840 EGP');
+      final kg = (132 * CompanySeed.legKm * CompanyDashboardTerms.co2KgPerKm).round();
+      expect(_value(tester, 'co2'), code == 'ar' ? '${groupedInt(kg)} كجم' : '${groupedInt(kg)} kg');
       expect(_value(tester, 'parking'), '${66 ~/ CompanyDashboard.workdaysIn('2026-09')}');
       expect(find.text(l.companyDashboardSavedMethod), findsOneWidget);
       expect(find.text(l.companyDashboardCo2Method), findsOneWidget);

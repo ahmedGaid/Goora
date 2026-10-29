@@ -527,3 +527,213 @@ Founder Q1–Q11 still open: defaults unchanged.
 | E1 | T052 already holds: `test/architecture/no_hardcoded_values_test.dart` lines 20 and 23 scan `lib/features` recursively, so `lib/features/company` is covered. | Tick T052 with this note (not ticked here: another session owns the tick). |
 
 Also added by this session: `test/widget/company_unwalked_states_test.dart` (6 tests, ar + en): removed employee's next trip (fee 4 back on the plan card, "plan ended" notice in the inbox, can enrol again) and the dashboard with 5 and with 4 employees. Both were "not walked" in walk 5.
+
+### P7 notes — N-16 check (2026-10-29, autonomous session)
+Savings formula `Σ(leg cost − share)` is right: checked by hand against R7/R10 (160 − 160/4 = 120 per rider trip; 132 rider trips × 120 = 15,840) and pinned in `test/unit/company_dashboard_test.dart`. The "208 per trip" in the walk was 15,840 ÷ 76 *shared legs*, a different count — not an error in the formula.
+
+## P8 notes — 2026-10-29 (US6 HR statement, T046–T049)
+
+Founder Q6, Q7 still open: the spec defaults were taken. Q8 b (Law 151/2020 wording of the opt-in) is the
+open legal item: the copy below is a draft for the lawyer.
+
+### Choices (picked, with the rejected option)
+1. **Consent is a history, read at the month end.** `company.hrConsent.<companyId>.<personId>` = list of
+   `{on, at}` (data-model). A month's statement includes a person if they were enrolled AND consent was on
+   at 00:00 on the 1st of the next month (`HrStatement.build`). So withdrawing on the 15th leaves that
+   month out and earlier ones unchanged. Rejected: a stored on/off flag (an issued month would change).
+2. **A statement exists only for a closed month.** `statement()` returns nothing while the month runs;
+   the screen lists closed months only, newest first. Rejected: a "so far" statement (consent can still change).
+3. **Joining again starts from off.** `enroll` appends an `off` if the last change was `on`; leaving ends
+   it for `hrConsent` (no open enrollment = false). Rejected: carrying the old yes over a leave.
+4. **Only received / auto-received shares, rider trips only** (Q7, AC6): `TripShare.asRider == false` and
+   pending / not received / disputed never reach a line. HR sees name, date, leg, share — nothing else
+   (`StatementLine`, field list pinned in a test next to the privacy test).
+5. **The statement's source is a seam**, `TripSharesSource`, defaulting to `CompanySeed.sharesFor`. The seed
+   gives Valeo shares from the same facts as the dashboard (one going + one return per workday, 40 EGP each);
+   the signed-in person's real shares wait for the server (R9). Rejected: reading the wallet from the company
+   network (R8: it may not).
+6. **Seed consents (placeholders):** Dina, Hossam, Yasmin and Karim agreed; Yasmin withdrew on the 15th of the
+   second month; Karim drives, so he has no line; Hossam has 3 shares that stay off (not received, disputed,
+   pending) and 1 auto-received that counts.
+7. **No export.** `CompanyFlags.hrStatementExport` stays false; the screen has no export or share control and
+   a test pins both (constitution VIII). Goora's fee is shown as `0` in one line.
+8. **Where the switch lives:** `HrConsentToggle` on the Wallet's company card (above Leave), off by default,
+   the "what HR sees" text always visible under it. Turning it off asks first ("statements already issued
+   stay"); turning it on needs no confirm. Rejected: a confirm on turning on (the sentence is already on screen).
+9. The HR home gets a fifth button "Trips statement" next to Numbers; route `/company/statement`.
+
+### R11 — keys added in P8 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyHrShareTitle | ابعت مشاويري لـ HR | Share my trips with HR |
+| companyHrShareSees | الشركة هتشوف: اسمك، وتاريخ كل مشوار ركبته كراكب، الذهاب ولا الرجوع، والحصة اللي دفعتها للسواق. مش هتشوف مكان الركوب ولا الميعاد ولا السواق. | Your company will see: your name, the date of each trip you rode as a passenger, going or return, and the share you paid the driver. It never sees the pickup point, the time or the driver. |
+| companyHrShareOffLine · OnLine | مقفول. الشركة مش بتشوف مشاويرك. · شغال. الشركة بتستلم كشف الشهر اللي فات أول كل شهر. | Off. Your company doesn't see your trips. · On. Your company gets last month's statement on the 1st of each month. |
+| companyHrShareStopTitle · Body · Confirm | توقّف إرسال مشاويرك لـ HR؟ · الكشوف اللي الشركة استلمتها قبل كده هتفضل زي ما هي. الكشف الجاي وأي كشف بعده مش هيشمل مشاويرك. · أيوه، وقّف | Stop sharing your trips with HR? · Statements your company already received stay as they are. The next one, and every one after, leaves your trips out. · Yes, stop |
+| companyStatementCta · Title | كشف المشاوير · كشف المشاوير الشهري | Trips statement · Monthly trips statement |
+| companyStatementNote | الموظفين اللي وافقوا يشاركوا مشاويرهم بس هما اللي بيظهروا هنا. أي حد تاني مش موجود، ولا حتى اسمه. | Only employees who agreed to share their trips appear here. No one else is listed, not even a name. |
+| companyStatementFee | رسوم جورة على المشاوير دي: {amount}. كل حصة اتدفعت للسواق على طول. | Goora's fee on these trips: {amount}. Each share was paid straight to the driver. |
+| companyStatementPerson · Share · Total | {count} مشوار · {amount} ج · {amount} ج للسواق · إجمالي الحصص: {amount} ج | {count} trips · {amount} EGP · {amount} EGP to the driver · Total shares: {amount} EGP |
+| companyStatementEmpty · NoMonths | مفيش موظف وافق يشارك مشاويره في الشهر ده. · أول كشف بيظهر بعد ما أول شهر يخلص. | No employee shared their trips for this month. · The first statement appears once the first month has ended. |
+
+Arabic notes for founder review: "أيوه، وقّف" is a masculine imperative, like the existing "شيل" and "سيبها" (same register,
+same open gender question as "خرج من الخطة"). "الشركة بتستلم كشف ... أول كل شهر" promises a delivery the fake does not do
+(HR opens the screen; nothing is sent), so the copy may need "تقدر تشوف" once the real flow is known. Wording waits for Q8 b.
+
+### Not done / not walked
+- **T049 quickstart 8: not walked** (no emulator this run). Covered by widget tests ar + en only.
+- Red-first was not observed for T046/T048: the tests were written before the code but not run against
+  a missing implementation (both would have failed to compile).
+
+### R11 — full list of 010 ARB keys, all phases (T053, **for founder review**, ar first)
+
+Every key 010 added to `app_ar.arb` / `app_en.arb` on this branch compared with main at b198795 (139 keys), ar and en side by side. P8 keys (`companyHrShare*`, `companyStatement*`) are listed in "R11 — keys added in P8" once that phase is committed. Nothing here is founder-approved yet.
+
+**Flag — gendered wording:** `companyLogEmployeeLeft` reads "خرج من الخطة: {name}", the masculine verb for a person whose gender the app does not know. Neutral options for the founder: "الخروج من الخطة: {name}" (noun form, my pick) or "{name} · خرج/خرجت" (not neutral). Same masculine-generic pattern in `companyDomainRemoveBody` ("هيخرجوا", plural — normal Egyptian usage, lower risk).
+
+Four older keys changed wording and are also up for review: `nCompanyPlanStarted`, `nCompanyPlanEnded`, `nCompanyPlanPaused`, `nCompanyPlanResumed`.
+
+| Key | ar | en |
+|---|---|---|
+| howPayRule1Company | بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. خطة شركتك بتغطي رسوم جورة، فمفيش عليك رسوم خدمة. | You pay your driver's share directly, by cash or InstaPay. Your company plan covers Goora's fee, so you pay no service fee. |
+| companyAccountTitle | حساب الشركة | Company account |
+| companyAccountSub | سجّل شركتك لو إنت HR، أو شوف خطة شركتك | Register your company if you're in HR, or see your company plan |
+| companyRegisterCta | سجّل شركتك | Register your company |
+| companyRegisterIntro | إنت من HR؟ سجّل شركتك، وموظفينكم يركبوا من غير رسوم جورة. | In HR? Register your company so your employees ride with no Goora fee. |
+| companyRegisterSub | هنتأكد من إيميل شغلك، وفريق جورة هيفعّل الحساب بعد ما العقد يتمضي. | We check your work email. The Goora team turns the account on once the contract is signed. |
+| companyNameLabel | اسم الشركة | Company name |
+| companyNameError | الاسم لازم يكون من 2 لـ 60 حرف | Use 2 to 60 characters |
+| companyWorkEmailLabel | إيميل شغلك | Your work email |
+| companyEmailInvalid | اكتب إيميل صحيح، زي name@company.com | Enter a valid email, like name@company.com |
+| companyPublicDomain | {domain} إيميل عام أي حد يقدر يعمل عليه حساب. استخدم إيميل الشغل. | {domain} is a public email service anyone can sign up to. Use your work email. |
+| companyDomainTaken | {domain} متسجّل لشركة تانية على جورة. | {domain} is already registered to another company on Goora. |
+| companySendCode | ابعتلي كود | Send me a code |
+| companyCodeSent | بعتنا كود لـ {email} | We sent a code to {email} |
+| companyCodeLabel | الكود | Code |
+| companySubmit | ابعت الطلب | Send the request |
+| companyStatusPending | مستني موافقة جورة | Waiting for Goora |
+| companyStatusActive | شغّال | Active |
+| companyStatusSuspended | متوقف لحد الدفع | Paused until paid |
+| companyStatusEnded | العقد خلص | Contract ended |
+| companyPendingBody | طلب {company} وصلنا. هنفعّل الحساب أول ما العقد يتمضي. | We got {company}'s request. We'll turn the account on once the contract is signed. |
+| companyDomainsLine | الدومين: {domains} | Domain: {domains} |
+| companyMinSeats | أقل عدد في الفاتورة: {count} موظف | Billed for at least {count} employees |
+| companyPriceLine | {amount} ج لجورة عن كل موظف في الشهر | {amount} EGP to Goora per employee a month |
+| companyContractLine | العقد من {start} لـ {end} | Contract {start} to {end} |
+| companyHomeNote | الشركة عمرها ما بتشوف مشاوير الموظفين ولا أماكن ركوبهم. | The company never sees employees' trips or pickup points. |
+| companyMineTitle | خطة شركتك | Your company plan |
+| companyEnrolledLine | مشترك في خطة {company} من {date} | On {company}'s plan since {date} |
+| companyCanEnrollLine | {company} بتدفع رسوم جورة عنك على كل مشوار. | {company} pays Goora's fee for you on every trip. |
+| companyJoinCta | اشترك من خلال {company} | Join through {company} |
+| companyNotOnGoora | شركتك لسه مش على جورة | Your company isn't on Goora yet |
+| companyNotOnGooraBody | قول لـ HR بتاعكم عن جورة. لحد ما يشتركوا، تقدر تدفع بالمشوار أو تشترك لوحدك. | Tell your HR about Goora. Until they join, you can pay per trip or subscribe yourself. |
+| companyTellHr | ابعت لـ HR بتاعكم | Tell your HR |
+| companyShareText | جورة بيجمّع زمايل الشغل في مشوار يومي واحد، وبيقسموا التكلفة. وفيه خطة للشركات: الشركة تدفع رسوم جورة، والموظفين يركبوا من غير رسوم. {link} | Goora groups colleagues into one daily commute, and they share the cost. With its company plan, the company pays Goora's fee and employees ride with no fee. {link} |
+| consentTitle | قبل ما تشترك من خلال {company} | Before you join through {company} |
+| consentSeesTitle | شركتك هتشوف | Your company will see |
+| consentSeesName | اسمك | Your name |
+| consentSeesEmail | إيميل شغلك | Your work email |
+| consentSeesSince | من إمتى مشترك | Since when you joined |
+| consentNeverTitle | عمرها ما هتشوف | It will never see |
+| consentNeverTrips | مشاويرك ومواعيدها | Your trips or their times |
+| consentNeverPlace | بيتك أو مكان ركوبك | Your home or pickup point |
+| consentNeverWho | مين راكب معاك | Who rides with you |
+| consentNeverMoney | فلوسك أو اللي دفعته للسواق | Your money or what you paid the driver |
+| consentFeeLine | رسوم جورة على مشاويرك هتبقى 0. نصيب السواق بتدفعه له زي ما هو. | Goora's fee on your trips becomes 0. You still pay the driver's share to the driver. |
+| consentPausedLine | اشتراكك الشخصي (فاضل {days} يوم) هيتوقف، ويرجعلك لو سبت الشركة. | Your own plan ({days} days left) pauses and comes back if you leave your company. |
+| consentAgree | موافق، اشترك | Agree and join |
+| consentDecline | مش دلوقتي | Not now |
+| planCompanyOf | شركة · {company} | Company · {company} |
+| planCompanyPaused | اشتراكك الشخصي متوقف: فاضل {days} يوم، يرجعلك لو سبت الشركة. | Your own plan is paused: {days} days left, back if you leave your company. |
+| companyLeave | سيب خطة الشركة | Leave the company plan |
+| companyLeaveTitle | تسيب خطة {company}؟ | Leave {company}'s plan? |
+| companyLeaveBody | من دلوقتي رسوم جورة هترجع على مشاويرك. المشاوير اللي فاتت مش هتتغير. | From now on Goora's fee applies to your trips. Trips you already took don't change. |
+| companyLeaveConfirm | أيوه، سيبها | Yes, leave |
+| demoApproveCompany | جورة توافق على شركتي | Goora approves my company |
+| demoMakeMeHr | خليني HR بتاع Valeo | Make me Valeo's HR contact |
+| companyInvoicesCta | الفواتير | Invoices |
+| companyInvoicesTitle | فواتير الشركة | Company invoices |
+| companyInvoicesEmpty | لسه مفيش فواتير. أول فاتورة بتتعمل أول الشهر الجاي. | No invoices yet. The first one is issued at the start of next month. |
+| companyInvoiceMonthLabel | فاتورة {month} | Invoice {month} |
+| companyInvoiceMath | {seats} موظف × {price} ج = {total} ج | {seats} employees × {price} EGP = {total} EGP |
+| companyInvoicePeak | أكتر عدد موظفين اتسجلوا في الشهر: {count} | Most employees enrolled in the month: {count} |
+| companyInvoicePaid | اتدفعت | Paid |
+| companyInvoiceWaiting | مستنية الدفع | Waiting for payment |
+| companyInvoiceOverdue | متأخرة | Overdue |
+| companyInvoiceDue | آخر ميعاد للدفع {date} | Pay by {date} |
+| companyInvoiceReferenceTitle | اكتب الرقم ده في التحويل | Write this on the transfer |
+| companyInvoiceBankTitle | حساب جورة | Goora's bank account |
+| companyInvoiceSuspendNote | لو الفاتورة لسه ماتدفعتش في {date}، خطة الشركة بتتوقف لحد الدفع، ورسوم جورة بترجع على مشاوير الموظفين. | If this is still unpaid on {date}, the company plan pauses until it is paid and Goora's fee applies to employees' trips. |
+| companyInvoicePaidOn | اتدفعت يوم {date} · مرجع البنك {ref} | Paid on {date} · bank reference {ref} |
+| demoMarkInvoicePaid | جورة تأكد دفع الفاتورة | Goora marks the invoice paid |
+| demoSkipToSuspension | قدّم الساعة لحد يوم إيقاف خطة الشركة | Skip to the day the company plan pauses |
+| companyRosterCta | الموظفين المشتركين | Enrolled employees |
+| companyRosterTitle | الموظفين المشتركين | Enrolled employees |
+| companyRosterCount | {count} مشترك دلوقتي | {count} enrolled now |
+| companyRosterNote | ده كل اللي الشركة بتشوفه: الاسم والإيميل ومن إمتى مشترك. | This is all the company sees: name, email and since when. |
+| companyRosterSince | مشترك من {date} | Since {date} |
+| companyRosterLeft | آخر يوم في الخطة: {date} | Left on {date} |
+| companyRosterEmpty | مفيش موظفين مشتركين لسه. قول لزمايلك يشتركوا من خلال الشركة من جورة. | No employees enrolled yet. Tell your colleagues to join through the company in Goora. |
+| companyRosterRemove | شيل | Remove |
+| companyRosterRemoveTitle | تشيل {name} من خطة الشركة؟ | Remove {name} from the company plan? |
+| companyRosterRemoveBody | من دلوقتي رسوم جورة هترجع على مشاويرهم، والمشاوير اللي فاتت مش هتتغير. هيتحسبوا في فاتورة الشهر ده. | From now on Goora's fee applies to their trips; trips already taken don't change. They still count on this month's invoice. |
+| companyRosterRemoveConfirm | أيوه، شيل | Yes, remove |
+| companyLogCta | سجل التغييرات | Change log |
+| companyLogTitle | سجل التغييرات | Change log |
+| companyLogEmpty | مفيش تغييرات لسه. | No changes yet. |
+| companyLogMeta | {actor} · {date} | {actor} · {date} |
+| companyLogByHr | HR | HR |
+| companyLogByEmployee | الموظف | Employee |
+| companyLogByGoora | جورة | Goora |
+| companyLogApproved | الحساب اتفعّل | Account approved |
+| companyLogDomainAdded | دومين اتضاف: {domain} | Domain added: {domain} |
+| companyLogDomainRemoved | دومين اتشال: {domain} | Domain removed: {domain} |
+| companyLogEmployeeRemoved | اتشال من الخطة: {name} | Removed from the plan: {name} |
+| companyLogEmployeeLeft | خرج من الخطة: {name} | Left the plan: {name} |
+| companyLogInvoiceIssued | فاتورة اتعملت: {month} | Invoice issued: {month} |
+| companyLogInvoicePaid | فاتورة اتدفعت: {month} | Invoice paid: {month} |
+| companyLogSuspended | الخطة اتوقفت لحد الدفع | Plan paused until paid |
+| companyLogResumed | الخطة رجعت تشتغل | Plan back on |
+| companyLogContractEnded | العقد خلص | Contract ended |
+| companyLogHrChanged | مسؤول HR اتغيّر | HR contact changed |
+| companyDomainsTitle | الدومينات | Domains |
+| companyDomainsNote | أي حد إيميل شغله على الدومينات دي يقدر يشترك من خلال الشركة. | Anyone whose work email is on these domains can join through the company. |
+| companyAddDomain | ضيف دومين | Add a domain |
+| companyDomainLabel | الدومين | Domain |
+| companyDomainInvalid | اكتب دومين صحيح، زي company.com | Enter a valid domain, like company.com |
+| companyDomainAddCta | ضيف | Add |
+| companyDomainRemove | شيل {domain} | Remove {domain} |
+| companyDomainRemoveTitle | تشيل {domain}؟ | Remove {domain}? |
+| companyDomainRemoveBody | الموظفين المشتركين بإيميل على {domain} هيخرجوا من الخطة دلوقتي، ورسوم جورة هترجع على مشاويرهم. | Employees enrolled with a {domain} email leave the plan now, and Goora's fee applies to their trips. |
+| demoEndContract | جورة تنهي عقد Valeo | Goora ends Valeo's contract |
+| demoHrLeft | مسؤول HR بتاع Valeo ساب الشركة | Valeo's HR contact left the company |
+| companyDashboardCta | أرقام الشركة | Company numbers |
+| companyDashboardTitle | أرقام الشركة | Company numbers |
+| companyDashboardSoFar | {month} (لحد دلوقتي) | {month} (so far) |
+| companyDashboardNote | أرقام إجمالية بس. مفيش اسم ولا مشوار ولا مكان ركوب لأي موظف. | Totals only. No employee's name, trip or pickup point. |
+| companyDashboardEmpty | الأرقام بتظهر أول ما الحساب يتفعّل. | Numbers appear once the account is active. |
+| companyDashboardFewer | أقل من 5 | Fewer than 5 |
+| companyDashboardFewerNote | أي رقم طالع من أقل من 5 موظفين بنخبّيه، عشان محدش يتعرف. | A figure from fewer than 5 employees is hidden, so no one can be picked out. |
+| companyDashboardEnrolled | موظفين مشتركين | Employees enrolled |
+| companyDashboardActive | موظفين نشطين الشهر ده | Active employees this month |
+| companyDashboardActiveMethod | نشط يعني ركب أو سوّق مشوار واحد على الأقل. | Active means at least one trip as a passenger or driver. |
+| companyDashboardCarpool | نسبة المشاركة | Carpool rate |
+| companyDashboardCarpoolMethod | النشطين ÷ المشتركين. | Active ÷ enrolled. |
+| companyDashboardGroups | مجموعات مشاوير فيها موظفين | Commute groups with employees |
+| companyDashboardTrips | مشاوير اتشاركت | Trips shared |
+| companyDashboardTripsMethod | كل مشوار بيتعد مرة واحدة، حتى لو كذا موظف في العربية. | Each trip counts once, however many employees were in the car. |
+| companyDashboardSaved | توفير تقديري | Estimated savings |
+| companyDashboardSavedMethod | تكلفة المشوار لو سقت لوحدك ناقص حصة الكرسي اللي اتدفعت. تقدير. | What driving alone would cost minus the seat share paid. An estimate. |
+| companyDashboardCo2 | كربون اتوفّر (تقدير) | CO₂ avoided (estimate) |
+| companyDashboardCo2Method | الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس. | Kilometres × 0.1645 kg CO₂ per km, an average petrol car. An estimate, not a measurement. |
+| companyDashboardKg | {kg} كجم | {kg} kg |
+| companyDashboardMoney | {amount} ج | {amount} EGP |
+| companyDashboardPercent | {pct}% | {pct}% |
+| companyDashboardParking | أماكن ركن فاضية كل يوم شغل | Parking spaces freed per workday |
+| companyDashboardParkingMethod | مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده. | Going trips as a passenger ÷ workdays (Sun–Thu). Assumes each passenger would otherwise drive alone. |
+| companyDashboardGapsTitle | مناطق فيها موظفين من غير مجموعة | Areas with employees but no group |
+| companyDashboardGapRow | {area} · {count} موظف مستنيين | {area} · {count} employees waiting |
+| companyDashboardGapsEmpty | مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة. | No area has 5 or more employees waiting for a group. |
+
+## Autonomous session notes — 2026-10-29
+- Several sessions shared worktree Goora-010; split agreed by message: P8 (T046–T049) = goora-2e; N-13, N-16, wallet plural, T050–T054 = this session. Commits stage only own hunks.
+- N-13: digits stay Western with "," in ar and en (spec default: every other money line does the same).

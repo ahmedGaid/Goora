@@ -95,6 +95,18 @@ Try it in a debug build (any Egyptian number, code `123456`): choose "Just one t
 Settings → Demo has the fake other side: "A rider books your seat", "A driver accepts your request",
 "A subscriber takes this seat", "Verify my driver documents". "Reset demo data" clears it all.
 
+## Company network (feature 010)
+
+A company pays **Goora's service fee** for its employees' commute rides: an employee who joins through their company rides without the fee, and the company gets a monthly invoice. The driver's share is never touched; it still goes straight from rider to driver, so this stays cost-sharing, not a taxi. Everything runs on fake data in `lib/features/company/` (spec: `specs/010-company-network/`).
+
+- **Register and join.** Settings → Company account: a company signs up with a work-email domain and waits for Goora to approve it. An employee with a verified work email joins from Plan → "Through my company", after a consent sheet that lists what the company sees (name, work email, when they joined) and never sees (trips, pickup points, who rode with them).
+- **Invoices.** One per closed month: seats × price per seat, with a 20-seat minimum, a transfer reference and a due date. Goora marks it paid by hand (a demo action in Settings → Demo). An invoice unpaid past its due date pauses coverage for the company's employees.
+- **Roster and log.** The HR contact sees names, work emails and join dates, and can remove an employee; a log records who did what.
+- **Company numbers.** Monthly totals (active employees, trips shared, estimated savings, CO₂, parking spaces freed) in words with their method; any figure built from fewer than 5 employees shows "Fewer than 5". No individual appears.
+- **Switches, off for now.** `CompanyFlags.companyInvoicesLive` and `CompanyFlags.hrStatementExport` stay `false` until the lawyer answers (constitution VIII).
+
+Walked 2026-10-29, see `specs/010-company-network/walk5/REPORT.md`. Emulator walk-through steps are not written here yet.
+
 ## Code generation
 
 Riverpod providers and l10n are generated and committed. After changing a `@riverpod` provider or

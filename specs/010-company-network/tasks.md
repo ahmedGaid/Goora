@@ -81,10 +81,10 @@ then commit.
 
 ## Phase 8: US6 — HR statement (P8, droppable — Q6)
 
-- [ ] T046 [P] [US6] Unit tests: consent off by default; statement only for consent-on-at-month-end employees; rider trips only; only received/auto-received shares (Q7); withdrawn consent leaves later months, issued month unchanged (SC-008) (red)
-- [ ] T047 [US6] `hrConsent`/`setHrConsent`/`statement` in the fake; "Share my trips with HR" toggle on the Wallet company card with the what-HR-sees text and the "already-issued statements stay" confirm
-- [ ] T048 [US6] Widget tests `test/widget/company_statement_test.dart` (ar+en, red first): toggle text, statement lines, withdrawn-consent confirm; then `statement_screen.dart` + route; export stays behind `hrStatementExport` (off) — constitution VIII
-- [ ] T049 Checkpoint P8: gates green; quickstart 8
+- [x] T046 [P] [US6] Unit tests: consent off by default; statement only for consent-on-at-month-end employees; rider trips only; only received/auto-received shares (Q7); withdrawn consent leaves later months, issued month unchanged (SC-008) (red) — done 2026-10-29: `test/unit/company_hr_statement_test.dart` (19 tests); red not observed, see research "P8 notes"
+- [x] T047 [US6] `hrConsent`/`setHrConsent`/`statement` in the fake; "Share my trips with HR" toggle on the Wallet company card with the what-HR-sees text and the "already-issued statements stay" confirm — done 2026-10-29: fake + seed consents/shares, `HrConsentToggle` on the Wallet company card; ar/en keys in research "P8 notes" R11
+- [x] T048 [US6] Widget tests `test/widget/company_statement_test.dart` (ar+en, red first): toggle text, statement lines, withdrawn-consent confirm; then `statement_screen.dart` + route; export stays behind `hrStatementExport` (off) — constitution VIII — done 2026-10-29: `test/widget/company_statement_test.dart` (10 tests x ar+en), `statement_screen.dart`, route `/company/statement`; no export control (flag off)
+- [x] T049 Checkpoint P8: gates green; quickstart 8 — gates green 2026-10-29 (analyze 0 in my files, flutter 1669, node 276); quickstart 8 NOT WALKED (no emulator); widget tests ar+en cover it
 
 ## Phase 9: Polish (P9)
 
