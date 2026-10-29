@@ -11,8 +11,8 @@ import 'package:goora/features/onboarding/domain/choices.dart';
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
 
-/// 010 T050: the company home, consent sheet, invoice and dashboard in ar
-/// (rtl) and en (ltr). Windows only, like the rest. Regenerate with
+/// 010 T050: the company home, consent sheet, invoice, dashboard and trips
+/// statement in ar (rtl) and en (ltr). Windows only, like the rest. Regenerate with
 /// `flutter test --update-goldens test/golden` after an intended visual change.
 final _now = at(rideTuesday, 10, 0);
 
@@ -83,6 +83,19 @@ void main() {
       await tester.tap(find.byKey(const Key('dashboard-month-2026-09')));
       await tester.pumpAndSettle();
       await _shot(tester, 'dashboard', dir);
+    });
+
+    testWidgets('statement [$dir]', (tester) async {
+      final c = await _pump(tester, code, hr: true, height: 3200);
+      c.read(routerProvider).go(Routes.company);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('company-statement')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('company-statement-screen')), findsOneWidget);
+      // Home needs the tall view to reach the tile; the statement ends well before it.
+      tester.view.physicalSize = const Size(390, 2000);
+      await tester.pumpAndSettle();
+      await _shot(tester, 'statement', dir);
     });
   }
 }

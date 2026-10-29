@@ -88,7 +88,7 @@ then commit.
 
 ## Phase 9: Polish (P9)
 
-- [x] T050 [P] Goldens for company home, consent sheet, invoice, dashboard (ar+en) — Windows only — done 2026-10-29 (`c2fccaf`, 8 goldens); the P8 statement screen has no golden yet
+- [x] T050 [P] Goldens for company home, consent sheet, invoice, dashboard (ar+en) — Windows only — done 2026-10-29 (`c2fccaf`, 8 goldens); P8 statement screen golden (ar + en) added 2026-10-29 in `company_screens_golden_test.dart`
 - [x] T051 [P] New colour pairings into `test/unit/contrast_test.dart`; a11y at 1.3× text on dashboard and invoice — done 2026-10-29 (`e934c33`; includes the P8 switch pairings)
 - [x] T052 [P] `no_hardcoded_values_test.dart` covers `lib/features/company` (check the root recursion) — done 2026-10-29 (`45e8783`)
 - [x] T053 Research R11: full list of new ARB keys (ar/en) for founder review — done 2026-10-29 (`129022d`, 139 keys; gendered "خرج من الخطة" flagged)
