@@ -142,9 +142,8 @@ digit (q8-wallet-company-card-off-ar).
 | N-11 once rider, no shell | Rider + once lands on **Today** (its no-group state offers Empty seats); Today's payment gate skips a once rider; Empty seats with nothing to pop goes Back to Today | `onboarding_flow_test`, `onboarding_route_test`, `app_flow_test` (+ 3 older tests that assumed the old landing updated) | none |
 | N-12 Fawry | Two steps: "Get my Fawry code" shows the code (title size, tabular digits) + how to pay; only "I paid at Fawry" settles. New keys `fawryGetCode`, `fawryHow` (appended) | `rider_wallet_test.dart` (3 new, incl. 1.3×) | none (no golden shows the pay sheet) |
 
-**Gates in this worktree (final tree):** `flutter analyze` 0 issues · `flutter test --concurrency=1` **1767 passed, 0 failed** ·
-`node --test "supabase/functions/_shared/*.test.ts"` **276 pass, 0 fail**. Re-run once more after N-5b (driver wallet,
-goldens, analyze): green.
+**Gates in this worktree (final tree):** `flutter analyze` 0 issues · `flutter test --concurrency=1` **1769 passed, 0 failed** ·
+`node --test "supabase/functions/_shared/*.test.ts"` **276 pass, 0 fail** (all three run on the final tree, after N-5b).
 
 **Seen on the emulator after the fixes** (rebuilt APK from this branch, Arabic):
 - N-11: once rider onboarding ends on Today with the four tabs (`fix-n11-once-rider-lands-today-ar`); "عايز مشوار زيادة؟" opens
