@@ -789,9 +789,9 @@
   "companyStatementTitle": "Monthly trips statement",
   "companyStatementNote": "Only employees who agreed to share their trips appear here. No one else is listed, not even a name.",
   "companyStatementFee": "Goora's fee on these trips: {amount}. Each share was paid straight to the driver.",
-  "companyStatementPerson": "{count, plural, =1{1 trip} other{{count} trips}} · {amount} EGP",
+  "companyStatementPerson": "{count, plural, =1{1 trip} other{{count} trips}} · {amount} EGP to the driver",
   "companyStatementShare": "{amount} EGP to the driver",
-  "companyStatementTotal": "Total shares: {amount} EGP",
+  "companyStatementTotal": "Total driver shares: {amount} EGP",
   "companyStatementEmpty": "No employee shared their trips for this month.",
   "companyStatementNoMonths": "The first statement appears once the first month has ended."
 }

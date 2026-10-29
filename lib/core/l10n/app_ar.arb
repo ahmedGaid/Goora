@@ -2129,7 +2129,7 @@
       "amount": {"type": "String"}
     }
   },
-  "companyStatementPerson": "{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج",
+  "companyStatementPerson": "{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج للسواق",
   "@companyStatementPerson": {
     "placeholders": {
       "count": {"type": "int"},
@@ -2142,7 +2142,7 @@
       "amount": {"type": "String"}
     }
   },
-  "companyStatementTotal": "إجمالي الحصص: {amount} ج",
+  "companyStatementTotal": "إجمالي حصص السواق: {amount} ج",
   "@companyStatementTotal": {
     "placeholders": {
       "amount": {"type": "String"}

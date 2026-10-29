@@ -2911,7 +2911,7 @@ class AppLocalizationsAr extends AppLocalizations {
       two: 'مشوارين',
       one: 'مشوار واحد',
     );
-    return '$_temp0 · $amount ج';
+    return '$_temp0 · $amount ج للسواق';
   }
 
   @override
@@ -2921,7 +2921,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String companyStatementTotal(String amount) {
-    return 'إجمالي الحصص: $amount ج';
+    return 'إجمالي حصص السواق: $amount ج';
   }
 
   @override
