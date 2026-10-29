@@ -2,7 +2,7 @@
 
 **Input**: `specs/010-company-network/` — spec, plan, research, data-model, contracts, quickstart.
 `006-cairo-ismailia-corridor` has merged into `main`. Implementation branch `010-company-network`
-off that `main`, own worktree. Founder answers to Q1–Q11 may change the
+off that `main`, own worktree; merged into `main` 2026-10-29 (`30b8181`). Founder answers to Q1–Q11 may change the
 numbers in vectors and tests — re-check the spec's "Touches" column before P2.
 
 Format: `[ID] [P?] [Story] Description` — `[P]` = can run in parallel (different files, no
@@ -93,6 +93,9 @@ then commit.
 - [x] T052 [P] `no_hardcoded_values_test.dart` covers `lib/features/company` (check the root recursion) — done 2026-10-29 (`45e8783`)
 - [x] T053 Research R11: full list of new ARB keys (ar/en) for founder review — done 2026-10-29 (`129022d`, 139 keys; gendered "خرج من الخطة" flagged)
 - [ ] T054 README section "Company network (feature 010)"; full quickstart walk ar + en on the emulator; results in research.md — README part done 2026-10-29 (`74a2af8`); full ar + en emulator walk NOT WALKED, results not yet in research.md
+- [x] T055 [P] Edge cases from the spec that had a sentence but no test (research "P8/P9 notes", C1): price change mid-contract, work email moved (same company stays, other company leaves — **red, fixed** in `FakeCompanyRepository._leaveIfMoved`), 009 ID check not skipped on enrol, driver-only employee enrols — done 2026-10-29: `test/unit/company_edge_cases_test.dart` (8), `test/widget/company_driver_enroll_test.dart` (ar+en)
+- [x] T056 [P] Every screen in `lib/features/company/presentation` at 1.3× text, ≥ 44 px targets, labelled tappables, ar + en (C2; extends T051) — done 2026-10-29: `test/widget/company_text_scale_test.dart` (26); one red fixed with `AppSizes.minTouch` (invoice reference), invoice goldens regenerated
+- [x] T057 [P] [US6] A non-HR user sees no statement (U2); statement rows have no fee column (A1) — done 2026-10-29: `test/widget/company_statement_guard_test.dart` (8, ar+en); the header "Goora's fee 0" line is flagged for the founder, not removed
 
 ## Dependencies
 
@@ -116,3 +119,21 @@ minute someone leaves (R2, contract, T006) · F2 HR consent judged at month end 
 B1 "trips shared" defined (R7) · C3 leave notice asserted (T037) · C4 log writes asserted (T015) ·
 P1 untested perf targets dropped (plan) · F5 pending company shows "not on Goora yet" (T023).
 Coverage after fixes: 32/32 FR, 8/8 SC, 54 tasks, 0 unmapped. 11 founder markers (Q1–Q11) open by design.
+
+## /speckit-analyze — 2026-10-29 (integration run, after P9)
+
+0 CRITICAL, 0 HIGH, 4 MEDIUM, 8 LOW. No constitution MUST is violated. Coverage: 32/32 FR and 8/8 SC mapped to
+a task, 57 tasks (T055–T057 added), 0 unmapped; FR-030 / T001 wait for the founder's OK, SC-001 and SC-002 can
+only be timed in the T054 device walk.
+Fixed in the docs (doc-only): spec header said "P0–P7 built" and plan/tasks did not say 010 is in `main` ·
+FR-013 "7 days after due" now says "from 00:00 on the 8th day" (matches `CompanyRules.suspendFromDay` and T032) ·
+SC-007 lists the new email-moved leave path · spec Clarifications 2026-10-29 (unheld domain / no email stays
+enrolled; A1 open) · plan: ARB key count (155) and the source list (hr_consent_toggle, hr_statement, hr_views,
+employee_month_facts, company_terms, company_flags) · quickstart step 2 (the Demo "end contract" action exists) ·
+T055–T057 record the edge-case, 1.3× and statement-guard tests.
+Open for the founder, not changed: A1 (FR-025 "fees show as 0" vs FR-013, one header line still says 0) · A2
+(headcount hidden under 5 while the roster lists every name) · SC-001/SC-002 untimed · the constitution's roadmap
+line and `feature/00X-name` branch wording (T001; every feature since 001 uses `NNN-name`) · Arabic copy:
+حصة vs نصيب, masculine-default lines, اشترك/مشترك used for both enrolling and the personal subscription (R11).
+Left as LOW: the statement screen has no golden (T050 note); a non-HR user who types `/company/statement` sees
+"the first statement appears once the first month has ended" (no entry reaches it from the UI).
