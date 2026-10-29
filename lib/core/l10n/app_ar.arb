@@ -2081,7 +2081,13 @@
   "companyDashboardKg": "{kg} كجم",
   "@companyDashboardKg": {
     "placeholders": {
-      "kg": {"type": "int"}
+      "kg": {"type": "String"}
+    }
+  },
+  "companyDashboardMoney": "{amount} ج",
+  "@companyDashboardMoney": {
+    "placeholders": {
+      "amount": {"type": "String"}
     }
   },
   "companyDashboardPercent": "{pct}%",

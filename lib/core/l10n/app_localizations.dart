@@ -4609,7 +4609,13 @@ abstract class AppLocalizations {
   ///
   /// In ar, this message translates to:
   /// **'{kg} كجم'**
-  String companyDashboardKg(int kg);
+  String companyDashboardKg(String kg);
+
+  /// No description provided for @companyDashboardMoney.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} ج'**
+  String companyDashboardMoney(String amount);
 
   /// No description provided for @companyDashboardPercent.
   ///

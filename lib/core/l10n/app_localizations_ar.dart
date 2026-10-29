@@ -2821,8 +2821,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس.';
 
   @override
-  String companyDashboardKg(int kg) {
+  String companyDashboardKg(String kg) {
     return '$kg كجم';
+  }
+
+  @override
+  String companyDashboardMoney(String amount) {
+    return '$amount ج';
   }
 
   @override

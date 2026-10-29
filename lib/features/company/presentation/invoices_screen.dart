@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/routes.dart';
+import '../../../core/format/grouped_number.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -27,7 +28,7 @@ final companyInvoicesProvider = FutureProvider.autoDispose<List<Invoice>>((ref) 
 
 /// 1980 → "1,980", the same in both languages (digits stay Western, as in
 /// every other money line).
-String egpGrouped(int amount) => amount.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (_) => ',');
+String egpGrouped(int amount) => groupedInt(amount);
 
 /// Status chip and label for one invoice at [now].
 (GooraStatus, String) invoiceChip(AppLocalizations l10n, InvoiceStatus status) => switch (status) {

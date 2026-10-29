@@ -2779,8 +2779,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Kilometres × 0.1645 kg CO₂ per km, an average petrol car. An estimate, not a measurement.';
 
   @override
-  String companyDashboardKg(int kg) {
+  String companyDashboardKg(String kg) {
     return '$kg kg';
+  }
+
+  @override
+  String companyDashboardMoney(String amount) {
+    return '$amount EGP';
   }
 
   @override

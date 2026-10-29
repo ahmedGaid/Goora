@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/routes.dart';
+import '../../../core/format/grouped_number.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -145,27 +146,27 @@ class _Body extends ConsumerWidget {
   List<Widget> _figures(AppLocalizations l10n, DashboardMonth m) {
     String? n(int? v, String Function(int) fmt) => v == null ? null : fmt(v);
     final figures = <(String, String, String?, String?)>[
-      ('enrolled', l10n.companyDashboardEnrolled, n(m.enrolled, (v) => '$v'), null),
-      ('active', l10n.companyDashboardActive, n(m.active, (v) => '$v'), l10n.companyDashboardActiveMethod),
+      ('enrolled', l10n.companyDashboardEnrolled, n(m.enrolled, groupedInt), null),
+      ('active', l10n.companyDashboardActive, n(m.active, groupedInt), l10n.companyDashboardActiveMethod),
       (
         'carpool',
         l10n.companyDashboardCarpool,
         n(m.carpoolRatePct, (v) => l10n.companyDashboardPercent(v)),
         l10n.companyDashboardCarpoolMethod,
       ),
-      ('groups', l10n.companyDashboardGroups, n(m.groups, (v) => '$v'), null),
-      ('trips', l10n.companyDashboardTrips, n(m.tripsShared, (v) => '$v'), l10n.companyDashboardTripsMethod),
+      ('groups', l10n.companyDashboardGroups, n(m.groups, groupedInt), null),
+      ('trips', l10n.companyDashboardTrips, n(m.tripsShared, groupedInt), l10n.companyDashboardTripsMethod),
       (
         'saved',
         l10n.companyDashboardSaved,
-        n(m.moneySaved, (v) => l10n.egpAmount(v)),
+        n(m.moneySaved, (v) => l10n.companyDashboardMoney(groupedInt(v))),
         l10n.companyDashboardSavedMethod,
       ),
-      ('co2', l10n.companyDashboardCo2, n(m.co2Kg, (v) => l10n.companyDashboardKg(v)), l10n.companyDashboardCo2Method),
+      ('co2', l10n.companyDashboardCo2, n(m.co2Kg, (v) => l10n.companyDashboardKg(groupedInt(v))), l10n.companyDashboardCo2Method),
       (
         'parking',
         l10n.companyDashboardParking,
-        n(m.parkingPerDay, (v) => '$v'),
+        n(m.parkingPerDay, groupedInt),
         l10n.companyDashboardParkingMethod,
       ),
     ];

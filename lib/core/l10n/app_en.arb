@@ -765,6 +765,7 @@
   "companyDashboardCo2": "CO₂ avoided (estimate)",
   "companyDashboardCo2Method": "Kilometres × 0.1645 kg CO₂ per km, an average petrol car. An estimate, not a measurement.",
   "companyDashboardKg": "{kg} kg",
+  "companyDashboardMoney": "{amount} EGP",
   "companyDashboardPercent": "{pct}%",
   "companyDashboardParking": "Parking spaces freed per workday",
   "companyDashboardParkingMethod": "Going trips as a passenger ÷ workdays (Sun–Thu). Assumes each passenger would otherwise drive alone.",
