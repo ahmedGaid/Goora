@@ -1,7 +1,8 @@
 # Feature Specification: Company Network (B2B company plan)
 
 **Feature Branch**: `010-company-network` (implementation; the spec was written on
-`spec/company-network`, docs only. 006 has merged; P0–P7 are built against the defaults below)
+`spec/company-network`, docs only. 006 has merged; P1–P9 are built against the defaults below, T001 and the
+T054 emulator walk are open. Merged into `main` 2026-10-29, `30b8181`)
 
 **Created**: 2026-10-19
 
@@ -84,6 +85,16 @@ the "Touches" column. Ask in Egyptian Arabic.
   closed month since the contract start. No week or day view: small slices single people out.
 - Q: What does "share with your HR" send? → A: A fixed text with the app link and one line on the
   company plan. No employee data, and Goora does not track who shared.
+
+### Session 2026-10-29 (decided by the implementer, most conservative reading — founder to confirm)
+
+- Q: A work email moves to a domain no company holds, or the email is removed — does the employee stay
+  enrolled? → A: Yes. Only a move to another company's domain ends the enrollment (it counts as the
+  employee's own leave, at the moment the app first sees the move); the spec says nothing else, and HR can
+  still remove the person. A move to another domain of the same company changes nothing.
+- Q: Does the HR statement say "Goora's fee 0" even for a trip taken while the company was suspended
+  (FR-013)? → A: Open for the founder (research "P8/P9 notes", A1). Today the rows carry no fee at all and one
+  header line says 0; deleting that line is the most conservative reading.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -315,7 +326,8 @@ them out; October's already-issued statement is unchanged.
 - **FR-012**: Goora staff MUST be able to mark an invoice paid with a date and bank reference; the app
   moves no money and stores no bank card data. Real invoice issuing (e-invoice, VAT) stays behind a
   flag until Q8 is answered.
-- **FR-013**: An invoice unpaid 7 days after its due date MUST suspend the company; while suspended
+- **FR-013**: An invoice still unpaid after 7 full days past its due date (so from 00:00 on the 8th day) MUST
+  suspend the company; while suspended
   enrolled employees MUST pay Goora's normal fee (pay later, 008) and see a neutral notice (Q10).
 - **FR-014**: Marking every overdue invoice paid MUST make the company active again from that moment;
   fees on trips settled while suspended stay.
@@ -399,7 +411,7 @@ them out; October's already-issued statement is unchanged.
   test, and every figure from fewer than 5 employees is suppressed.
 - **SC-006**: 0 employees blocked from riding by their company's unpaid invoice.
 - **SC-007**: A leaver's next trip carries the normal fee in 100% of leave paths (self, HR, domain,
-  contract end, suspension).
+  contract end, work email moved to another company's domain, suspension).
 - **SC-008** (US6): 0 statement lines for an employee without consent, and 0 disputed shares on any
   statement.
 

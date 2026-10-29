@@ -3048,7 +3048,7 @@ abstract class AppLocalizations {
   /// No description provided for @lateBookingNote.
   ///
   /// In ar, this message translates to:
-  /// **'عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.'**
+  /// **'عدّت 9 بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.'**
   String get lateBookingNote;
 
   /// No description provided for @topUpFirst.
@@ -3402,7 +3402,7 @@ abstract class AppLocalizations {
   /// No description provided for @cancelFreeNote.
   ///
   /// In ar, this message translates to:
-  /// **'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.'**
+  /// **'الإلغاء ببلاش لحد 9 بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.'**
   String get cancelFreeNote;
 
   /// No description provided for @offerFromLabel.
@@ -4728,7 +4728,7 @@ abstract class AppLocalizations {
   /// No description provided for @companyStatementPerson.
   ///
   /// In ar, this message translates to:
-  /// **'{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج'**
+  /// **'{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج للسواق'**
   String companyStatementPerson(int count, String amount);
 
   /// No description provided for @companyStatementShare.
@@ -4740,7 +4740,7 @@ abstract class AppLocalizations {
   /// No description provided for @companyStatementTotal.
   ///
   /// In ar, this message translates to:
-  /// **'إجمالي الحصص: {amount} ج'**
+  /// **'إجمالي حصص السواق: {amount} ج'**
   String companyStatementTotal(String amount);
 
   /// No description provided for @companyStatementEmpty.

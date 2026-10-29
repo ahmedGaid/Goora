@@ -136,6 +136,7 @@ final class FakeCompanyRepository implements CompanyRepository {
   @override
   Future<EnrollOffer> offerFor(String personId, WallTime now) async {
     await _ensureSeeded();
+    await _leaveIfMoved(personId, now);
     for (final c in _companies()) {
       final company = await _catchUp(c, now);
       final open = _enrollments(company.id).where((e) => e.personId == personId && e.isOpen).firstOrNull;
@@ -181,24 +182,46 @@ final class FakeCompanyRepository implements CompanyRepository {
   Future<void> leave(String personId, {required WallTime now}) async {
     await _ensureSeeded();
     for (final c in _companies()) {
-      final rows = _enrollments(c.id);
-      final i = rows.indexWhere((e) => e.personId == personId && e.isOpen);
-      if (i < 0) continue;
-      rows[i] = rows[i].leave(now, LeftWhy.self);
-      await _saveEnrollments(c.id, rows);
-      await _log(LogEntry(
-        companyId: c.id,
-        at: now,
-        actor: LogActor.employee,
-        kind: LogKind.employeeLeft,
-        detail: rows[i].name,
-      ));
+      await _selfLeave(c.id, personId, now);
+    }
+  }
+
+  /// Closes [personId]'s open enrollment in [companyId] as their own leave and
+  /// logs it as "left" with no reason. Nothing happens when there is none.
+  Future<void> _selfLeave(String companyId, String personId, WallTime now) async {
+    final rows = _enrollments(companyId);
+    final i = rows.indexWhere((e) => e.personId == personId && e.isOpen);
+    if (i < 0) return;
+    rows[i] = rows[i].leave(now, LeftWhy.self);
+    await _saveEnrollments(companyId, rows);
+    await _log(LogEntry(
+      companyId: companyId,
+      at: now,
+      actor: LogActor.employee,
+      kind: LogKind.employeeLeft,
+      detail: rows[i].name,
+    ));
+  }
+
+  /// Spec edge case: a work email that moves to another company's domain ends
+  /// the enrollment in the first company, at [now], the moment the move is
+  /// first seen (the fake reads the profile only when the person acts). Another
+  /// domain of the same company, a domain no company holds, or no email at all
+  /// changes nothing: the spec is silent there, and HR can still remove them.
+  Future<void> _leaveIfMoved(String personId, WallTime now) async {
+    final email = (await _person(personId))?.workEmail;
+    final domain = email == null ? null : CompanyDomains.of(email);
+    final holder = domain == null ? null : _prefs.getString(domainKey(domain));
+    if (holder == null) return;
+    for (final c in _companies().where((c) => c.id != holder)) {
+      await _selfLeave(c.id, personId, now);
     }
   }
 
   @override
   Future<LastLeave?> lastLeave(String personId, WallTime now) async {
     await _ensureSeeded();
+    await _leaveIfMoved(personId, now);
     LastLeave? latest;
     for (final c in _companies()) {
       final company = await _catchUp(c, now);
@@ -215,6 +238,7 @@ final class FakeCompanyRepository implements CompanyRepository {
   @override
   Future<List<Window>> coverageFor(String personId, WallTime now) async {
     await _ensureSeeded();
+    await _leaveIfMoved(personId, now);
     final out = <Window>[];
     for (final c in _companies()) {
       final mine = _enrollments(c.id).where((e) => e.personId == personId).map((e) => e.window).toList();

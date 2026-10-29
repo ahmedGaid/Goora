@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/routes.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/time/now_provider.dart';
@@ -108,10 +109,14 @@ class _Body extends StatelessWidget {
             children: [
               Text(l10n.companyInvoiceReferenceTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: AppSpacing.xs),
-              SelectableText(
-                invoice.reference,
-                key: const Key('invoice-reference'),
-                style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+              // Long-press to copy: a touch target, so at least 44 high at any text size.
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: AppSizes.minTouch),
+                child: SelectableText(
+                  invoice.reference,
+                  key: const Key('invoice-reference'),
+                  style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(l10n.companyInvoiceBankTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),

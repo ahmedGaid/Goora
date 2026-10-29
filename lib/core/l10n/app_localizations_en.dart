@@ -2865,7 +2865,7 @@ class AppLocalizationsEn extends AppLocalizations {
       other: '$count trips',
       one: '1 trip',
     );
-    return '$_temp0 · $amount EGP';
+    return '$_temp0 · $amount EGP to the driver';
   }
 
   @override
@@ -2875,7 +2875,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String companyStatementTotal(String amount) {
-    return 'Total shares: $amount EGP';
+    return 'Total driver shares: $amount EGP';
   }
 
   @override
