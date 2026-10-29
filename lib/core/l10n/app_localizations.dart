@@ -3048,7 +3048,7 @@ abstract class AppLocalizations {
   /// No description provided for @lateBookingNote.
   ///
   /// In ar, this message translates to:
-  /// **'عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.'**
+  /// **'عدّت 9 بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.'**
   String get lateBookingNote;
 
   /// No description provided for @topUpFirst.
@@ -3402,7 +3402,7 @@ abstract class AppLocalizations {
   /// No description provided for @cancelFreeNote.
   ///
   /// In ar, this message translates to:
-  /// **'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.'**
+  /// **'الإلغاء ببلاش لحد 9 بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.'**
   String get cancelFreeNote;
 
   /// No description provided for @offerFromLabel.

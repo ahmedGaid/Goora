@@ -1849,7 +1849,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get lateBookingNote =>
-      'عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.';
+      'عدّت 9 بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.';
 
   @override
   String topUpFirst(int gap) {
@@ -2082,7 +2082,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cancelFreeNote =>
-      'الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.';
+      'الإلغاء ببلاش لحد 9 بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.';
 
   @override
   String get offerFromLabel => 'طالع من';
