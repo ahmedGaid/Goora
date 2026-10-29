@@ -5,6 +5,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/widgets/goora_balance_card.dart';
 import '../../../../core/widgets/goora_card.dart';
 import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_status_chip.dart';
@@ -40,7 +41,7 @@ class DriverWallet extends StatelessWidget {
             children: [
               Text(l10n.cashReceivedTitle, style: AppTypography.bodySmall.copyWith(color: AppColors.onDarkSecondary)),
               const SizedBox(height: AppSpacing.xxs),
-              Text(l10n.egpAmount(view.wallet.cashReceived), style: AppTypography.display.copyWith(color: AppColors.white)),
+              GooraBalanceValue(l10n.egpAmount(view.wallet.cashReceived)),
               const SizedBox(height: AppSpacing.xxs),
               Text(l10n.cashReceivedNote, style: AppTypography.bodySmall.copyWith(color: AppColors.onDarkBody)),
             ],
