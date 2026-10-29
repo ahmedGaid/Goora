@@ -1,8 +1,8 @@
 # Tasks: Company Network (010)
 
 **Input**: `specs/010-company-network/` — spec, plan, research, data-model, contracts, quickstart.
-**Do not start before `006-cairo-ismailia-corridor` is merged into `main`.** Implementation branch
-`010-company-network` off that `main`, own worktree. Founder answers to Q1–Q11 may change the
+`006-cairo-ismailia-corridor` has merged into `main`. Implementation branch `010-company-network`
+off that `main`, own worktree. Founder answers to Q1–Q11 may change the
 numbers in vectors and tests — re-check the spec's "Touches" column before P2.
 
 Format: `[ID] [P?] [Story] Description` — `[P]` = can run in parallel (different files, no
@@ -12,7 +12,7 @@ then commit.
 
 ## Phase 0: Setup (P0)
 
-- [ ] T001 Amend `GOORA_SPEC_KIT_BRIEF.md` (§2 roadmap row, §5 D, "Feature 006: Company network" → 010, price per Q1) and the constitution's roadmap line, with a Sync Impact Report + PATCH bump — **only with the founder's OK** (FR-030). Keep 006's merged text (company network "later, unnumbered, price TBD") as the base. — **waits for 006 merge — touches `GOORA_SPEC_KIT_BRIEF.md`, `.specify/memory/constitution.md` (+ founder OK)** (Lane B 2026-10-20 did new files only)
+- [ ] T001 Amend `GOORA_SPEC_KIT_BRIEF.md` (§2 roadmap row, §5 D, "Feature 006: Company network" → 010, price per Q1) and the constitution's roadmap line, with a Sync Impact Report + PATCH bump — **only with the founder's OK** (FR-030). Keep 006's merged text (company network "later, unnumbered, price TBD") as the base. — **006 has merged; waits only for the founder's OK — touches `GOORA_SPEC_KIT_BRIEF.md`, `.specify/memory/constitution.md`** (Lane B 2026-10-20 did new files only)
 - [x] T002 [P] Feature flags `companyInvoicesLive`, `hrStatementExport` (off) next to the existing flag/config home (find it first; constitution: open legal items behind flags) — research R0 — done 2026-10-20: home is `lib/core/config/env.dart` (existing file, waits for 006), so new `lib/features/company/company_flags.dart` + `test/unit/company_flags_test.dart` (research "Lane B notes")
 
 ## Phase 1: Coverage spike — riskiest first (P1, Opus)
