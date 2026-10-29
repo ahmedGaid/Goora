@@ -510,3 +510,10 @@ Founder Q1–Q11 still open: defaults unchanged.
 | companyDashboardParking · ParkingMethod | أماكن ركن فاضية كل يوم شغل · مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده. | Parking spaces freed per workday · Going trips as a passenger ÷ workdays (Sun–Thu). Assumes each passenger would otherwise drive alone. |
 | companyDashboardGapsTitle · GapRow · GapsEmpty | مناطق فيها موظفين من غير مجموعة · {area} · {count} موظف مستنيين · مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة. | Areas with employees but no group · {area} · {count} employees waiting · No area has 5 or more employees waiting for a group. |
 | companyDashboardEmpty | الأرقام بتظهر أول ما الحساب يتفعّل. | Numbers appear once the account is active. |
+
+### P7 notes — N-16 check (2026-10-29, autonomous session)
+Savings formula `Σ(leg cost − share)` is right: checked by hand against R7/R10 (160 − 160/4 = 120 per rider trip; 132 rider trips × 120 = 15,840) and pinned in `test/unit/company_dashboard_test.dart`. The "208 per trip" in the walk was 15,840 ÷ 76 *shared legs*, a different count — not an error in the formula.
+
+## Autonomous session notes — 2026-10-29
+- Several sessions shared worktree Goora-010; split agreed by message: P8 (T046–T049) = goora-2e; N-13, N-16, wallet plural, T050–T054 = this session. Commits stage only own hunks.
+- N-13: digits stay Western with "," in ar and en (spec default: every other money line does the same).
