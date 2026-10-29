@@ -212,15 +212,15 @@ waiting employees is suppressed. The demo user becomes an employee only by enrol
 ## R11 — Drafted copy (founder review, ar first)
 
 Drafted at implementation in the ARB files; list every new key here for review, as 004 R5 / 005 R16
-did. Lexicon: مشوار, السواق, كرسي, موثّق. Example lines (drafts):
+did. Lexicon: مشوار, السواق, كرسي, موثّق. Example lines (early drafts; struck-through keys were renamed, the shipped wording is in the per-phase lists and the full list below):
 
 | Key | ar | en |
 |---|---|---|
 | companyNotOnGoora | شركتك لسه مش على Goora | Your company isn't on Goora yet |
 | companyTellHr | ابعت لـ HR بتاعكم | Tell your HR |
-| companyConsentSees | شركتك هتشوف: اسمك، إيميل الشغل، ومن إمتى مشترك | Your company will see: your name, work email and since when you joined |
-| companyConsentNever | عمرها ما هتشوف مشاويرك، مكان ركوبك، ولا مواعيدك | It never sees your trips, pickup point or times |
-| companyPlanPaused | خطة شركتك متوقفة دلوقتي، رسوم المشوار رجعت عادي | Your company plan is paused for now; the usual trip fee applies |
+| ~~companyConsentSees~~ → `consentSeesTitle` | شركتك هتشوف: اسمك، إيميل الشغل، ومن إمتى مشترك | Your company will see: your name, work email and since when you joined |
+| ~~companyConsentNever~~ → `consentNeverTitle` | عمرها ما هتشوف مشاويرك، مكان ركوبك، ولا مواعيدك | It never sees your trips, pickup point or times |
+| ~~companyPlanPaused~~ → `nCompanyPlanPaused` | خطة شركتك متوقفة دلوقتي، رسوم المشوار رجعت عادي | Your company plan is paused for now; the usual trip fee applies |
 | fewerThanFive | أقل من 5 | Fewer than 5 |
 
 ## Lane B notes — 2026-10-20 (T002, P2, P3 on `010-company-network`, new files only)
