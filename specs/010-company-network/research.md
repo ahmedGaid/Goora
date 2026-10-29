@@ -212,15 +212,15 @@ waiting employees is suppressed. The demo user becomes an employee only by enrol
 ## R11 — Drafted copy (founder review, ar first)
 
 Drafted at implementation in the ARB files; list every new key here for review, as 004 R5 / 005 R16
-did. Lexicon: مشوار, السواق, كرسي, موثّق. Example lines (drafts):
+did. Lexicon: مشوار, السواق, كرسي, موثّق. Example lines (early drafts; struck-through keys were renamed, the shipped wording is in the per-phase lists and the full list below):
 
 | Key | ar | en |
 |---|---|---|
 | companyNotOnGoora | شركتك لسه مش على Goora | Your company isn't on Goora yet |
 | companyTellHr | ابعت لـ HR بتاعكم | Tell your HR |
-| companyConsentSees | شركتك هتشوف: اسمك، إيميل الشغل، ومن إمتى مشترك | Your company will see: your name, work email and since when you joined |
-| companyConsentNever | عمرها ما هتشوف مشاويرك، مكان ركوبك، ولا مواعيدك | It never sees your trips, pickup point or times |
-| companyPlanPaused | خطة شركتك متوقفة دلوقتي، رسوم المشوار رجعت عادي | Your company plan is paused for now; the usual trip fee applies |
+| ~~companyConsentSees~~ → `consentSeesTitle` | شركتك هتشوف: اسمك، إيميل الشغل، ومن إمتى مشترك | Your company will see: your name, work email and since when you joined |
+| ~~companyConsentNever~~ → `consentNeverTitle` | عمرها ما هتشوف مشاويرك، مكان ركوبك، ولا مواعيدك | It never sees your trips, pickup point or times |
+| ~~companyPlanPaused~~ → `nCompanyPlanPaused` | خطة شركتك متوقفة دلوقتي، رسوم المشوار رجعت عادي | Your company plan is paused for now; the usual trip fee applies |
 | fewerThanFive | أقل من 5 | Fewer than 5 |
 
 ## Lane B notes — 2026-10-20 (T002, P2, P3 on `010-company-network`, new files only)
@@ -511,6 +511,23 @@ Founder Q1–Q11 still open: defaults unchanged.
 | companyDashboardGapsTitle · GapRow · GapsEmpty | مناطق فيها موظفين من غير مجموعة · {area} · {count} موظف مستنيين · مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة. | Areas with employees but no group · {area} · {count} employees waiting · No area has 5 or more employees waiting for a group. |
 | companyDashboardEmpty | الأرقام بتظهر أول ما الحساب يتفعّل. | Numbers appear once the account is active. |
 
+## P8/P9 notes (autonomous run) — analyze pass, session goora-5b, 2026-10-29
+
+`/speckit-analyze` on 010 after P7: 0 critical, 0 high, 5 medium, 6 low. Doc-only fixes applied (branch/status headers in spec, plan, tasks; plan file names and key estimate; T001 wording). Below: what was NOT a doc fix, each with the conservative default taken and why. Founder reviews later.
+
+| ID | Finding | Default taken (why) |
+|---|---|---|
+| U1 | Statement rows (date, leg, share) have no source in the fakes: `EmployeeMonthFacts` holds counts only and the company provider may not import wallet (R8). | The P8 session picks the source and writes it here. Rule: a function seam, never a wallet import in `company/data`. |
+| U2 | `statement(...)` is the only call returning individual data and takes no caller id; `NotHrContact` is not enforced in the fake. | Screen-level guard stays (`home == null` → not-HR state). Add a test that a non-HR user sees no statement. Server RLS (R9) is the real guard. |
+| A1 | FR-025 / US6 AC2 "Goora fees show as 0" is untrue while a company is suspended (FR-013: employees pay the fee then). | The statement shows date, leg and share paid only; no fee column. Most conservative: states nothing that can be wrong. |
+| C1 | Edge cases with no task and no test: employee moves to another domain, price change mid-contract, driver-only employee enrols, 009 ID check not skipped on enrol. | Listed here, not built. P9 can add them; none blocks P8. |
+| C2 | T051 covers dashboard + invoice at 1.3× only; no company test uses a text scale; roster, home, register, consent, log and statement are unchecked at 1.3× and 44 px (constitution VII). | Widen T051 to every company screen. |
+| A2 | FR-021/FR-022 hide "employees enrolled" under 5 while the roster (FR-016) lists every name, so hiding the headcount adds no privacy. | Kept hidden (conservative; spec text literal). Pinned by `company_unwalked_states_test.dart` ("4 employees"). Founder to confirm. |
+| A3 | SC-001 (3 min) and SC-002 (1 min) cannot be tested in fakes. | Time them in the T054 device walk, or drop them. |
+| E1 | T052 already holds: `test/architecture/no_hardcoded_values_test.dart` lines 20 and 23 scan `lib/features` recursively, so `lib/features/company` is covered. | Tick T052 with this note (not ticked here: another session owns the tick). |
+
+Also added by this session: `test/widget/company_unwalked_states_test.dart` (6 tests, ar + en): removed employee's next trip (fee 4 back on the plan card, "plan ended" notice in the inbox, can enrol again) and the dashboard with 5 and with 4 employees. Both were "not walked" in walk 5.
+
 ### P7 notes — N-16 check (2026-10-29, autonomous session)
 Savings formula `Σ(leg cost − share)` is right: checked by hand against R7/R10 (160 − 160/4 = 120 per rider trip; 132 rider trips × 120 = 15,840) and pinned in `test/unit/company_dashboard_test.dart`. The "208 per trip" in the walk was 15,840 ÷ 76 *shared legs*, a different count — not an error in the formula.
 
@@ -720,23 +737,6 @@ Four older keys changed wording and are also up for review: `nCompanyPlanStarted
 ## Autonomous session notes — 2026-10-29
 - Several sessions shared worktree Goora-010; split agreed by message: P8 (T046–T049) = goora-2e; N-13, N-16, wallet plural, T050–T054 = this session. Commits stage only own hunks.
 - N-13: digits stay Western with "," in ar and en (spec default: every other money line does the same).
-
-## P8/P9 notes (autonomous run) — analyze pass, session goora-5b, 2026-10-29
-
-`/speckit-analyze` on 010 after P7: 0 critical, 0 high, 5 medium, 6 low. Doc-only fixes applied (branch/status headers in spec, plan, tasks; plan file names and key estimate; T001 wording). Below: what was NOT a doc fix, each with the conservative default taken and why. Founder reviews later.
-
-| ID | Finding | Default taken (why) |
-|---|---|---|
-| U1 | Statement rows (date, leg, share) have no source in the fakes: `EmployeeMonthFacts` holds counts only and the company provider may not import wallet (R8). | The P8 session picks the source and writes it here. Rule: a function seam, never a wallet import in `company/data`. |
-| U2 | `statement(...)` is the only call returning individual data and takes no caller id; `NotHrContact` is not enforced in the fake. | Screen-level guard stays (`home == null` → not-HR state). Add a test that a non-HR user sees no statement. Server RLS (R9) is the real guard. |
-| A1 | FR-025 / US6 AC2 "Goora fees show as 0" is untrue while a company is suspended (FR-013: employees pay the fee then). | The statement shows date, leg and share paid only; no fee column. Most conservative: states nothing that can be wrong. |
-| C1 | Edge cases with no task and no test: employee moves to another domain, price change mid-contract, driver-only employee enrols, 009 ID check not skipped on enrol. | Listed here, not built. P9 can add them; none blocks P8. |
-| C2 | T051 covers dashboard + invoice at 1.3× only; no company test uses a text scale; roster, home, register, consent, log and statement are unchecked at 1.3× and 44 px (constitution VII). | Widen T051 to every company screen. |
-| A2 | FR-021/FR-022 hide "employees enrolled" under 5 while the roster (FR-016) lists every name, so hiding the headcount adds no privacy. | Kept hidden (conservative; spec text literal). Pinned by `company_unwalked_states_test.dart` ("4 employees"). Founder to confirm. |
-| A3 | SC-001 (3 min) and SC-002 (1 min) cannot be tested in fakes. | Time them in the T054 device walk, or drop them. |
-| E1 | T052 already holds: `test/architecture/no_hardcoded_values_test.dart` lines 20 and 23 scan `lib/features` recursively, so `lib/features/company` is covered. | Tick T052 with this note (not ticked here: another session owns the tick). |
-
-Also added by this session: `test/widget/company_unwalked_states_test.dart` (6 tests, ar + en): removed employee's next trip (fee 4 back on the plan card, "plan ended" notice in the inbox, can enrol again) and the dashboard with 5 and with 4 employees. Both were "not walked" in walk 5.
 
 ### Integration run — branch `010-integration`, session goora-5b, 2026-10-29
 Autonomous run, no questions to the founder. Q1–Q11 stay open; code reads `CompanyTerms`. One bullet per queue item, added in that item's commit.
