@@ -122,3 +122,66 @@ digit (q8-wallet-company-card-off-ar).
   tab bar taps inside the app.
 - Demo rider matches only at going 6:30 / return 4:30 (corridor groups). Default times shown on the form change after a
   reset; step them with the ±5 min buttons until 6:30 / 4:30.
+
+---
+
+# Phase 2 + 3 — walk 007–009 merged, five nits fixed
+
+**Phase 2.** `docs/walk-007-009` merged into this branch (`Docs/walks/2026-10-20-007-009.md` + `Docs/walks/2026-10-20/*.png`).
+`Docs/NEXT_GOAL.md` conflicted → main's side taken (it equals main). Main was also merged in three times
+(the conductor moved it twice while this lane ran); ARB and generated l10n merged without conflict.
+
+**Phase 3.** Each fix: test first, seen failing, then the fix, then the suites. One commit each, pushed.
+
+| Nit | Fix | Test (was failing first) | Goldens regenerated |
+|---|---|---|---|
+| N-5 `0 ج` drops | Unit (after the last space) is a title-size run in the same line as the digits (`GooraBalanceValue`) | `goora_balance_card_test.dart` | `wallet_widgets`, `screen_wallet_rider`, `screen_wallet_rider_cash` (ltr+rtl) |
+| N-5b same drop on the driver's "received directly" amount (found while checking N-5; not in the brief) | Same widget reused | `driver_wallet_test.dart` | `screen_wallet_driver` (ltr+rtl) |
+| N-7 dates `d/m` | `shortDate` = day + month name, Western digits: "3 يناير", "3 Jan". New ARB key `dayAndMonth` (appended). Used by plan card, activity, driver share rows, fee-due banner | `short_date_test.dart`, `rider_wallet_test.dart` | `screen_wallet_driver` (ltr+rtl) |
+| N-10 identical activity rows | `ActivityEntry.leg` (trip, bundle trip, paid trip, charge, free cancel); date line "5 Oct · Going" | `activity_row_test.dart`, `fake_wallet_repository_test.dart` | none (no golden shows an activity row) |
+| N-11 once rider, no shell | Rider + once lands on **Today** (its no-group state offers Empty seats); Today's payment gate skips a once rider; Empty seats with nothing to pop goes Back to Today | `onboarding_flow_test`, `onboarding_route_test`, `app_flow_test` (+ 3 older tests that assumed the old landing updated) | none |
+| N-12 Fawry | Two steps: "Get my Fawry code" shows the code (title size, tabular digits) + how to pay; only "I paid at Fawry" settles. New keys `fawryGetCode`, `fawryHow` (appended) | `rider_wallet_test.dart` (3 new, incl. 1.3×) | none (no golden shows the pay sheet) |
+
+**Gates in this worktree (final tree):** `flutter analyze` 0 issues · `flutter test --concurrency=1` **1767 passed, 0 failed** ·
+`node --test "supabase/functions/_shared/*.test.ts"` **276 pass, 0 fail**. Re-run once more after N-5b (driver wallet,
+goldens, analyze): green.
+
+**Seen on the emulator after the fixes** (rebuilt APK from this branch, Arabic):
+- N-11: once rider onboarding ends on Today with the four tabs (`fix-n11-once-rider-lands-today-ar`); "عايز مشوار زيادة؟" opens
+  Empty seats (`fix-n11-empty-seats-ar`); Back returns to Today; Trust opens from the tab bar (`fix-n11-trust-reachable-ar`).
+- N-5: "51 ج" — unit smaller, on the digits' line (`fix-n5-balance-card-ar`). The ج's own tail still dips below the baseline; that is the glyph.
+- N-7: "مشترك لحد 29 نوفمبر" (`fix-n7-subscribed-until-ar`).
+- **Not seen on the device:** N-10 (needs two settled legs on one day) and N-12 (needs an owed fee past the trial). Covered by
+  widget/unit tests only.
+
+## Decisions (picked without asking; the rejected option)
+1. **Main moved while the worktree was being made** (the 010 merge landed at `30b8181`, after the brief's check on `b198795`).
+   Fast-forwarded the still-empty branch to main instead of recreating the worktree.
+2. **Read the screen by its accessibility tree** (uiautomator) and looked at PNGs for the key screens only. Rejected: reading a
+   screenshot for every step (slower, no extra evidence for text).
+3. **q6 removal was done on myself in Arabic and on a seed employee in English**, so both locales show the "left on" row and the log.
+4. **N-5:** shrink the unit inside one `Text.rich`. Rejected: shifting the unit with a baseline `WidgetSpan`/`Transform` (fragile in RTL),
+   and a new two-field API (every caller already builds the string with `egpAmount`).
+5. **N-7:** change `shortDate` itself. Rejected: Intl `DateFormat` (Arabic gives Eastern digits, the lexicon says Western) and a second
+   helper (it would leave the company home's "since" line numeric). Side effect to know: `company_offer_view.dart` ("On Valeo's plan
+   since …") now prints "29 Oct" through the helper; the file is untouched. `shortDateYear` (company screens) stays `d/m/yyyy`.
+6. **N-10:** store `leg` on the row. Rejected: parse it from `rideId` in the widget (free-cancel rows have no ride id).
+7. **N-11:** land on Today. Rejected: a tab bar on Empty seats (it is a pushed task screen; no other pushed screen has one) and
+   `go(Today)` + `push(Empty seats)` (a relaunch would still start on a lone Empty seats). **Not changed:** a once *driver* still
+   lands on Offer a trip with no tab bar (same shape, not in the brief).
+8. **N-12:** reveal the code on a button, settle on a second tap. Rejected: settling when the Fawry pill is tapped.
+
+## 010 findings list (for goora-5b — reported, not fixed)
+F-W1 plan sheet "Through my company" applies at once with no consent/enrollment (should-fix) · F-W2 consent-on line promises a
+monthly delivery the fake does not make (open copy, legal Q8 b) · F-W3 only the switch toggles, not the label · F-W4 demo reset
+keeps the demo clock · F-W5 plan-sheet copy (رحلة, جنيه vs ج) · F-W6 HR dates are numeric d/m/yyyy; "since 29/10" had no year
+(now a month name via N-7) · N-14 English bank placeholder in the Arabic invoice. T049 and T054 (walk part): **ready to tick**.
+
+## Files touched in Phase 3 (all mine to touch)
+`lib/core/widgets/goora_balance_card.dart` · `lib/features/wallet/presentation/{labels.dart, wallet/activity_row.dart,
+wallet/driver_wallet.dart, wallet/pay_sheet.dart}` · `lib/features/wallet/domain/activity_entry.dart` ·
+`lib/features/wallet/data/fake_wallet_repository.dart` · `lib/features/onboarding/domain/onboarding_flow.dart` · `lib/app/{router,routes}.dart` ·
+`lib/features/marketplace/presentation/empty_seats/empty_seats_screen.dart` · `lib/core/l10n/app_{ar,en}.arb` (+ generated) —
+3 keys appended at the end (`dayAndMonth`, `fawryGetCode`, `fawryHow`) · tests: `goora_balance_card`, `short_date`, `activity_row`,
+`fake_wallet_repository`, `rider_wallet`, `driver_wallet`, `app_flow`, `marketplace_navigation`, `today_rider`, `reclaim`,
+`onboarding_flow`, `onboarding_route` · 8 golden PNGs (list above).
