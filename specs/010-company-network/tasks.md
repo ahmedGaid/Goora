@@ -69,7 +69,7 @@ then commit.
 - [x] T037 [P] [US4] Unit tests for every leave path (self, HR remove, domain removed, contract ended, staff end): next trip fee applies, earlier trips stay free, no trial, paused plan restored, an inbox notice posted (FR-020), leaver counted in the month's peak, re-join same month counts once (SC-007) (red) — done 2026-10-29 (P6): `test/unit/company_leave_paths_test.dart`, red with the sync off
 - [x] T038 [US4] `roster_screen.dart`, domain add/remove on company home, `company_log_screen.dart`; Settings → Demo: End contract, Change HR contact — done 2026-10-29 (P6)
 - [x] T039 [US4] HR-contact-left edge case: company stays active with no HR contact; `/company` for others shows only their enrollment — done 2026-10-29 (P6): covered in `company_roster_test.dart`
-- [ ] T040 Checkpoint P6: gates green; quickstart 6
+- [x] T040 Checkpoint P6: gates green; quickstart 6 — walked 2026-10-29 (`walk5/REPORT.md`); the removed employee's next trip not walked
 
 ## Phase 7: US5 — dashboard (P7)
 
@@ -77,7 +77,7 @@ then commit.
 - [x] T042 [P] [US5] Privacy test `test/unit/company_privacy_test.dart`: HR read models have no person id / group / pickup / time / share / role fields; dashboard output contains no seeded name or email (SC-005) (red) — done 2026-10-29 (P7): `company_privacy_test.dart` (3; scans `hr_views.dart` field names)
 - [x] T043 [US5] `lib/features/company/domain/company_dashboard.dart` (pure aggregator, suppression inside) — research R7; record the CO₂ factor source and the SZ↔SV km in research R7 first — done 2026-10-29 (P7): factor 0.1645 (UK DESNZ 2024, via mirror), leg km 13 (estimate); R7 + "P7 notes"
 - [x] T044 [US5] `dashboard_screen.dart` (month picker, figures in words, method lines, "Fewer than 5") + widget tests ar+en — done 2026-10-29 (P7): `company_dashboard_screen.dart`, route `/company/dashboard`, HR-home button "Company numbers", `test/widget/company_dashboard_test.dart` (5 x ar+en)
-- [ ] T045 Checkpoint P7: gates green; quickstart 7
+- [x] T045 Checkpoint P7: gates green; quickstart 7 — walked 2026-10-29, Arabic + English 1.3× (`walk5/REPORT.md`); "Fewer than 5" not walked
 
 ## Phase 8: US6 — HR statement (P8, droppable — Q6)
 
