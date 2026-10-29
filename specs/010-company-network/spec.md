@@ -1,7 +1,7 @@
 # Feature Specification: Company Network (B2B company plan)
 
-**Feature Branch**: `spec/company-network` (docs only; implementation starts only after
-`006-cairo-ismailia-corridor` merges — both touch the brief and the constitution)
+**Feature Branch**: `010-company-network` (implementation; the spec was written on
+`spec/company-network`, docs only. 006 has merged; P0–P7 are built against the defaults below)
 
 **Created**: 2026-10-19
 

@@ -11,6 +11,11 @@ daily commute and runs it as a trusted recurring group. Cost-sharing only, never
 **Path** `C:\AhmedGaid\Goora` · **Repo** `https://github.com/ahmedGaid/Goora.git` (connected
 2026-10-06) · **App ID** `app.goora.goora`
 
+## Position — 2026-10-20 #3 (010 P4 built), main @ `b198795` = origin/main + branch `010-company-network` @ `060fe87` = origin (worktree Goora-010, pushed with founder OK, NOT merged)
+P4 T020–T029: Settings → Company account (`/company`, `/company/register`) with every state (register by name + work email + code, pending, HR home with status/domain/minimum/price/contract) · Plan → Through my company shows `offerFor` states (verify first / not on Goora + Tell your HR / join / enrolled since) · consent sheet (sees / never sees, decline = nothing) · `CompanyEnrollment` in `company/presentation/company_controller.dart` calls company enroll/leave + wallet start/endCompanyPlan + notices · Wallet company card "Company · Valeo", paused days, Leave · 5 notice kinds (incl. `personalPlanBack`) · Demo: approve my company, make me Valeo's HR · 55 ARB keys (R11 table in research "P4 notes"); Arabic name = جورة. Bug fixed: Plan screen read a stale plan after joining and never went to Today. Gates: analyze 0 · flutter 1541 · node 276.
+**NEXT ACTION**: T030 emulator walk (quickstart 1, 3, 4) or P5 invoices + suspension (T031–T035) — see `Docs/NEXT_GOAL.md`. Merge 010 only with founder OK.
+**Blocker**: none (spec defaults stand in for Q1–Q11).
+
 ## Position — 2026-10-20 (two parallel rounds merged), main @ `71235d4` = origin/main
 Merged: 006 Cairo↔Ismailia corridor P0–P7 (done; walk gaps in research.md T039) · walk fixes S-1..S-6 + nits for 007/008/009 · 010 company network core (T002, P1, P2, P3 seams; T020 half). Gates on main: analyze 0 · flutter 1502 · node 276. Kept open: branch `010-company-network` (worktree Goora-010). Unmerged docs: `docs/walk-007-009`, `spec/company-network`.
 **NEXT ACTION**: 010 P4 (register + enroll UI, T022–T030) on 010-company-network; beside it, fix the wallet "covers N trips" caption (round-trip days shown as trips; plural مشوار). Full list → `Docs/NEXT_GOAL.md`.

@@ -21,8 +21,12 @@ import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/corridor.dart';
 import '../../commute/domain/group.dart';
 import '../../commute/presentation/labels.dart';
+import '../../company/data/company_seed.dart';
 import '../../company/data/fake_company_repository.dart';
 import '../../company/data/providers.dart';
+import '../../company/domain/company.dart';
+import '../../company/domain/invoice.dart';
+import '../../company/presentation/company_controller.dart';
 import '../../daily/data/fake_daily_commute_repository.dart';
 import '../../daily/data/fake_trust_repository.dart';
 import '../../daily/data/providers.dart';
@@ -39,6 +43,7 @@ import '../../marketplace/presentation/today/one_off_section.dart';
 import '../../onboarding/data/providers.dart';
 import '../../onboarding/presentation/session_controller.dart';
 import '../../wallet/data/fake_wallet_repository.dart';
+import '../../wallet/data/providers.dart';
 import '../../wallet/presentation/wallet/wallet_controller.dart';
 
 /// Debug builds only (research R11): move the demo clock to the moments the
@@ -79,6 +84,12 @@ class DemoSection extends ConsumerWidget {
             ('demo-driver-accepts', l10n.demoAcceptRequest, () => _driverAccepts(context, ref)),
             ('demo-subscriber-takes', l10n.demoReclaim, () => _subscriberTakes(context, ref)),
             ('demo-corridor', l10n.demoCorridor(_corridorName(l10n, corridor)), () => _switchCorridor(ref, corridor)),
+            ('demo-approve-company', l10n.demoApproveCompany, () => _approveCompany(ref)),
+            ('demo-make-me-hr', l10n.demoMakeMeHr, () => _makeMeHr(ref)),
+            ('demo-skip-to-suspension', l10n.demoSkipToSuspension, () => _skipToSuspension(ref)),
+            ('demo-mark-invoice-paid', l10n.demoMarkInvoicePaid, () => _markInvoicePaid(ref)),
+            ('demo-end-contract', l10n.demoEndContract, () => _endContract(ref)),
+            ('demo-hr-left', l10n.demoHrLeft, () => _hrLeft(ref)),
             ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -172,6 +183,82 @@ class DemoSection extends ConsumerWidget {
     final trust = ref.read(trustRepositoryProvider);
     if (trust is FakeTrustRepository) await trust.demoVerifyDriver();
     ref.invalidate(offerCheckProvider);
+  }
+
+  /// Goora staff approve a company (010 US1): mine while it is pending, else
+  /// the seeded pending one (Orange Business).
+  Future<void> _approveCompany(WidgetRef ref) async {
+    final repo = ref.read(companyRepositoryProvider);
+    final now = ref.read(nowProvider)();
+    final mine = await repo.myCompanyAccount(ref.read(dailyCommuteRepositoryProvider).meId, now);
+    final pending = mine != null && mine.status == CompanyStatus.pending
+        ? mine.company
+        : await repo.companyForDomain('orange.com');
+    if (pending != null && pending.status == CompanyStatus.pending) await repo.demoApprove(pending.id, now);
+    ref.invalidate(companyAccountProvider);
+  }
+
+  /// Goora staff name me Valeo's HR contact (010 R5), to see an active home.
+  Future<void> _makeMeHr(WidgetRef ref) async {
+    final meId = ref.read(dailyCommuteRepositoryProvider).meId;
+    await ref.read(companyRepositoryProvider).demoSetHrContact(CompanySeed.valeoId, meId, ref.read(nowProvider)());
+    ref.invalidate(companyAccountProvider);
+  }
+
+  /// Valeo's invoices: issued lazily up to [now], newest first.
+  Future<List<Invoice>> _valeoInvoices(WidgetRef ref, WallTime now) =>
+      ref.read(companyRepositoryProvider).invoices(CompanySeed.valeoId, now);
+
+  /// Goora staff mark Valeo's oldest unpaid invoice paid (010 US3, FR-012).
+  /// Coverage returns from this moment, and the employee's notice follows.
+  Future<void> _markInvoicePaid(WidgetRef ref) async {
+    final now = ref.read(nowProvider)();
+    final unpaid = (await _valeoInvoices(ref, now)).where((i) => i.paidAt == null).toList();
+    if (unpaid.isNotEmpty) {
+      await ref
+          .read(companyRepositoryProvider)
+          .demoMarkPaid(unpaid.last.id, bankRef: 'DEMO-${unpaid.last.month}', now: now);
+    }
+    await _refreshCompany(ref);
+  }
+
+  /// Moves the clock to 10:00 on the day Valeo's plan pauses for the invoice
+  /// that falls due next (the 24th), so the unpaid case can be walked.
+  Future<void> _skipToSuspension(WidgetRef ref) async {
+    final now = ref.read(nowProvider)();
+    final invoices = await _valeoInvoices(ref, now);
+    final open = invoices.where((i) => i.paidAt == null).toList();
+    // The oldest unpaid one, or the one issued next month.
+    final issued = open.isNotEmpty ? open.last.issuedOn : invoices.first.issuedOn.addMonths(1);
+    final suspendOn = Invoice.issue(
+      company: (await ref.read(companyRepositoryProvider).companyForDomain('valeo.com'))!,
+      month: issued.addMonths(-1),
+      peakEnrolled: 0,
+    ).suspendFrom.date;
+    await _setClock(ref, WallTime(suspendOn, const Clock.hm(10, 0)));
+    await _refreshCompany(ref);
+  }
+
+  /// Goora staff end Valeo's contract now (010 US4 AC4): every employee
+  /// leaves, the company reads "ended", a final invoice covers this month.
+  Future<void> _endContract(WidgetRef ref) async {
+    await ref.read(companyRepositoryProvider).demoEndContract(CompanySeed.valeoId, ref.read(nowProvider)());
+    await _refreshCompany(ref);
+  }
+
+  /// Valeo's HR contact left (010 spec edge case): the company stays active
+  /// with no HR contact until Goora names another ("Make me Valeo's HR").
+  Future<void> _hrLeft(WidgetRef ref) async {
+    await ref.read(companyRepositoryProvider).demoSetHrContact(CompanySeed.valeoId, null, ref.read(nowProvider)());
+    await _refreshCompany(ref);
+  }
+
+  /// Re-reads the company area so the employee's notice follows the clock.
+  Future<void> _refreshCompany(WidgetRef ref) async {
+    ref.invalidate(companyAccountProvider);
+    ref.invalidate(riderPricingProvider);
+    ref.invalidate(walletControllerProvider);
+    await ref.read(companyAccountProvider.future);
   }
 
   /// The next fake rider books the driver's latest open offer. A daily offer's

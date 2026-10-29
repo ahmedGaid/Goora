@@ -1,8 +1,8 @@
 # Tasks: Company Network (010)
 
 **Input**: `specs/010-company-network/` — spec, plan, research, data-model, contracts, quickstart.
-**Do not start before `006-cairo-ismailia-corridor` is merged into `main`.** Implementation branch
-`010-company-network` off that `main`, own worktree. Founder answers to Q1–Q11 may change the
+`006-cairo-ismailia-corridor` has merged into `main`. Implementation branch `010-company-network`
+off that `main`, own worktree. Founder answers to Q1–Q11 may change the
 numbers in vectors and tests — re-check the spec's "Touches" column before P2.
 
 Format: `[ID] [P?] [Story] Description` — `[P]` = can run in parallel (different files, no
@@ -12,7 +12,7 @@ then commit.
 
 ## Phase 0: Setup (P0)
 
-- [ ] T001 Amend `GOORA_SPEC_KIT_BRIEF.md` (§2 roadmap row, §5 D, "Feature 006: Company network" → 010, price per Q1) and the constitution's roadmap line, with a Sync Impact Report + PATCH bump — **only with the founder's OK** (FR-030). Keep 006's merged text (company network "later, unnumbered, price TBD") as the base. — **waits for 006 merge — touches `GOORA_SPEC_KIT_BRIEF.md`, `.specify/memory/constitution.md` (+ founder OK)** (Lane B 2026-10-20 did new files only)
+- [ ] T001 Amend `GOORA_SPEC_KIT_BRIEF.md` (§2 roadmap row, §5 D, "Feature 006: Company network" → 010, price per Q1) and the constitution's roadmap line, with a Sync Impact Report + PATCH bump — **only with the founder's OK** (FR-030). Keep 006's merged text (company network "later, unnumbered, price TBD") as the base. — **006 has merged; waits only for the founder's OK — touches `GOORA_SPEC_KIT_BRIEF.md`, `.specify/memory/constitution.md`** (Lane B 2026-10-20 did new files only)
 - [x] T002 [P] Feature flags `companyInvoicesLive`, `hrStatementExport` (off) next to the existing flag/config home (find it first; constitution: open legal items behind flags) — research R0 — done 2026-10-20: home is `lib/core/config/env.dart` (existing file, waits for 006), so new `lib/features/company/company_flags.dart` + `test/unit/company_flags_test.dart` (research "Lane B notes")
 
 ## Phase 1: Coverage spike — riskiest first (P1, Opus)
@@ -40,44 +40,44 @@ then commit.
 - [x] T017 Trust seam: `TrustProfile.workEmail` + fake value (`<first>@valeo.com`) in `daily/domain/trust.dart`, `daily/data/fake_trust_repository.dart`; tests updated — done 2026-10-20 (Lane A): `workEmailFor`, non-Latin first name → `employee@`; tests in `company_wallet_seam_test.dart`; company person lookup wired through Trust
 - [x] T018 Wallet seam tests in `test/unit/fake_wallet_repository_test.dart`: company plan read carries windows; `startCompanyPlan` pauses Monthly with 10 days left and sets `noTrial`; `endCompanyPlan` restores Monthly with 10 days from the leave date; bundle and owed balance unchanged (red) — done 2026-10-20 (Lane A): 6 cases in a "company plan seam (010)" group; balance, bundle and every activity row compared before/after (red first)
 - [x] T019 `fake_wallet_repository.dart`: `companyCoverage` function seam, `startCompanyPlan`/`endCompanyPlan`, `company.paused.<id>` (research R8); wallet + company providers wired without a provider cycle (functions, 005 lesson) — done 2026-10-20 (Lane A): + `pausedPlan`, `wallet.coveredBefore.<id>`, `wallet.noTrialFrom.<id>`, `CompanyRepository.hasEnrolled`; provider test `company_wallet_seam_test.dart`; who *calls* start/end is P4/P6 (research "Lane A notes" #6)
-- [ ] T020 [P] `daily/domain/notice.dart`: `companyPlanStarted/Ended/Paused/Resumed` + copy keys — **partly done 2026-10-20 (Lane A): the 5 ARB keys + copy test; the 4 `NoticeKind` values wait for P4 (their label switch is in `daily/presentation/labels.dart`, Lane B's this round) — research "Lane A notes" T020 split**
+- [x] T020 [P] `daily/domain/notice.dart`: `companyPlanStarted/Ended/Paused/Resumed` + copy keys — **partly done 2026-10-20 (Lane A): the 5 ARB keys + copy test; the 4 `NoticeKind` values wait for P4 (their label switch is in `daily/presentation/labels.dart`, Lane B's this round) — research "Lane A notes" T020 split** — rest done 2026-10-20 (P4): 4 kinds + `personalPlanBack`, label arms, posted on join/leave
 - [x] T021 Settings → Reset clears `company.*`; test — done 2026-10-20 (Lane A): `demo_section.dart` + `test/widget/settings_reset_company_test.dart` (red first)
 
 ## Phase 4: US1 + US2 — register and enroll (P4, MVP, Sonnet + goora-brand)
 
-- [ ] T022 [P] [US1] Widget tests `test/widget/company_register_test.dart` (ar+en): public domain refused, taken domain refused, pending state, approve demo → active home with minimum and price (red)
-- [ ] T023 [P] [US2] Widget tests `test/widget/company_enroll_test.dart` (ar+en): not-on-Goora + Tell HR (also for a pending company — US1 AC5); consent lists sees/never-sees; decline enrolls nothing; agree → plan card "Company · Valeo"; paused personal plan shown (red)
-- [ ] T024 [US1] Routes `/company`, `/company/register` in `lib/app/router.dart`; Settings row "Company account"; Settings → Demo: Approve company, Make me Valeo's HR contact
-- [ ] T025 [US1] `company_home_screen.dart` (register / pending / HR home / my enrollment states — every state designed) + `register_company_screen.dart`
-- [ ] T026 [US2] Rework `wallet/presentation/plan/company_verify_sheet.dart` → `offerFor` states; new `company/presentation/consent_sheet.dart`; enroll via `CompanyRepository.enroll`
-- [ ] T027 [US2] Rider Wallet company card: company name, paused-days line, Leave (confirm) in `rider_wallet.dart`
-- [ ] T028 [US2] Fee check: unit test that a covered employee's group trip and one-off seat both carry fee 0 and the driver share unchanged; a covered employee gets the subscriber reclaim right on a full car (005 US6, FR-008) and loses it the minute they leave; 007/008 guard order unchanged (FR-007, FR-008, SC-003)
-- [ ] T029 ARB keys for P4 (ar first, Egyptian colloquial, lexicon) + `flutter gen-l10n`; list keys in research R11
-- [ ] T030 Checkpoint P4: gates green; walk quickstart 1–4 on the emulator
+- [x] T022 [P] [US1] Widget tests `test/widget/company_register_test.dart` (ar+en): public domain refused, taken domain refused, pending state, approve demo → active home with minimum and price (red)
+- [x] T023 [P] [US2] Widget tests `test/widget/company_enroll_test.dart` (ar+en): not-on-Goora + Tell HR (also for a pending company — US1 AC5); consent lists sees/never-sees; decline enrolls nothing; agree → plan card "Company · Valeo"; paused personal plan shown (red)
+- [x] T024 [US1] Routes `/company`, `/company/register` in `lib/app/router.dart`; Settings row "Company account"; Settings → Demo: Approve company, Make me Valeo's HR contact
+- [x] T025 [US1] `company_home_screen.dart` (register / pending / HR home / my enrollment states — every state designed) + `register_company_screen.dart`
+- [x] T026 [US2] Rework `wallet/presentation/plan/company_verify_sheet.dart` → `offerFor` states; new `company/presentation/consent_sheet.dart`; enroll via `CompanyRepository.enroll`
+- [x] T027 [US2] Rider Wallet company card: company name, paused-days line, Leave (confirm) in `rider_wallet.dart`
+- [x] T028 [US2] Fee check: unit test that a covered employee's group trip and one-off seat both carry fee 0 and the driver share unchanged; a covered employee gets the subscriber reclaim right on a full car (005 US6, FR-008) and loses it the minute they leave; 007/008 guard order unchanged (FR-007, FR-008, SC-003)
+- [x] T029 ARB keys for P4 (ar first, Egyptian colloquial, lexicon) + `flutter gen-l10n`; list keys in research R11
+- [x] T030 Checkpoint P4: gates green; walked quickstart 1, 3, 4 on the emulator 2026-10-21 (specs/010-company-network/walk/README.md): 0 blockers, 3 should-fix F-1..F-3, quickstart 2 not walkable
 
 ## Phase 5: US3 — invoices and suspension (P5)
 
-- [ ] T031 [P] [US3] Widget tests `test/widget/company_invoices_test.dart` (ar+en): list per closed month, 20 × 99 = 1,980 at 12 enrolled, 34 × 99 at 34, invoice screen shows reference + bank details + due date, paid state after demo (red)
-- [ ] T032 [P] [US3] Unit tests: suspension from due + 8 days 00:00; employee trip on the 24th carries the fee and books fine (FR-015, SC-006); paid → covered from that moment; fees during suspension stay (red)
-- [ ] T033 [US3] `invoices_screen.dart`, `invoice_screen.dart`; Settings → Demo: Mark invoice paid (bank ref)
-- [ ] T034 [US3] Suspend/resume notices to enrolled employees (neutral copy, no amounts)
-- [ ] T035 Checkpoint P5: gates green; quickstart 5
+- [x] T031 [P] [US3] Widget tests `test/widget/company_invoices_test.dart` (ar+en): list per closed month, 20 × 99 = 1,980 at 12 enrolled, 34 × 99 at 34, invoice screen shows reference + bank details + due date, paid state after demo (red) — done: 5 tests x ar+en (list, 20 × 99, invoice screen, waiting→paid, overdue note)
+- [x] T032 [P] [US3] Unit tests: suspension from due + 8 days 00:00; employee trip on the 24th carries the fee and books fine (FR-015, SC-006); paid → covered from that moment; fees during suspension stay (red) — done: `company_suspension_test.dart` (6) passed first run, the rules existed from P2/P3
+- [x] T033 [US3] `invoices_screen.dart`, `invoice_screen.dart`; Settings → Demo: Mark invoice paid (bank ref) — done: + Demo "skip to suspension day" (needed to walk quickstart 5)
+- [x] T034 [US3] Suspend/resume notices to enrolled employees (neutral copy, no amounts) — done: sync in `companyAccount` provider (runs when the Wallet company card or company area loads), `company_suspension_notice_test.dart`
+- [x] T035 Checkpoint P5: gates green (analyze 0 · flutter 1567 · node 276); quickstart 5 NOT yet walked on the emulator — Demo "skip to suspension" + "mark paid" are the way in
 
 ## Phase 6: US4 — roster, leaving, log (P6)
 
-- [ ] T036 [P] [US4] Widget tests `test/widget/company_roster_test.dart` (ar+en): roster shows only name/email/since (+ this month's leavers), remove → "left on", log entries with actor (red)
-- [ ] T037 [P] [US4] Unit tests for every leave path (self, HR remove, domain removed, contract ended, staff end): next trip fee applies, earlier trips stay free, no trial, paused plan restored, an inbox notice posted (FR-020), leaver counted in the month's peak, re-join same month counts once (SC-007) (red)
-- [ ] T038 [US4] `roster_screen.dart`, domain add/remove on company home, `company_log_screen.dart`; Settings → Demo: End contract, Change HR contact
-- [ ] T039 [US4] HR-contact-left edge case: company stays active with no HR contact; `/company` for others shows only their enrollment
-- [ ] T040 Checkpoint P6: gates green; quickstart 6
+- [x] T036 [P] [US4] Widget tests `test/widget/company_roster_test.dart` (ar+en): roster shows only name/email/since (+ this month's leavers), remove → "left on", log entries with actor (red) — done 2026-10-29 (P6)
+- [x] T037 [P] [US4] Unit tests for every leave path (self, HR remove, domain removed, contract ended, staff end): next trip fee applies, earlier trips stay free, no trial, paused plan restored, an inbox notice posted (FR-020), leaver counted in the month's peak, re-join same month counts once (SC-007) (red) — done 2026-10-29 (P6): `test/unit/company_leave_paths_test.dart`, red with the sync off
+- [x] T038 [US4] `roster_screen.dart`, domain add/remove on company home, `company_log_screen.dart`; Settings → Demo: End contract, Change HR contact — done 2026-10-29 (P6)
+- [x] T039 [US4] HR-contact-left edge case: company stays active with no HR contact; `/company` for others shows only their enrollment — done 2026-10-29 (P6): covered in `company_roster_test.dart`
+- [x] T040 Checkpoint P6: gates green; quickstart 6 — walked 2026-10-29 (`walk5/REPORT.md`); the removed employee's next trip not walked
 
 ## Phase 7: US5 — dashboard (P7)
 
-- [ ] T041 [P] [US5] Unit tests `test/unit/company_dashboard_test.dart`: totals from month facts; money saved = Σ (leg cost − share); parking = going rider trips ÷ workdays; every figure from < 5 → null; route-gap area < 5 not listed; month list = current so far + closed months since start (red)
-- [ ] T042 [P] [US5] Privacy test `test/unit/company_privacy_test.dart`: HR read models have no person id / group / pickup / time / share / role fields; dashboard output contains no seeded name or email (SC-005) (red)
-- [ ] T043 [US5] `lib/features/company/domain/company_dashboard.dart` (pure aggregator, suppression inside) — research R7; record the CO₂ factor source and the SZ↔SV km in research R7 first
-- [ ] T044 [US5] `dashboard_screen.dart` (month picker, figures in words, method lines, "Fewer than 5") + widget tests ar+en
-- [ ] T045 Checkpoint P7: gates green; quickstart 7
+- [x] T041 [P] [US5] Unit tests `test/unit/company_dashboard_test.dart`: totals from month facts; money saved = Σ (leg cost − share); parking = going rider trips ÷ workdays; every figure from < 5 → null; route-gap area < 5 not listed; month list = current so far + closed months since start (red) — done 2026-10-29 (P7): `company_dashboard_test.dart` (11 tests; aggregator written before the first run, so no red run)
+- [x] T042 [P] [US5] Privacy test `test/unit/company_privacy_test.dart`: HR read models have no person id / group / pickup / time / share / role fields; dashboard output contains no seeded name or email (SC-005) (red) — done 2026-10-29 (P7): `company_privacy_test.dart` (3; scans `hr_views.dart` field names)
+- [x] T043 [US5] `lib/features/company/domain/company_dashboard.dart` (pure aggregator, suppression inside) — research R7; record the CO₂ factor source and the SZ↔SV km in research R7 first — done 2026-10-29 (P7): factor 0.1645 (UK DESNZ 2024, via mirror), leg km 13 (estimate); R7 + "P7 notes"
+- [x] T044 [US5] `dashboard_screen.dart` (month picker, figures in words, method lines, "Fewer than 5") + widget tests ar+en — done 2026-10-29 (P7): `company_dashboard_screen.dart`, route `/company/dashboard`, HR-home button "Company numbers", `test/widget/company_dashboard_test.dart` (5 x ar+en)
+- [x] T045 Checkpoint P7: gates green; quickstart 7 — walked 2026-10-29, Arabic + English 1.3× (`walk5/REPORT.md`); "Fewer than 5" not walked
 
 ## Phase 8: US6 — HR statement (P8, droppable — Q6)
 

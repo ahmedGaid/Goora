@@ -18,6 +18,8 @@ abstract interface class CompanyRepository {
       // NoWorkEmail | NotOnGoora(domain) | Pending | CanEnroll(companyName) | Enrolled(companyName, since)
   Future<void> enroll(String personId, {required WallTime now}); // consent given = now
   Future<void> leave(String personId, {required WallTime now});
+  /// null while enrolled, or never enrolled (010 P6: the employee's side ends the wallet plan here).
+  Future<LastLeave?> lastLeave(String personId, WallTime now);
   Future<List<Window>> coverageFor(String personId, WallTime now);
 
   // US3 — invoices (issues missing months lazily, idempotent)
@@ -41,7 +43,7 @@ abstract interface class CompanyRepository {
   // Goora staff (demo actions)
   Future<void> demoApprove(String companyId, WallTime now);
   Future<void> demoMarkPaid(String invoiceId, {required String bankRef, required WallTime now});
-  Future<void> demoSetHrContact(String companyId, String personId, WallTime now);
+  Future<void> demoSetHrContact(String companyId, String? personId, WallTime now); // null = HR contact left
   Future<void> demoEndContract(String companyId, WallTime now);
 
   Future<void> clearAll(); // Settings → Reset

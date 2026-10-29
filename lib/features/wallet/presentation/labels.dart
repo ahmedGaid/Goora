@@ -22,6 +22,9 @@ extension WalletLabels on AppLocalizations {
   /// `d/m`, Western digits in both locales — no month-name infra exists yet.
   String shortDate(CalendarDate d) => '${d.day}/${d.month}';
 
+  /// `d/m/yyyy` — for spans that can cross a year (a 12-month contract).
+  String shortDateYear(CalendarDate d) => '${d.day}/${d.month}/${d.year}';
+
   /// FR-004, 007 FR-014: the one price line for a trip. It always names the
   /// share as going to the driver directly; Goora's fee, when there is one,
   /// is its own part. The trial reads how the rider pays the driver.

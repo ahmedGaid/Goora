@@ -161,9 +161,14 @@ change HR contact, end contract), like 005/007/008/009.
   Uses the app's own numbers (e.g. demo corridor 160 / 3 → 160 − 40 = 120 EGP per rider trip). No
   outside constant. One-line method copy: "what driving alone would cost minus the share paid".
 - **CO₂ avoided** = Σ rider trips × leg km × factor. Leg km per corridor: Cairo ↔ Ismailia 123 km
-  (verified in 006 research); Sheikh Zayed ↔ Smart Village **unverified** (measure at
-  implementation). Factor 0.17 kg CO₂/km for an average petrol car is **recalled, unverified** —
-  look up a citable source (e.g. an IPCC or EEA figure) before shipping and record it here.
+  (verified in 006 research); Sheikh Zayed ↔ Smart Village **13 km** per leg (P7, 2026-10-29) —
+  from one hotel listing (12.5 km, 16 min by car) and a property guide (~30 min via the 26th of July
+  Corridor); no official figure, so it stays an estimate and the app says "about". Factor **0.1645 kg
+  CO₂e/km**, average petrol car, UK government (DESNZ/DEFRA) GHG conversion factors 2024, read via
+  the Climatiq mirror and a Durham University copy of the 2023-24 sheet — **not** read from the
+  government file itself; confirm there before the lawyer/marketing copy quotes it. Egypt's fleet
+  differs, so the app labels CO₂ "estimate" and shows the method line. Constant lives in
+  `CompanyDashboardTerms.co2KgPerKm` (0.1645) and the seed leg km in `CompanySeed.legKm` (13).
 - **Parking spaces freed per workday** = employee rider trips on going legs in the month ÷ workdays
   (Sun–Thu) in the month, rounded down. Assumes each rider would otherwise drive alone — stated in
   the method line.
@@ -244,7 +249,7 @@ real invoices on before the lawyer answers). May move next to `Env` after 006 me
 | Q10 grace | 7 days, suspended 00:00 on due + 8 | `CompanyRules.graceDays` = TS `GRACE_DAYS` |
 | clarification k | 5 | `CompanyRules.suppressBelow` = TS `SUPPRESS_BELOW` |
 | R4 Goora bank details | placeholder text | `CompanyTerms.bankDetails` (**founder to supply**) |
-| R7 leg km SZ ↔ SV | 20 km, **unverified** | `CompanySeed.legKmPlaceholder` (measure before T043) |
+| R7 leg km SZ ↔ SV | 13 km, estimate (one listing, no official figure) | `CompanySeed.legKm` |
 | R10 seed money saved | 160 − 40 = 120 EGP per rider trip | `CompanySeed._savedPerTrip` |
 
 The three rule constants exist in Dart, TS and `gen_company_vectors.py` by the twin rule; the
@@ -355,3 +360,170 @@ Paused/resumed carry no amount (Q10 "neutral notice"). Founder review pending li
 - The router's pay-method guard still asks `coversDate` (day level, `lib/app/router.dart`, not this
   lane's file): a leaver keeps reaching Today for the rest of the leave day. Fine for P4; revisit if
   the walk shows it.
+
+## P4 notes — 2026-10-20 (US1 + US2, T020 rest, T022–T029)
+
+Founder Q1–Q11 still open: defaults unchanged (99 EGP, minimum 20).
+
+### Choices (picked, with the rejected option)
+1. **Who calls the wallet seam** (Lane A notes #6): `CompanyEnrollment.enroll/leave` in
+   `company/presentation/company_controller.dart` calls `CompanyRepository.enroll/leave`, then
+   `WalletRepository.startCompanyPlan/endCompanyPlan`, then posts the notice. Rejected an
+   `onPlanChange` function on the fake: the HR-side leave paths (remove, domain removed, contract
+   end) happen inside the company fake with no wallet call either way, so P6 (T037) needs a
+   catch-up seam regardless; one presentation helper is the smaller step now.
+2. **Register = name + work email**; the company's domain is the email's domain, more domains
+   later (`addDomain`, P6). A code to that email proves it — fake: `FakeOtpProvider.testCode`
+   (123456); real delivery is server work (R9). Public and taken domains are refused *before* a
+   code is sent, as the email field's error. Rejected a separate domain field (a second input that
+   must match the email anyway).
+3. `companyAccountProvider` = (HR home, offer, paused plan) for the signed-in person. Screens keep
+   the last value while it reloads, so the offer view is never torn down mid-join.
+4. Wallet: a company plan with **no enrollment behind it** (pre-010 seeds, `memberPrefs`) keeps the
+   old plain plan card; only an `Enrolled` offer shows "Company · Valeo", the paused line and
+   Leave. Rejected migrating old plans (they are test seeds only).
+5. **`personalPlanBack` is a fifth notice kind** (the contract listed four): the ARB key existed
+   and the leave flow needs it. Paused/Resumed have kinds and copy but are posted by P5
+   (suspension), not yet.
+6. Settings → Demo: "Goora approves my company" approves my pending company, else the seeded
+   Orange Business; "Make me Valeo's HR contact" = `demoSetHrContact`.
+7. The HR home shows status, domain, minimum, price, contract dates and the privacy note; no
+   buttons for Roster/Invoices/Dashboard/Log until P5–P7 add their screens (no dead ends).
+8. Arabic copy writes the name **جورة** (17 existing keys did; the 4 notice keys drafted in P3 said
+   "Goora" — fixed).
+9. T028 checks the P1 seams (green on first run): fee 0 on a group trip and a one-off seat, share
+   unchanged, reclaim right while covered and gone one minute after leaving, an owed share still
+   blocks. The 008 overdue-fee block is not re-tested here (the gate order is pure,
+   `booking_gate_test.dart`).
+10. `GooraTextField` errors wrap to 3 lines (a refusal reason is a sentence; Arabic runs longer).
+
+### R11 — keys added in P4 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyAccountTitle | حساب الشركة | Company account |
+| companyAccountSub | سجّل شركتك لو إنت HR، أو شوف خطة شركتك | Register your company if you're in HR, or see your company plan |
+| companyRegisterCta | سجّل شركتك | Register your company |
+| companyRegisterIntro | إنت من HR؟ سجّل شركتك، وموظفينكم يركبوا من غير رسوم جورة. | In HR? Register your company so your employees ride with no Goora fee. |
+| companyRegisterSub | هنتأكد من إيميل شغلك، وفريق جورة هيفعّل الحساب بعد ما العقد يتمضي. | We check your work email. The Goora team turns the account on once the contract is signed. |
+| companyNameLabel · companyNameError | اسم الشركة · الاسم لازم يكون من 2 لـ 60 حرف | Company name · Use 2 to 60 characters |
+| companyWorkEmailLabel · companyEmailInvalid | إيميل شغلك · اكتب إيميل صحيح، زي name@company.com | Your work email · Enter a valid email, like name@company.com |
+| companyPublicDomain | {domain} إيميل عام أي حد يقدر يعمل عليه حساب. استخدم إيميل الشغل. | {domain} is a public email service anyone can sign up to. Use your work email. |
+| companyDomainTaken | {domain} متسجّل لشركة تانية على جورة. | {domain} is already registered to another company on Goora. |
+| companySendCode · companyCodeSent · companyCodeLabel · companySubmit | ابعتلي كود · بعتنا كود لـ {email} · الكود · ابعت الطلب | Send me a code · We sent a code to {email} · Code · Send the request |
+| companyStatusPending · Active · Suspended · Ended | مستني موافقة جورة · شغّال · متوقف لحد الدفع · العقد خلص | Waiting for Goora · Active · Paused until paid · Contract ended |
+| companyPendingBody | طلب {company} وصلنا. هنفعّل الحساب أول ما العقد يتمضي. | We got {company}'s request. We'll turn the account on once the contract is signed. |
+| companyDomainsLine · companyMinSeats · companyPriceLine · companyContractLine | الدومين: {domains} · أقل عدد في الفاتورة: {count} موظف · {amount} ج لجورة عن كل موظف في الشهر · العقد من {start} لـ {end} | Domain: {domains} · Billed for at least {count} employees · {amount} EGP to Goora per employee a month · Contract {start} to {end} |
+| companyHomeNote | الشركة عمرها ما بتشوف مشاوير الموظفين ولا أماكن ركوبهم. | The company never sees employees' trips or pickup points. |
+| companyMineTitle · companyEnrolledLine · companyCanEnrollLine · companyJoinCta | خطة شركتك · مشترك في خطة {company} من {date} · {company} بتدفع رسوم جورة عنك على كل مشوار. · اشترك من خلال {company} | Your company plan · On {company}'s plan since {date} · {company} pays Goora's fee for you on every trip. · Join through {company} |
+| companyNotOnGoora · companyNotOnGooraBody · companyTellHr | شركتك لسه مش على جورة · قول لـ HR بتاعكم عن جورة. لحد ما يشتركوا، تقدر تدفع بالمشوار أو تشترك لوحدك. · ابعت لـ HR بتاعكم | Your company isn't on Goora yet · Tell your HR about Goora. Until they join, you can pay per trip or subscribe yourself. · Tell your HR |
+| companyShareText | جورة بيجمّع زمايل الشغل في مشوار يومي واحد، وبيقسموا التكلفة. وفيه خطة للشركات: الشركة تدفع رسوم جورة، والموظفين يركبوا من غير رسوم. {link} | Goora groups colleagues into one daily commute, and they share the cost. With its company plan, the company pays Goora's fee and employees ride with no fee. {link} |
+| consentTitle | قبل ما تشترك من خلال {company} | Before you join through {company} |
+| consentSees* | شركتك هتشوف: اسمك · إيميل شغلك · من إمتى مشترك | Your company will see: Your name · Your work email · Since when you joined |
+| consentNever* | عمرها ما هتشوف: مشاويرك ومواعيدها · بيتك أو مكان ركوبك · مين راكب معاك · فلوسك أو اللي دفعته للسواق | It will never see: Your trips or their times · Your home or pickup point · Who rides with you · Your money or what you paid the driver |
+| consentFeeLine | رسوم جورة على مشاويرك هتبقى 0. نصيب السواق بتدفعه له زي ما هو. | Goora's fee on your trips becomes 0. You still pay the driver's share to the driver. |
+| consentPausedLine | اشتراكك الشخصي (فاضل {days} يوم) هيتوقف، ويرجعلك لو سبت الشركة. | Your own plan ({days} days left) pauses and comes back if you leave your company. |
+| consentAgree · consentDecline | موافق، اشترك · مش دلوقتي | Agree and join · Not now |
+| planCompanyOf · planCompanyPaused | شركة · {company} · اشتراكك الشخصي متوقف: فاضل {days} يوم، يرجعلك لو سبت الشركة. | Company · {company} · Your own plan is paused: {days} days left, back if you leave your company. |
+| companyLeave · companyLeaveTitle · companyLeaveBody · companyLeaveConfirm | سيب خطة الشركة · تسيب خطة {company}؟ · من دلوقتي رسوم جورة هترجع على مشاويرك. المشاوير اللي فاتت مش هتتغير. · أيوه، سيبها | Leave the company plan · Leave {company}'s plan? · From now on Goora's fee applies to your trips. Trips you already took don't change. · Yes, leave |
+| demoApproveCompany · demoMakeMeHr | جورة توافق على شركتي · خليني HR بتاع Valeo | Goora approves my company · Make me Valeo's HR contact |
+
+### Still open after P4
+- T030 done 2026-10-21: walk report `walk/README.md` (F-1 contract dates lack the year, F-2 wallet rules still mention a 10% fee on a company plan, F-3 stale top-up banner).
+- The router's pay-method guard still asks `coversDate` (Lane A notes): unchanged.
+
+## P6 notes — 2026-10-29 (US4 roster, leaving, log, T036–T039)
+
+Founder Q1–Q11 still open: defaults unchanged.
+
+### Choices (picked, with the rejected option)
+1. **One leave path on the employee's side.** `companyAccountProvider` runs `_syncLeave` whenever no
+   enrollment is open: if the wallet plan is still a company plan with coverage behind it, it ends it
+   at `CompanyRepository.lastLeave(...).at` (new), brings a paused plan back, posts
+   `companyPlanEnded` (+ `personalPlanBack`) once, and refreshes plan/pricing/wallet. Self-leave now
+   goes the same way (`CompanyEnrollment.leave` = `company.leave` + re-read). Rejected: an
+   `onPlanChange` callback on the fake (the company network may not reach the wallet, and HR-side
+   leaves happen while the employee's app is closed — the real backend has the same gap).
+2. Fees are right **before** the sync runs: the plan's coverage already ends at the leave moment
+   through the T019 seam. Only the notice and the plan card wait for the next company-area read
+   (Wallet card or `/company`) — the same lag P5 has for suspension notices.
+3. `demoSetHrContact` takes `String?`: null = the HR contact left; the company stays active with no
+   HR contact, `/company` shows everyone only their own plan (T039). Settings → Demo: "Goora ends
+   Valeo's contract", "Valeo's HR contact left the company" (re-name with "Make me Valeo's HR").
+4. Domains get their own card on the HR home (active or suspended only): list, Add (shape check,
+   public and taken refused before saving), Remove with confirm; the last domain has no Remove. The
+   pending home keeps the one-line "Domain:" summary.
+5. Log entries written in the same minute sort newest-written first (Dart's sort is not stable).
+6. `companyAccountProvider` reads every repository **before its first await** and passes them to
+   the catch-up helpers (`_Deps`): it is invalidated often (demo actions, screens), and Riverpod 3
+   throws `UnmountedRefException` on `ref.read` after a rebuild. Found by `company_invoices_test`.
+7. Arabic leaver copy avoids gendered verbs: "آخر يوم في الخطة: {date}", "خرج من الخطة: {name}" is
+   the one gendered form left (founder review).
+
+### R11 — keys added in P6 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyRosterCta · companyRosterTitle | الموظفين المشتركين | Enrolled employees |
+| companyRosterCount | {count} مشترك دلوقتي | {count} enrolled now |
+| companyRosterNote | ده كل اللي الشركة بتشوفه: الاسم والإيميل ومن إمتى مشترك. | This is all the company sees: name, email and since when. |
+| companyRosterSince · companyRosterLeft | مشترك من {date} · آخر يوم في الخطة: {date} | Since {date} · Left on {date} |
+| companyRosterEmpty | مفيش موظفين مشتركين لسه. قول لزمايلك يشتركوا من خلال الشركة من جورة. | No employees enrolled yet. Tell your colleagues to join through the company in Goora. |
+| companyRosterRemove · …Title · …Body · …Confirm | شيل · تشيل {name} من خطة الشركة؟ · من دلوقتي رسوم جورة هترجع على مشاويرهم، والمشاوير اللي فاتت مش هتتغير. هيتحسبوا في فاتورة الشهر ده. · أيوه، شيل | Remove · Remove {name} from the company plan? · From now on Goora's fee applies to their trips; trips already taken don't change. They still count on this month's invoice. · Yes, remove |
+| companyLogCta · companyLogTitle · companyLogEmpty | سجل التغييرات · مفيش تغييرات لسه. | Change log · No changes yet. |
+| companyLogMeta · ByHr · ByEmployee · ByGoora | {actor} · {date} · HR · الموظف · جورة | {actor} · {date} · HR · Employee · Goora |
+| companyLog* kinds | الحساب اتفعّل · دومين اتضاف/اتشال: {domain} · اتشال من الخطة: {name} · خرج من الخطة: {name} · فاتورة اتعملت/اتدفعت: {month} · الخطة اتوقفت لحد الدفع · الخطة رجعت تشتغل · العقد خلص · مسؤول HR اتغيّر | Account approved · Domain added/removed: {domain} · Removed from the plan: {name} · Left the plan: {name} · Invoice issued/paid: {month} · Plan paused until paid · Plan back on · Contract ended · HR contact changed |
+| companyDomainsTitle · companyDomainsNote | الدومينات · أي حد إيميل شغله على الدومينات دي يقدر يشترك من خلال الشركة. | Domains · Anyone whose work email is on these domains can join through the company. |
+| companyAddDomain · companyDomainLabel · companyDomainInvalid · companyDomainAddCta | ضيف دومين · الدومين · اكتب دومين صحيح، زي company.com · ضيف | Add a domain · Domain · Enter a valid domain, like company.com · Add |
+| companyDomainRemove · …Title · …Body | شيل {domain} · تشيل {domain}؟ · الموظفين المشتركين بإيميل على {domain} هيخرجوا من الخطة دلوقتي، ورسوم جورة هترجع على مشاويرهم. | Remove {domain} · Remove {domain}? · Employees enrolled with a {domain} email leave the plan now, and Goora's fee applies to their trips. |
+| demoEndContract · demoHrLeft | جورة تنهي عقد Valeo · مسؤول HR بتاع Valeo ساب الشركة | Goora ends Valeo's contract · Valeo's HR contact left the company |
+
+### Still open after P6
+- T040: quickstart 6 on the emulator (not walked this session).
+- Log invoice months show as `yyyy-mm` (same as the invoice list) — a month-name format is a polish item.
+
+
+## P7 notes — 2026-10-29 (US5 dashboard, T041–T044)
+
+### Choices (picked, with the rejected option)
+1. **Trips shared counts each leg once** by a `legIds` set on `EmployeeMonthFacts` (riders and the driver of one car share ids). Rejected: Σ per-person trips (counts a full car 4x).
+2. **Every figure is suppressed on the number of people it is built from**, not on enrolled: enrolled ← all employees; active, carpool rate, trips shared ← active; groups ← employees in a group; money, CO₂ ← employees who rode; parking ← employees who rode a going leg. Carpool rate is null when either side is.
+3. **Parking per workday for the running month divides by the workdays so far** (Sun–Thu up to today), not the whole month — else early in the month it reads near 0. Closed months use the whole month. Rejected: whole month always (R7 text) because it misleads "so far".
+4. **Month picker = pills**, labels `m/yyyy`; the running one reads "(so far)". No month names (avoids 12 ARB keys x 2).
+5. **Fake data**: Valeo's seeded facts repeat every month; a company with no seed facts counts open enrollments as headcount only (no commute profile, no route-gap effect), so a fresh company shows "Fewer than 5" everywhere.
+6. Privacy test scans field names in `hr_views.dart` (Dart has no reflection in tests) plus checks the seeded output holds no name/email/id.
+
+### R7 constants — what is and is not verified
+- CO₂ factor 0.1645 kg CO₂e/km (UK DESNZ/DEFRA 2024, average petrol car): read from a Climatiq mirror and a Durham University copy of the 2023-24 sheet, **not** from the government file. Egypt's fleet differs. Shown as "estimate" with its method.
+- SZ ↔ SV 13 km per leg: one hotel listing (12.5 km, 16 min); no official figure. Seed only; real facts will carry measured km.
+
+### R11 — keys added in P7 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyDashboardCta · Title | أرقام الشركة | Company numbers |
+| companyDashboardSoFar | {month} (لحد دلوقتي) | {month} (so far) |
+| companyDashboardNote | أرقام إجمالية بس. مفيش اسم ولا مشوار ولا مكان ركوب لأي موظف. | Totals only. No employee's name, trip or pickup point. |
+| companyDashboardFewer · FewerNote | أقل من 5 · أي رقم طالع من أقل من 5 موظفين بنخبّيه، عشان محدش يتعرف. | Fewer than 5 · A figure from fewer than 5 employees is hidden, so no one can be picked out. |
+| companyDashboardEnrolled · Active · ActiveMethod | موظفين مشتركين · موظفين نشطين الشهر ده · نشط يعني ركب أو سوّق مشوار واحد على الأقل. | Employees enrolled · Active employees this month · Active means at least one trip as a passenger or driver. |
+| companyDashboardCarpool · CarpoolMethod | نسبة المشاركة · النشطين ÷ المشتركين. | Carpool rate · Active ÷ enrolled. |
+| companyDashboardGroups · Trips · TripsMethod | مجموعات مشاوير فيها موظفين · مشاوير اتشاركت · كل مشوار بيتعد مرة واحدة، حتى لو كذا موظف في العربية. | Commute groups with employees · Trips shared · Each trip counts once, however many employees were in the car. |
+| companyDashboardSaved · SavedMethod | توفير تقديري · تكلفة المشوار لو سقت لوحدك ناقص حصة الكرسي اللي اتدفعت. تقدير. | Estimated savings · What driving alone would cost minus the seat share paid. An estimate. |
+| companyDashboardCo2 · Co2Method · Kg · Percent | كربون اتوفّر (تقدير) · الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس. · {kg} كجم · {pct}% | CO₂ avoided (estimate) · Kilometres × 0.1645 kg CO₂ per km, an average petrol car. An estimate, not a measurement. · {kg} kg · {pct}% |
+| companyDashboardParking · ParkingMethod | أماكن ركن فاضية كل يوم شغل · مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده. | Parking spaces freed per workday · Going trips as a passenger ÷ workdays (Sun–Thu). Assumes each passenger would otherwise drive alone. |
+| companyDashboardGapsTitle · GapRow · GapsEmpty | مناطق فيها موظفين من غير مجموعة · {area} · {count} موظف مستنيين · مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة. | Areas with employees but no group · {area} · {count} employees waiting · No area has 5 or more employees waiting for a group. |
+| companyDashboardEmpty | الأرقام بتظهر أول ما الحساب يتفعّل. | Numbers appear once the account is active. |
+
+## P8/P9 notes (autonomous run) — analyze pass, session goora-5b, 2026-10-29
+
+`/speckit-analyze` on 010 after P7: 0 critical, 0 high, 5 medium, 6 low. Doc-only fixes applied (branch/status headers in spec, plan, tasks; plan file names and key estimate; T001 wording). Below: what was NOT a doc fix, each with the conservative default taken and why. Founder reviews later.
+
+| ID | Finding | Default taken (why) |
+|---|---|---|
+| U1 | Statement rows (date, leg, share) have no source in the fakes: `EmployeeMonthFacts` holds counts only and the company provider may not import wallet (R8). | The P8 session picks the source and writes it here. Rule: a function seam, never a wallet import in `company/data`. |
+| U2 | `statement(...)` is the only call returning individual data and takes no caller id; `NotHrContact` is not enforced in the fake. | Screen-level guard stays (`home == null` → not-HR state). Add a test that a non-HR user sees no statement. Server RLS (R9) is the real guard. |
+| A1 | FR-025 / US6 AC2 "Goora fees show as 0" is untrue while a company is suspended (FR-013: employees pay the fee then). | The statement shows date, leg and share paid only; no fee column. Most conservative: states nothing that can be wrong. |
+| C1 | Edge cases with no task and no test: employee moves to another domain, price change mid-contract, driver-only employee enrols, 009 ID check not skipped on enrol. | Listed here, not built. P9 can add them; none blocks P8. |
+| C2 | T051 covers dashboard + invoice at 1.3× only; no company test uses a text scale; roster, home, register, consent, log and statement are unchecked at 1.3× and 44 px (constitution VII). | Widen T051 to every company screen. |
+| A2 | FR-021/FR-022 hide "employees enrolled" under 5 while the roster (FR-016) lists every name, so hiding the headcount adds no privacy. | Kept hidden (conservative; spec text literal). Pinned by `company_unwalked_states_test.dart` ("4 employees"). Founder to confirm. |
+| A3 | SC-001 (3 min) and SC-002 (1 min) cannot be tested in fakes. | Time them in the T054 device walk, or drop them. |
+| E1 | T052 already holds: `test/architecture/no_hardcoded_values_test.dart` lines 20 and 23 scan `lib/features` recursively, so `lib/features/company` is covered. | Tick T052 with this note (not ticked here: another session owns the tick). |
+
+Also added by this session: `test/widget/company_unwalked_states_test.dart` (6 tests, ar + en): removed employee's next trip (fee 4 back on the plan card, "plan ended" notice in the inbox, can enrol again) and the dashboard with 5 and with 4 employees. Both were "not walked" in walk 5.

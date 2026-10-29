@@ -26,6 +26,15 @@ abstract final class Routes {
   static const wallet = '/wallet';
   static const trust = '/trust';
   static const settings = '/settings';
+
+  /// 010: the company account (register / pending / HR home / my enrollment).
+  static const company = '/company';
+  static const companyRegister = '/company/register';
+  static const companyInvoices = '/company/invoices';
+  static const companyInvoice = '/company/invoice';
+  static const companyRoster = '/company/roster';
+  static const companyLog = '/company/log';
+  static const companyDashboard = '/company/dashboard';
   static const gallery = '/debug/gallery';
 
   static const phoneParam = 'phone';

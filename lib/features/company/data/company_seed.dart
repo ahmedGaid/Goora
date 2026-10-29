@@ -27,9 +27,9 @@ abstract final class CompanySeed {
   /// Leg trip cost − share on the demo corridor (160 − 40), per rider trip.
   static const _savedPerTrip = 120;
 
-  /// One leg Sheikh Zayed ↔ Smart Village in km. **Unverified placeholder**
-  /// (research R7: measure before the dashboard ships, T043).
-  static const legKmPlaceholder = 20;
+  /// One leg Sheikh Zayed ↔ Smart Village in km. Estimate, research R7
+  /// (~13 km; no official figure).
+  static const legKm = 13;
 
   static const _people = <({String id, String name, String email})>[
     (id: 'valeo-01', name: 'Mona Adel', email: 'mona.adel@valeo.com'),
@@ -114,17 +114,25 @@ abstract final class CompanySeed {
           ),
       ];
 
+  /// The first [n] legs of a group's month; riders and the driver of one car
+  /// share them, so each leg counts once in "trips shared".
+  static Set<String> _legs(String group, int n) => {for (var i = 0; i < n; i++) '$group-$i'};
+
   static EmployeeMonthFacts _rider(String id, int trips, Area home) => EmployeeMonthFacts(
         personId: id,
         riderTrips: trips,
         riderGoingTrips: trips ~/ 2,
         driverTrips: 0,
         savedEgp: trips * _savedPerTrip,
-        km: trips * legKmPlaceholder,
+        km: trips * legKm,
         homeArea: home,
         hasProfile: true,
         hasGroup: true,
+        groupIds: [_groupOf(home)],
+        legIds: _legs(_groupOf(home), trips),
       );
+
+  static String _groupOf(Area home) => home == Area.october ? 'grp-oct' : 'grp-sz';
 
   static EmployeeMonthFacts _driver(String id, int trips, Area home) => EmployeeMonthFacts(
         personId: id,
@@ -136,6 +144,8 @@ abstract final class CompanySeed {
         homeArea: home,
         hasProfile: true,
         hasGroup: true,
+        groupIds: [_groupOf(home)],
+        legIds: _legs(_groupOf(home), trips),
       );
 
   static EmployeeMonthFacts _waiting(String id) => EmployeeMonthFacts(

@@ -66,7 +66,8 @@
   "planCompanyActive": "مجانية · شركتك بتدفعها",
   "howPayTitle": "إزاي الدفع بيشتغل",
   "howPayRule1": "بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. جورة بتضيف بس رسوم خدمة لحد 10% على كل مشوار، والمشتركين من غير رسوم.",
-  "howPayRule2": "نصيب السواق بيروحله على طول. جورة مش بتمسكه ولا بتاخد منه نسبة.",
+  "howPayRule1Company": "بتدفع نصيب السواق ليه على طول، كاش أو InstaPay. خطة شركتك بتغطي رسوم جورة، فمفيش عليك رسوم خدمة.",
+  "howPayRule2":"نصيب السواق بيروحله على طول. جورة مش بتمسكه ولا بتاخد منه نسبة.",
   "howPayRule3": "الإلغاء المتأخر والغياب بتدفعهم للسواق على طول، من غير رسوم خدمة.",
   "topUpSheetTitle": "اشحن محفظتك",
   "topUpMethodInstaPay": "InstaPay",
@@ -1168,7 +1169,6 @@
       }
     }
   },
-  "priceNoFee": "{price} ج للسواق · من غير رسوم خدمة",
   "@priceNoFee": {
     "placeholders": {
       "price": {
@@ -1646,7 +1646,7 @@
   "idCaptured": "اتصوّرت",
   "idSubmit": "ابعتها للتأكيد",
   "idPending": "بنراجع بطاقتك. هتقدر تحجز أول ما تتأكد.",
-  "nCompanyPlanStarted": "خطة {company} شغّالة: مشاويرك من غير رسوم Goora.",
+  "nCompanyPlanStarted": "خطة {company} شغّالة: مشاويرك من غير رسوم جورة.",
   "@nCompanyPlanStarted": {
     "placeholders": {
       "company": {
@@ -1654,7 +1654,7 @@
       }
     }
   },
-  "nCompanyPlanEnded": "خطة {company} خلصت. رسوم Goora على المشوار رجعت عادي.",
+  "nCompanyPlanEnded": "خطة {company} خلصت. رسوم جورة على المشوار رجعت عادي.",
   "@nCompanyPlanEnded": {
     "placeholders": {
       "company": {
@@ -1662,8 +1662,8 @@
       }
     }
   },
-  "nCompanyPlanPaused": "خطة شركتك متوقفة دلوقتي، رسوم Goora على المشوار رجعت عادي.",
-  "nCompanyPlanResumed": "خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم Goora تاني.",
+  "nCompanyPlanPaused": "خطة شركتك متوقفة دلوقتي، رسوم جورة على المشوار رجعت عادي.",
+  "nCompanyPlanResumed": "خطة شركتك رجعت تشتغل: مشاويرك من غير رسوم جورة تاني.",
   "nPersonalPlanBack": "اشتراكك رجعلك، وفاضل فيه {days} يوم.",
   "@nPersonalPlanBack": {
     "placeholders": {
@@ -1671,5 +1671,440 @@
         "type": "int"
       }
     }
-  }
+  },
+  "companyAccountTitle": "حساب الشركة",
+  "companyAccountSub": "سجّل شركتك لو إنت HR، أو شوف خطة شركتك",
+  "companyRegisterCta": "سجّل شركتك",
+  "companyRegisterIntro": "إنت من HR؟ سجّل شركتك، وموظفينكم يركبوا من غير رسوم جورة.",
+  "companyRegisterSub": "هنتأكد من إيميل شغلك، وفريق جورة هيفعّل الحساب بعد ما العقد يتمضي.",
+  "companyNameLabel": "اسم الشركة",
+  "companyNameError": "الاسم لازم يكون من 2 لـ 60 حرف",
+  "companyWorkEmailLabel": "إيميل شغلك",
+  "companyEmailInvalid": "اكتب إيميل صحيح، زي name@company.com",
+  "companyPublicDomain": "{domain} إيميل عام أي حد يقدر يعمل عليه حساب. استخدم إيميل الشغل.",
+  "@companyPublicDomain": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "companyDomainTaken": "{domain} متسجّل لشركة تانية على جورة.",
+  "@companyDomainTaken": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "companySendCode": "ابعتلي كود",
+  "companyCodeSent": "بعتنا كود لـ {email}",
+  "@companyCodeSent": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "companyCodeLabel": "الكود",
+  "companySubmit": "ابعت الطلب",
+  "companyStatusPending": "مستني موافقة جورة",
+  "companyStatusActive": "شغّال",
+  "companyStatusSuspended": "متوقف لحد الدفع",
+  "companyStatusEnded": "العقد خلص",
+  "companyPendingBody": "طلب {company} وصلنا. هنفعّل الحساب أول ما العقد يتمضي.",
+  "@companyPendingBody": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "companyDomainsLine": "الدومين: {domains}",
+  "@companyDomainsLine": {
+    "placeholders": {
+      "domains": {
+        "type": "String"
+      }
+    }
+  },
+  "companyMinSeats": "أقل عدد في الفاتورة: {count} موظف",
+  "@companyMinSeats": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "companyPriceLine": "{amount} ج لجورة عن كل موظف في الشهر",
+  "@companyPriceLine": {
+    "placeholders": {
+      "amount": {
+        "type": "int"
+      }
+    }
+  },
+  "companyContractLine": "العقد من {start} لـ {end}",
+  "@companyContractLine": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "companyHomeNote": "الشركة عمرها ما بتشوف مشاوير الموظفين ولا أماكن ركوبهم.",
+  "companyMineTitle": "خطة شركتك",
+  "companyEnrolledLine": "مشترك في خطة {company} من {date}",
+  "@companyEnrolledLine": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyCanEnrollLine": "{company} بتدفع رسوم جورة عنك على كل مشوار.",
+  "@companyCanEnrollLine": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "companyJoinCta": "اشترك من خلال {company}",
+  "@companyJoinCta": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "companyNotOnGoora": "شركتك لسه مش على جورة",
+  "companyNotOnGooraBody": "قول لـ HR بتاعكم عن جورة. لحد ما يشتركوا، تقدر تدفع بالمشوار أو تشترك لوحدك.",
+  "companyTellHr": "ابعت لـ HR بتاعكم",
+  "companyShareText": "جورة بيجمّع زمايل الشغل في مشوار يومي واحد، وبيقسموا التكلفة. وفيه خطة للشركات: الشركة تدفع رسوم جورة، والموظفين يركبوا من غير رسوم. {link}",
+  "@companyShareText": {
+    "placeholders": {
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "consentTitle": "قبل ما تشترك من خلال {company}",
+  "@consentTitle": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "consentSeesTitle": "شركتك هتشوف",
+  "consentSeesName": "اسمك",
+  "consentSeesEmail": "إيميل شغلك",
+  "consentSeesSince": "من إمتى مشترك",
+  "consentNeverTitle": "عمرها ما هتشوف",
+  "consentNeverTrips": "مشاويرك ومواعيدها",
+  "consentNeverPlace": "بيتك أو مكان ركوبك",
+  "consentNeverWho": "مين راكب معاك",
+  "consentNeverMoney": "فلوسك أو اللي دفعته للسواق",
+  "consentFeeLine": "رسوم جورة على مشاويرك هتبقى 0. نصيب السواق بتدفعه له زي ما هو.",
+  "consentPausedLine": "اشتراكك الشخصي (فاضل {days} يوم) هيتوقف، ويرجعلك لو سبت الشركة.",
+  "@consentPausedLine": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "consentAgree": "موافق، اشترك",
+  "consentDecline": "مش دلوقتي",
+  "planCompanyOf": "شركة · {company}",
+  "@planCompanyOf": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "planCompanyPaused": "اشتراكك الشخصي متوقف: فاضل {days} يوم، يرجعلك لو سبت الشركة.",
+  "@planCompanyPaused": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "companyLeave": "سيب خطة الشركة",
+  "companyLeaveTitle": "تسيب خطة {company}؟",
+  "@companyLeaveTitle": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLeaveBody": "من دلوقتي رسوم جورة هترجع على مشاويرك. المشاوير اللي فاتت مش هتتغير.",
+  "companyLeaveConfirm": "أيوه، سيبها",
+  "demoApproveCompany": "جورة توافق على شركتي",
+  "demoMakeMeHr": "خليني HR بتاع Valeo",
+  "companyInvoicesCta": "الفواتير",
+  "companyInvoicesTitle": "فواتير الشركة",
+  "companyInvoicesEmpty": "لسه مفيش فواتير. أول فاتورة بتتعمل أول الشهر الجاي.",
+  "companyInvoiceMonthLabel": "فاتورة {month}",
+  "@companyInvoiceMonthLabel": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoiceMath": "{seats} موظف × {price} ج = {total} ج",
+  "@companyInvoiceMath": {
+    "placeholders": {
+      "seats": {
+        "type": "int"
+      },
+      "price": {
+        "type": "int"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoicePeak": "أكتر عدد موظفين اتسجلوا في الشهر: {count}",
+  "@companyInvoicePeak": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "companyInvoicePaid": "اتدفعت",
+  "companyInvoiceWaiting": "مستنية الدفع",
+  "companyInvoiceOverdue": "متأخرة",
+  "companyInvoiceDue": "آخر ميعاد للدفع {date}",
+  "@companyInvoiceDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoiceReferenceTitle": "اكتب الرقم ده في التحويل",
+  "companyInvoiceBankTitle": "حساب جورة",
+  "companyInvoiceSuspendNote": "لو الفاتورة لسه ماتدفعتش في {date}، خطة الشركة بتتوقف لحد الدفع، ورسوم جورة بترجع على مشاوير الموظفين.",
+  "@companyInvoiceSuspendNote": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInvoicePaidOn": "اتدفعت يوم {date} · مرجع البنك {ref}",
+  "@companyInvoicePaidOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "ref": {
+        "type": "String"
+      }
+    }
+  },
+  "demoMarkInvoicePaid": "جورة تأكد دفع الفاتورة",
+  "demoSkipToSuspension": "قدّم الساعة لحد يوم إيقاف خطة الشركة",
+  "companyRosterCta": "الموظفين المشتركين",
+  "companyRosterTitle": "الموظفين المشتركين",
+  "companyRosterCount": "{count} مشترك دلوقتي",
+  "@companyRosterCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "companyRosterNote": "ده كل اللي الشركة بتشوفه: الاسم والإيميل ومن إمتى مشترك.",
+  "companyRosterSince": "مشترك من {date}",
+  "@companyRosterSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyRosterLeft": "آخر يوم في الخطة: {date}",
+  "@companyRosterLeft": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyRosterEmpty": "مفيش موظفين مشتركين لسه. قول لزمايلك يشتركوا من خلال الشركة من جورة.",
+  "companyRosterRemove": "شيل",
+  "companyRosterRemoveTitle": "تشيل {name} من خطة الشركة؟",
+  "@companyRosterRemoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "companyRosterRemoveBody": "من دلوقتي رسوم جورة هترجع على مشاويرهم، والمشاوير اللي فاتت مش هتتغير. هيتحسبوا في فاتورة الشهر ده.",
+  "companyRosterRemoveConfirm": "أيوه، شيل",
+  "companyLogCta": "سجل التغييرات",
+  "companyLogTitle": "سجل التغييرات",
+  "companyLogEmpty": "مفيش تغييرات لسه.",
+  "companyLogMeta": "{actor} · {date}",
+  "@companyLogMeta": {
+    "placeholders": {
+      "actor": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLogByHr": "HR",
+  "companyLogByEmployee": "الموظف",
+  "companyLogByGoora": "جورة",
+  "companyLogApproved": "الحساب اتفعّل",
+  "companyLogDomainAdded": "دومين اتضاف: {domain}",
+  "@companyLogDomainAdded": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLogDomainRemoved": "دومين اتشال: {domain}",
+  "@companyLogDomainRemoved": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLogEmployeeRemoved": "اتشال من الخطة: {name}",
+  "@companyLogEmployeeRemoved": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLogEmployeeLeft": "خرج من الخطة: {name}",
+  "@companyLogEmployeeLeft": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLogInvoiceIssued": "فاتورة اتعملت: {month}",
+  "@companyLogInvoiceIssued": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLogInvoicePaid": "فاتورة اتدفعت: {month}",
+  "@companyLogInvoicePaid": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "companyLogSuspended": "الخطة اتوقفت لحد الدفع",
+  "companyLogResumed": "الخطة رجعت تشتغل",
+  "companyLogContractEnded": "العقد خلص",
+  "companyLogHrChanged": "مسؤول HR اتغيّر",
+  "companyDomainsTitle": "الدومينات",
+  "companyDomainsNote": "أي حد إيميل شغله على الدومينات دي يقدر يشترك من خلال الشركة.",
+  "companyAddDomain": "ضيف دومين",
+  "companyDomainLabel": "الدومين",
+  "companyDomainInvalid": "اكتب دومين صحيح، زي company.com",
+  "companyDomainAddCta": "ضيف",
+  "companyDomainRemove": "شيل {domain}",
+  "@companyDomainRemove": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "companyDomainRemoveTitle": "تشيل {domain}؟",
+  "@companyDomainRemoveTitle": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "companyDomainRemoveBody": "الموظفين المشتركين بإيميل على {domain} هيخرجوا من الخطة دلوقتي، ورسوم جورة هترجع على مشاويرهم.",
+  "@companyDomainRemoveBody": {
+    "placeholders": {
+      "domain": {
+        "type": "String"
+      }
+    }
+  },
+  "demoEndContract": "جورة تنهي عقد Valeo",
+  "demoHrLeft": "مسؤول HR بتاع Valeo ساب الشركة",
+  "companyDashboardCta": "أرقام الشركة",
+  "companyDashboardTitle": "أرقام الشركة",
+  "companyDashboardSoFar": "{month} (لحد دلوقتي)",
+  "@companyDashboardSoFar": {
+    "placeholders": {
+      "month": {"type": "String"}
+    }
+  },
+  "companyDashboardNote": "أرقام إجمالية بس. مفيش اسم ولا مشوار ولا مكان ركوب لأي موظف.",
+  "companyDashboardEmpty": "الأرقام بتظهر أول ما الحساب يتفعّل.",
+  "companyDashboardFewer": "أقل من 5",
+  "companyDashboardFewerNote": "أي رقم طالع من أقل من 5 موظفين بنخبّيه، عشان محدش يتعرف.",
+  "companyDashboardEnrolled": "موظفين مشتركين",
+  "companyDashboardActive": "موظفين نشطين الشهر ده",
+  "companyDashboardActiveMethod": "نشط يعني ركب أو سوّق مشوار واحد على الأقل.",
+  "companyDashboardCarpool": "نسبة المشاركة",
+  "companyDashboardCarpoolMethod": "النشطين ÷ المشتركين.",
+  "companyDashboardGroups": "مجموعات مشاوير فيها موظفين",
+  "companyDashboardTrips": "مشاوير اتشاركت",
+  "companyDashboardTripsMethod": "كل مشوار بيتعد مرة واحدة، حتى لو كذا موظف في العربية.",
+  "companyDashboardSaved": "توفير تقديري",
+  "companyDashboardSavedMethod": "تكلفة المشوار لو سقت لوحدك ناقص حصة الكرسي اللي اتدفعت. تقدير.",
+  "companyDashboardCo2": "كربون اتوفّر (تقدير)",
+  "companyDashboardCo2Method": "الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس.",
+  "companyDashboardKg": "{kg} كجم",
+  "@companyDashboardKg": {
+    "placeholders": {
+      "kg": {"type": "int"}
+    }
+  },
+  "companyDashboardPercent": "{pct}%",
+  "@companyDashboardPercent": {
+    "placeholders": {
+      "pct": {"type": "int"}
+    }
+  },
+  "companyDashboardParking": "أماكن ركن فاضية كل يوم شغل",
+  "companyDashboardParkingMethod": "مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده.",
+  "companyDashboardGapsTitle": "مناطق فيها موظفين من غير مجموعة",
+  "companyDashboardGapRow": "{area} · {count} موظف مستنيين",
+  "@companyDashboardGapRow": {
+    "placeholders": {
+      "area": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "companyDashboardGapsEmpty": "مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة."
 }

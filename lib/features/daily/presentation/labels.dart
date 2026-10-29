@@ -126,6 +126,11 @@ extension DailyLabels on AppLocalizations {
       NoticeKind.requestAccepted => requestAccepted,
       NoticeKind.requestExpired => requestExpired,
       NoticeKind.tripCancelledByDriver => tripCancelledRefund(n.params['driver'] ?? ''),
+      NoticeKind.companyPlanStarted => nCompanyPlanStarted(n.params['company'] ?? ''),
+      NoticeKind.companyPlanEnded => nCompanyPlanEnded(n.params['company'] ?? ''),
+      NoticeKind.companyPlanPaused => nCompanyPlanPaused,
+      NoticeKind.companyPlanResumed => nCompanyPlanResumed,
+      NoticeKind.personalPlanBack => nPersonalPlanBack(int.tryParse(n.params['days'] ?? '') ?? 0),
     };
   }
 }
