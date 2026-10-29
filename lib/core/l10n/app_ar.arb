@@ -2053,5 +2053,52 @@
     }
   },
   "demoEndContract": "جورة تنهي عقد Valeo",
-  "demoHrLeft": "مسؤول HR بتاع Valeo ساب الشركة"
+  "demoHrLeft": "مسؤول HR بتاع Valeo ساب الشركة",
+  "companyDashboardCta": "أرقام الشركة",
+  "companyDashboardTitle": "أرقام الشركة",
+  "companyDashboardSoFar": "{month} (لحد دلوقتي)",
+  "@companyDashboardSoFar": {
+    "placeholders": {
+      "month": {"type": "String"}
+    }
+  },
+  "companyDashboardNote": "أرقام إجمالية بس. مفيش اسم ولا مشوار ولا مكان ركوب لأي موظف.",
+  "companyDashboardEmpty": "الأرقام بتظهر أول ما الحساب يتفعّل.",
+  "companyDashboardFewer": "أقل من 5",
+  "companyDashboardFewerNote": "أي رقم طالع من أقل من 5 موظفين بنخبّيه، عشان محدش يتعرف.",
+  "companyDashboardEnrolled": "موظفين مشتركين",
+  "companyDashboardActive": "موظفين نشطين الشهر ده",
+  "companyDashboardActiveMethod": "نشط يعني ركب أو سوّق مشوار واحد على الأقل.",
+  "companyDashboardCarpool": "نسبة المشاركة",
+  "companyDashboardCarpoolMethod": "النشطين ÷ المشتركين.",
+  "companyDashboardGroups": "مجموعات مشاوير فيها موظفين",
+  "companyDashboardTrips": "مشاوير اتشاركت",
+  "companyDashboardTripsMethod": "كل مشوار بيتعد مرة واحدة، حتى لو كذا موظف في العربية.",
+  "companyDashboardSaved": "توفير تقديري",
+  "companyDashboardSavedMethod": "تكلفة المشوار لو سقت لوحدك ناقص حصة الكرسي اللي اتدفعت. تقدير.",
+  "companyDashboardCo2": "كربون اتوفّر (تقدير)",
+  "companyDashboardCo2Method": "الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس.",
+  "companyDashboardKg": "{kg} كجم",
+  "@companyDashboardKg": {
+    "placeholders": {
+      "kg": {"type": "int"}
+    }
+  },
+  "companyDashboardPercent": "{pct}%",
+  "@companyDashboardPercent": {
+    "placeholders": {
+      "pct": {"type": "int"}
+    }
+  },
+  "companyDashboardParking": "أماكن ركن فاضية كل يوم شغل",
+  "companyDashboardParkingMethod": "مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده.",
+  "companyDashboardGapsTitle": "مناطق فيها موظفين من غير مجموعة",
+  "companyDashboardGapRow": "{area} · {count} موظف مستنيين",
+  "@companyDashboardGapRow": {
+    "placeholders": {
+      "area": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "companyDashboardGapsEmpty": "مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة."
 }

@@ -6,12 +6,15 @@ import '../../../core/time/calendar_date.dart';
 import '../../../core/time/now_provider.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/domain/clock.dart';
+import '../../commute/domain/place.dart';
 import '../../wallet/domain/direct_pay.dart';
 import '../domain/company.dart';
+import '../domain/company_dashboard.dart';
 import '../domain/company_log.dart';
 import '../domain/company_repository.dart';
 import '../domain/company_rules.dart';
 import '../domain/company_terms.dart';
+import '../domain/employee_month_facts.dart';
 import '../domain/enrollment.dart';
 import '../domain/hr_views.dart';
 import '../domain/invoice.dart';
@@ -318,8 +321,44 @@ final class FakeCompanyRepository implements CompanyRepository {
   // US5, US6 — later phases
 
   @override
-  Future<DashboardMonth> dashboard(String companyId, String month, WallTime now) =>
-      throw UnimplementedError('US5 dashboard: tasks.md P7 (T041–T045)');
+  Future<List<({String month, bool soFar})>> dashboardMonths(String companyId, WallTime now) async {
+    await _ensureSeeded();
+    final start = _company(companyId)?.contractStart;
+    if (start == null) return const [];
+    return CompanyDashboard.months(start, now.date);
+  }
+
+  /// Demo data (research R10): Valeo's seeded facts repeat every month; anyone
+  /// else enrolled counts as headcount only (no commute profile, so no
+  /// route-gap effect).
+  @override
+  Future<DashboardMonth> dashboard(String companyId, String month, WallTime now) async {
+    await _ensureSeeded();
+    final seeded = companyId == CompanySeed.valeoId ? CompanySeed.valeoFacts : const <EmployeeMonthFacts>[];
+    final known = {for (final f in seeded) f.personId};
+    final extra = <EmployeeMonthFacts>[
+      for (final e in _enrollments(companyId))
+        if (e.isOpen && !known.contains(e.personId))
+          EmployeeMonthFacts(
+            personId: e.personId,
+            riderTrips: 0,
+            riderGoingTrips: 0,
+            driverTrips: 0,
+            savedEgp: 0,
+            km: 0,
+            homeArea: Area.sheikhZayed,
+            hasProfile: false,
+            hasGroup: false,
+          ),
+    ];
+    final soFar = month == now.date.monthKey;
+    return CompanyDashboard.build(
+      month: month,
+      soFar: soFar,
+      facts: [...seeded, ...extra],
+      workdays: CompanyDashboard.workdaysIn(month, through: soFar ? now.date : null),
+    );
+  }
 
   @override
   Future<bool> hrConsent(String personId) => throw UnimplementedError('US6 HR statement: tasks.md P8');

@@ -4490,6 +4490,162 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مسؤول HR بتاع Valeo ساب الشركة'**
   String get demoHrLeft;
+
+  /// No description provided for @companyDashboardCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام الشركة'**
+  String get companyDashboardCta;
+
+  /// No description provided for @companyDashboardTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام الشركة'**
+  String get companyDashboardTitle;
+
+  /// No description provided for @companyDashboardSoFar.
+  ///
+  /// In ar, this message translates to:
+  /// **'{month} (لحد دلوقتي)'**
+  String companyDashboardSoFar(String month);
+
+  /// No description provided for @companyDashboardNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أرقام إجمالية بس. مفيش اسم ولا مشوار ولا مكان ركوب لأي موظف.'**
+  String get companyDashboardNote;
+
+  /// No description provided for @companyDashboardEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرقام بتظهر أول ما الحساب يتفعّل.'**
+  String get companyDashboardEmpty;
+
+  /// No description provided for @companyDashboardFewer.
+  ///
+  /// In ar, this message translates to:
+  /// **'أقل من 5'**
+  String get companyDashboardFewer;
+
+  /// No description provided for @companyDashboardFewerNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أي رقم طالع من أقل من 5 موظفين بنخبّيه، عشان محدش يتعرف.'**
+  String get companyDashboardFewerNote;
+
+  /// No description provided for @companyDashboardEnrolled.
+  ///
+  /// In ar, this message translates to:
+  /// **'موظفين مشتركين'**
+  String get companyDashboardEnrolled;
+
+  /// No description provided for @companyDashboardActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'موظفين نشطين الشهر ده'**
+  String get companyDashboardActive;
+
+  /// No description provided for @companyDashboardActiveMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'نشط يعني ركب أو سوّق مشوار واحد على الأقل.'**
+  String get companyDashboardActiveMethod;
+
+  /// No description provided for @companyDashboardCarpool.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة المشاركة'**
+  String get companyDashboardCarpool;
+
+  /// No description provided for @companyDashboardCarpoolMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'النشطين ÷ المشتركين.'**
+  String get companyDashboardCarpoolMethod;
+
+  /// No description provided for @companyDashboardGroups.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجموعات مشاوير فيها موظفين'**
+  String get companyDashboardGroups;
+
+  /// No description provided for @companyDashboardTrips.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاوير اتشاركت'**
+  String get companyDashboardTrips;
+
+  /// No description provided for @companyDashboardTripsMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل مشوار بيتعد مرة واحدة، حتى لو كذا موظف في العربية.'**
+  String get companyDashboardTripsMethod;
+
+  /// No description provided for @companyDashboardSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'توفير تقديري'**
+  String get companyDashboardSaved;
+
+  /// No description provided for @companyDashboardSavedMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكلفة المشوار لو سقت لوحدك ناقص حصة الكرسي اللي اتدفعت. تقدير.'**
+  String get companyDashboardSavedMethod;
+
+  /// No description provided for @companyDashboardCo2.
+  ///
+  /// In ar, this message translates to:
+  /// **'كربون اتوفّر (تقدير)'**
+  String get companyDashboardCo2;
+
+  /// No description provided for @companyDashboardCo2Method.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس.'**
+  String get companyDashboardCo2Method;
+
+  /// No description provided for @companyDashboardKg.
+  ///
+  /// In ar, this message translates to:
+  /// **'{kg} كجم'**
+  String companyDashboardKg(int kg);
+
+  /// No description provided for @companyDashboardPercent.
+  ///
+  /// In ar, this message translates to:
+  /// **'{pct}%'**
+  String companyDashboardPercent(int pct);
+
+  /// No description provided for @companyDashboardParking.
+  ///
+  /// In ar, this message translates to:
+  /// **'أماكن ركن فاضية كل يوم شغل'**
+  String get companyDashboardParking;
+
+  /// No description provided for @companyDashboardParkingMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده.'**
+  String get companyDashboardParkingMethod;
+
+  /// No description provided for @companyDashboardGapsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'مناطق فيها موظفين من غير مجموعة'**
+  String get companyDashboardGapsTitle;
+
+  /// No description provided for @companyDashboardGapRow.
+  ///
+  /// In ar, this message translates to:
+  /// **'{area} · {count} موظف مستنيين'**
+  String companyDashboardGapRow(String area, int count);
+
+  /// No description provided for @companyDashboardGapsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة.'**
+  String get companyDashboardGapsEmpty;
 }
 
 class _AppLocalizationsDelegate

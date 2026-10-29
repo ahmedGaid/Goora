@@ -2754,4 +2754,98 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoHrLeft => 'مسؤول HR بتاع Valeo ساب الشركة';
+
+  @override
+  String get companyDashboardCta => 'أرقام الشركة';
+
+  @override
+  String get companyDashboardTitle => 'أرقام الشركة';
+
+  @override
+  String companyDashboardSoFar(String month) {
+    return '$month (لحد دلوقتي)';
+  }
+
+  @override
+  String get companyDashboardNote =>
+      'أرقام إجمالية بس. مفيش اسم ولا مشوار ولا مكان ركوب لأي موظف.';
+
+  @override
+  String get companyDashboardEmpty => 'الأرقام بتظهر أول ما الحساب يتفعّل.';
+
+  @override
+  String get companyDashboardFewer => 'أقل من 5';
+
+  @override
+  String get companyDashboardFewerNote =>
+      'أي رقم طالع من أقل من 5 موظفين بنخبّيه، عشان محدش يتعرف.';
+
+  @override
+  String get companyDashboardEnrolled => 'موظفين مشتركين';
+
+  @override
+  String get companyDashboardActive => 'موظفين نشطين الشهر ده';
+
+  @override
+  String get companyDashboardActiveMethod =>
+      'نشط يعني ركب أو سوّق مشوار واحد على الأقل.';
+
+  @override
+  String get companyDashboardCarpool => 'نسبة المشاركة';
+
+  @override
+  String get companyDashboardCarpoolMethod => 'النشطين ÷ المشتركين.';
+
+  @override
+  String get companyDashboardGroups => 'مجموعات مشاوير فيها موظفين';
+
+  @override
+  String get companyDashboardTrips => 'مشاوير اتشاركت';
+
+  @override
+  String get companyDashboardTripsMethod =>
+      'كل مشوار بيتعد مرة واحدة، حتى لو كذا موظف في العربية.';
+
+  @override
+  String get companyDashboardSaved => 'توفير تقديري';
+
+  @override
+  String get companyDashboardSavedMethod =>
+      'تكلفة المشوار لو سقت لوحدك ناقص حصة الكرسي اللي اتدفعت. تقدير.';
+
+  @override
+  String get companyDashboardCo2 => 'كربون اتوفّر (تقدير)';
+
+  @override
+  String get companyDashboardCo2Method =>
+      'الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس.';
+
+  @override
+  String companyDashboardKg(int kg) {
+    return '$kg كجم';
+  }
+
+  @override
+  String companyDashboardPercent(int pct) {
+    return '$pct%';
+  }
+
+  @override
+  String get companyDashboardParking => 'أماكن ركن فاضية كل يوم شغل';
+
+  @override
+  String get companyDashboardParkingMethod =>
+      'مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده.';
+
+  @override
+  String get companyDashboardGapsTitle => 'مناطق فيها موظفين من غير مجموعة';
+
+  @override
+  String companyDashboardGapRow(String area, int count) {
+    return '$area · $count موظف مستنيين';
+  }
+
+  @override
+  String get companyDashboardGapsEmpty =>
+      'مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة.';
 }

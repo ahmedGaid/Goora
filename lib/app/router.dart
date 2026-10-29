@@ -10,6 +10,7 @@ import '../features/commute/domain/commute_profile.dart';
 import '../features/commute/presentation/commute_setup_screen.dart';
 import '../features/commute/presentation/match_result_screen.dart';
 import '../features/commute/presentation/no_match_screen.dart';
+import '../features/company/presentation/company_dashboard_screen.dart';
 import '../features/company/presentation/company_home_screen.dart';
 import '../features/company/presentation/company_log_screen.dart';
 import '../features/company/presentation/invoice_screen.dart';
@@ -161,6 +162,7 @@ GoRouter router(Ref ref) {
       ),
       GoRoute(path: Routes.companyRoster, builder: (_, _) => const RosterScreen()),
       GoRoute(path: Routes.companyLog, builder: (_, _) => const CompanyLogScreen()),
+      GoRoute(path: Routes.companyDashboard, builder: (_, _) => const CompanyDashboardScreen()),
       if (kDebugMode) GoRoute(path: Routes.gallery, builder: (_, _) => const DesignGalleryScreen()),
     ],
   );

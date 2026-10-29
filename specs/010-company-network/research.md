@@ -479,3 +479,34 @@ Founder Q1–Q11 still open: defaults unchanged.
 ### Still open after P6
 - T040: quickstart 6 on the emulator (not walked this session).
 - Log invoice months show as `yyyy-mm` (same as the invoice list) — a month-name format is a polish item.
+
+
+## P7 notes — 2026-10-29 (US5 dashboard, T041–T044)
+
+### Choices (picked, with the rejected option)
+1. **Trips shared counts each leg once** by a `legIds` set on `EmployeeMonthFacts` (riders and the driver of one car share ids). Rejected: Σ per-person trips (counts a full car 4x).
+2. **Every figure is suppressed on the number of people it is built from**, not on enrolled: enrolled ← all employees; active, carpool rate, trips shared ← active; groups ← employees in a group; money, CO₂ ← employees who rode; parking ← employees who rode a going leg. Carpool rate is null when either side is.
+3. **Parking per workday for the running month divides by the workdays so far** (Sun–Thu up to today), not the whole month — else early in the month it reads near 0. Closed months use the whole month. Rejected: whole month always (R7 text) because it misleads "so far".
+4. **Month picker = pills**, labels `m/yyyy`; the running one reads "(so far)". No month names (avoids 12 ARB keys x 2).
+5. **Fake data**: Valeo's seeded facts repeat every month; a company with no seed facts counts open enrollments as headcount only (no commute profile, no route-gap effect), so a fresh company shows "Fewer than 5" everywhere.
+6. Privacy test scans field names in `hr_views.dart` (Dart has no reflection in tests) plus checks the seeded output holds no name/email/id.
+
+### R7 constants — what is and is not verified
+- CO₂ factor 0.1645 kg CO₂e/km (UK DESNZ/DEFRA 2024, average petrol car): read from a Climatiq mirror and a Durham University copy of the 2023-24 sheet, **not** from the government file. Egypt's fleet differs. Shown as "estimate" with its method.
+- SZ ↔ SV 13 km per leg: one hotel listing (12.5 km, 16 min); no official figure. Seed only; real facts will carry measured km.
+
+### R11 — keys added in P7 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyDashboardCta · Title | أرقام الشركة | Company numbers |
+| companyDashboardSoFar | {month} (لحد دلوقتي) | {month} (so far) |
+| companyDashboardNote | أرقام إجمالية بس. مفيش اسم ولا مشوار ولا مكان ركوب لأي موظف. | Totals only. No employee's name, trip or pickup point. |
+| companyDashboardFewer · FewerNote | أقل من 5 · أي رقم طالع من أقل من 5 موظفين بنخبّيه، عشان محدش يتعرف. | Fewer than 5 · A figure from fewer than 5 employees is hidden, so no one can be picked out. |
+| companyDashboardEnrolled · Active · ActiveMethod | موظفين مشتركين · موظفين نشطين الشهر ده · نشط يعني ركب أو سوّق مشوار واحد على الأقل. | Employees enrolled · Active employees this month · Active means at least one trip as a passenger or driver. |
+| companyDashboardCarpool · CarpoolMethod | نسبة المشاركة · النشطين ÷ المشتركين. | Carpool rate · Active ÷ enrolled. |
+| companyDashboardGroups · Trips · TripsMethod | مجموعات مشاوير فيها موظفين · مشاوير اتشاركت · كل مشوار بيتعد مرة واحدة، حتى لو كذا موظف في العربية. | Commute groups with employees · Trips shared · Each trip counts once, however many employees were in the car. |
+| companyDashboardSaved · SavedMethod | توفير تقديري · تكلفة المشوار لو سقت لوحدك ناقص حصة الكرسي اللي اتدفعت. تقدير. | Estimated savings · What driving alone would cost minus the seat share paid. An estimate. |
+| companyDashboardCo2 · Co2Method · Kg · Percent | كربون اتوفّر (تقدير) · الكيلومترات × 0.1645 كجم كربون للكيلو، متوسط عربية بنزين. تقدير مش قياس. · {kg} كجم · {pct}% | CO₂ avoided (estimate) · Kilometres × 0.1645 kg CO₂ per km, an average petrol car. An estimate, not a measurement. · {kg} kg · {pct}% |
+| companyDashboardParking · ParkingMethod | أماكن ركن فاضية كل يوم شغل · مشاوير الذهاب كراكب ÷ أيام الشغل (الأحد–الخميس). بنفترض إن كل راكب كان هيسوق لوحده. | Parking spaces freed per workday · Going trips as a passenger ÷ workdays (Sun–Thu). Assumes each passenger would otherwise drive alone. |
+| companyDashboardGapsTitle · GapRow · GapsEmpty | مناطق فيها موظفين من غير مجموعة · {area} · {count} موظف مستنيين · مفيش منطقة فيها 5 موظفين أو أكتر مستنيين مجموعة. | Areas with employees but no group · {area} · {count} employees waiting · No area has 5 or more employees waiting for a group. |
+| companyDashboardEmpty | الأرقام بتظهر أول ما الحساب يتفعّل. | Numbers appear once the account is active. |

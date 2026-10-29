@@ -2711,4 +2711,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoHrLeft => 'Valeo\'s HR contact left the company';
+
+  @override
+  String get companyDashboardCta => 'Company numbers';
+
+  @override
+  String get companyDashboardTitle => 'Company numbers';
+
+  @override
+  String companyDashboardSoFar(String month) {
+    return '$month (so far)';
+  }
+
+  @override
+  String get companyDashboardNote =>
+      'Totals only. No employee\'s name, trip or pickup point.';
+
+  @override
+  String get companyDashboardEmpty =>
+      'Numbers appear once the account is active.';
+
+  @override
+  String get companyDashboardFewer => 'Fewer than 5';
+
+  @override
+  String get companyDashboardFewerNote =>
+      'A figure from fewer than 5 employees is hidden, so no one can be picked out.';
+
+  @override
+  String get companyDashboardEnrolled => 'Employees enrolled';
+
+  @override
+  String get companyDashboardActive => 'Active employees this month';
+
+  @override
+  String get companyDashboardActiveMethod =>
+      'Active means at least one trip as a passenger or driver.';
+
+  @override
+  String get companyDashboardCarpool => 'Carpool rate';
+
+  @override
+  String get companyDashboardCarpoolMethod => 'Active ÷ enrolled.';
+
+  @override
+  String get companyDashboardGroups => 'Commute groups with employees';
+
+  @override
+  String get companyDashboardTrips => 'Trips shared';
+
+  @override
+  String get companyDashboardTripsMethod =>
+      'Each trip counts once, however many employees were in the car.';
+
+  @override
+  String get companyDashboardSaved => 'Estimated savings';
+
+  @override
+  String get companyDashboardSavedMethod =>
+      'What driving alone would cost minus the seat share paid. An estimate.';
+
+  @override
+  String get companyDashboardCo2 => 'CO₂ avoided (estimate)';
+
+  @override
+  String get companyDashboardCo2Method =>
+      'Kilometres × 0.1645 kg CO₂ per km, an average petrol car. An estimate, not a measurement.';
+
+  @override
+  String companyDashboardKg(int kg) {
+    return '$kg kg';
+  }
+
+  @override
+  String companyDashboardPercent(int pct) {
+    return '$pct%';
+  }
+
+  @override
+  String get companyDashboardParking => 'Parking spaces freed per workday';
+
+  @override
+  String get companyDashboardParkingMethod =>
+      'Going trips as a passenger ÷ workdays (Sun–Thu). Assumes each passenger would otherwise drive alone.';
+
+  @override
+  String get companyDashboardGapsTitle => 'Areas with employees but no group';
+
+  @override
+  String companyDashboardGapRow(String area, int count) {
+    return '$area · $count employees waiting';
+  }
+
+  @override
+  String get companyDashboardGapsEmpty =>
+      'No area has 5 or more employees waiting for a group.';
 }

@@ -73,10 +73,10 @@ then commit.
 
 ## Phase 7: US5 — dashboard (P7)
 
-- [ ] T041 [P] [US5] Unit tests `test/unit/company_dashboard_test.dart`: totals from month facts; money saved = Σ (leg cost − share); parking = going rider trips ÷ workdays; every figure from < 5 → null; route-gap area < 5 not listed; month list = current so far + closed months since start (red)
-- [ ] T042 [P] [US5] Privacy test `test/unit/company_privacy_test.dart`: HR read models have no person id / group / pickup / time / share / role fields; dashboard output contains no seeded name or email (SC-005) (red)
-- [ ] T043 [US5] `lib/features/company/domain/company_dashboard.dart` (pure aggregator, suppression inside) — research R7; record the CO₂ factor source and the SZ↔SV km in research R7 first
-- [ ] T044 [US5] `dashboard_screen.dart` (month picker, figures in words, method lines, "Fewer than 5") + widget tests ar+en
+- [x] T041 [P] [US5] Unit tests `test/unit/company_dashboard_test.dart`: totals from month facts; money saved = Σ (leg cost − share); parking = going rider trips ÷ workdays; every figure from < 5 → null; route-gap area < 5 not listed; month list = current so far + closed months since start (red) — done 2026-10-29 (P7): `company_dashboard_test.dart` (11 tests; aggregator written before the first run, so no red run)
+- [x] T042 [P] [US5] Privacy test `test/unit/company_privacy_test.dart`: HR read models have no person id / group / pickup / time / share / role fields; dashboard output contains no seeded name or email (SC-005) (red) — done 2026-10-29 (P7): `company_privacy_test.dart` (3; scans `hr_views.dart` field names)
+- [x] T043 [US5] `lib/features/company/domain/company_dashboard.dart` (pure aggregator, suppression inside) — research R7; record the CO₂ factor source and the SZ↔SV km in research R7 first — done 2026-10-29 (P7): factor 0.1645 (UK DESNZ 2024, via mirror), leg km 13 (estimate); R7 + "P7 notes"
+- [x] T044 [US5] `dashboard_screen.dart` (month picker, figures in words, method lines, "Fewer than 5") + widget tests ar+en — done 2026-10-29 (P7): `company_dashboard_screen.dart`, route `/company/dashboard`, HR-home button "Company numbers", `test/widget/company_dashboard_test.dart` (5 x ar+en)
 - [ ] T045 Checkpoint P7: gates green; quickstart 7
 
 ## Phase 8: US6 — HR statement (P8, droppable — Q6)

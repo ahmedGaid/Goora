@@ -144,6 +144,8 @@ abstract interface class CompanyRepository {
   Future<List<LogEntry>> log(String companyId);
 
   // US5 — dashboard (aggregates only)
+  /// The months HR can pick: the running one ("so far") first, then each closed month since the contract start.
+  Future<List<({String month, bool soFar})>> dashboardMonths(String companyId, WallTime now);
   Future<DashboardMonth> dashboard(String companyId, String month, WallTime now);
 
   // US6 — HR statement

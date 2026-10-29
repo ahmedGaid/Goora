@@ -34,6 +34,7 @@ abstract final class Routes {
   static const companyInvoice = '/company/invoice';
   static const companyRoster = '/company/roster';
   static const companyLog = '/company/log';
+  static const companyDashboard = '/company/dashboard';
   static const gallery = '/debug/gallery';
 
   static const phoneParam = 'phone';
