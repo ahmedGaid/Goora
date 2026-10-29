@@ -4,6 +4,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../daily/presentation/labels.dart';
 import '../../domain/activity_entry.dart';
 import '../labels.dart';
 
@@ -25,6 +26,14 @@ class ActivityRow extends StatelessWidget {
     ActivityKind.seatRefund,
     ActivityKind.settlement,
   };
+
+  /// "5 Oct · Going": a day with both legs would otherwise show two identical
+  /// rows (walk N-10).
+  String _dateLine(AppLocalizations l10n) {
+    final date = l10n.shortDate(entry.date);
+    final leg = entry.leg;
+    return leg == null ? date : '$date · ${l10n.legName(leg)}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +57,7 @@ class ActivityRow extends StatelessWidget {
                 Text(caption, key: Key('caption-${entry.id}'), style: small),
               ],
               const SizedBox(height: AppSpacing.xxs),
-              Text(l10n.shortDate(entry.date), style: small),
+              Text(_dateLine(l10n), key: Key('date-${entry.id}'), style: small),
             ],
           ),
         ),

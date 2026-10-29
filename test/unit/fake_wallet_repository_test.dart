@@ -221,6 +221,67 @@ void main() {
       expect([row.kind, row.amount, row.fee, row.toDriver], [ActivityKind.trip, 0, 0, 40]);
     });
 
+    test('N-10: a going and a return trip on one day are two rows that name their legs', () async {
+      final day = CalendarDate(2026, 10, 5);
+      final repo = _repo(
+        await _prefs(),
+        daily: _StubDailyRepo(kept: [rideId(day, Leg.going), rideId(day, Leg.ret)]),
+      );
+      await repo.setMethod('me', PaymentMethod.cash);
+      final rows = (await repo.getWallet('me')).activity.where((e) => e.kind == ActivityKind.cashTrip).toList();
+      expect(rows, hasLength(2));
+      expect(rows.map((e) => e.date).toSet(), {day});
+      expect({for (final e in rows) e.rideId: e.leg}, {
+        rideId(day, Leg.going): Leg.going,
+        rideId(day, Leg.ret): Leg.ret,
+      });
+    });
+
+    test('N-10: a paid trip row carries its leg', () async {
+      final repo = _repo(
+        await _prefs(),
+        daily: _StubDailyRepo(kept: [...trips(5), rideId(CalendarDate(2026, 10, 6), Leg.ret)]),
+      );
+      await repo.setMethod('me', PaymentMethod.instapay);
+      await repo.topUp('me', method: 'instapay', amount: 200);
+      final row = (await repo.getWallet('me')).activity.singleWhere((e) => e.kind == ActivityKind.trip);
+      expect(row.leg, Leg.ret);
+    });
+
+    test('N-10: a charge row carries the leg of its ride', () async {
+      final repo = _repo(
+        await _prefs(),
+        daily: _StubDailyRepo(charges: [_lateCancel(rideId(CalendarDate(2026, 10, 20), Leg.ret))]),
+      );
+      await repo.setMethod('me', PaymentMethod.cash);
+      final row = (await repo.getWallet('me')).activity.single;
+      expect([row.kind, row.leg], [ActivityKind.lateCancelCharge, Leg.ret]);
+    });
+
+    test('N-10: a free-cancel row carries its leg', () async {
+      final repo = _repo(
+        await _prefs(),
+        daily: _StubDailyRepo(absences_: [
+          Absence(
+            personId: 'me',
+            date: today.addDays(-1),
+            leg: Leg.ret,
+            madeAt: WallTime(today.addDays(-2), const Clock.hm(18, 0)),
+            kind: AbsenceKind.freeCancel,
+          ),
+        ]),
+      );
+      final row = (await repo.getWallet('me')).activity.single;
+      expect([row.kind, row.leg], [ActivityKind.freeCancelZero, Leg.ret]);
+    });
+
+    test('N-10: a top-up has no leg', () async {
+      final repo = _repo(await _prefs());
+      await repo.setMethod('me', PaymentMethod.instapay);
+      await repo.topUp('me', method: 'instapay', amount: 200);
+      expect((await repo.getWallet('me')).activity.single.leg, isNull);
+    });
+
     test('a trip the person drove is not a rider trip', () async {
       final kept = trips(2);
       final repo = _repo(await _prefs(), daily: _StubDailyRepo(kept: kept, drivenByMe: {kept.first}));

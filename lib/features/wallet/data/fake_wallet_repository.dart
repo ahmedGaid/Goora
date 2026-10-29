@@ -685,6 +685,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
             date: item.date,
             rideId: item.rideId,
             shareToDriver: share,
+            leg: item.leg,
           ));
         } else {
           final fee = DirectPay.fee(contribution,
@@ -699,6 +700,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
               date: item.date,
               rideId: item.rideId,
               shareToDriver: share,
+              leg: item.leg,
             ));
           } else {
             debits += fee;
@@ -710,6 +712,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
               date: item.date,
               rideId: item.rideId,
               shareToDriver: share,
+              leg: item.leg,
             ));
           }
         }
@@ -721,6 +724,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
           date: item.date,
           rideId: charge.rideId,
           shareToDriver: charge.amount,
+          leg: item.leg,
         ));
       }
     }
@@ -731,6 +735,7 @@ final class FakeWalletRepository implements WalletRepository, SeatLedger {
           kind: ActivityKind.freeCancelZero,
           amount: 0,
           date: absence.date,
+          leg: absence.leg,
         ));
       }
     }
