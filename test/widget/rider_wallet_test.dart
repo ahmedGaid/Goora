@@ -120,6 +120,23 @@ void main() {
       expect(find.text('-${l.egpAmount(44)}'), findsNothing);
     });
 
+    testWidgets('[$code] F-2: under a company plan, "How paying works" does not promise a service fee',
+        (tester) async {
+      await _openWallet(tester, code, extra: {
+        FakeWalletRepository.planKey: jsonEncode(
+          const Plan(personId: 'me', type: PlanType.company, status: PlanStatus.active, price: 0).toJson(),
+        ),
+      });
+      expect(find.text(l.howPayRule1), findsNothing);
+      expect(find.text(l.howPayRule1Company), findsOneWidget);
+    });
+
+    testWidgets('[$code] without a company plan "How paying works" still names the fee', (tester) async {
+      await _openWallet(tester, code);
+      expect(find.text(l.howPayRule1), findsOneWidget);
+      expect(find.text(l.howPayRule1Company), findsNothing);
+    });
+
     testWidgets('[$code] US2 AC2: topping up 200 gives a balance of exactly 200', (tester) async {
       final c = await _openWallet(tester, code);
       await tester.tap(find.byKey(const Key('top-up')));

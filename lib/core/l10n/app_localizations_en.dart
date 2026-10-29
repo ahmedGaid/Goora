@@ -178,6 +178,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You pay your driver\'s share directly, by cash or InstaPay. Goora adds only a service fee of up to 10% per trip; subscribers pay no fee.';
 
   @override
+  String get howPayRule1Company =>
+      'You pay your driver\'s share directly, by cash or InstaPay. Your company plan covers Goora\'s fee, so you pay no service fee.';
+
+  @override
   String get howPayRule2 =>
       'The driver\'s share goes straight to them. Goora never holds it or takes a cut.';
 
@@ -1482,6 +1486,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get demoRealTime => 'Real time';
 
   @override
+  String demoCorridor(String name) {
+    return 'Demo corridor: $name (tap to switch)';
+  }
+
+  @override
   String get demoReset => 'Reset demo data';
 
   @override
@@ -2287,4 +2296,593 @@ class AppLocalizationsEn extends AppLocalizations {
   String nPersonalPlanBack(int days) {
     return 'Your own plan is back, with $days days left.';
   }
+
+  @override
+  String get companyAccountTitle => 'Company account';
+
+  @override
+  String get companyAccountSub =>
+      'Register your company if you\'re in HR, or see your company plan';
+
+  @override
+  String get companyRegisterCta => 'Register your company';
+
+  @override
+  String get companyRegisterIntro =>
+      'In HR? Register your company so your employees ride with no Goora fee.';
+
+  @override
+  String get companyRegisterSub =>
+      'We check your work email. The Goora team turns the account on once the contract is signed.';
+
+  @override
+  String get companyNameLabel => 'Company name';
+
+  @override
+  String get companyNameError => 'Use 2 to 60 characters';
+
+  @override
+  String get companyWorkEmailLabel => 'Your work email';
+
+  @override
+  String get companyEmailInvalid =>
+      'Enter a valid email, like name@company.com';
+
+  @override
+  String companyPublicDomain(String domain) {
+    return '$domain is a public email service anyone can sign up to. Use your work email.';
+  }
+
+  @override
+  String companyDomainTaken(String domain) {
+    return '$domain is already registered to another company on Goora.';
+  }
+
+  @override
+  String get companySendCode => 'Send me a code';
+
+  @override
+  String companyCodeSent(String email) {
+    return 'We sent a code to $email';
+  }
+
+  @override
+  String get companyCodeLabel => 'Code';
+
+  @override
+  String get companySubmit => 'Send the request';
+
+  @override
+  String get companyStatusPending => 'Waiting for Goora';
+
+  @override
+  String get companyStatusActive => 'Active';
+
+  @override
+  String get companyStatusSuspended => 'Paused until paid';
+
+  @override
+  String get companyStatusEnded => 'Contract ended';
+
+  @override
+  String companyPendingBody(String company) {
+    return 'We got $company\'s request. We\'ll turn the account on once the contract is signed.';
+  }
+
+  @override
+  String companyDomainsLine(String domains) {
+    return 'Domain: $domains';
+  }
+
+  @override
+  String companyMinSeats(int count) {
+    return 'Billed for at least $count employees';
+  }
+
+  @override
+  String companyPriceLine(int amount) {
+    return '$amount EGP to Goora per employee a month';
+  }
+
+  @override
+  String companyContractLine(String start, String end) {
+    return 'Contract $start to $end';
+  }
+
+  @override
+  String get companyHomeNote =>
+      'The company never sees employees\' trips or pickup points.';
+
+  @override
+  String get companyMineTitle => 'Your company plan';
+
+  @override
+  String companyEnrolledLine(String company, String date) {
+    return 'On $company\'s plan since $date';
+  }
+
+  @override
+  String companyCanEnrollLine(String company) {
+    return '$company pays Goora\'s fee for you on every trip.';
+  }
+
+  @override
+  String companyJoinCta(String company) {
+    return 'Join through $company';
+  }
+
+  @override
+  String get companyNotOnGoora => 'Your company isn\'t on Goora yet';
+
+  @override
+  String get companyNotOnGooraBody =>
+      'Tell your HR about Goora. Until they join, you can pay per trip or subscribe yourself.';
+
+  @override
+  String get companyTellHr => 'Tell your HR';
+
+  @override
+  String companyShareText(String link) {
+    return 'Goora groups colleagues into one daily commute, and they share the cost. With its company plan, the company pays Goora\'s fee and employees ride with no fee. $link';
+  }
+
+  @override
+  String consentTitle(String company) {
+    return 'Before you join through $company';
+  }
+
+  @override
+  String get consentSeesTitle => 'Your company will see';
+
+  @override
+  String get consentSeesName => 'Your name';
+
+  @override
+  String get consentSeesEmail => 'Your work email';
+
+  @override
+  String get consentSeesSince => 'Since when you joined';
+
+  @override
+  String get consentNeverTitle => 'It will never see';
+
+  @override
+  String get consentNeverTrips => 'Your trips or their times';
+
+  @override
+  String get consentNeverPlace => 'Your home or pickup point';
+
+  @override
+  String get consentNeverWho => 'Who rides with you';
+
+  @override
+  String get consentNeverMoney => 'Your money or what you paid the driver';
+
+  @override
+  String get consentFeeLine =>
+      'Goora\'s fee on your trips becomes 0. You still pay the driver\'s share to the driver.';
+
+  @override
+  String consentPausedLine(int days) {
+    return 'Your own plan ($days days left) pauses and comes back if you leave your company.';
+  }
+
+  @override
+  String get consentAgree => 'Agree and join';
+
+  @override
+  String get consentDecline => 'Not now';
+
+  @override
+  String planCompanyOf(String company) {
+    return 'Company · $company';
+  }
+
+  @override
+  String planCompanyPaused(int days) {
+    return 'Your own plan is paused: $days days left, back if you leave your company.';
+  }
+
+  @override
+  String get companyLeave => 'Leave the company plan';
+
+  @override
+  String companyLeaveTitle(String company) {
+    return 'Leave $company\'s plan?';
+  }
+
+  @override
+  String get companyLeaveBody =>
+      'From now on Goora\'s fee applies to your trips. Trips you already took don\'t change.';
+
+  @override
+  String get companyLeaveConfirm => 'Yes, leave';
+
+  @override
+  String get demoApproveCompany => 'Goora approves my company';
+
+  @override
+  String get demoMakeMeHr => 'Make me Valeo\'s HR contact';
+
+  @override
+  String get companyInvoicesCta => 'Invoices';
+
+  @override
+  String get companyInvoicesTitle => 'Company invoices';
+
+  @override
+  String get companyInvoicesEmpty =>
+      'No invoices yet. The first one is issued at the start of next month.';
+
+  @override
+  String companyInvoiceMonthLabel(String month) {
+    return 'Invoice $month';
+  }
+
+  @override
+  String companyInvoiceMath(int seats, int price, String total) {
+    return '$seats employees × $price EGP = $total EGP';
+  }
+
+  @override
+  String companyInvoicePeak(int count) {
+    return 'Most employees enrolled in the month: $count';
+  }
+
+  @override
+  String get companyInvoicePaid => 'Paid';
+
+  @override
+  String get companyInvoiceWaiting => 'Waiting for payment';
+
+  @override
+  String get companyInvoiceOverdue => 'Overdue';
+
+  @override
+  String companyInvoiceDue(String date) {
+    return 'Pay by $date';
+  }
+
+  @override
+  String get companyInvoiceReferenceTitle => 'Write this on the transfer';
+
+  @override
+  String get companyInvoiceBankTitle => 'Goora\'s bank account';
+
+  @override
+  String companyInvoiceSuspendNote(String date) {
+    return 'If this is still unpaid on $date, the company plan pauses until it is paid and Goora\'s fee applies to employees\' trips.';
+  }
+
+  @override
+  String companyInvoicePaidOn(String date, String ref) {
+    return 'Paid on $date · bank reference $ref';
+  }
+
+  @override
+  String get demoMarkInvoicePaid => 'Goora marks the invoice paid';
+
+  @override
+  String get demoSkipToSuspension => 'Skip to the day the company plan pauses';
+
+  @override
+  String get companyRosterCta => 'Enrolled employees';
+
+  @override
+  String get companyRosterTitle => 'Enrolled employees';
+
+  @override
+  String companyRosterCount(int count) {
+    return '$count enrolled now';
+  }
+
+  @override
+  String get companyRosterNote =>
+      'This is all the company sees: name, email and since when.';
+
+  @override
+  String companyRosterSince(String date) {
+    return 'Since $date';
+  }
+
+  @override
+  String companyRosterLeft(String date) {
+    return 'Left on $date';
+  }
+
+  @override
+  String get companyRosterEmpty =>
+      'No employees enrolled yet. Tell your colleagues to join through the company in Goora.';
+
+  @override
+  String get companyRosterRemove => 'Remove';
+
+  @override
+  String companyRosterRemoveTitle(String name) {
+    return 'Remove $name from the company plan?';
+  }
+
+  @override
+  String get companyRosterRemoveBody =>
+      'From now on Goora\'s fee applies to their trips; trips already taken don\'t change. They still count on this month\'s invoice.';
+
+  @override
+  String get companyRosterRemoveConfirm => 'Yes, remove';
+
+  @override
+  String get companyLogCta => 'Change log';
+
+  @override
+  String get companyLogTitle => 'Change log';
+
+  @override
+  String get companyLogEmpty => 'No changes yet.';
+
+  @override
+  String companyLogMeta(String actor, String date) {
+    return '$actor · $date';
+  }
+
+  @override
+  String get companyLogByHr => 'HR';
+
+  @override
+  String get companyLogByEmployee => 'Employee';
+
+  @override
+  String get companyLogByGoora => 'Goora';
+
+  @override
+  String get companyLogApproved => 'Account approved';
+
+  @override
+  String companyLogDomainAdded(String domain) {
+    return 'Domain added: $domain';
+  }
+
+  @override
+  String companyLogDomainRemoved(String domain) {
+    return 'Domain removed: $domain';
+  }
+
+  @override
+  String companyLogEmployeeRemoved(String name) {
+    return 'Removed from the plan: $name';
+  }
+
+  @override
+  String companyLogEmployeeLeft(String name) {
+    return 'Left the plan: $name';
+  }
+
+  @override
+  String companyLogInvoiceIssued(String month) {
+    return 'Invoice issued: $month';
+  }
+
+  @override
+  String companyLogInvoicePaid(String month) {
+    return 'Invoice paid: $month';
+  }
+
+  @override
+  String get companyLogSuspended => 'Plan paused until paid';
+
+  @override
+  String get companyLogResumed => 'Plan back on';
+
+  @override
+  String get companyLogContractEnded => 'Contract ended';
+
+  @override
+  String get companyLogHrChanged => 'HR contact changed';
+
+  @override
+  String get companyDomainsTitle => 'Domains';
+
+  @override
+  String get companyDomainsNote =>
+      'Anyone whose work email is on these domains can join through the company.';
+
+  @override
+  String get companyAddDomain => 'Add a domain';
+
+  @override
+  String get companyDomainLabel => 'Domain';
+
+  @override
+  String get companyDomainInvalid => 'Enter a valid domain, like company.com';
+
+  @override
+  String get companyDomainAddCta => 'Add';
+
+  @override
+  String companyDomainRemove(String domain) {
+    return 'Remove $domain';
+  }
+
+  @override
+  String companyDomainRemoveTitle(String domain) {
+    return 'Remove $domain?';
+  }
+
+  @override
+  String companyDomainRemoveBody(String domain) {
+    return 'Employees enrolled with a $domain email leave the plan now, and Goora\'s fee applies to their trips.';
+  }
+
+  @override
+  String get demoEndContract => 'Goora ends Valeo\'s contract';
+
+  @override
+  String get demoHrLeft => 'Valeo\'s HR contact left the company';
+
+  @override
+  String get companyDashboardCta => 'Company numbers';
+
+  @override
+  String get companyDashboardTitle => 'Company numbers';
+
+  @override
+  String companyDashboardSoFar(String month) {
+    return '$month (so far)';
+  }
+
+  @override
+  String get companyDashboardNote =>
+      'Totals only. No employee\'s name, trip or pickup point.';
+
+  @override
+  String get companyDashboardEmpty =>
+      'Numbers appear once the account is active.';
+
+  @override
+  String get companyDashboardFewer => 'Fewer than 5';
+
+  @override
+  String get companyDashboardFewerNote =>
+      'A figure from fewer than 5 employees is hidden, so no one can be picked out.';
+
+  @override
+  String get companyDashboardEnrolled => 'Employees enrolled';
+
+  @override
+  String get companyDashboardActive => 'Active employees this month';
+
+  @override
+  String get companyDashboardActiveMethod =>
+      'Active means at least one trip as a passenger or driver.';
+
+  @override
+  String get companyDashboardCarpool => 'Carpool rate';
+
+  @override
+  String get companyDashboardCarpoolMethod => 'Active ÷ enrolled.';
+
+  @override
+  String get companyDashboardGroups => 'Commute groups with employees';
+
+  @override
+  String get companyDashboardTrips => 'Trips shared';
+
+  @override
+  String get companyDashboardTripsMethod =>
+      'Each trip counts once, however many employees were in the car.';
+
+  @override
+  String get companyDashboardSaved => 'Estimated savings';
+
+  @override
+  String get companyDashboardSavedMethod =>
+      'What driving alone would cost minus the seat share paid. An estimate.';
+
+  @override
+  String get companyDashboardCo2 => 'CO₂ avoided (estimate)';
+
+  @override
+  String get companyDashboardCo2Method =>
+      'Kilometres × 0.1645 kg CO₂ per km, an average petrol car. An estimate, not a measurement.';
+
+  @override
+  String companyDashboardKg(String kg) {
+    return '$kg kg';
+  }
+
+  @override
+  String companyDashboardMoney(String amount) {
+    return '$amount EGP';
+  }
+
+  @override
+  String companyDashboardPercent(int pct) {
+    return '$pct%';
+  }
+
+  @override
+  String get companyDashboardParking => 'Parking spaces freed per workday';
+
+  @override
+  String get companyDashboardParkingMethod =>
+      'Going trips as a passenger ÷ workdays (Sun–Thu). Assumes each passenger would otherwise drive alone.';
+
+  @override
+  String get companyDashboardGapsTitle => 'Areas with employees but no group';
+
+  @override
+  String companyDashboardGapRow(String area, int count) {
+    return '$area · $count employees waiting';
+  }
+
+  @override
+  String get companyDashboardGapsEmpty =>
+      'No area has 5 or more employees waiting for a group.';
+
+  @override
+  String get companyHrShareTitle => 'Share my trips with HR';
+
+  @override
+  String get companyHrShareSees =>
+      'Your company will see: your name, the date of each trip you rode as a passenger, going or return, and the share you paid the driver. It never sees the pickup point, the time or the driver.';
+
+  @override
+  String get companyHrShareOffLine =>
+      'Off. Your company doesn\'t see your trips.';
+
+  @override
+  String get companyHrShareOnLine =>
+      'On. Your company gets last month\'s statement on the 1st of each month.';
+
+  @override
+  String get companyHrShareStopTitle => 'Stop sharing your trips with HR?';
+
+  @override
+  String get companyHrShareStopBody =>
+      'Statements your company already received stay as they are. The next one, and every one after, leaves your trips out.';
+
+  @override
+  String get companyHrShareStopConfirm => 'Yes, stop';
+
+  @override
+  String get companyStatementCta => 'Trips statement';
+
+  @override
+  String get companyStatementTitle => 'Monthly trips statement';
+
+  @override
+  String get companyStatementNote =>
+      'Only employees who agreed to share their trips appear here. No one else is listed, not even a name.';
+
+  @override
+  String companyStatementFee(String amount) {
+    return 'Goora\'s fee on these trips: $amount. Each share was paid straight to the driver.';
+  }
+
+  @override
+  String companyStatementPerson(int count, String amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trips',
+      one: '1 trip',
+    );
+    return '$_temp0 · $amount EGP';
+  }
+
+  @override
+  String companyStatementShare(String amount) {
+    return '$amount EGP to the driver';
+  }
+
+  @override
+  String companyStatementTotal(String amount) {
+    return 'Total shares: $amount EGP';
+  }
+
+  @override
+  String get companyStatementEmpty =>
+      'No employee shared their trips for this month.';
+
+  @override
+  String get companyStatementNoMonths =>
+      'The first statement appears once the first month has ended.';
 }

@@ -1,11 +1,14 @@
 import '../../../core/time/calendar_date.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/domain/clock.dart';
+import '../../commute/domain/commute_profile.dart';
 import '../../commute/domain/place.dart';
+import '../../wallet/domain/direct_pay.dart';
 import '../domain/company.dart';
 import '../domain/company_terms.dart';
 import '../domain/employee_month_facts.dart';
 import '../domain/enrollment.dart';
+import '../domain/hr_statement.dart';
 
 /// The company network's demo data (research R10). **Every number here is a
 /// placeholder**, chosen so the demo shows each state: Valeo bills the
@@ -27,9 +30,9 @@ abstract final class CompanySeed {
   /// Leg trip cost − share on the demo corridor (160 − 40), per rider trip.
   static const _savedPerTrip = 120;
 
-  /// One leg Sheikh Zayed ↔ Smart Village in km. **Unverified placeholder**
-  /// (research R7: measure before the dashboard ships, T043).
-  static const legKmPlaceholder = 20;
+  /// One leg Sheikh Zayed ↔ Smart Village in km. Estimate, research R7
+  /// (~13 km; no official figure).
+  static const legKm = 13;
 
   static const _people = <({String id, String name, String email})>[
     (id: 'valeo-01', name: 'Mona Adel', email: 'mona.adel@valeo.com'),
@@ -114,17 +117,95 @@ abstract final class CompanySeed {
           ),
       ];
 
+  /// Who agreed to the HR statement (US6, placeholder data like the rest).
+  /// Everyone else is off, the default. Dina and Hossam agreed on the first
+  /// day; Yasmin agreed too and withdrew on 15 of the second month, so the
+  /// first month's statement keeps her and the second leaves her out; Karim
+  /// agreed but drives, and a driver pays no share (AC6).
+  static Map<String, List<ConsentChange>> valeoConsents(WallTime approvedAt) {
+    final withdrawn = WallTime(approvedAt.date.addMonths(1).addDays(14), const Clock.hm(9, 0));
+    return {
+      'valeo-02': [ConsentChange(on: true, at: approvedAt.plusMinutes(100))],
+      'valeo-03': [ConsentChange(on: true, at: approvedAt.plusMinutes(60))],
+      'valeo-04': [ConsentChange(on: true, at: approvedAt.plusMinutes(90))],
+      'valeo-05': [ConsentChange(on: true, at: approvedAt.plusMinutes(120)), ConsentChange(on: false, at: withdrawn)],
+    };
+  }
+
+  /// Each share is the corridor's 40 EGP seat share (160 / 4 seats, see
+  /// [_savedPerTrip]).
+  static const shareEgp = 40;
+
+  /// Hossam's month: of his 24 rider trips, three are not on the statement —
+  /// one "didn't pay", one disputed, one still pending — and one is
+  /// auto-received, which does count.
+  static const hossamPaidShares = 21;
+
+  /// Valeo's rider shares of [month] (`yyyy-mm`), from the same facts as the
+  /// dashboard: one going and one return trip per workday, in order, so the
+  /// counts match [valeoFacts]. Drivers get one share per trip they drove, with
+  /// `asRider: false`. Hossam's carry the mixed statuses described at
+  /// [hossamPaidShares].
+  static List<TripShare> valeoShares(String month) {
+    final workdays = <CalendarDate>[];
+    final p = month.split('-').map(int.parse).toList();
+    final first = CalendarDate(p[0], p[1], 1);
+    for (var d = first; d.monthKey == month; d = d.addDays(1)) {
+      if (d.weekday != Day.fri && d.weekday != Day.sat) workdays.add(d);
+    }
+    final out = <TripShare>[];
+    for (final f in valeoFacts) {
+      final trips = f.riderTrips > 0 ? f.riderTrips : f.driverTrips;
+      for (var k = 0; k < trips; k++) {
+        var status = ShareStatus.received;
+        if (f.personId == 'valeo-04') {
+          status = switch (k) {
+            2 => ShareStatus.notReceived,
+            4 => ShareStatus.disputed,
+            6 => ShareStatus.pending,
+            8 => ShareStatus.autoReceived,
+            _ => ShareStatus.received,
+          };
+        }
+        out.add(
+          TripShare(
+            personId: f.personId,
+            date: workdays[(k ~/ 2) % workdays.length],
+            leg: k.isEven ? Leg.going : Leg.ret,
+            sharePaid: shareEgp,
+            status: status,
+            asRider: f.riderTrips > 0,
+          ),
+        );
+      }
+    }
+    return out;
+  }
+
+  /// The fake's default statement source: Valeo has seeded shares, everyone
+  /// else none (the signed-in person's real shares wait for the server).
+  static Future<List<TripShare>> sharesFor(String companyId, String month) async =>
+      companyId == valeoId ? valeoShares(month) : const [];
+
+  /// The first [n] legs of a group's month; riders and the driver of one car
+  /// share them, so each leg counts once in "trips shared".
+  static Set<String> _legs(String group, int n) => {for (var i = 0; i < n; i++) '$group-$i'};
+
   static EmployeeMonthFacts _rider(String id, int trips, Area home) => EmployeeMonthFacts(
         personId: id,
         riderTrips: trips,
         riderGoingTrips: trips ~/ 2,
         driverTrips: 0,
         savedEgp: trips * _savedPerTrip,
-        km: trips * legKmPlaceholder,
+        km: trips * legKm,
         homeArea: home,
         hasProfile: true,
         hasGroup: true,
+        groupIds: [_groupOf(home)],
+        legIds: _legs(_groupOf(home), trips),
       );
+
+  static String _groupOf(Area home) => home == Area.october ? 'grp-oct' : 'grp-sz';
 
   static EmployeeMonthFacts _driver(String id, int trips, Area home) => EmployeeMonthFacts(
         personId: id,
@@ -136,6 +217,8 @@ abstract final class CompanySeed {
         homeArea: home,
         hasProfile: true,
         hasGroup: true,
+        groupIds: [_groupOf(home)],
+        legIds: _legs(_groupOf(home), trips),
       );
 
   static EmployeeMonthFacts _waiting(String id) => EmployeeMonthFacts(

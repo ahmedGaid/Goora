@@ -59,6 +59,8 @@ class GooraTextField extends StatelessWidget {
         labelText: label,
         labelStyle: AppTypography.body.copyWith(color: AppColors.textSecondary),
         errorText: errorText,
+        // A reason may need a sentence (Arabic runs longer): wrap, never clip.
+        errorMaxLines: 3,
         errorStyle: AppTypography.caption.copyWith(color: AppColors.dangerText),
         counterText: '',
         filled: true,

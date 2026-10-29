@@ -33,4 +33,12 @@ void main() {
     expect(ar.feeSavings(160), isNot(contains('ج.م')));
     expect(ar.owesDriver(40, 'Ahmed'), isNot(contains('ج.م')));
   });
+
+  test('wallet caption: Arabic count agrees with the noun (25 مشوار, not 25 مشاوير)', () {
+    expect(ar.coversTrips(2), contains('مشوارين'));
+    expect(ar.coversTrips(5), 'بيغطي حوالي 5 مشاوير');
+    expect(ar.coversTrips(25), 'بيغطي حوالي 25 مشوار');
+    expect(ar.coversTrips(100), 'بيغطي حوالي 100 مشوار');
+    expect(en.coversTrips(25), 'Covers about 25 trips');
+  });
 }

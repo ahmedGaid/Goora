@@ -15,6 +15,7 @@ final class EmployeeMonthFacts {
     required this.hasProfile,
     required this.hasGroup,
     this.groupIds = const [],
+    this.legIds = const {},
   });
 
   final String personId;
@@ -37,6 +38,10 @@ final class EmployeeMonthFacts {
   final bool hasProfile;
   final bool hasGroup;
   final List<String> groupIds;
+
+  /// Completed legs this person was aboard (rider or driver). Several
+  /// employees in one car share a leg id, so "trips shared" counts it once.
+  final Set<String> legIds;
 
   /// Rode or drove at least once (FR-021 "active this month").
   bool get isActive => riderTrips + driverTrips > 0;

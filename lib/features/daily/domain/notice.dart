@@ -20,6 +20,15 @@ enum NoticeKind {
   requestAccepted,
   requestExpired,
   tripCancelledByDriver,
+
+  /// 010: the company plan (params `company`; `days` for [personalPlanBack]).
+  companyPlanStarted,
+  companyPlanEnded,
+  companyPlanPaused,
+  companyPlanResumed,
+
+  /// The personal plan paused on enrolling came back on leaving.
+  personalPlanBack,
 }
 
 /// An in-app notification (research R11). [toMe] is false for notices the
@@ -40,7 +49,8 @@ final class Notice {
   final WallTime createdAt;
 
   /// Values for the localized text: `driver`, `day` (ISO date), `time`
-  /// (minutes since midnight), `minutes`, `amount`, `stop`, `leg`.
+  /// (minutes since midnight), `minutes`, `amount`, `stop`, `leg`, `company`,
+  /// `days`.
   final Map<String, String> params;
   final bool read;
   final bool toMe;

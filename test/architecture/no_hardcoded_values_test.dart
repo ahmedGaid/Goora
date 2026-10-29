@@ -17,7 +17,7 @@ void main() {
   };
 
   // lib/features includes lib/features/daily (003).
-  final roots = ['lib/app', 'lib/features', 'lib/core/widgets', 'lib/core/time'];
+  final roots = ['lib/app', 'lib/features', 'lib/core/widgets', 'lib/core/time', 'lib/core/format'];
   final files = [
     for (final root in roots)
       ...Directory(root)
@@ -27,6 +27,20 @@ void main() {
   ];
 
   test('scans a non-empty source tree', () => expect(files, isNotEmpty));
+
+  // 010 T052: the company screens are inside the scan (lib/features recursion),
+  // not skipped by a root that stops short.
+  test('scans every file under lib/features/company', () {
+    final scanned = {for (final f in files) f.path.replaceAll(r'\', '/')};
+    final company = Directory('lib/features/company')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((f) => f.path.endsWith('.dart') && !f.path.endsWith('.g.dart'));
+    expect(company, isNotEmpty);
+    for (final f in company) {
+      expect(scanned, contains(f.path.replaceAll(r'\', '/')));
+    }
+  });
 
   for (final entry in rules.entries) {
     test('no ${entry.key}', () {

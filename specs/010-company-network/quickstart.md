@@ -4,12 +4,14 @@ Emulator only: `powershell -ExecutionPolicy Bypass -File D:\Company\99-Ops\start
 Fake OTP: any Egyptian mobile, code `123456`. Settings → Reset before each scenario. Numbers use
 the Q1–Q3 defaults (99 EGP, minimum 20); change them here if the founder decides otherwise.
 
-1. **Register (US1)** — Settings → Company account → Register: name "Acme", domain `gmail.com` →
-   refused ("public email"). Domain `valeo.com` → refused (taken by the seed). Domain `acme.com`,
-   verify `hr@acme.com` → "Waiting for Goora". Settings → Demo → Approve company → home shows
-   active, minimum 20, 99 EGP per employee.
+1. **Register (US1)** — Settings → Company account → Register your company: name "Acme", work
+   email `hr@gmail.com` → refused under the email ("public email"). `hr@valeo.com` → refused (taken
+   by the seed). `hr@acme.com` → Send me a code → code `123456` → "Waiting for Goora". Settings →
+   Demo → Goora approves my company → home shows active, minimum 20, 99 EGP per employee.
 2. **Not on Goora (US2 AC4)** — as a rider whose work email is `@acme-not-real.com`: Plan → Through
-   my company → "Your company isn't on Goora yet" + Tell your HR; no plan.
+   my company → "Your company isn't on Goora yet" + Tell your HR; no plan. *(P4: the fake work
+   email is always `@valeo.com`, so on a device this needs Valeo ended first — Settings → Demo has
+   no "end contract" yet (P5/P6). Covered by `company_enroll_test.dart`.)*
 3. **Enroll (US2)** — as a rider with `@valeo.com` verified: Through my company → consent sheet lists
    what Valeo sees / never sees → Agree → plan card "Company · Valeo". Ride a trip (demo clock):
    fee none, "40 ج للسواق" unchanged.

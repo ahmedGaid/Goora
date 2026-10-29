@@ -1,7 +1,7 @@
 # Implementation Plan: Company Network (B2B company plan)
 
-**Branch**: `spec/company-network` (docs); implementation branch `010-company-network` off `main`
-**after 006 merges** | **Date**: 2026-10-19 | **Spec**: [spec.md](spec.md)
+**Branch**: `010-company-network` (implementation, off `main` after 006 merged; spec written on
+`spec/company-network`) | **Date**: 2026-10-19 | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from `specs/010-company-network/spec.md`
 
@@ -27,7 +27,7 @@ attached to the existing company `Plan`, so the six existing plan call sites kee
 **Project Type**: mobile app (+ shared TS rules for the future server)
 **Performance Goals**: none beyond normal screen responsiveness (fakes over seeded data; the spec sets no timing target)
 **Constraints**: fakes only; money rules twinned; no individual data to HR without consent; legal items behind flags (R0)
-**Scale/Scope**: ~8 new screens/sheets (company home, register, roster, invoices, invoice, dashboard, log, statement) + consent sheet + 2 wallet card changes; ~70 ARB keys (estimate)
+**Scale/Scope**: ~8 new screens/sheets (company home, register, roster, invoices, invoice, dashboard, log, statement) + consent sheet + 2 wallet card changes; ~140 ARB keys (139 company-related keys in en at P7; was estimated ~70)
 
 ## Constitution Check
 
@@ -67,8 +67,8 @@ lib/features/company/
 │             company_rules.dart (twin) · company_dashboard.dart · company_repository.dart
 ├── data/     fake_company_repository.dart · company_seed.dart · providers.dart
 └── presentation/ company_home_screen.dart · register_company_screen.dart · roster_screen.dart
-              invoices_screen.dart · invoice_screen.dart · dashboard_screen.dart · company_log_screen.dart
-              statement_screen.dart (US6) · consent_sheet.dart · labels.dart
+              invoices_screen.dart · invoice_screen.dart · company_dashboard_screen.dart · company_log_screen.dart
+              statement_screen.dart (US6) · consent_sheet.dart · company_offer_view.dart · company_controller.dart
 lib/features/wallet/      plan.dart (coverage) · fake_wallet_repository.dart (seam, pause/restore)
                           presentation/plan/company_verify_sheet.dart · wallet/rider_wallet.dart (card)
 lib/features/marketplace/data/fake_marketplace_repository.dart   (coversTrip at booking)
