@@ -53,10 +53,14 @@ part 'router.g.dart';
 
 /// A rider with no payment arrangement — a payment method, a paid-up
 /// subscription or a company plan — is sent to the payment-method screen
-/// before Today/Week (004 v2 research R9); Wallet/Trust stay reachable.
+/// before Today/Week (004 v2 research R9); Wallet/Trust stay reachable. A once
+/// rider is exempt: the method is asked for when they book.
 Future<String?> _requireArrangement(Ref ref, BuildContext context, GoRouterState state) async {
-  final role = ref.read(sessionControllerProvider).profile?.role;
-  if (role != Role.rider) return null;
+  final profile = ref.read(sessionControllerProvider).profile;
+  if (profile?.role != Role.rider) return null;
+  // A once rider has nothing to pay for yet: booking a seat asks for the method
+  // (BookNeedsMethod), so Today must not turn them away first (walk N-11).
+  if (profile?.frequency == Frequency.once) return null;
   final meId = ref.read(dailyCommuteRepositoryProvider).meId;
   final repo = ref.read(walletRepositoryProvider);
   if (await repo.getMethod(meId) != null) return null;

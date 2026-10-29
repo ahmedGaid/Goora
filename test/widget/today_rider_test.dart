@@ -13,6 +13,8 @@ import 'package:goora/features/daily/presentation/safety/sos_sheet.dart';
 import 'package:goora/features/marketplace/data/market_seed.dart';
 import 'package:goora/features/marketplace/data/providers.dart';
 import 'package:goora/features/marketplace/domain/seat_offer.dart';
+import 'package:goora/features/marketplace/presentation/empty_seats/empty_seats_controller.dart';
+import 'package:goora/features/marketplace/presentation/today/one_off_section.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/data/providers.dart';
@@ -174,6 +176,11 @@ Future<ProviderContainer> _openNoGroupToday(WidgetTester tester, String locale, 
     final repo = c.read(marketplaceRepositoryProvider);
     final SeatOffer tarek = (await repo.seatOffers(Leg.going, now: clock.now)).firstWhere((o) => o.source.id == MarketSeed.tarekId);
     await repo.book(tarek, now: clock.now);
+    // A once rider now starts on Today (walk N-11), so it is already built:
+    // tell it a seat was booked behind its back.
+    c
+      ..invalidate(myBookingsProvider)
+      ..invalidate(oneOffTodayProvider);
   }
   c.read(routerProvider).go(Routes.today);
   await tester.pumpAndSettle();

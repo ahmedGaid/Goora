@@ -51,7 +51,7 @@ abstract final class Routes {
 
   static String forDestination(Destination d) => switch (d) {
         Destination.commuteSetup => commuteSetup,
-        Destination.emptySeatsToday => emptySeats,
         Destination.offerTrip => offerTrip,
+        Destination.today => today,
       };
 }

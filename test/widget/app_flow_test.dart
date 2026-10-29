@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
 import 'package:goora/app/routes.dart';
+import 'package:goora/core/widgets/goora_bottom_nav.dart';
 import 'package:goora/features/design_gallery/presentation/design_gallery_screen.dart';
 import 'package:goora/features/onboarding/data/fake_auth_repository.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
@@ -61,7 +62,6 @@ void main() {
   const combos = {
     (Role.rider, 'freq-every-day'): 'whereGo',
     (Role.driver, 'freq-every-day'): 'whereGo',
-    (Role.rider, 'freq-once'): 'emptySeatsTitle',
     (Role.driver, 'freq-once'): 'offerTitle',
   };
   for (final MapEntry(key: (role, freqKey), value: titleKey) in combos.entries) {
@@ -78,7 +78,6 @@ void main() {
       await tester.pumpAndSettle();
       final title = switch (titleKey) {
         'whereGo' => a.whereGo,
-        'emptySeatsTitle' => a.emptySeatsTitle,
         _ => a.offerTitle,
       };
       expect(find.text(title), findsOneWidget);
@@ -87,6 +86,43 @@ void main() {
       expect(find.text(a.freqTitle), findsOneWidget);
     });
   }
+
+  // Walk N-11: a once rider landed on Empty seats with no tab bar, and Back went
+  // to onboarding's step 2. Today is the shell; Empty seats is one tap away.
+  testWidgets('rider + once lands on Today with the tab bar; Empty seats is a step on top, Back returns', (tester) async {
+    await pumpGooraApp(tester, prefs: _signedIn());
+    await tester.tap(find.byKey(const Key('role-rider')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('role-continue')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('freq-once')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('freq-continue')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('no-group-yet')), findsOneWidget, reason: 'Today, not Empty seats');
+    expect(find.byType(GooraBottomNav), findsOneWidget, reason: 'the shell: Wallet and Trust are reachable');
+    expect(find.text(a.freqTitle), findsNothing);
+
+    await tester.tap(find.byKey(const Key('no-group-action')));
+    await tester.pumpAndSettle();
+    expect(find.text(a.emptySeatsTitle), findsOneWidget);
+    await tester.tap(find.byTooltip(a.back));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('no-group-yet')), findsOneWidget, reason: 'Back goes to Today');
+    expect(find.text(a.freqTitle), findsNothing, reason: 'never to onboarding');
+  });
+
+  testWidgets('Empty seats opened with nothing to pop goes Back to Today, not onboarding (N-11)', (tester) async {
+    final c = await pumpGooraApp(tester, prefs: _signedIn(role: Role.rider, frequency: Frequency.once));
+    c.read(routerProvider).go(Routes.emptySeats);
+    await tester.pumpAndSettle();
+    expect(find.text(a.emptySeatsTitle), findsOneWidget);
+    await tester.tap(find.byTooltip(a.back));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('no-group-yet')), findsOneWidget);
+    expect(find.text(a.freqTitle), findsNothing);
+  });
 
   testWidgets('back from frequency keeps the chosen role', (tester) async {
     await pumpGooraApp(tester, prefs: _signedIn(role: Role.driver));

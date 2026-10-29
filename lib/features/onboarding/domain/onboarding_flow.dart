@@ -3,7 +3,7 @@ import 'profile.dart';
 
 enum OnboardingStep { welcome, profile, role, frequency, destination }
 
-enum Destination { commuteSetup, emptySeatsToday, offerTrip }
+enum Destination { commuteSetup, offerTrip, today }
 
 /// Pure onboarding rules (data-model.md).
 abstract final class OnboardingFlow {
@@ -19,7 +19,9 @@ abstract final class OnboardingFlow {
 
   static Destination destinationFor(Role role, Frequency frequency) => switch ((role, frequency)) {
         (_, Frequency.everyDay) => Destination.commuteSetup,
-        (Role.rider, Frequency.once) => Destination.emptySeatsToday,
+        // Today is the shell (tab bar, Wallet, Trust); its "no group yet" state
+        // offers Empty seats, so Back from there never reaches onboarding (walk N-11).
+        (Role.rider, Frequency.once) => Destination.today,
         (Role.driver, Frequency.once) => Destination.offerTrip,
       };
 
