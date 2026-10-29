@@ -183,6 +183,22 @@ final class FakeCompanyRepository implements CompanyRepository {
   }
 
   @override
+  Future<LastLeave?> lastLeave(String personId, WallTime now) async {
+    await _ensureSeeded();
+    LastLeave? latest;
+    for (final c in _companies()) {
+      final company = await _catchUp(c, now);
+      for (final e in _enrollments(company.id).where((e) => e.personId == personId)) {
+        if (e.isOpen) return null;
+        if (latest == null || e.leftAt!.isAfter(latest.at)) {
+          latest = (companyName: company.name, at: e.leftAt!, why: e.leftWhy!);
+        }
+      }
+    }
+    return latest;
+  }
+
+  @override
   Future<List<Window>> coverageFor(String personId, WallTime now) async {
     await _ensureSeeded();
     final out = <Window>[];
@@ -290,7 +306,13 @@ final class FakeCompanyRepository implements CompanyRepository {
   @override
   Future<List<LogEntry>> log(String companyId) async {
     await _ensureSeeded();
-    return _logEntries(companyId)..sort((a, b) => b.at.compareTo(a.at));
+    // Same moment → the one written later first (Dart's sort is not stable).
+    final indexed = _logEntries(companyId).indexed.toList()
+      ..sort((a, b) {
+        final byTime = b.$2.at.compareTo(a.$2.at);
+        return byTime != 0 ? byTime : b.$1.compareTo(a.$1);
+      });
+    return [for (final (_, e) in indexed) e];
   }
 
   // US5, US6 — later phases
@@ -348,7 +370,7 @@ final class FakeCompanyRepository implements CompanyRepository {
   }
 
   @override
-  Future<void> demoSetHrContact(String companyId, String personId, WallTime now) async {
+  Future<void> demoSetHrContact(String companyId, String? personId, WallTime now) async {
     await _ensureSeeded();
     await _saveCompany(_company(companyId)!.copyWith(hrContactId: personId));
     await _log(LogEntry(companyId: companyId, at: now, actor: LogActor.goora, kind: LogKind.hrContactChanged));

@@ -2,6 +2,7 @@ import '../../../core/time/wall_time.dart';
 import 'company.dart';
 import 'company_log.dart';
 import 'company_rules.dart';
+import 'enrollment.dart';
 import 'hr_views.dart';
 import 'invoice.dart';
 
@@ -67,6 +68,11 @@ final class Enrolled extends EnrollOffer {
   final WallTime since;
 }
 
+/// How a person's latest enrollment ended, when none is open (US4): the
+/// employee's own side reads it to end their company plan in the wallet at
+/// that moment, whoever made them leave.
+typedef LastLeave = ({String companyName, WallTime at, LeftWhy why});
+
 /// The company-account home for its HR contact (research R5).
 final class CompanyHome {
   const CompanyHome({required this.company, required this.status, this.latestInvoice});
@@ -114,6 +120,9 @@ abstract interface class CompanyRepository {
   Future<void> enroll(String personId, {required WallTime now});
   Future<void> leave(String personId, {required WallTime now});
 
+  /// null while [personId] is enrolled somewhere, or never enrolled.
+  Future<LastLeave?> lastLeave(String personId, WallTime now);
+
   /// Fee-free windows: enrollments ∩ the company's active windows.
   Future<List<Window>> coverageFor(String personId, WallTime now);
 
@@ -145,7 +154,9 @@ abstract interface class CompanyRepository {
   // Goora staff (demo actions)
   Future<void> demoApprove(String companyId, WallTime now);
   Future<void> demoMarkPaid(String invoiceId, {required String bankRef, required WallTime now});
-  Future<void> demoSetHrContact(String companyId, String personId, WallTime now);
+  /// null = the HR contact left; the company stays active with none
+  /// until Goora names another (spec edge case).
+  Future<void> demoSetHrContact(String companyId, String? personId, WallTime now);
   Future<void> demoEndContract(String companyId, WallTime now);
 
   /// Settings → Reset.

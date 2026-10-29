@@ -2602,4 +2602,156 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoSkipToSuspension => 'قدّم الساعة لحد يوم إيقاف خطة الشركة';
+
+  @override
+  String get companyRosterCta => 'الموظفين المشتركين';
+
+  @override
+  String get companyRosterTitle => 'الموظفين المشتركين';
+
+  @override
+  String companyRosterCount(int count) {
+    return '$count مشترك دلوقتي';
+  }
+
+  @override
+  String get companyRosterNote =>
+      'ده كل اللي الشركة بتشوفه: الاسم والإيميل ومن إمتى مشترك.';
+
+  @override
+  String companyRosterSince(String date) {
+    return 'مشترك من $date';
+  }
+
+  @override
+  String companyRosterLeft(String date) {
+    return 'آخر يوم في الخطة: $date';
+  }
+
+  @override
+  String get companyRosterEmpty =>
+      'مفيش موظفين مشتركين لسه. قول لزمايلك يشتركوا من خلال الشركة من جورة.';
+
+  @override
+  String get companyRosterRemove => 'شيل';
+
+  @override
+  String companyRosterRemoveTitle(String name) {
+    return 'تشيل $name من خطة الشركة؟';
+  }
+
+  @override
+  String get companyRosterRemoveBody =>
+      'من دلوقتي رسوم جورة هترجع على مشاويرهم، والمشاوير اللي فاتت مش هتتغير. هيتحسبوا في فاتورة الشهر ده.';
+
+  @override
+  String get companyRosterRemoveConfirm => 'أيوه، شيل';
+
+  @override
+  String get companyLogCta => 'سجل التغييرات';
+
+  @override
+  String get companyLogTitle => 'سجل التغييرات';
+
+  @override
+  String get companyLogEmpty => 'مفيش تغييرات لسه.';
+
+  @override
+  String companyLogMeta(String actor, String date) {
+    return '$actor · $date';
+  }
+
+  @override
+  String get companyLogByHr => 'HR';
+
+  @override
+  String get companyLogByEmployee => 'الموظف';
+
+  @override
+  String get companyLogByGoora => 'جورة';
+
+  @override
+  String get companyLogApproved => 'الحساب اتفعّل';
+
+  @override
+  String companyLogDomainAdded(String domain) {
+    return 'دومين اتضاف: $domain';
+  }
+
+  @override
+  String companyLogDomainRemoved(String domain) {
+    return 'دومين اتشال: $domain';
+  }
+
+  @override
+  String companyLogEmployeeRemoved(String name) {
+    return 'اتشال من الخطة: $name';
+  }
+
+  @override
+  String companyLogEmployeeLeft(String name) {
+    return 'خرج من الخطة: $name';
+  }
+
+  @override
+  String companyLogInvoiceIssued(String month) {
+    return 'فاتورة اتعملت: $month';
+  }
+
+  @override
+  String companyLogInvoicePaid(String month) {
+    return 'فاتورة اتدفعت: $month';
+  }
+
+  @override
+  String get companyLogSuspended => 'الخطة اتوقفت لحد الدفع';
+
+  @override
+  String get companyLogResumed => 'الخطة رجعت تشتغل';
+
+  @override
+  String get companyLogContractEnded => 'العقد خلص';
+
+  @override
+  String get companyLogHrChanged => 'مسؤول HR اتغيّر';
+
+  @override
+  String get companyDomainsTitle => 'الدومينات';
+
+  @override
+  String get companyDomainsNote =>
+      'أي حد إيميل شغله على الدومينات دي يقدر يشترك من خلال الشركة.';
+
+  @override
+  String get companyAddDomain => 'ضيف دومين';
+
+  @override
+  String get companyDomainLabel => 'الدومين';
+
+  @override
+  String get companyDomainInvalid => 'اكتب دومين صحيح، زي company.com';
+
+  @override
+  String get companyDomainAddCta => 'ضيف';
+
+  @override
+  String companyDomainRemove(String domain) {
+    return 'شيل $domain';
+  }
+
+  @override
+  String companyDomainRemoveTitle(String domain) {
+    return 'تشيل $domain؟';
+  }
+
+  @override
+  String companyDomainRemoveBody(String domain) {
+    return 'الموظفين المشتركين بإيميل على $domain هيخرجوا من الخطة دلوقتي، ورسوم جورة هترجع على مشاويرهم.';
+  }
+
+  @override
+  String get demoEndContract => 'جورة تنهي عقد Valeo';
+
+  @override
+  String get demoHrLeft => 'مسؤول HR بتاع Valeo ساب الشركة';
 }

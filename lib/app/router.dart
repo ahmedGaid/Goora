@@ -11,9 +11,11 @@ import '../features/commute/presentation/commute_setup_screen.dart';
 import '../features/commute/presentation/match_result_screen.dart';
 import '../features/commute/presentation/no_match_screen.dart';
 import '../features/company/presentation/company_home_screen.dart';
+import '../features/company/presentation/company_log_screen.dart';
 import '../features/company/presentation/invoice_screen.dart';
 import '../features/company/presentation/invoices_screen.dart';
 import '../features/company/presentation/register_company_screen.dart';
+import '../features/company/presentation/roster_screen.dart';
 import '../features/daily/data/daily_seed.dart';
 import '../features/daily/data/providers.dart';
 import '../features/daily/presentation/shell/app_shell.dart';
@@ -157,6 +159,8 @@ GoRouter router(Ref ref) {
         path: Routes.companyInvoice,
         builder: (_, state) => InvoiceScreen(invoiceId: state.uri.queryParameters['id'] ?? ''),
       ),
+      GoRoute(path: Routes.companyRoster, builder: (_, _) => const RosterScreen()),
+      GoRoute(path: Routes.companyLog, builder: (_, _) => const CompanyLogScreen()),
       if (kDebugMode) GoRoute(path: Routes.gallery, builder: (_, _) => const DesignGalleryScreen()),
     ],
   );

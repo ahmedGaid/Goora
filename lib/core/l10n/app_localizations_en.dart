@@ -2559,4 +2559,156 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoSkipToSuspension => 'Skip to the day the company plan pauses';
+
+  @override
+  String get companyRosterCta => 'Enrolled employees';
+
+  @override
+  String get companyRosterTitle => 'Enrolled employees';
+
+  @override
+  String companyRosterCount(int count) {
+    return '$count enrolled now';
+  }
+
+  @override
+  String get companyRosterNote =>
+      'This is all the company sees: name, email and since when.';
+
+  @override
+  String companyRosterSince(String date) {
+    return 'Since $date';
+  }
+
+  @override
+  String companyRosterLeft(String date) {
+    return 'Left on $date';
+  }
+
+  @override
+  String get companyRosterEmpty =>
+      'No employees enrolled yet. Tell your colleagues to join through the company in Goora.';
+
+  @override
+  String get companyRosterRemove => 'Remove';
+
+  @override
+  String companyRosterRemoveTitle(String name) {
+    return 'Remove $name from the company plan?';
+  }
+
+  @override
+  String get companyRosterRemoveBody =>
+      'From now on Goora\'s fee applies to their trips; trips already taken don\'t change. They still count on this month\'s invoice.';
+
+  @override
+  String get companyRosterRemoveConfirm => 'Yes, remove';
+
+  @override
+  String get companyLogCta => 'Change log';
+
+  @override
+  String get companyLogTitle => 'Change log';
+
+  @override
+  String get companyLogEmpty => 'No changes yet.';
+
+  @override
+  String companyLogMeta(String actor, String date) {
+    return '$actor · $date';
+  }
+
+  @override
+  String get companyLogByHr => 'HR';
+
+  @override
+  String get companyLogByEmployee => 'Employee';
+
+  @override
+  String get companyLogByGoora => 'Goora';
+
+  @override
+  String get companyLogApproved => 'Account approved';
+
+  @override
+  String companyLogDomainAdded(String domain) {
+    return 'Domain added: $domain';
+  }
+
+  @override
+  String companyLogDomainRemoved(String domain) {
+    return 'Domain removed: $domain';
+  }
+
+  @override
+  String companyLogEmployeeRemoved(String name) {
+    return 'Removed from the plan: $name';
+  }
+
+  @override
+  String companyLogEmployeeLeft(String name) {
+    return 'Left the plan: $name';
+  }
+
+  @override
+  String companyLogInvoiceIssued(String month) {
+    return 'Invoice issued: $month';
+  }
+
+  @override
+  String companyLogInvoicePaid(String month) {
+    return 'Invoice paid: $month';
+  }
+
+  @override
+  String get companyLogSuspended => 'Plan paused until paid';
+
+  @override
+  String get companyLogResumed => 'Plan back on';
+
+  @override
+  String get companyLogContractEnded => 'Contract ended';
+
+  @override
+  String get companyLogHrChanged => 'HR contact changed';
+
+  @override
+  String get companyDomainsTitle => 'Domains';
+
+  @override
+  String get companyDomainsNote =>
+      'Anyone whose work email is on these domains can join through the company.';
+
+  @override
+  String get companyAddDomain => 'Add a domain';
+
+  @override
+  String get companyDomainLabel => 'Domain';
+
+  @override
+  String get companyDomainInvalid => 'Enter a valid domain, like company.com';
+
+  @override
+  String get companyDomainAddCta => 'Add';
+
+  @override
+  String companyDomainRemove(String domain) {
+    return 'Remove $domain';
+  }
+
+  @override
+  String companyDomainRemoveTitle(String domain) {
+    return 'Remove $domain?';
+  }
+
+  @override
+  String companyDomainRemoveBody(String domain) {
+    return 'Employees enrolled with a $domain email leave the plan now, and Goora\'s fee applies to their trips.';
+  }
+
+  @override
+  String get demoEndContract => 'Goora ends Valeo\'s contract';
+
+  @override
+  String get demoHrLeft => 'Valeo\'s HR contact left the company';
 }

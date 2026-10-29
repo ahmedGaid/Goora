@@ -4250,6 +4250,246 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'قدّم الساعة لحد يوم إيقاف خطة الشركة'**
   String get demoSkipToSuspension;
+
+  /// No description provided for @companyRosterCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموظفين المشتركين'**
+  String get companyRosterCta;
+
+  /// No description provided for @companyRosterTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموظفين المشتركين'**
+  String get companyRosterTitle;
+
+  /// No description provided for @companyRosterCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} مشترك دلوقتي'**
+  String companyRosterCount(int count);
+
+  /// No description provided for @companyRosterNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ده كل اللي الشركة بتشوفه: الاسم والإيميل ومن إمتى مشترك.'**
+  String get companyRosterNote;
+
+  /// No description provided for @companyRosterSince.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشترك من {date}'**
+  String companyRosterSince(String date);
+
+  /// No description provided for @companyRosterLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر يوم في الخطة: {date}'**
+  String companyRosterLeft(String date);
+
+  /// No description provided for @companyRosterEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش موظفين مشتركين لسه. قول لزمايلك يشتركوا من خلال الشركة من جورة.'**
+  String get companyRosterEmpty;
+
+  /// No description provided for @companyRosterRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'شيل'**
+  String get companyRosterRemove;
+
+  /// No description provided for @companyRosterRemoveTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشيل {name} من خطة الشركة؟'**
+  String companyRosterRemoveTitle(String name);
+
+  /// No description provided for @companyRosterRemoveBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'من دلوقتي رسوم جورة هترجع على مشاويرهم، والمشاوير اللي فاتت مش هتتغير. هيتحسبوا في فاتورة الشهر ده.'**
+  String get companyRosterRemoveBody;
+
+  /// No description provided for @companyRosterRemoveConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيوه، شيل'**
+  String get companyRosterRemoveConfirm;
+
+  /// No description provided for @companyLogCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التغييرات'**
+  String get companyLogCta;
+
+  /// No description provided for @companyLogTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التغييرات'**
+  String get companyLogTitle;
+
+  /// No description provided for @companyLogEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'مفيش تغييرات لسه.'**
+  String get companyLogEmpty;
+
+  /// No description provided for @companyLogMeta.
+  ///
+  /// In ar, this message translates to:
+  /// **'{actor} · {date}'**
+  String companyLogMeta(String actor, String date);
+
+  /// No description provided for @companyLogByHr.
+  ///
+  /// In ar, this message translates to:
+  /// **'HR'**
+  String get companyLogByHr;
+
+  /// No description provided for @companyLogByEmployee.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموظف'**
+  String get companyLogByEmployee;
+
+  /// No description provided for @companyLogByGoora.
+  ///
+  /// In ar, this message translates to:
+  /// **'جورة'**
+  String get companyLogByGoora;
+
+  /// No description provided for @companyLogApproved.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب اتفعّل'**
+  String get companyLogApproved;
+
+  /// No description provided for @companyLogDomainAdded.
+  ///
+  /// In ar, this message translates to:
+  /// **'دومين اتضاف: {domain}'**
+  String companyLogDomainAdded(String domain);
+
+  /// No description provided for @companyLogDomainRemoved.
+  ///
+  /// In ar, this message translates to:
+  /// **'دومين اتشال: {domain}'**
+  String companyLogDomainRemoved(String domain);
+
+  /// No description provided for @companyLogEmployeeRemoved.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتشال من الخطة: {name}'**
+  String companyLogEmployeeRemoved(String name);
+
+  /// No description provided for @companyLogEmployeeLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'خرج من الخطة: {name}'**
+  String companyLogEmployeeLeft(String name);
+
+  /// No description provided for @companyLogInvoiceIssued.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة اتعملت: {month}'**
+  String companyLogInvoiceIssued(String month);
+
+  /// No description provided for @companyLogInvoicePaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتورة اتدفعت: {month}'**
+  String companyLogInvoicePaid(String month);
+
+  /// No description provided for @companyLogSuspended.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطة اتوقفت لحد الدفع'**
+  String get companyLogSuspended;
+
+  /// No description provided for @companyLogResumed.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخطة رجعت تشتغل'**
+  String get companyLogResumed;
+
+  /// No description provided for @companyLogContractEnded.
+  ///
+  /// In ar, this message translates to:
+  /// **'العقد خلص'**
+  String get companyLogContractEnded;
+
+  /// No description provided for @companyLogHrChanged.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسؤول HR اتغيّر'**
+  String get companyLogHrChanged;
+
+  /// No description provided for @companyDomainsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدومينات'**
+  String get companyDomainsTitle;
+
+  /// No description provided for @companyDomainsNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أي حد إيميل شغله على الدومينات دي يقدر يشترك من خلال الشركة.'**
+  String get companyDomainsNote;
+
+  /// No description provided for @companyAddDomain.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف دومين'**
+  String get companyAddDomain;
+
+  /// No description provided for @companyDomainLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدومين'**
+  String get companyDomainLabel;
+
+  /// No description provided for @companyDomainInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب دومين صحيح، زي company.com'**
+  String get companyDomainInvalid;
+
+  /// No description provided for @companyDomainAddCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضيف'**
+  String get companyDomainAddCta;
+
+  /// No description provided for @companyDomainRemove.
+  ///
+  /// In ar, this message translates to:
+  /// **'شيل {domain}'**
+  String companyDomainRemove(String domain);
+
+  /// No description provided for @companyDomainRemoveTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشيل {domain}؟'**
+  String companyDomainRemoveTitle(String domain);
+
+  /// No description provided for @companyDomainRemoveBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'الموظفين المشتركين بإيميل على {domain} هيخرجوا من الخطة دلوقتي، ورسوم جورة هترجع على مشاويرهم.'**
+  String companyDomainRemoveBody(String domain);
+
+  /// No description provided for @demoEndContract.
+  ///
+  /// In ar, this message translates to:
+  /// **'جورة تنهي عقد Valeo'**
+  String get demoEndContract;
+
+  /// No description provided for @demoHrLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسؤول HR بتاع Valeo ساب الشركة'**
+  String get demoHrLeft;
 }
 
 class _AppLocalizationsDelegate

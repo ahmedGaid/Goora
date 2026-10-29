@@ -84,6 +84,8 @@ class DemoSection extends ConsumerWidget {
             ('demo-make-me-hr', l10n.demoMakeMeHr, () => _makeMeHr(ref)),
             ('demo-skip-to-suspension', l10n.demoSkipToSuspension, () => _skipToSuspension(ref)),
             ('demo-mark-invoice-paid', l10n.demoMarkInvoicePaid, () => _markInvoicePaid(ref)),
+            ('demo-end-contract', l10n.demoEndContract, () => _endContract(ref)),
+            ('demo-hr-left', l10n.demoHrLeft, () => _hrLeft(ref)),
             ('demo-reset', l10n.demoReset, () => _reset(context, ref)),
           ]) ...[
             const SizedBox(height: AppSpacing.md),
@@ -214,6 +216,20 @@ class DemoSection extends ConsumerWidget {
       peakEnrolled: 0,
     ).suspendFrom.date;
     await _setClock(ref, WallTime(suspendOn, const Clock.hm(10, 0)));
+    await _refreshCompany(ref);
+  }
+
+  /// Goora staff end Valeo's contract now (010 US4 AC4): every employee
+  /// leaves, the company reads "ended", a final invoice covers this month.
+  Future<void> _endContract(WidgetRef ref) async {
+    await ref.read(companyRepositoryProvider).demoEndContract(CompanySeed.valeoId, ref.read(nowProvider)());
+    await _refreshCompany(ref);
+  }
+
+  /// Valeo's HR contact left (010 spec edge case): the company stays active
+  /// with no HR contact until Goora names another ("Make me Valeo's HR").
+  Future<void> _hrLeft(WidgetRef ref) async {
+    await ref.read(companyRepositoryProvider).demoSetHrContact(CompanySeed.valeoId, null, ref.read(nowProvider)());
     await _refreshCompany(ref);
   }
 

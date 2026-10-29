@@ -425,3 +425,52 @@ Founder Q1–Q11 still open: defaults unchanged (99 EGP, minimum 20).
 ### Still open after P4
 - T030 done 2026-10-21: walk report `walk/README.md` (F-1 contract dates lack the year, F-2 wallet rules still mention a 10% fee on a company plan, F-3 stale top-up banner).
 - The router's pay-method guard still asks `coversDate` (Lane A notes): unchanged.
+
+## P6 notes — 2026-10-29 (US4 roster, leaving, log, T036–T039)
+
+Founder Q1–Q11 still open: defaults unchanged.
+
+### Choices (picked, with the rejected option)
+1. **One leave path on the employee's side.** `companyAccountProvider` runs `_syncLeave` whenever no
+   enrollment is open: if the wallet plan is still a company plan with coverage behind it, it ends it
+   at `CompanyRepository.lastLeave(...).at` (new), brings a paused plan back, posts
+   `companyPlanEnded` (+ `personalPlanBack`) once, and refreshes plan/pricing/wallet. Self-leave now
+   goes the same way (`CompanyEnrollment.leave` = `company.leave` + re-read). Rejected: an
+   `onPlanChange` callback on the fake (the company network may not reach the wallet, and HR-side
+   leaves happen while the employee's app is closed — the real backend has the same gap).
+2. Fees are right **before** the sync runs: the plan's coverage already ends at the leave moment
+   through the T019 seam. Only the notice and the plan card wait for the next company-area read
+   (Wallet card or `/company`) — the same lag P5 has for suspension notices.
+3. `demoSetHrContact` takes `String?`: null = the HR contact left; the company stays active with no
+   HR contact, `/company` shows everyone only their own plan (T039). Settings → Demo: "Goora ends
+   Valeo's contract", "Valeo's HR contact left the company" (re-name with "Make me Valeo's HR").
+4. Domains get their own card on the HR home (active or suspended only): list, Add (shape check,
+   public and taken refused before saving), Remove with confirm; the last domain has no Remove. The
+   pending home keeps the one-line "Domain:" summary.
+5. Log entries written in the same minute sort newest-written first (Dart's sort is not stable).
+6. `companyAccountProvider` reads every repository **before its first await** and passes them to
+   the catch-up helpers (`_Deps`): it is invalidated often (demo actions, screens), and Riverpod 3
+   throws `UnmountedRefException` on `ref.read` after a rebuild. Found by `company_invoices_test`.
+7. Arabic leaver copy avoids gendered verbs: "آخر يوم في الخطة: {date}", "خرج من الخطة: {name}" is
+   the one gendered form left (founder review).
+
+### R11 — keys added in P6 (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| companyRosterCta · companyRosterTitle | الموظفين المشتركين | Enrolled employees |
+| companyRosterCount | {count} مشترك دلوقتي | {count} enrolled now |
+| companyRosterNote | ده كل اللي الشركة بتشوفه: الاسم والإيميل ومن إمتى مشترك. | This is all the company sees: name, email and since when. |
+| companyRosterSince · companyRosterLeft | مشترك من {date} · آخر يوم في الخطة: {date} | Since {date} · Left on {date} |
+| companyRosterEmpty | مفيش موظفين مشتركين لسه. قول لزمايلك يشتركوا من خلال الشركة من جورة. | No employees enrolled yet. Tell your colleagues to join through the company in Goora. |
+| companyRosterRemove · …Title · …Body · …Confirm | شيل · تشيل {name} من خطة الشركة؟ · من دلوقتي رسوم جورة هترجع على مشاويرهم، والمشاوير اللي فاتت مش هتتغير. هيتحسبوا في فاتورة الشهر ده. · أيوه، شيل | Remove · Remove {name} from the company plan? · From now on Goora's fee applies to their trips; trips already taken don't change. They still count on this month's invoice. · Yes, remove |
+| companyLogCta · companyLogTitle · companyLogEmpty | سجل التغييرات · مفيش تغييرات لسه. | Change log · No changes yet. |
+| companyLogMeta · ByHr · ByEmployee · ByGoora | {actor} · {date} · HR · الموظف · جورة | {actor} · {date} · HR · Employee · Goora |
+| companyLog* kinds | الحساب اتفعّل · دومين اتضاف/اتشال: {domain} · اتشال من الخطة: {name} · خرج من الخطة: {name} · فاتورة اتعملت/اتدفعت: {month} · الخطة اتوقفت لحد الدفع · الخطة رجعت تشتغل · العقد خلص · مسؤول HR اتغيّر | Account approved · Domain added/removed: {domain} · Removed from the plan: {name} · Left the plan: {name} · Invoice issued/paid: {month} · Plan paused until paid · Plan back on · Contract ended · HR contact changed |
+| companyDomainsTitle · companyDomainsNote | الدومينات · أي حد إيميل شغله على الدومينات دي يقدر يشترك من خلال الشركة. | Domains · Anyone whose work email is on these domains can join through the company. |
+| companyAddDomain · companyDomainLabel · companyDomainInvalid · companyDomainAddCta | ضيف دومين · الدومين · اكتب دومين صحيح، زي company.com · ضيف | Add a domain · Domain · Enter a valid domain, like company.com · Add |
+| companyDomainRemove · …Title · …Body | شيل {domain} · تشيل {domain}؟ · الموظفين المشتركين بإيميل على {domain} هيخرجوا من الخطة دلوقتي، ورسوم جورة هترجع على مشاويرهم. | Remove {domain} · Remove {domain}? · Employees enrolled with a {domain} email leave the plan now, and Goora's fee applies to their trips. |
+| demoEndContract · demoHrLeft | جورة تنهي عقد Valeo · مسؤول HR بتاع Valeo ساب الشركة | Goora ends Valeo's contract · Valeo's HR contact left the company |
+
+### Still open after P6
+- T040: quickstart 6 on the emulator (not walked this session).
+- Log invoice months show as `yyyy-mm` (same as the invoice list) — a month-name format is a polish item.

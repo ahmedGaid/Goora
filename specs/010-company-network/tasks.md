@@ -65,10 +65,10 @@ then commit.
 
 ## Phase 6: US4 — roster, leaving, log (P6)
 
-- [ ] T036 [P] [US4] Widget tests `test/widget/company_roster_test.dart` (ar+en): roster shows only name/email/since (+ this month's leavers), remove → "left on", log entries with actor (red)
-- [ ] T037 [P] [US4] Unit tests for every leave path (self, HR remove, domain removed, contract ended, staff end): next trip fee applies, earlier trips stay free, no trial, paused plan restored, an inbox notice posted (FR-020), leaver counted in the month's peak, re-join same month counts once (SC-007) (red)
-- [ ] T038 [US4] `roster_screen.dart`, domain add/remove on company home, `company_log_screen.dart`; Settings → Demo: End contract, Change HR contact
-- [ ] T039 [US4] HR-contact-left edge case: company stays active with no HR contact; `/company` for others shows only their enrollment
+- [x] T036 [P] [US4] Widget tests `test/widget/company_roster_test.dart` (ar+en): roster shows only name/email/since (+ this month's leavers), remove → "left on", log entries with actor (red) — done 2026-10-29 (P6)
+- [x] T037 [P] [US4] Unit tests for every leave path (self, HR remove, domain removed, contract ended, staff end): next trip fee applies, earlier trips stay free, no trial, paused plan restored, an inbox notice posted (FR-020), leaver counted in the month's peak, re-join same month counts once (SC-007) (red) — done 2026-10-29 (P6): `test/unit/company_leave_paths_test.dart`, red with the sync off
+- [x] T038 [US4] `roster_screen.dart`, domain add/remove on company home, `company_log_screen.dart`; Settings → Demo: End contract, Change HR contact — done 2026-10-29 (P6)
+- [x] T039 [US4] HR-contact-left edge case: company stays active with no HR contact; `/company` for others shows only their enrollment — done 2026-10-29 (P6): covered in `company_roster_test.dart`
 - [ ] T040 Checkpoint P6: gates green; quickstart 6
 
 ## Phase 7: US5 — dashboard (P7)

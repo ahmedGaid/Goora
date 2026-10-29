@@ -145,7 +145,7 @@ void main() {
       final c = await _openCompany(tester, code);
       await _demo(tester, c, 'demo-make-me-hr');
       expect(find.text(l.companyStatusActive), findsOneWidget);
-      expect(find.text(l.companyDomainsLine('valeo.com')), findsOneWidget);
+      expect(find.byKey(const Key('domain-valeo.com')), findsOneWidget);
       final valeo = (await c.read(companyRepositoryProvider).companyForDomain('valeo.com'))!;
       expect(valeo.id, CompanySeed.valeoId);
       expect(valeo.hrContactId, c.read(dailyCommuteRepositoryProvider).meId);

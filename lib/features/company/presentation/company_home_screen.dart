@@ -8,22 +8,27 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/time/now_provider.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_ghost_button.dart';
 import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_status_chip.dart';
+import '../../../core/widgets/goora_text_field.dart';
 import '../../onboarding/presentation/widgets/onboarding_scaffold.dart';
 import '../../wallet/presentation/labels.dart';
+import '../data/providers.dart';
 import '../domain/company.dart';
 import '../domain/company_repository.dart';
 import 'company_controller.dart';
+import 'company_log_screen.dart';
 import 'company_offer_view.dart';
+import 'roster_screen.dart';
 
 /// Settings → Company account (010 research R5). Any signed-in person sees
 /// their own company plan; the HR contact of a company also sees it here
 /// (pending → "waiting for Goora", then status, minimum, price and
-/// contract); anyone else may register one. Roster, invoices, dashboard and
-/// log arrive with P5–P7.
+/// contract, domains, roster, invoices, log); anyone else may register one.
+/// The dashboard arrives with P7.
 class CompanyHomeScreen extends ConsumerWidget {
   const CompanyHomeScreen({super.key});
 
@@ -39,7 +44,15 @@ class CompanyHomeScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: view.home == null
             ? [mine, const SizedBox(height: AppSpacing.gap), const _RegisterCard()]
-            : [_HrCard(home: view.home!), const SizedBox(height: AppSpacing.gap), mine],
+            : [
+                _HrCard(home: view.home!),
+                if (_canEditDomains(view.home!.status)) ...[
+                  const SizedBox(height: AppSpacing.gap),
+                  _DomainsCard(company: view.home!.company),
+                ],
+                const SizedBox(height: AppSpacing.gap),
+                mine,
+              ],
       );
     } else if (account.hasError) {
       body = GooraCard(
@@ -151,8 +164,10 @@ class _HrCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           GooraStatusChip(status: chip, label: label),
-          if (home.status == CompanyStatus.pending) line(l10n.companyPendingBody(c.name)),
-          line(l10n.companyDomainsLine(c.domains.join(Localizations.localeOf(context).languageCode == 'ar' ? '، ' : ', '))),
+          if (home.status == CompanyStatus.pending) ...[
+            line(l10n.companyPendingBody(c.name)),
+            line(l10n.companyDomainsLine(c.domains.join(Localizations.localeOf(context).languageCode == 'ar' ? '، ' : ', '))),
+          ],
           if (home.status != CompanyStatus.pending) ...[
             line(l10n.companyMinSeats(c.minimumSeats)),
             line(l10n.companyPriceLine(c.pricePerSeat)),
@@ -173,13 +188,165 @@ class _HrCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
-            GooraGhostButton(
-              key: const Key('company-invoices'),
-              label: l10n.companyInvoicesCta,
-              onPressed: () => context.push(Routes.companyInvoices),
-            ),
+            const SizedBox(height: AppSpacing.xs),
+            for (final (key, label, route) in [
+              ('company-roster', l10n.companyRosterCta, Routes.companyRoster),
+              ('company-invoices', l10n.companyInvoicesCta, Routes.companyInvoices),
+              ('company-log', l10n.companyLogCta, Routes.companyLog),
+            ]) ...[
+              const SizedBox(height: AppSpacing.sm),
+              GooraGhostButton(key: Key(key), label: label, onPressed: () => context.push(route)),
+            ],
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Domains change while the contract runs; pending and ended companies
+/// only show them.
+bool _canEditDomains(CompanyStatus s) => s == CompanyStatus.active || s == CompanyStatus.suspended;
+
+/// The company's domains (010 US4, FR-017): add one, or remove one — whoever
+/// enrolled with that domain's email leaves the plan. The last domain stays.
+class _DomainsCard extends ConsumerStatefulWidget {
+  const _DomainsCard({required this.company});
+
+  final Company company;
+
+  @override
+  ConsumerState<_DomainsCard> createState() => _DomainsCardState();
+}
+
+class _DomainsCardState extends ConsumerState<_DomainsCard> {
+  static final _domainShape = RegExp(r'^[a-z0-9-]+(\.[a-z0-9-]+)+$');
+
+  final _field = TextEditingController();
+  bool _adding = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _field.dispose();
+    super.dispose();
+  }
+
+  void _refresh() {
+    ref.invalidate(companyAccountProvider);
+    ref.invalidate(companyRosterProvider);
+    ref.invalidate(companyLogProvider);
+  }
+
+  Future<void> _add() async {
+    final l10n = AppLocalizations.of(context);
+    final repo = ref.read(companyRepositoryProvider);
+    final d = CompanyDomains.normalize(_field.text);
+    final String? error;
+    if (!_domainShape.hasMatch(d)) {
+      error = l10n.companyDomainInvalid;
+    } else if (CompanyDomains.isPublic(d)) {
+      error = l10n.companyPublicDomain(d);
+    } else if (await repo.companyForDomain(d) != null) {
+      error = l10n.companyDomainTaken(d);
+    } else {
+      error = null;
+    }
+    if (error != null) {
+      setState(() => _error = error);
+      return;
+    }
+    await repo.addDomain(widget.company.id, d, ref.read(nowProvider)());
+    _field.clear();
+    if (mounted) {
+      setState(() {
+        _adding = false;
+        _error = null;
+      });
+    }
+    _refresh();
+  }
+
+  Future<void> _remove(String domain) async {
+    final l10n = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.companyDomainRemoveTitle(domain)),
+        content: Text(l10n.companyDomainRemoveBody(domain)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.keepIt)),
+          TextButton(
+            key: const Key('domain-remove-confirm'),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.companyRosterRemoveConfirm),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await ref.read(companyRepositoryProvider).removeDomain(widget.company.id, domain, ref.read(nowProvider)());
+    _refresh();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final domains = widget.company.domains;
+    return GooraCard(
+      key: const Key('company-domains'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.companyDomainsTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(l10n.companyDomainsNote, style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
+          const SizedBox(height: AppSpacing.xs),
+          for (final d in domains)
+            ConstrainedBox(
+              key: Key('domain-$d'),
+              constraints: const BoxConstraints(minHeight: AppSizes.minTouch),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      d,
+                      textDirection: TextDirection.ltr,
+                      textAlign: TextAlign.start,
+                      style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+                    ),
+                  ),
+                  if (domains.length > 1)
+                    IconButton(
+                      key: Key('domain-remove-$d'),
+                      tooltip: l10n.companyDomainRemove(d),
+                      constraints: const BoxConstraints(minWidth: AppSizes.minTouch, minHeight: AppSizes.minTouch),
+                      onPressed: () => _remove(d),
+                      icon: const Icon(GooraIcons.close, size: AppSizes.icon, color: AppColors.textSecondary),
+                    ),
+                ],
+              ),
+            ),
+          const SizedBox(height: AppSpacing.sm),
+          if (_adding) ...[
+            GooraTextField(
+              key: const Key('company-domain-field'),
+              controller: _field,
+              label: l10n.companyDomainLabel,
+              ltr: true,
+              keyboardType: TextInputType.url,
+              autofocus: true,
+              errorText: _error,
+              onSubmitted: (_) => _add(),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            GooraGhostButton(key: const Key('company-domain-add'), label: l10n.companyDomainAddCta, onPressed: _add),
+          ] else
+            GooraGhostButton(
+              key: const Key('company-add-domain'),
+              label: l10n.companyAddDomain,
+              onPressed: () => setState(() => _adding = true),
+            ),
         ],
       ),
     );
