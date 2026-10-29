@@ -251,6 +251,27 @@ void main() {
     });
   });
 
+  group('same-company privacy filter (spec edge case, 002/003)', () {
+    test('enrolling changes nothing the matcher reads: the filter keeps keying on the verified work-email company', () async {
+      SharedPreferences.setMockInitialValues(memberPrefs(role: Role.rider, member: false));
+      final prefs = await SharedPreferences.getInstance();
+      final clock = TestClock(_start);
+      final person = Profile(phone: testPhone, firstName: 'Omar', lastName: 'Khaled', gender: Gender.male, role: Role.rider);
+      final trust = FakeTrustRepository(prefs, person: () => person, now: clock.call);
+      final company = FakeCompanyRepository(
+        prefs,
+        person: (_) async => (name: 'Omar Khaled', workEmail: 'omar@valeo.com'),
+        now: clock.call,
+      );
+      final before = (await trust.profile()).facts;
+      await company.enroll(DailySeed.meId, now: clock.now);
+      final after = (await trust.profile()).facts;
+      expect(after.company, before.company);
+      expect(after.compound, before.compound);
+      expect(after.isWoman, before.isWoman);
+    });
+  });
+
   group('a driver-only employee enrolls (spec edge case, Q2 default)', () {
     test('counts once for the roster, the dashboard headcount and the month\'s billed seats', () async {
       // The company network has no role field: a driver-only person is one
