@@ -7,6 +7,14 @@ Join → Plan "Through my company" → consent sheet → Agree. PNGs in this fol
 
 **Result: 0 blockers, 0 should-fix, 4 nits. Quickstarts 5, 6, 7 pass for what was walked.**
 
+**Caveat — a second session was on the same emulator** (it left `walk-interleaved-2026-10-29/`, found
+only at commit time; it saw this walk as the interference too). Seen on my side: the app closed to the
+launcher once during sign-in (05), text typed into the wrong field (01, 02), and the Invoices tap opened
+an invoice detail instead of the list (37 → back → list, 38). Every result below followed a tap I made
+and was read from the screenshot straight after it; none depends on a screen I did not open. Treat the
+Demo-button results (paused → resumed) as the least certain, since the other session also had the Demo
+list open (its shot 03) and its notices match mine (its shot 01).
+
 ## Quickstart 5 — invoice and suspension
 - Demo "skip to the day the company plan pauses" → clock Tue 24/11/2026 10:00 → bell shows the notice
   "خطة شركتك متوقفة دلوقتي، رسوم جورة على المشوار رجعت عادي" (30, 31). Wallet: pay-per-trip, "8 EGP
