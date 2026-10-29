@@ -9,9 +9,9 @@ the Q1–Q3 defaults (99 EGP, minimum 20); change them here if the founder decid
    by the seed). `hr@acme.com` → Send me a code → code `123456` → "Waiting for Goora". Settings →
    Demo → Goora approves my company → home shows active, minimum 20, 99 EGP per employee.
 2. **Not on Goora (US2 AC4)** — as a rider whose work email is `@acme-not-real.com`: Plan → Through
-   my company → "Your company isn't on Goora yet" + Tell your HR; no plan. *(P4: the fake work
-   email is always `@valeo.com`, so on a device this needs Valeo ended first — Settings → Demo has
-   no "end contract" yet (P5/P6). Covered by `company_enroll_test.dart`.)*
+   my company → "Your company isn't on Goora yet" + Tell your HR; no plan. *(The fake work
+   email is always `@valeo.com`, so on a device this needs Valeo ended first — Settings → Demo →
+   "Goora ends Valeo's contract". Covered by `company_enroll_test.dart`.)*
 3. **Enroll (US2)** — as a rider with `@valeo.com` verified: Through my company → consent sheet lists
    what Valeo sees / never sees → Agree → plan card "Company · Valeo". Ride a trip (demo clock):
    fee none, "40 ج للسواق" unchanged.

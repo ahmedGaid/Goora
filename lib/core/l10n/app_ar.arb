@@ -1325,7 +1325,7 @@
   "seatBookedTitle": "الكرسي اتحجز",
   "upsellDaily": "عجبك؟ خليه مشوارك كل يوم",
   "backToToday": "ارجع للنهارده",
-  "lateBookingNote": "عدّت ٩ بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.",
+  "lateBookingNote": "عدّت 9 بالليل اليوم اللي قبله، فلو لغيت دلوقتي هتدفع نص نصيبك.",
   "topUpFirst": "اشحن {gap} ج الأول",
   "@topUpFirst": {
     "placeholders": {
@@ -1489,7 +1489,7 @@
   "noSeatsOnRoute": "مفيش كراسي فاضية على طريقك دلوقتي",
   "seatPayFailed": "الدفع ماتمّش. ومخدناش منك حاجة.",
   "seatChosen": "اختيارك",
-  "cancelFreeNote": "الإلغاء ببلاش لحد ٩ بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.",
+  "cancelFreeNote": "الإلغاء ببلاش لحد 9 بالليل اليوم اللي قبله. بعدها بتدفع نص حصتك.",
   "offerFromLabel": "طالع من",
   "offerToLabel": "رايح",
   "offerTimeLabel": "ميعاد الخروج",
@@ -2129,7 +2129,7 @@
       "amount": {"type": "String"}
     }
   },
-  "companyStatementPerson": "{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج",
+  "companyStatementPerson": "{count, plural, =1{مشوار واحد} =2{مشوارين} few{{count} مشاوير} other{{count} مشوار}} · {amount} ج للسواق",
   "@companyStatementPerson": {
     "placeholders": {
       "count": {"type": "int"},
@@ -2142,7 +2142,7 @@
       "amount": {"type": "String"}
     }
   },
-  "companyStatementTotal": "إجمالي الحصص: {amount} ج",
+  "companyStatementTotal": "إجمالي حصص السواق: {amount} ج",
   "@companyStatementTotal": {
     "placeholders": {
       "amount": {"type": "String"}
