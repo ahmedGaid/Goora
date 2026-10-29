@@ -2905,4 +2905,12 @@ class AppLocalizationsEn extends AppLocalizations {
     });
     return '$day $_temp0';
   }
+
+  @override
+  String get fawryGetCode => 'Get my Fawry code';
+
+  @override
+  String fawryHow(int amount) {
+    return 'Pay $amount EGP at any Fawry outlet with this code, then tap below.';
+  }
 }

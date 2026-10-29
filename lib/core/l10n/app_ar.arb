@@ -2157,5 +2157,12 @@
       "day": {"type": "int"},
       "month": {"type": "String"}
     }
+  },
+  "fawryGetCode": "هاتلي كود فوري",
+  "fawryHow": "ادفع {amount} ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.",
+  "@fawryHow": {
+    "placeholders": {
+      "amount": {"type": "int"}
+    }
   }
 }

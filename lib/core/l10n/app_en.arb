@@ -801,5 +801,12 @@
       "day": {"type": "int"},
       "month": {"type": "String"}
     }
+  },
+  "fawryGetCode": "Get my Fawry code",
+  "fawryHow": "Pay {amount} EGP at any Fawry outlet with this code, then tap below.",
+  "@fawryHow": {
+    "placeholders": {
+      "amount": {"type": "int"}
+    }
   }
 }

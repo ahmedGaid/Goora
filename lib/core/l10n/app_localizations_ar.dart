@@ -2950,4 +2950,12 @@ class AppLocalizationsAr extends AppLocalizations {
     });
     return '$day $_temp0';
   }
+
+  @override
+  String get fawryGetCode => 'هاتلي كود فوري';
+
+  @override
+  String fawryHow(int amount) {
+    return 'ادفع $amount ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.';
+  }
 }
