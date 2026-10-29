@@ -8,6 +8,7 @@ import 'package:goora/core/time/now_provider.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/company/data/company_seed.dart';
+import 'package:goora/features/company/data/fake_company_repository.dart';
 import 'package:goora/features/company/data/providers.dart';
 import 'package:goora/features/company/domain/company_repository.dart';
 import 'package:goora/features/company/domain/company_rules.dart';
@@ -35,6 +36,8 @@ import '../helpers/daily_fakes.dart';
 /// leave carry the fee, trips before stay fee-free, no new trial, a paused
 /// personal plan comes back with its days, one inbox notice. The leaver is
 /// still counted in the month's peak, and re-joining that month counts once.
+/// The sixth path is the spec edge case "work email moves to another company's
+/// domain" (P9, research C1).
 WallTime _at(int y, int m, int d, [int h = 0, int min = 0]) => WallTime(CalendarDate(y, m, d), Clock.hm(h, min));
 
 /// The demo user's Trust work email (`FakeTrustRepository.workEmailFor`).
@@ -47,6 +50,9 @@ void main() {
   late WallTime now;
   final enrollAt = _at(2026, 10, 20, 9);
   final leftAt = _at(2026, 10, 20, 12);
+
+  /// The demo user's work email as the profile gives it; a test moves it.
+  var email = _myEmail;
 
   String me() => c.read(dailyCommuteRepositoryProvider).meId;
   CompanyRepository company() => c.read(companyRepositoryProvider);
@@ -68,6 +74,7 @@ void main() {
 
   Future<void> start({Plan? personal}) async {
     now = enrollAt;
+    email = _myEmail;
     SharedPreferences.setMockInitialValues({
       ...memberPrefs(role: Role.rider, member: false, withPlan: false, method: PaymentMethod.cash),
       if (personal != null) FakeWalletRepository.planKey: jsonEncode(personal.toJson()),
@@ -78,6 +85,13 @@ void main() {
       sharedPreferencesProvider.overrideWithValue(prefs),
       initialSessionProvider.overrideWithValue(session),
       nowProvider.overrideWithValue(() => now),
+      companyRepositoryProvider.overrideWith(
+        (ref) => FakeCompanyRepository(
+          ref.watch(sharedPreferencesProvider),
+          person: (id) async => id == DailySeed.meId ? (name: 'Omar Khaled', workEmail: email) : null,
+          now: ref.watch(nowProvider),
+        ),
+      ),
     ]);
     addTearDown(c.dispose);
     await company().enroll(me(), now: enrollAt);
@@ -113,6 +127,17 @@ void main() {
       name: 'contract end date passed',
       // Seeded on 20 Oct 2026: approved 1 Aug 2026, contract to 1 Aug 2027.
       leave: (c, at) async => _at(2027, 8, 1),
+    ),
+    (
+      name: 'work email moved to another company domain',
+      // The move is seen when the company area next loads, so it is read at the leave moment.
+      leave: (c, at) async {
+        await c.read(companyRepositoryProvider).demoApprove(CompanySeed.orangeId, at.plusMinutes(-30));
+        email = 'omar@orange.com';
+        now = at;
+        await read();
+        return at;
+      },
     ),
     (
       name: 'Goora staff ended the contract',
