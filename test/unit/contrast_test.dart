@@ -70,6 +70,7 @@ void main() {
     ('greenText / surface (company icon on card)', AppColors.greenText, AppColors.surface),
     ('greenText / background (company icon on sheet)', AppColors.greenText, AppColors.background),
     ('white / greenText (switch thumb on its on-track)', AppColors.white, AppColors.greenText),
+    ('textSecondary / surface (switch off thumb and outline)', AppColors.textSecondary, AppColors.surface),
   ];
 
   for (final (name, fg, bg) in pairs) {
