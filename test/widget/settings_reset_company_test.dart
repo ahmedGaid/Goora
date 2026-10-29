@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/storage/preferences.dart';
+import 'package:goora/features/commute/data/providers.dart';
 import 'package:goora/features/company/data/fake_company_repository.dart';
 import 'package:goora/features/company/data/providers.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
@@ -37,5 +38,25 @@ void main() {
 
     expect(find.byType(WelcomeScreen), findsOneWidget);
     expect(prefs.getKeys().where((k) => k.startsWith(FakeCompanyRepository.keyPrefix)), isEmpty);
+  });
+
+  testWidgets('Demo corridor switch flips the active corridor; cycles through the corridors', (tester) async {
+    final c = await pumpGooraApp(
+      tester,
+      prefs: memberPrefs(role: Role.rider, locale: 'en'),
+      overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
+    );
+    final first = c.read(activeCorridorProvider).id;
+    tester.view.physicalSize = const Size(390, 2400);
+    await tester.tap(find.byKey(const Key('open-settings')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('demo-corridor')));
+    await tester.tap(find.byKey(const Key('demo-corridor')));
+    await tester.pumpAndSettle();
+    expect(c.read(activeCorridorProvider).id, isNot(first));
+    await tester.ensureVisible(find.byKey(const Key('demo-corridor')));
+    await tester.tap(find.byKey(const Key('demo-corridor')));
+    await tester.pumpAndSettle();
+    expect(c.read(activeCorridorProvider).id, first);
   });
 }

@@ -157,7 +157,10 @@ class AppLocalizationsAr extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'بيغطي حوالي $count مشاوير',
+      other: 'بيغطي حوالي $count مشوار',
+      many: 'بيغطي حوالي $count مشوار',
+      few: 'بيغطي حوالي $count مشاوير',
+      two: 'بيغطي حوالي مشوارين',
       one: 'بيغطي حوالي مشوار واحد',
       zero: 'بيدفع رسوم جورة بس، مش نصيب السواق',
     );
@@ -1499,6 +1502,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get demoRealTime => 'الوقت الحقيقي';
+
+  @override
+  String demoCorridor(String name) {
+    return 'المسار التجريبي: $name (دوس للتبديل)';
+  }
 
   @override
   String get demoReset => 'امسح بيانات التجربة';
