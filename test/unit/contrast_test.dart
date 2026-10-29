@@ -51,6 +51,12 @@ void main() {
     // card title is new: it shows warningTitle inline on the card's
     // surface, not inside the warningBg banner below it.
     ('warningTitle / surface (due title on plan card)', AppColors.warningTitle, AppColors.surface),
+    // 010: company screens. Cards and sheets read textPrimary/textBody/
+    // textSecondary on surface or background; status chips reuse the
+    // greenText/mintSurface, infoTitle/infoBg, textSecondary/divider pairs above.
+    ('textPrimary / background (company sheet title)', AppColors.textPrimary, AppColors.background),
+    ('textBody / surface (company card body)', AppColors.textBody, AppColors.surface),
+    ('greenText / background (roster name)', AppColors.greenText, AppColors.background),
   ];
 
   // Non-text parts that carry meaning (WCAG 1.4.11): ≥ 3:1 against what is next to them.
@@ -60,6 +66,10 @@ void main() {
   final graphics = <(String, Color, Color)>[
     ('forest / mapLand (live driver marker)', AppColors.forest, AppColors.mapLand),
     ('primary / mapLand (route line)', AppColors.primary, AppColors.mapLand),
+    // 010: company icon on cards and the sheet (also always beside text).
+    ('greenText / surface (company icon on card)', AppColors.greenText, AppColors.surface),
+    ('greenText / background (company icon on sheet)', AppColors.greenText, AppColors.background),
+    ('white / greenText (switch thumb on its on-track)', AppColors.white, AppColors.greenText),
   ];
 
   for (final (name, fg, bg) in pairs) {
