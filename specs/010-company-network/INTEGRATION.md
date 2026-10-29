@@ -18,7 +18,7 @@ ARB, `app_localizations*`, routes, router: auto-merged, no conflicts. `flutter g
 ## Gates on the merged tree
 - `flutter analyze`: 0 issues (the one unused-import warning seen on the first merge was fixed upstream by 35ff080).
 - `node --test "supabase/functions/_shared/*.test.ts"`: 276 pass, 0 fail.
-- `flutter test --concurrency=1`: see the result line at the bottom of this file.
+- `flutter test --concurrency=1`: 1690 tests, all passed (tree at the second merge of 010-company-network, a0c13d1; later commits are docs only).
 
 ## Checks done
 - **R11 vs ARB** (scripted): every `company*` key in `app_ar.arb` (132, same in en) is in research.md R11, and no R11 key is missing from the ARB. Four early-draft rows named keys that were later renamed (`companyConsentSees`, `companyConsentNever`, `companyPlanPaused`); they now point to `consentSeesTitle`, `consentNeverTitle`, `nCompanyPlanPaused`. 156 keys are new vs main; the only ones not in R11 are `demoCorridor` (wallet-fix branch, not 010).
