@@ -224,7 +224,7 @@ void main() {
           ).toJson()),
         },
       );
-      expect(find.text(l.planSubscribedLine('1/11')), findsOneWidget);
+      expect(find.text(l.planSubscribedLine(code == 'ar' ? '1 نوفمبر' : '1 Nov')), findsOneWidget);
       expect(find.text(l.breakdownNoFee), findsOneWidget);
     });
 
@@ -291,14 +291,76 @@ void main() {
       expect(wallet.owed, 0);
     });
 
-    testWidgets('[$code] 008: Fawry shows a reference code and "I paid at Fawry"', (tester) async {
-      await _openWallet(tester, code, extra: _trips(2));
+    // N-12: Fawry settled at once and no reference code was seen. The code now
+    // comes first; the settlement only happens on "I paid at Fawry".
+    testWidgets('[$code] 008 / N-12: Fawry shows its reference code first; nothing settles until "I paid at Fawry"',
+        (tester) async {
+      final c = await _openWallet(tester, code, extra: _trips(2));
       await tester.tap(find.descendant(of: find.byKey(const Key('fee-owed')), matching: find.text(l.payNow)));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('pay-method-fawry')));
       await tester.pumpAndSettle();
+      expect(find.byKey(const Key('fawry-code')), findsNothing, reason: 'asked for, not shown yet');
+      expect(find.text(l.fawryGetCode), findsOneWidget);
+      expect(find.text(l.fawryPaid), findsNothing, reason: 'cannot say "I paid" before there is a code');
+
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('pay-sheet-settle')), findsOneWidget, reason: 'the sheet stays open');
       expect(find.byKey(const Key('fawry-code')), findsOneWidget);
+      expect(find.textContaining(RegExp(r'7\d{4} \d{4}')), findsOneWidget, reason: 'the reference code');
+      expect(find.text(l.fawryHow(8)), findsOneWidget);
       expect(find.text(l.fawryPaid), findsOneWidget);
+      final me = c.read(dailyCommuteRepositoryProvider).meId;
+      expect((await c.read(walletRepositoryProvider).getWallet(me)).owed, 8, reason: 'nothing settled yet');
+
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('pay-sheet-settle')), findsNothing);
+      expect(find.byKey(const Key('fee-owed')), findsNothing);
+      expect((await c.read(walletRepositoryProvider).getWallet(me)).owed, 0);
+    });
+
+    testWidgets('[$code] N-12: switching away from Fawry hides the code and pays as before', (tester) async {
+      await _openWallet(tester, code, extra: _trips(2));
+      await tester.tap(find.descendant(of: find.byKey(const Key('fee-owed')), matching: find.text(l.payNow)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('pay-method-fawry')));
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('fawry-code')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('pay-method-instapay')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('fawry-code')), findsNothing);
+      expect(find.text(l.settleConfirm(8)), findsOneWidget);
+      await tester.tap(find.byKey(const Key('pay-method-fawry')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('fawry-code')), findsNothing, reason: 'a new Fawry choice asks for a new code');
+      expect(find.text(l.fawryGetCode), findsOneWidget);
+    });
+
+    testWidgets('[$code] N-12: at 1.3x text the Fawry code, its how-to line and both buttons fit', (tester) async {
+      await _openWallet(tester, code, extra: _trips(2));
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpAndSettle();
+      await tester.tap(find.descendant(of: find.byKey(const Key('fee-owed')), matching: find.text(l.payNow)));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('pay-method-fawry')));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(tester.getSize(find.byKey(const Key('pay-confirm'))).height, greaterThanOrEqualTo(44));
+      await tester.tap(find.byKey(const Key('pay-confirm')));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull, reason: 'no overflow');
+      final view = tester.view.physicalSize / tester.view.devicePixelRatio;
+      for (final key in const ['fawry-code', 'pay-confirm']) {
+        final box = tester.getRect(find.byKey(Key(key)));
+        expect(box.left, greaterThanOrEqualTo(0));
+        expect(box.right, lessThanOrEqualTo(view.width));
+        expect(box.bottom, lessThanOrEqualTo(view.height), reason: '$key is on screen');
+      }
+      expect(tester.getSize(find.byKey(const Key('pay-confirm'))).height, greaterThanOrEqualTo(44));
     });
 
     testWidgets('[$code] 008 US4: buying the bundle shows 20 trips left; the balance does not move',

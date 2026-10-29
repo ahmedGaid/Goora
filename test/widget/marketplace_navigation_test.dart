@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
 import 'package:goora/app/routes.dart';
+import 'package:goora/core/widgets/goora_bottom_nav.dart';
 import 'package:goora/core/widgets/goora_pill.dart';
 import 'package:goora/core/widgets/goora_stepper.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
@@ -67,6 +68,15 @@ Future<ProviderContainer> _pump(WidgetTester tester, Map<String, Object> prefs, 
   return c;
 }
 
+/// A once rider with nothing booked lands on Today (walk N-11); Empty seats is
+/// the button on it.
+Future<void> _openEmptySeats(WidgetTester tester) async {
+  expect(find.byType(TodayScreen), findsOneWidget);
+  await tester.tap(find.byKey(const Key('no-group-action')));
+  await tester.pumpAndSettle();
+  expect(find.byType(EmptySeatsScreen), findsOneWidget);
+}
+
 Future<void> _back(WidgetTester tester, String tooltip) async {
   await tester.tap(find.byTooltip(tooltip));
   await tester.pumpAndSettle();
@@ -77,15 +87,19 @@ void main() {
     final l = l10nFor(locale);
     final code = locale.languageCode;
 
-    testWidgets('[$code] Just one trip → Empty seats; Back → Frequency', (tester) async {
+    // N-11: it used to land on Empty seats (no tab bar) and Back went to onboarding.
+    testWidgets('[$code] Just one trip → Today (the shell) → Empty seats; Back → Today, never Frequency', (tester) async {
       await _pump(tester, _newRider(code));
       expect(find.byType(FrequencyScreen), findsOneWidget);
       await tester.tap(find.byKey(const Key('freq-once')));
       await tester.tap(find.byKey(const Key('freq-continue')));
       await tester.pumpAndSettle();
-      expect(find.byType(EmptySeatsScreen), findsOneWidget);
+      expect(find.byType(TodayScreen), findsOneWidget);
+      expect(find.byType(GooraBottomNav), findsOneWidget);
+      await _openEmptySeats(tester);
       await _back(tester, l.back);
-      expect(find.byType(FrequencyScreen), findsOneWidget);
+      expect(find.byType(TodayScreen), findsOneWidget);
+      expect(find.byType(FrequencyScreen), findsNothing);
     });
 
     testWidgets('[$code] Today "Need an extra trip?" → Empty seats; Back → Today', (tester) async {
@@ -113,7 +127,7 @@ void main() {
 
     testWidgets('[$code] Book with no method → PayMethod → back to the same seat', (tester) async {
       await _pump(tester, _newRider(code, frequency: Frequency.once));
-      expect(find.byType(EmptySeatsScreen), findsOneWidget);
+      await _openEmptySeats(tester);
       final book = find.byWidgetPredicate((w) => w.key is Key && '${w.key}'.contains('book-')).first;
       final key = (tester.widget(book).key! as ValueKey<String>).value.substring('book-'.length);
       await tester.tap(book);
@@ -163,7 +177,7 @@ void main() {
 
     testWidgets('[$code] booked upsell opens commute setup', (tester) async {
       await _pump(tester, _newRider(code, frequency: Frequency.once, method: PaymentMethod.cash));
-      expect(find.byType(EmptySeatsScreen), findsOneWidget);
+      await _openEmptySeats(tester);
       await tester.tap(find.byWidgetPredicate((w) => '${w.key}'.contains('book-')).first);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('upsell-daily')), findsOneWidget);
@@ -213,6 +227,7 @@ void main() {
     // T104 F6: the list kept the wallet prices after the rider chose cash.
     testWidgets('[$code] PayMethod cash → back on Empty seats with cash prices', (tester) async {
       await _pump(tester, _newRider(code, frequency: Frequency.once));
+      await _openEmptySeats(tester);
       await tester.tap(find.byWidgetPredicate((w) => '${w.key}'.contains('book-')).first);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('pay-cash')));
@@ -225,6 +240,7 @@ void main() {
     // T104 F8: once something is booked or live, Back is Today, not onboarding.
     testWidgets('[$code] once rider books; Back (top bar) → Today, not Frequency', (tester) async {
       await _pump(tester, _newRider(code, frequency: Frequency.once, method: PaymentMethod.cash));
+      await _openEmptySeats(tester);
       await tester.tap(find.byWidgetPredicate((w) => '${w.key}'.contains('book-')).first);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('booked-view')), findsOneWidget);
@@ -303,7 +319,7 @@ void main() {
     // 005 US3/US4 (T076, T088): Post your trip and Find riders entry points.
     testWidgets('[$code] Empty seats "Post your trip" → Post your trip; Back → Empty seats', (tester) async {
       await _pump(tester, _newRider(code, frequency: Frequency.once));
-      expect(find.byType(EmptySeatsScreen), findsOneWidget);
+      await _openEmptySeats(tester);
       await tester.ensureVisible(find.byKey(const Key('post-trip')));
       await tester.tap(find.byKey(const Key('post-trip')));
       await tester.pumpAndSettle();

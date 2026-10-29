@@ -19,8 +19,9 @@ extension WalletLabels on AppLocalizations {
         PlanType.company => planCompanySub,
       };
 
-  /// `d/m`, Western digits in both locales — no month-name infra exists yet.
-  String shortDate(CalendarDate d) => '${d.day}/${d.month}';
+  /// The day and the month's name ("3 يناير", "3 Jan"), Western digits in both
+  /// locales: "3/1" read as 1 March to many readers (walk nit N-7).
+  String shortDate(CalendarDate d) => dayAndMonth(d.day, '${d.month}');
 
   /// `d/m/yyyy` — for spans that can cross a year (a 12-month contract).
   String shortDateYear(CalendarDate d) => '${d.day}/${d.month}/${d.year}';

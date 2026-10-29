@@ -4754,6 +4754,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'أول كشف بيظهر بعد ما أول شهر يخلص.'**
   String get companyStatementNoMonths;
+
+  /// A wallet date: the day, then the month's name, so 3/1 cannot read as 1 March. month is 1-12 as text.
+  ///
+  /// In ar, this message translates to:
+  /// **'{day} {month, select, 1{يناير} 2{فبراير} 3{مارس} 4{أبريل} 5{مايو} 6{يونيو} 7{يوليو} 8{أغسطس} 9{سبتمبر} 10{أكتوبر} 11{نوفمبر} 12{ديسمبر} other{{month}}}'**
+  String dayAndMonth(int day, String month);
+
+  /// No description provided for @fawryGetCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'هاتلي كود فوري'**
+  String get fawryGetCode;
+
+  /// No description provided for @fawryHow.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع {amount} ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.'**
+  String fawryHow(int amount);
 }
 
 class _AppLocalizationsDelegate

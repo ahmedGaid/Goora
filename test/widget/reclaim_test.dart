@@ -14,6 +14,8 @@ import 'package:goora/features/daily/data/daily_seed.dart';
 import 'package:goora/features/marketplace/data/fake_marketplace_repository.dart';
 import 'package:goora/features/marketplace/data/market_seed.dart';
 import 'package:goora/features/marketplace/domain/offered_trip.dart';
+import 'package:goora/features/marketplace/presentation/empty_seats/empty_seats_controller.dart';
+import 'package:goora/features/marketplace/presentation/today/one_off_section.dart';
 import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/data/providers.dart';
@@ -65,11 +67,16 @@ Future<ProviderContainer> _booked(WidgetTester tester, TestClock clock, String l
   final c = await pumpGooraApp(tester, prefs: _prefs(locale), overrides: dailyOverrides(clock));
   tester.view.physicalSize = const Size(390, 3000);
   await c.read(walletRepositoryProvider).topUp(DailySeed.meId, method: 'card', amount: 200);
+  // A once rider starts on Today (walk N-11); Empty seats is a step on top of it.
+  c.read(routerProvider).go(Routes.emptySeats);
   await tester.pumpAndSettle();
   final book = find.byWidgetPredicate((w) => '${w.key}'.contains('book-offer:of-9'));
   await tester.ensureVisible(book);
   await tester.tap(book);
   await tester.pumpAndSettle();
+  c
+    ..invalidate(myBookingsProvider)
+    ..invalidate(oneOffTodayProvider);
   c.read(routerProvider).go(Routes.today);
   await tester.pumpAndSettle();
   return c;

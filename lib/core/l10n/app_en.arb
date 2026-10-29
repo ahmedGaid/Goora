@@ -793,5 +793,20 @@
   "companyStatementShare": "{amount} EGP to the driver",
   "companyStatementTotal": "Total driver shares: {amount} EGP",
   "companyStatementEmpty": "No employee shared their trips for this month.",
-  "companyStatementNoMonths": "The first statement appears once the first month has ended."
+  "companyStatementNoMonths": "The first statement appears once the first month has ended.",
+  "dayAndMonth": "{day} {month, select, 1{Jan} 2{Feb} 3{Mar} 4{Apr} 5{May} 6{Jun} 7{Jul} 8{Aug} 9{Sep} 10{Oct} 11{Nov} 12{Dec} other{{month}}}",
+  "@dayAndMonth": {
+    "description": "A wallet date: the day, then the month's name, so 3/1 cannot read as 1 March. month is 1-12 as text.",
+    "placeholders": {
+      "day": {"type": "int"},
+      "month": {"type": "String"}
+    }
+  },
+  "fawryGetCode": "Get my Fawry code",
+  "fawryHow": "Pay {amount} EGP at any Fawry outlet with this code, then tap below.",
+  "@fawryHow": {
+    "placeholders": {
+      "amount": {"type": "int"}
+    }
+  }
 }

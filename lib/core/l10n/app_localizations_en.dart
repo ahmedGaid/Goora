@@ -2885,4 +2885,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get companyStatementNoMonths =>
       'The first statement appears once the first month has ended.';
+
+  @override
+  String dayAndMonth(int day, String month) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'Jan',
+      '2': 'Feb',
+      '3': 'Mar',
+      '4': 'Apr',
+      '5': 'May',
+      '6': 'Jun',
+      '7': 'Jul',
+      '8': 'Aug',
+      '9': 'Sep',
+      '10': 'Oct',
+      '11': 'Nov',
+      '12': 'Dec',
+      'other': '$month',
+    });
+    return '$day $_temp0';
+  }
+
+  @override
+  String get fawryGetCode => 'Get my Fawry code';
+
+  @override
+  String fawryHow(int amount) {
+    return 'Pay $amount EGP at any Fawry outlet with this code, then tap below.';
+  }
 }

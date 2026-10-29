@@ -1,4 +1,5 @@
 import '../../../core/time/calendar_date.dart';
+import '../../commute/domain/commute_profile.dart' show Leg;
 
 /// Rider trips (`trip`, `cashTrip`) and 003's charges (`lateCancelCharge`,
 /// `tripDeduction` for a no-show, `freeCancelZero`) are derived from 003's
@@ -43,6 +44,7 @@ final class ActivityEntry {
     this.rideId,
     this.otherPersonId,
     this.shareToDriver = 0,
+    this.leg,
   });
 
   final String id;
@@ -70,6 +72,12 @@ final class ActivityEntry {
   /// rows, where the share was inside [amount].
   final int shareToDriver;
 
+  /// Going or return, for the rows that are one leg of a day (a trip, a
+  /// charge, a free cancel); null for money rows and for rows stored before
+  /// this field existed. Without it a day with both legs shows two identical
+  /// rows (walk N-10).
+  final Leg? leg;
+
   /// What went to the driver for this trip.
   int get toDriver => shareToDriver > 0 ? shareToDriver : amount - fee;
 
@@ -83,6 +91,7 @@ final class ActivityEntry {
         'rideId': rideId,
         'otherPersonId': otherPersonId,
         if (shareToDriver != 0) 'shareToDriver': shareToDriver,
+        if (leg != null) 'leg': leg!.name,
       };
 
   static ActivityEntry fromJson(Map<String, Object?> j) => ActivityEntry(
@@ -95,5 +104,6 @@ final class ActivityEntry {
         rideId: j['rideId'] as String?,
         otherPersonId: j['otherPersonId'] as String?,
         shareToDriver: (j['shareToDriver'] as int?) ?? 0,
+        leg: (j['leg'] as String?) == null ? null : Leg.values.byName(j['leg']! as String),
       );
 }

@@ -52,6 +52,22 @@ void main() {
       expect(find.text(l.actTripIncome), findsNothing, reason: 'Goora writes no driver income (007 R8)');
     });
 
+    // Same drop as walk N-5 on the rider's balance card: the unit is a smaller run.
+    testWidgets('[$code] N-5: the received-directly amount draws its unit smaller, on the same line', (tester) async {
+      await _openWallet(tester, code);
+      final amount = tester.widget<Text>(find.descendant(
+        of: find.byKey(const Key('cash-received')),
+        matching: find.byWidgetPredicate(
+          (w) => w is Text && w.textSpan != null && w.textSpan!.toPlainText() == l.egpAmount(40),
+        ),
+      ));
+      final line = amount.textSpan! as TextSpan;
+      final runs = line.children!.cast<TextSpan>();
+      expect(runs, hasLength(2));
+      expect(runs.last.style!.fontSize!, lessThan(line.style!.fontSize!));
+      expect(runs.first.text, '40');
+    });
+
     testWidgets('[$code] AC2: each passenger share is listed with its status in words', (tester) async {
       await _openWallet(tester, code);
       expect(find.byKey(const Key('payments-list')), findsOneWidget);

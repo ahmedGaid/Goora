@@ -29,8 +29,8 @@ void main() {
     expect(routeForSession(session(Role.driver, Frequency.once), hasOneOff: true), Routes.today);
   });
 
-  test('a once rider with nothing booked still lands on Empty seats', () {
-    expect(routeForSession(session(Role.rider, Frequency.once)), Routes.emptySeats);
+  test('a once rider with nothing booked lands on Today, which offers Empty seats (walk N-11)', () {
+    expect(routeForSession(session(Role.rider, Frequency.once)), Routes.today);
   });
 
   test('an every-day rider is not sent to Today by a one-off alone', () {

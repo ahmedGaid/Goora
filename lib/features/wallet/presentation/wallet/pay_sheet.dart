@@ -26,8 +26,9 @@ Future<void> showPaySheet(BuildContext context, PayPurpose purpose) => showModal
 
 /// 008 FR-003 / FR-007: one payment by mobile wallet, InstaPay, Fawry code
 /// or card — never a required card. A failure changes nothing and offers a
-/// blame-free retry. Fawry shows a reference code and "I paid at Fawry"
-/// (the fakes settle at once).
+/// blame-free retry. Fawry is two steps: "Get my Fawry code" shows the
+/// reference code and how to pay with it, and only "I paid at Fawry" settles
+/// (the fakes settle at once; walk N-12: it used to give no code first).
 class PaySheet extends ConsumerStatefulWidget {
   const PaySheet({super.key, required this.purpose});
 
@@ -44,6 +45,9 @@ class _PaySheetState extends ConsumerState<PaySheet> {
   bool _busy = false;
   bool _failed = false;
 
+  /// Fawry only: the reference code has been asked for and is on screen.
+  bool _codeShown = false;
+
   String _label(AppLocalizations l10n, String method) => switch (method) {
         'vodafone' => l10n.topUpMethodVodafone,
         'instapay' => l10n.topUpMethodInstaPay,
@@ -54,6 +58,21 @@ class _PaySheetState extends ConsumerState<PaySheet> {
 
   /// A stable-looking demo reference; a real one comes from Fawry.
   String _fawryCode(int amount) => '7${(amount * 7919 % 9000 + 1000)} ${(amount * 104729 % 9000 + 1000)}';
+
+  void _pick(String method) => setState(() {
+        _method = method;
+        _codeShown = false;
+        _failed = false;
+      });
+
+  /// The primary button: for Fawry, first reveal the code; then settle.
+  Future<void> _primary() async {
+    if (_method == 'fawry' && !_codeShown) {
+      setState(() => _codeShown = true);
+      return;
+    }
+    await _confirm();
+  }
 
   Future<void> _confirm() async {
     setState(() {
@@ -113,17 +132,27 @@ class _PaySheetState extends ConsumerState<PaySheet> {
                     key: Key('pay-method-$m'),
                     label: _label(l10n, m),
                     selected: _method == m,
-                    onTap: () => setState(() => _method = m),
+                    onTap: () => _pick(m),
                   ),
               ],
             ),
-            if (fawry) ...[
+            if (fawry && _codeShown) ...[
               const SizedBox(height: AppSpacing.md),
               GooraCard(
                 key: const Key('fawry-code'),
-                child: Text(
-                  l10n.fawryCode(_fawryCode(amount)),
-                  style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.fawryCode(_fawryCode(amount)),
+                      style: AppTypography.title.copyWith(
+                        color: AppColors.textPrimary,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(l10n.fawryHow(amount), style: AppTypography.body.copyWith(color: AppColors.textBody)),
+                  ],
                 ),
               ),
             ],
@@ -140,8 +169,10 @@ class _PaySheetState extends ConsumerState<PaySheet> {
             const SizedBox(height: AppSpacing.gap),
             GooraPrimaryButton(
               key: const Key('pay-confirm'),
-              label: fawry ? l10n.fawryPaid : l10n.settleConfirm(amount),
-              onPressed: _busy || amount == 0 ? null : _confirm,
+              label: !fawry
+                  ? l10n.settleConfirm(amount)
+                  : (_codeShown ? l10n.fawryPaid : l10n.fawryGetCode),
+              onPressed: _busy || amount == 0 ? null : _primary,
             ),
           ],
         ),
