@@ -161,9 +161,14 @@ change HR contact, end contract), like 005/007/008/009.
   Uses the app's own numbers (e.g. demo corridor 160 / 3 → 160 − 40 = 120 EGP per rider trip). No
   outside constant. One-line method copy: "what driving alone would cost minus the share paid".
 - **CO₂ avoided** = Σ rider trips × leg km × factor. Leg km per corridor: Cairo ↔ Ismailia 123 km
-  (verified in 006 research); Sheikh Zayed ↔ Smart Village **unverified** (measure at
-  implementation). Factor 0.17 kg CO₂/km for an average petrol car is **recalled, unverified** —
-  look up a citable source (e.g. an IPCC or EEA figure) before shipping and record it here.
+  (verified in 006 research); Sheikh Zayed ↔ Smart Village **13 km** per leg (P7, 2026-10-29) —
+  from one hotel listing (12.5 km, 16 min by car) and a property guide (~30 min via the 26th of July
+  Corridor); no official figure, so it stays an estimate and the app says "about". Factor **0.1645 kg
+  CO₂e/km**, average petrol car, UK government (DESNZ/DEFRA) GHG conversion factors 2024, read via
+  the Climatiq mirror and a Durham University copy of the 2023-24 sheet — **not** read from the
+  government file itself; confirm there before the lawyer/marketing copy quotes it. Egypt's fleet
+  differs, so the app labels CO₂ "estimate" and shows the method line. Constant lives in
+  `CompanyDashboardTerms.co2KgPerKm` (0.1645) and the seed leg km in `CompanySeed.legKm` (13).
 - **Parking spaces freed per workday** = employee rider trips on going legs in the month ÷ workdays
   (Sun–Thu) in the month, rounded down. Assumes each rider would otherwise drive alone — stated in
   the method line.
@@ -244,7 +249,7 @@ real invoices on before the lawyer answers). May move next to `Env` after 006 me
 | Q10 grace | 7 days, suspended 00:00 on due + 8 | `CompanyRules.graceDays` = TS `GRACE_DAYS` |
 | clarification k | 5 | `CompanyRules.suppressBelow` = TS `SUPPRESS_BELOW` |
 | R4 Goora bank details | placeholder text | `CompanyTerms.bankDetails` (**founder to supply**) |
-| R7 leg km SZ ↔ SV | 20 km, **unverified** | `CompanySeed.legKmPlaceholder` (measure before T043) |
+| R7 leg km SZ ↔ SV | 13 km, estimate (one listing, no official figure) | `CompanySeed.legKm` |
 | R10 seed money saved | 160 − 40 = 120 EGP per rider trip | `CompanySeed._savedPerTrip` |
 
 The three rule constants exist in Dart, TS and `gen_company_vectors.py` by the twin rule; the
