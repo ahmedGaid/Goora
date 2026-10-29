@@ -427,6 +427,12 @@
   "demo855": "Before 9 PM · 8:55 PM",
   "demo905": "After 9 PM · 9:05 PM",
   "demoRealTime": "Real time",
+  "demoCorridor": "Demo corridor: {name} (tap to switch)",
+  "@demoCorridor": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "demoReset": "Reset demo data",
   "noRidesSoon": "No rides in the coming days.",
   "loadingToday": "Getting your commute…",
