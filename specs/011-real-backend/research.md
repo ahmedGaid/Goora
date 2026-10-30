@@ -281,4 +281,4 @@ FR-020 → T035.
 - **Contracts** (in-memory gateway, each half fake and half Supabase, all green): onboarding 14,
   trust 18, commute 10, wallet 16, company 14, marketplace 10, daily 10.
 - **Gates (2026-10-30)**: `flutter analyze` 0 issues; `node --test` 276/276; `flutter test
-  --concurrency=1`: see the goora-status block.
+  --concurrency=1` 1944 passed.
