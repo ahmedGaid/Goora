@@ -200,3 +200,62 @@ void installCompanyServer(InMemoryGateway db, {required String wall}) {
     return null;
   };
 }
+
+/// 20261030000400: the marketplace functions the contract calls.
+void installMarketServer(InMemoryGateway db) {
+  int tripsOn(String driver, Object? date) => db
+      .table('offered_trips')
+      .where((t) =>
+          t['driver_id'] == driver && t['trip_date'] == date && (t['status'] != 'cancelled' || t['cancelled_with_riders'] == true))
+      .length;
+
+  db.rpcs['market_publish'] = (p, db) {
+    final me = db.me();
+    if (db.table('profiles').firstWhere((r) => r['id'] == me)['driver_docs'] == 'pending') {
+      throw const BackendRefused('notVerified');
+    }
+    if (tripsOn(me, p['p_date']) >= 2) throw const BackendRefused('overLimit');
+    final id = db.newId('trip');
+    db.table('offered_trips').add({
+      'id': id, 'driver_id': me, 'leg': p['p_leg'], 'origin_area': p['p_origin'],
+      'destination_area': p['p_destination'], 'trip_date': p['p_date'], 'departure': '${p['p_departure']}:00',
+      'duration_minutes': 40, 'seats': p['p_seats'], 'rider_seats': p['p_seats'], 'trip_cost': p['p_trip_cost'],
+      'contribution': p['p_contribution'], 'repeat': p['p_repeat'], 'pickup': p['p_pickup'], 'status': 'open',
+      'group_id': null, 'origin': 'published', 'cancelled_with_riders': false,
+    });
+    return id;
+  };
+  db.rpcs['market_post'] = (p, db) {
+    final me = db.me();
+    if (p['p_repeat'] == 'daily' && db.table('group_members').any((m) => m['user_id'] == me)) {
+      throw const BackendRefused('dailyNotAllowed');
+    }
+    final id = db.newId('req');
+    db.table('trip_requests').add({
+      'id': id, 'rider_id': me, 'leg': p['p_leg'], 'origin_area': p['p_origin'],
+      'destination_area': p['p_destination'], 'trip_date': p['p_date'], 'departure': '${p['p_departure']}:00',
+      'repeat': p['p_repeat'], 'pickup': p['p_pickup'], 'contribution': p['p_contribution'], 'fee': p['p_fee'],
+      'status': 'posted', 'accepted_by': null, 'trip_ref': null,
+    });
+    return id;
+  };
+  db.rpcs['market_cancel_request'] = (p, db) {
+    final me = db.me();
+    for (final r in db.table('trip_requests')) {
+      if (r['id'] == p['p_request'] && r['rider_id'] == me && r['status'] == 'posted') r['status'] = 'withdrawn';
+    }
+    return null;
+  };
+  db.rpcs['market_cancel_offer'] = (p, db) {
+    final me = db.me();
+    final t = db.table('offered_trips').where((t) => t['id'] == p['p_trip'] && t['driver_id'] == me).firstOrNull;
+    if (t == null) throw const BackendRefused('notYours');
+    final held = db.table('bookings').where((b) => b['offered_trip_id'] == t['id'] && b['status'] == 'booked').toList();
+    for (final b in held) {
+      b['status'] = 'refunded';
+    }
+    t['status'] = 'cancelled';
+    t['cancelled_with_riders'] = held.isNotEmpty;
+    return null;
+  };
+}
