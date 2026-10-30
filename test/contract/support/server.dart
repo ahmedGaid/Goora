@@ -86,3 +86,67 @@ void installCommuteServer(InMemoryGateway db) {
     return onRoute.indexWhere((r) => r['user_id'] == me) + 1;
   };
 }
+
+/// 20261030000200: the wallet functions the contract calls, with the same
+/// ledger rows (`delta` = signed balance effect) and refusals.
+void installWalletServer(InMemoryGateway db, {required String today, required String wall}) {
+  const prices = {'monthly': (149, 1), 'yearly': (1490, 12), 'company': (0, 0)};
+  List<Row> ledger() => db.table('wallet_entries');
+  int balance(String me) => ledger().where((e) => e['person_id'] == me).fold(0, (s, e) => s + (e['delta']! as int));
+  var seq = 0;
+  void post(String me, String kind, int amount, int delta, {String? id, int fee = 0, int share = 0, String? ride}) {
+    final key = id ?? '$kind:${db.newId()}';
+    if (ledger().any((e) => e['person_id'] == me && e['id'] == key)) return;
+    ledger().add({
+      'person_id': me, 'id': key, 'kind': kind, 'amount': amount, 'delta': delta, 'fee': fee,
+      'share_to_driver': share, 'ride_id': ride, 'leg': null, 'entry_date': today, 'created_at': ++seq,
+    });
+  }
+
+  db.rpcs['wallet_top_up'] = (p, db) {
+    final amount = p['p_amount']! as int;
+    if (amount <= 0) throw const BackendRefused('amount');
+    post(db.me(), 'topUp', amount, amount);
+    return null;
+  };
+  db.rpcs['wallet_withdraw'] = (p, db) {
+    final amount = p['p_amount']! as int;
+    if (balance(db.me()) < amount) throw const BackendRefused('insufficient');
+    post(db.me(), 'withdrawal', amount, -amount);
+    return null;
+  };
+  db.rpcs['wallet_subscribe'] = (p, db) {
+    final me = db.me();
+    final type = p['p_type']! as String;
+    final (price, _) = prices[type]!;
+    if (type != 'company' && balance(me) < price) return 'needsTopUp';
+    if (price > 0) post(me, 'subscription', price, -price);
+    db.table('plans').removeWhere((r) => r['person_id'] == me);
+    db.table('plans').add({
+      'person_id': me, 'type': type, 'status': 'active', 'price': price, 'start_wall': wall,
+      'until_date': type == 'company' ? null : today,
+    });
+    return 'subscribed';
+  };
+  db.rpcs['wallet_settle'] = (p, db) {
+    final owed = -balance(db.me());
+    if (owed > 0) post(db.me(), 'settlement', owed, owed);
+    return owed > 0 ? owed : 0;
+  };
+  db.rpcs['wallet_seat_debit'] = (p, db) {
+    final fee = p['p_fee']! as int;
+    post(db.me(), 'seatBooked', fee, -fee,
+        id: 'seat:${p['p_booking']}', fee: fee, share: p['p_share']! as int, ride: p['p_ride'] as String?);
+    return null;
+  };
+  db.rpcs['wallet_seat_refund'] = (p, db) {
+    final amount = p['p_amount']! as int;
+    if (amount == 0) return null;
+    post(db.me(), 'seatRefund', amount, amount, id: 'refund:${p['p_booking']}', ride: p['p_ride'] as String?);
+    return null;
+  };
+  db.rpcs['instapay_handle_of'] = (p, db) =>
+      db.table('payment_settings').where((r) => r['person_id'] == p['p_driver']).firstOrNull?['instapay_handle'];
+  db.rpcs['payment_method_of'] = (p, db) =>
+      db.table('payment_settings').where((r) => r['person_id'] == p['p_rider']).firstOrNull?['method'];
+}
