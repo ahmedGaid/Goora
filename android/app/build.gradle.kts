@@ -1,7 +1,24 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Release signing. The keystore and passwords never live in the repo: key.properties is read from
+// $GOORA_KEY_PROPERTIES if set (e.g. D:/Secrets/Goora/key.properties), else android/key.properties
+// (gitignored). With neither present the release build is signed with the debug key, so
+// `flutter build apk --release` still works for anyone. See Docs/release/SIGNING.md.
+val keyPropertiesPath: String? = System.getenv("GOORA_KEY_PROPERTIES")?.takeIf { it.isNotBlank() }
+val keyPropertiesFile: File = keyPropertiesPath?.let { File(it) } ?: rootProject.file("key.properties")
+val hasReleaseKey = keyPropertiesFile.exists()
+if (keyPropertiesPath != null && !hasReleaseKey) {
+    throw GradleException("GOORA_KEY_PROPERTIES points at a file that does not exist: $keyPropertiesPath")
+}
+val keyProperties = Properties()
+if (hasReleaseKey) {
+    keyPropertiesFile.inputStream().use { keyProperties.load(it) }
 }
 
 android {
@@ -15,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // Final store id (Docs/release/DECISIONS.md D5). It cannot change after the first upload.
         applicationId = "app.goora.goora"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
@@ -25,11 +42,29 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (hasReleaseKey) {
+            create("release") {
+                // A half-filled key.properties fails loudly instead of silently debug-signing a store build.
+                fun required(name: String): String =
+                    keyProperties.getProperty(name)?.takeIf { it.isNotBlank() }
+                        ?: throw GradleException("$name is missing in ${keyPropertiesFile.path}")
+                keyAlias = required("keyAlias")
+                keyPassword = required("keyPassword")
+                storeFile = rootProject.file(required("storeFile"))
+                storePassword = required("storePassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (hasReleaseKey) {
+                signingConfigs.getByName("release")
+            } else {
+                // No key.properties: debug-signed. Fine for local runs, rejected by the Play Store.
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
