@@ -1,0 +1,45 @@
+name: gates
+
+# The three gates from CLAUDE.md. No secrets are needed: the app runs on the fake OTP and
+# the tests never touch a backend.
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: gates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  flutter:
+    # Windows on purpose: the golden PNGs in test/golden/goldens were rendered on Windows and are
+    # compared pixel for pixel, so a Linux runner would fail them on text anti-aliasing alone.
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      # 3.44.4 = the revision pinned in .metadata (ad70ec46…); satisfies pubspec sdk ^3.12.2.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.4
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test --concurrency=1
+
+  supabase-shared:
+    # The TypeScript twin of the matching/pricing rules. Node 24 runs .ts directly, nothing to install.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node --test "supabase/functions/_shared/*.test.ts"
