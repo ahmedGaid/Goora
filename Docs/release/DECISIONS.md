@@ -40,3 +40,60 @@ Reverse any of them by editing the file named in the entry.
   adopt it later: add `android/app/src/main/res/values-ar/strings.xml` (`app_name`), point the
   manifest label at `@string/app_name`, and add `ios/Runner/ar.lproj/InfoPlist.strings`.
 - **Left alone:** iOS `CFBundleName = goora` (lower case, not user-visible).
+
+## D4 — `android.permission.INTERNET` added to the main manifest
+- **Choice:** one `<uses-permission>` line in `android/app/src/main/AndroidManifest.xml`.
+- **Why:** Flutter adds INTERNET only to the debug and profile manifests. A release build without
+  it cannot reach Supabase or the map tile host, and nobody notices until the first store build.
+  The conductor's brief said to add it once Lane M asked; the need is certain (Supabase + tiles),
+  and the lane owns the manifest, so it is in now.
+- **Rejected:** waiting for Lane M's word. Costs nothing to revert, expensive to forget.
+- **Not added:** any location/camera permission. Nothing in the app uses them today
+  (pickup points are chosen on a map, not read from the device).
+
+## D5 — Application id stays `app.goora.goora`
+- **Choice:** unchanged, on Android (`applicationId`, `namespace`) and iOS (`PRODUCT_BUNDLE_IDENTIFIER`).
+- **Why:** `goora-stack` documents `app.goora.goora` as the installed package, and Android and iOS
+  already agree. It is permanent once uploaded, so the founder confirms it in
+  [CHECKLIST.md](CHECKLIST.md) before the first upload.
+- **Rejected:** a different reverse-domain id (for example from a real company domain). No domain
+  is registered yet; guessing one would be worse than the current id.
+
+## D6 — Signing: debug fallback, but fail loudly on a bad key file
+- **Choice:** `build.gradle.kts` reads `$GOORA_KEY_PROPERTIES`, else `android/key.properties`, else
+  falls back to the debug key. A set-but-missing env path, or a key file with an empty field,
+  stops the build with a message naming the problem.
+- **Why:** the brief asks for the fallback so `flutter build apk --release` works for anyone.
+  The loud failure covers the one dangerous case: a founder who thinks they are building a signed
+  store bundle but silently get a debug-signed one.
+- **Rejected:** always falling back when the file is unreadable (silent debug-signed store build);
+  and a second build flavor for "store" (more moving parts than one `if`).
+- **Checked with** `./gradlew :app:signingReport` using a throwaway keystore kept outside the repo
+  (deleted afterwards): no key → `Config: debug`; env key → `Config: release`; default
+  `android/key.properties` → `Config: release`; half-filled file → build fails; bad env path →
+  build fails.
+
+## D7 — CI: Flutter gates on Windows, Node gate on Linux
+- **Choice:** `.github/workflows/gates.yml` has two jobs. `flutter` runs `pub get`, `analyze` and
+  `test --concurrency=1` on `windows-latest`. `supabase-shared` runs the Node tests on
+  `ubuntu-latest` (Node 24, nothing to install).
+- **Why:** the 48 golden PNGs under `test/golden/goldens` were rendered on Windows
+  (`goora-stack`) and are compared exactly. On Linux, font anti-aliasing alone would fail them.
+  `test/**` is off limits for this lane, so tagging goldens to skip on Linux was not possible.
+- **Flutter pin:** `3.44.4`, the stable revision recorded in `.metadata` (`ad70ec46…`); satisfies
+  `sdk: ^3.12.2`. No `.fvmrc` exists.
+- **Not yet proven:** the workflow has never run on GitHub (no push of `main` from this lane).
+  The first run is the real test of "Windows runner reproduces Windows goldens". If it fails on
+  pixel noise only, the fallback is to skip `test/golden` in CI and keep it a local gate.
+- **Rejected:** all-Linux CI with goldens skipped (loses a gate that currently works); a matrix of
+  both OSes (double the minutes, no extra signal).
+
+## D8 — Android build memory on the company PC (environment, not a code change)
+- Release builds failed on resource exhaustion while another lane's emulator (~7 GB virtual),
+  WSL (~6 GB) and Oracle held the machine's commit limit (Windows logged a "low virtual memory
+  condition"): twice the Gradle JVM died with `insufficient memory ... malloc failed`, once the Dart
+  VM died with `Could not start thread`. Nothing in the repo caused it and no other lane's process
+  was touched. The signing logic was proven with `signingReport` instead (D6).
+- A release build on a loaded machine may need a smaller Gradle heap. The repo's
+  `android/gradle.properties` is left as it was (`-Xmx8G`): lowering it permanently would slow
+  every other machine. See `Docs/release/CHECKLIST.md` § Local build.
