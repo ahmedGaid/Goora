@@ -2958,4 +2958,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String fawryHow(int amount) {
     return 'ادفع $amount ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.';
   }
+
+  @override
+  String get mapCardTitle => 'مكان التجمع';
+
+  @override
+  String get mapSketchNote => 'رسم تقريبي، مش بالمقاس';
+
+  @override
+  String get mapOpen => 'افتح الخريطة';
+
+  @override
+  String get mapClose => 'اقفل الخريطة';
+
+  @override
+  String get mapAttribution => '© مساهمو OpenStreetMap';
+
+  @override
+  String mapPointsAria(String points) {
+    return 'خريطة مكان التجمع: $points';
+  }
 }

@@ -2913,4 +2913,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String fawryHow(int amount) {
     return 'Pay $amount EGP at any Fawry outlet with this code, then tap below.';
   }
+
+  @override
+  String get mapCardTitle => 'Meeting point';
+
+  @override
+  String get mapSketchNote => 'Sketch, not to scale';
+
+  @override
+  String get mapOpen => 'Open the map';
+
+  @override
+  String get mapClose => 'Close the map';
+
+  @override
+  String get mapAttribution => '© OpenStreetMap contributors';
+
+  @override
+  String mapPointsAria(String points) {
+    return 'Meeting point map: $points';
+  }
 }

@@ -31,4 +31,8 @@ abstract final class AppSizes {
   static const progressBarHeight = 8.0;
   static const liveMarker = 18.0;
   static const statusIcon = 14.0;
+  // 012 pickup-point map.
+  static const mapPin = 28.0;
+  static const mapPinRing = 2.0;
+  static const pickupMapSheetFraction = 0.72;
 }

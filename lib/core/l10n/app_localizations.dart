@@ -4772,6 +4772,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ادفع {amount} ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.'**
   String fawryHow(int amount);
+
+  /// 012: title of the pickup-point map card (match result + Today).
+  ///
+  /// In ar, this message translates to:
+  /// **'مكان التجمع'**
+  String get mapCardTitle;
+
+  /// 012: caption under the drawn map when no map tiles are configured.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسم تقريبي، مش بالمقاس'**
+  String get mapSketchNote;
+
+  /// 012: action/hint that opens the bigger map.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح الخريطة'**
+  String get mapOpen;
+
+  /// 012: closes the bigger map sheet.
+  ///
+  /// In ar, this message translates to:
+  /// **'اقفل الخريطة'**
+  String get mapClose;
+
+  /// 012: OSM licence credit, shown wherever map tiles render.
+  ///
+  /// In ar, this message translates to:
+  /// **'© مساهمو OpenStreetMap'**
+  String get mapAttribution;
+
+  /// 012: spoken label of the map card; points = the legend lines joined.
+  ///
+  /// In ar, this message translates to:
+  /// **'خريطة مكان التجمع: {points}'**
+  String mapPointsAria(String points);
 }
 
 class _AppLocalizationsDelegate

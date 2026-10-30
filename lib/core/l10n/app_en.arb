@@ -808,5 +808,16 @@
     "placeholders": {
       "amount": {"type": "int"}
     }
+  },
+  "mapCardTitle": "Meeting point",
+  "mapSketchNote": "Sketch, not to scale",
+  "mapOpen": "Open the map",
+  "mapClose": "Close the map",
+  "mapAttribution": "© OpenStreetMap contributors",
+  "mapPointsAria": "Meeting point map: {points}",
+  "@mapPointsAria": {
+    "placeholders": {
+      "points": {"type": "String"}
+    }
   }
 }
