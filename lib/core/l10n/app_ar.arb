@@ -2175,5 +2175,22 @@
       "year": {"type": "int"}
     }
   },
-  "companyInvoiceBankPlaceholder": "بيانات الحساب البنكي هتوصلك قريب"
+  "companyInvoiceBankPlaceholder": "بيانات الحساب البنكي هتوصلك قريب",
+  "mapCardTitle": "مكان التجمع",
+  "@mapCardTitle": {"description": "012: title of the pickup-point map card (match result + Today)."},
+  "mapSketchNote": "رسم تقريبي، مش بالمقاس",
+  "@mapSketchNote": {"description": "012: caption under the drawn map when no map tiles are configured."},
+  "mapOpen": "افتح الخريطة",
+  "@mapOpen": {"description": "012: action/hint that opens the bigger map."},
+  "mapClose": "اقفل الخريطة",
+  "@mapClose": {"description": "012: closes the bigger map sheet."},
+  "mapAttribution": "© مساهمو OpenStreetMap",
+  "@mapAttribution": {"description": "012: OSM licence credit, shown wherever map tiles render."},
+  "mapPointsAria": "خريطة مكان التجمع: {points}",
+  "@mapPointsAria": {
+    "description": "012: spoken label of the map card; points = the legend lines joined.",
+    "placeholders": {
+      "points": {"type": "String"}
+    }
+  }
 }

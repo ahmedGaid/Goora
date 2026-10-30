@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/routes.dart';
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/map/pickup_pin.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -12,6 +13,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/goora_avatar.dart';
 import '../../../core/widgets/goora_card.dart';
 import '../../../core/widgets/goora_icons.dart';
+import '../../../core/widgets/goora_pickup_map.dart';
 import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../daily/data/providers.dart';
@@ -182,6 +184,17 @@ class _MatchResultScreenState extends ConsumerState<MatchResultScreen> {
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: AppSpacing.gap),
+          // 012: the same two public points on a map (never the home).
+          GooraPickupMap(
+            key: const Key('match-map'),
+            pins: [
+              PickupPin.pickup(pickup,
+                  number: 1, title: l10n.tlPickup(l10n.time(pickup.time)), place: l10n.stopName(pickup.name)),
+              PickupPin.arrival(g.workStop,
+                  title: l10n.tlArrival(l10n.time(g.arrivalTime)), place: l10n.stopName(g.workStop.name)),
+            ],
           ),
           if (outcome.result.returnMatch != null) ...[
             const SizedBox(height: AppSpacing.md),

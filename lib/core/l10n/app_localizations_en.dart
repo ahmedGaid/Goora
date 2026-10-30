@@ -2941,4 +2941,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get companyInvoiceBankPlaceholder =>
       'Goora\'s bank details will reach you soon';
+
+  @override
+  String get mapCardTitle => 'Meeting point';
+
+  @override
+  String get mapSketchNote => 'Sketch, not to scale';
+
+  @override
+  String get mapOpen => 'Open the map';
+
+  @override
+  String get mapClose => 'Close the map';
+
+  @override
+  String get mapAttribution => '© OpenStreetMap contributors';
+
+  @override
+  String mapPointsAria(String points) {
+    return 'Meeting point map: $points';
+  }
 }

@@ -819,5 +819,16 @@
       "year": {"type": "int"}
     }
   },
-  "companyInvoiceBankPlaceholder": "Goora's bank details will reach you soon"
+  "companyInvoiceBankPlaceholder": "Goora's bank details will reach you soon",
+  "mapCardTitle": "Meeting point",
+  "mapSketchNote": "Sketch, not to scale",
+  "mapOpen": "Open the map",
+  "mapClose": "Close the map",
+  "mapAttribution": "© OpenStreetMap contributors",
+  "mapPointsAria": "Meeting point map: {points}",
+  "@mapPointsAria": {
+    "placeholders": {
+      "points": {"type": "String"}
+    }
+  }
 }

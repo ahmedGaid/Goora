@@ -2986,4 +2986,24 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get companyInvoiceBankPlaceholder =>
       'بيانات الحساب البنكي هتوصلك قريب';
+
+  @override
+  String get mapCardTitle => 'مكان التجمع';
+
+  @override
+  String get mapSketchNote => 'رسم تقريبي، مش بالمقاس';
+
+  @override
+  String get mapOpen => 'افتح الخريطة';
+
+  @override
+  String get mapClose => 'اقفل الخريطة';
+
+  @override
+  String get mapAttribution => '© مساهمو OpenStreetMap';
+
+  @override
+  String mapPointsAria(String points) {
+    return 'خريطة مكان التجمع: $points';
+  }
 }

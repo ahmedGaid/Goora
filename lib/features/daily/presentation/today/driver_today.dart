@@ -69,8 +69,11 @@ class DriverToday extends StatelessWidget {
         const SizedBox(height: AppSpacing.gap),
         if (drive == null)
           GooraCard(child: Text(l10n.notDrivingSoon, style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary)))
-        else
+        else ...[
           DriveHero(view: view, day: drive),
+          const SizedBox(height: AppSpacing.gap),
+          _DriveMeetingPoints(view: view, day: drive),
+        ],
         if (checkIn != null) ...[
           const SizedBox(height: AppSpacing.gap),
           PickupCheckIn(view: view, leg: checkIn),
@@ -216,6 +219,26 @@ class DriveHero extends ConsumerWidget {
       ),
     );
     if (ok == true) await ref.read(todayControllerProvider.notifier).cantDrive(day);
+  }
+}
+
+/// 012: the stops of the trip I drive, in driving order, then the arrival;
+/// on a return-only day, the work meeting point (the return pickup). Stop
+/// names only — no rider names on the map.
+class _DriveMeetingPoints extends StatelessWidget {
+  const _DriveMeetingPoints({required this.view, required this.day});
+
+  final TodayView view;
+  final DayPlan day;
+
+  @override
+  Widget build(BuildContext context) {
+    final g = view.group!;
+    final going = day.driving.where((l) => l.leg == Leg.going).firstOrNull;
+    if (going != null) {
+      return MeetingPointCard(pickups: going.ride!.stops, arrival: g.workStop, arrivalAt: going.end.time);
+    }
+    return MeetingPointCard(pickups: [g.workStop]);
   }
 }
 
