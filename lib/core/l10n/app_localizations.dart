@@ -4772,6 +4772,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ادفع {amount} ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.'**
   String fawryHow(int amount);
+
+  /// No description provided for @changePlanCompanyNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة.'**
+  String get changePlanCompanyNote;
 }
 
 class _AppLocalizationsDelegate

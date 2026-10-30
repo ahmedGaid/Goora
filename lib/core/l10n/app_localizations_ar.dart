@@ -2958,4 +2958,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String fawryHow(int amount) {
     return 'ادفع $amount ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.';
   }
+
+  @override
+  String get changePlanCompanyNote =>
+      'هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة.';
 }

@@ -808,5 +808,6 @@
     "placeholders": {
       "amount": {"type": "int"}
     }
-  }
+  },
+  "changePlanCompanyNote": "We check your work email first, then you agree to what your company sees. Your own plan pauses and comes back if you leave the company."
 }

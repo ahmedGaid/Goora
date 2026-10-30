@@ -2913,4 +2913,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String fawryHow(int amount) {
     return 'Pay $amount EGP at any Fawry outlet with this code, then tap below.';
   }
+
+  @override
+  String get changePlanCompanyNote =>
+      'We check your work email first, then you agree to what your company sees. Your own plan pauses and comes back if you leave the company.';
 }

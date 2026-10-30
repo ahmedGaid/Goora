@@ -183,8 +183,11 @@ class WalletController extends _$WalletController {
     return result;
   }
 
-  /// Takes effect at the next billing date, no pro-rating.
+  /// Takes effect at the next billing date, no pro-rating. Never the company
+  /// plan: that starts only through [CompanyEnrollment.enroll], after consent
+  /// (walk 6 F-W1).
   Future<void> changePlan(PlanType type) async {
+    assert(type != PlanType.company, 'the company plan starts through CompanyEnrollment.enroll');
     final meId = ref.read(dailyCommuteRepositoryProvider).meId;
     await ref.read(walletRepositoryProvider).changePlan(meId, type);
     await _refresh();
