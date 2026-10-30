@@ -46,8 +46,13 @@ final class SupabaseCompanyRepository implements CompanyRepository {
       if (CompanyDomains.isPublic(d)) return PublicDomain(d);
     }
     try {
-      final id = await _db.rpc('company_register',
-          {'p_name': name.trim(), 'p_domains': normalized, 'p_hr_work_email': hrWorkEmail.trim()}) as String;
+      final id =
+          await _db.rpc('company_register', {
+                'p_name': name.trim(),
+                'p_domains': normalized,
+                'p_hr_work_email': hrWorkEmail.trim(),
+              })
+              as String;
       return Registered((await _company(id))!);
     } on BackendRefused catch (e) {
       if (e.reason == 'domainTaken') return DomainTaken(e.detail ?? normalized.first);
@@ -65,18 +70,18 @@ final class SupabaseCompanyRepository implements CompanyRepository {
   }
 
   static Company _fromRow(Row r, List<String> domains) => Company(
-        id: r['id']! as String,
-        name: r['name']! as String,
-        domains: domains,
-        status: CompanyStatus.values.byName(r['status']! as String),
-        hrContactId: r['hr_contact_id'] as String?,
-        minimumSeats: (r['minimum_seats'] as int?) ?? CompanyTerms.minimumSeats,
-        pricePerSeat: (r['price_per_seat'] as int?) ?? CompanyTerms.pricePerSeat,
-        contractStart: _date(r['contract_start']),
-        contractEnd: _date(r['contract_end']),
-        approvedAt: _time(r['approved_at']),
-        endedAt: _time(r['ended_at']),
-      );
+    id: r['id']! as String,
+    name: r['name']! as String,
+    domains: domains,
+    status: CompanyStatus.values.byName(r['status']! as String),
+    hrContactId: r['hr_contact_id'] as String?,
+    minimumSeats: (r['minimum_seats'] as int?) ?? CompanyTerms.minimumSeats,
+    pricePerSeat: (r['price_per_seat'] as int?) ?? CompanyTerms.pricePerSeat,
+    contractStart: _date(r['contract_start']),
+    contractEnd: _date(r['contract_end']),
+    approvedAt: _time(r['approved_at']),
+    endedAt: _time(r['ended_at']),
+  );
 
   static CalendarDate? _date(Object? s) => s == null ? null : CalendarDate.parse(s as String);
   static WallTime? _time(Object? s) => s == null ? null : WallTime.fromJson(s as String);
@@ -117,18 +122,22 @@ final class SupabaseCompanyRepository implements CompanyRepository {
   // US2 — enrollment ---------------------------------------------------------------
 
   Future<List<Enrollment>> _mine(String personId) async => [
-        for (final r in await _db.select('enrollments',
-            where: [Filter.eq('person_id', personId)], orderBy: 'enrolled_at', descending: true))
-          Enrollment(
-            personId: r['person_id']! as String,
-            companyId: r['company_id']! as String,
-            name: r['name']! as String,
-            workEmail: r['work_email']! as String,
-            enrolledAt: WallTime.fromJson(r['enrolled_at']! as String),
-            leftAt: _time(r['left_at']),
-            leftWhy: r['left_why'] == null ? null : LeftWhy.values.byName(r['left_why']! as String),
-          ),
-      ];
+    for (final r in await _db.select(
+      'enrollments',
+      where: [Filter.eq('person_id', personId)],
+      orderBy: 'enrolled_at',
+      descending: true,
+    ))
+      Enrollment(
+        personId: r['person_id']! as String,
+        companyId: r['company_id']! as String,
+        name: r['name']! as String,
+        workEmail: r['work_email']! as String,
+        enrolledAt: WallTime.fromJson(r['enrolled_at']! as String),
+        leftAt: _time(r['left_at']),
+        leftWhy: r['left_why'] == null ? null : LeftWhy.values.byName(r['left_why']! as String),
+      ),
+  ];
 
   Future<String> _companyNameFor(String workEmail) async {
     final domain = CompanyDomains.of(workEmail);
@@ -188,23 +197,27 @@ final class SupabaseCompanyRepository implements CompanyRepository {
 
   @override
   Future<List<Invoice>> invoices(String companyId, WallTime now) async => [
-        for (final r in await _db.select('invoices',
-            where: [Filter.eq('company_id', companyId)], orderBy: 'month', descending: true))
-          Invoice(
-            id: r['id']! as String,
-            companyId: r['company_id']! as String,
-            month: r['month']! as String,
-            peakEnrolled: r['peak_enrolled']! as int,
-            billedSeats: r['billed_seats']! as int,
-            pricePerSeat: r['price_per_seat']! as int,
-            total: r['total']! as int,
-            issuedOn: CalendarDate.parse(r['issued_on']! as String),
-            dueOn: CalendarDate.parse(r['due_on']! as String),
-            reference: r['reference']! as String,
-            paidAt: _time(r['paid_at']),
-            bankRef: r['bank_ref'] as String?,
-          ),
-      ];
+    for (final r in await _db.select(
+      'invoices',
+      where: [Filter.eq('company_id', companyId)],
+      orderBy: 'month',
+      descending: true,
+    ))
+      Invoice(
+        id: r['id']! as String,
+        companyId: r['company_id']! as String,
+        month: r['month']! as String,
+        peakEnrolled: r['peak_enrolled']! as int,
+        billedSeats: r['billed_seats']! as int,
+        pricePerSeat: r['price_per_seat']! as int,
+        total: r['total']! as int,
+        issuedOn: CalendarDate.parse(r['issued_on']! as String),
+        dueOn: CalendarDate.parse(r['due_on']! as String),
+        reference: r['reference']! as String,
+        paidAt: _time(r['paid_at']),
+        bankRef: r['bank_ref'] as String?,
+      ),
+  ];
 
   // US4 — roster and log (HR) ----------------------------------------------------------
 
@@ -221,11 +234,10 @@ final class SupabaseCompanyRepository implements CompanyRepository {
           leftAt: _time(r['left_at']),
         ),
     ]..removeWhere((r) => r.leftAt != null && r.leftAt!.date.monthKey != month);
-    return rows
-      ..sort((a, b) {
-        final byDate = a.enrolledAt.compareTo(b.enrolledAt);
-        return byDate != 0 ? byDate : a.name.compareTo(b.name);
-      });
+    return rows..sort((a, b) {
+      final byDate = a.enrolledAt.compareTo(b.enrolledAt);
+      return byDate != 0 ? byDate : a.name.compareTo(b.name);
+    });
   }
 
   Future<void> _hr(String companyId, String function, Row params) async {
@@ -257,8 +269,12 @@ final class SupabaseCompanyRepository implements CompanyRepository {
   Future<List<LogEntry>> log(String companyId) async {
     final known = {for (final k in LogKind.values) k.name};
     return [
-      for (final r in await _db.select('company_log',
-          where: [Filter.eq('company_id', companyId)], orderBy: 'created_at', descending: true))
+      for (final r in await _db.select(
+        'company_log',
+        where: [Filter.eq('company_id', companyId)],
+        orderBy: 'created_at',
+        descending: true,
+      ))
         if (known.contains(r['kind']))
           LogEntry(
             companyId: companyId,

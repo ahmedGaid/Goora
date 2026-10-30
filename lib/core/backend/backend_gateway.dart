@@ -79,8 +79,13 @@ abstract interface class BackendGateway {
 
   BackendAuth get auth;
 
-  Future<List<Row>> select(String table,
-      {List<Filter> where = const [], String? orderBy, bool descending = false, int? limit});
+  Future<List<Row>> select(
+    String table, {
+    List<Filter> where = const [],
+    String? orderBy,
+    bool descending = false,
+    int? limit,
+  });
 
   Future<List<Row>> insert(String table, List<Row> rows);
 

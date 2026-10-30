@@ -44,9 +44,17 @@ final class InMemoryGateway implements BackendGateway {
   }
 
   @override
-  Future<List<Row>> select(String table,
-      {List<Filter> where = const [], String? orderBy, bool descending = false, int? limit}) async {
-    var rows = [for (final r in this.table(table)) if (where.every((f) => f.matches(r))) Map<String, Object?>.of(r)];
+  Future<List<Row>> select(
+    String table, {
+    List<Filter> where = const [],
+    String? orderBy,
+    bool descending = false,
+    int? limit,
+  }) async {
+    var rows = [
+      for (final r in this.table(table))
+        if (where.every((f) => f.matches(r))) Map<String, Object?>.of(r),
+    ];
     if (orderBy != null) {
       rows.sort((a, b) {
         final c = _cmp(a[orderBy], b[orderBy]);

@@ -31,8 +31,10 @@ void trustContract(String label, TrustHarness make) {
 
     test('T2 women-only is refused for a man and nothing changes', () async {
       final repo = await make(omar);
-      await expectLater(repo.setPrivacy(PrivacyPreference.womenOnly),
-          throwsA(isA<TrustRefused>().having((r) => r.reason, 'reason', TrustRefusal.privacyUnavailable)));
+      await expectLater(
+        repo.setPrivacy(PrivacyPreference.womenOnly),
+        throwsA(isA<TrustRefused>().having((r) => r.reason, 'reason', TrustRefusal.privacyUnavailable)),
+      );
       expect((await repo.profile()).privacy, PrivacyPreference.verifiedUsers);
     });
 
@@ -49,8 +51,10 @@ void trustContract(String label, TrustHarness make) {
       await repo.addContact('Baba', num('01022222222'));
       await repo.addContact('Sara', num('01033333333'));
       expect((await repo.contacts()).map((c) => c.name), ['Mama', 'Baba', 'Sara']);
-      await expectLater(repo.addContact('Four', num('01044444444')),
-          throwsA(isA<TrustRefused>().having((r) => r.reason, 'reason', TrustRefusal.contactsFull)));
+      await expectLater(
+        repo.addContact('Four', num('01044444444')),
+        throwsA(isA<TrustRefused>().having((r) => r.reason, 'reason', TrustRefusal.contactsFull)),
+      );
       expect(await repo.contacts(), hasLength(3));
     });
 

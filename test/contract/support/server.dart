@@ -11,8 +11,13 @@ import 'in_memory_gateway.dart';
 /// cases; the SQL itself is checked by supabase/tests/*.test.sql.
 
 /// A signed-in person with their `profiles` row, as after onboarding.
-Future<String> signUpPerson(InMemoryGateway db, Profile person,
-    {String riderIdStatus = 'verified', String? id, String? workEmail}) async {
+Future<String> signUpPerson(
+  InMemoryGateway db,
+  Profile person, {
+  String riderIdStatus = 'verified',
+  String? id,
+  String? workEmail,
+}) async {
   final uid = id ?? db.newId('user');
   db.table('profiles').removeWhere((r) => r['id'] == uid);
   await db.insert('profiles', [
@@ -28,7 +33,7 @@ Future<String> signUpPerson(InMemoryGateway db, Profile person,
       'compound': null,
       'work_email': workEmail,
       'work_email_verified': workEmail != null,
-    }
+    },
   ]);
   db.userId = uid;
   return uid;
@@ -63,15 +68,20 @@ void seedGroup(InMemoryGateway db, CommuteGroup g) {
 /// 20261030000100: groups_for, join_group, join_waitlist.
 void installCommuteServer(InMemoryGateway db) {
   db.rpcs['groups_for'] = (p, db) => [
-        for (final g in db.table('groups'))
-          if (g['origin_area'] == p['p_origin'] && g['destination_area'] == p['p_destination']) g['card'],
-      ];
+    for (final g in db.table('groups'))
+      if (g['origin_area'] == p['p_origin'] && g['destination_area'] == p['p_destination']) g['card'],
+  ];
   db.rpcs['join_group'] = (p, db) {
     final me = db.me();
     if (!db.table('groups').any((g) => g['id'] == p['p_group'])) throw const BackendRefused('noSuchGroup');
     db.table('group_members').removeWhere((m) => m['user_id'] == me && m['group_id'] != p['p_group']);
     if (!db.table('group_members').any((m) => m['user_id'] == me)) {
-      db.table('group_members').add({'group_id': p['p_group'], 'user_id': me, 'role': p['p_role'], 'legs': p['p_legs']});
+      db.table('group_members').add({
+        'group_id': p['p_group'],
+        'user_id': me,
+        'role': p['p_role'],
+        'legs': p['p_legs'],
+      });
     }
     return null;
   };
@@ -98,8 +108,17 @@ void installWalletServer(InMemoryGateway db, {required String today, required St
     final key = id ?? '$kind:${db.newId()}';
     if (ledger().any((e) => e['person_id'] == me && e['id'] == key)) return;
     ledger().add({
-      'person_id': me, 'id': key, 'kind': kind, 'amount': amount, 'delta': delta, 'fee': fee,
-      'share_to_driver': share, 'ride_id': ride, 'leg': null, 'entry_date': today, 'created_at': ++seq,
+      'person_id': me,
+      'id': key,
+      'kind': kind,
+      'amount': amount,
+      'delta': delta,
+      'fee': fee,
+      'share_to_driver': share,
+      'ride_id': ride,
+      'leg': null,
+      'entry_date': today,
+      'created_at': ++seq,
     });
   }
 
@@ -123,7 +142,11 @@ void installWalletServer(InMemoryGateway db, {required String today, required St
     if (price > 0) post(me, 'subscription', price, -price);
     db.table('plans').removeWhere((r) => r['person_id'] == me);
     db.table('plans').add({
-      'person_id': me, 'type': type, 'status': 'active', 'price': price, 'start_wall': wall,
+      'person_id': me,
+      'type': type,
+      'status': 'active',
+      'price': price,
+      'start_wall': wall,
       'until_date': type == 'company' ? null : today,
     });
     return 'subscribed';
@@ -135,8 +158,16 @@ void installWalletServer(InMemoryGateway db, {required String today, required St
   };
   db.rpcs['wallet_seat_debit'] = (p, db) {
     final fee = p['p_fee']! as int;
-    post(db.me(), 'seatBooked', fee, -fee,
-        id: 'seat:${p['p_booking']}', fee: fee, share: p['p_share']! as int, ride: p['p_ride'] as String?);
+    post(
+      db.me(),
+      'seatBooked',
+      fee,
+      -fee,
+      id: 'seat:${p['p_booking']}',
+      fee: fee,
+      share: p['p_share']! as int,
+      ride: p['p_ride'] as String?,
+    );
     return null;
   };
   db.rpcs['wallet_seat_refund'] = (p, db) {
@@ -154,9 +185,14 @@ void installWalletServer(InMemoryGateway db, {required String today, required St
 /// 20261030000300: the company functions the contract calls.
 void installCompanyServer(InMemoryGateway db, {required String wall}) {
   void logLine(String company, String actor, String kind, [String? detail]) => db.table('company_log').add({
-        'id': db.newId('log'), 'company_id': company, 'at': wall, 'actor': actor, 'kind': kind, 'detail': detail,
-        'created_at': db.table('company_log').length,
-      });
+    'id': db.newId('log'),
+    'company_id': company,
+    'at': wall,
+    'actor': actor,
+    'kind': kind,
+    'detail': detail,
+    'created_at': db.table('company_log').length,
+  });
   bool held(String d) => db.table('company_domains').any((r) => r['domain'] == d.toLowerCase());
   void mustBeHr(String company) {
     if (!db.table('companies').any((c) => c['id'] == company && c['hr_contact_id'] == db.userId)) {
@@ -174,9 +210,16 @@ void installCompanyServer(InMemoryGateway db, {required String wall}) {
     }
     final id = db.newId('co');
     db.table('companies').add({
-      'id': id, 'name': (p['p_name']! as String).trim(), 'status': 'pending', 'hr_contact_id': me,
-      'contract_start': null, 'contract_end': null, 'minimum_seats': 20, 'price_per_seat': 99,
-      'approved_at': null, 'ended_at': null,
+      'id': id,
+      'name': (p['p_name']! as String).trim(),
+      'status': 'pending',
+      'hr_contact_id': me,
+      'contract_start': null,
+      'contract_end': null,
+      'minimum_seats': 20,
+      'price_per_seat': 99,
+      'approved_at': null,
+      'ended_at': null,
     });
     for (final d in domains.toSet()) {
       db.table('company_domains').add({'domain': d, 'company_id': id});
@@ -205,8 +248,12 @@ void installCompanyServer(InMemoryGateway db, {required String wall}) {
 void installMarketServer(InMemoryGateway db) {
   int tripsOn(String driver, Object? date) => db
       .table('offered_trips')
-      .where((t) =>
-          t['driver_id'] == driver && t['trip_date'] == date && (t['status'] != 'cancelled' || t['cancelled_with_riders'] == true))
+      .where(
+        (t) =>
+            t['driver_id'] == driver &&
+            t['trip_date'] == date &&
+            (t['status'] != 'cancelled' || t['cancelled_with_riders'] == true),
+      )
       .length;
 
   db.rpcs['market_publish'] = (p, db) {
@@ -217,11 +264,24 @@ void installMarketServer(InMemoryGateway db) {
     if (tripsOn(me, p['p_date']) >= 2) throw const BackendRefused('overLimit');
     final id = db.newId('trip');
     db.table('offered_trips').add({
-      'id': id, 'driver_id': me, 'leg': p['p_leg'], 'origin_area': p['p_origin'],
-      'destination_area': p['p_destination'], 'trip_date': p['p_date'], 'departure': '${p['p_departure']}:00',
-      'duration_minutes': 40, 'seats': p['p_seats'], 'rider_seats': p['p_seats'], 'trip_cost': p['p_trip_cost'],
-      'contribution': p['p_contribution'], 'repeat': p['p_repeat'], 'pickup': p['p_pickup'], 'status': 'open',
-      'group_id': null, 'origin': 'published', 'cancelled_with_riders': false,
+      'id': id,
+      'driver_id': me,
+      'leg': p['p_leg'],
+      'origin_area': p['p_origin'],
+      'destination_area': p['p_destination'],
+      'trip_date': p['p_date'],
+      'departure': '${p['p_departure']}:00',
+      'duration_minutes': 40,
+      'seats': p['p_seats'],
+      'rider_seats': p['p_seats'],
+      'trip_cost': p['p_trip_cost'],
+      'contribution': p['p_contribution'],
+      'repeat': p['p_repeat'],
+      'pickup': p['p_pickup'],
+      'status': 'open',
+      'group_id': null,
+      'origin': 'published',
+      'cancelled_with_riders': false,
     });
     return id;
   };
@@ -232,10 +292,20 @@ void installMarketServer(InMemoryGateway db) {
     }
     final id = db.newId('req');
     db.table('trip_requests').add({
-      'id': id, 'rider_id': me, 'leg': p['p_leg'], 'origin_area': p['p_origin'],
-      'destination_area': p['p_destination'], 'trip_date': p['p_date'], 'departure': '${p['p_departure']}:00',
-      'repeat': p['p_repeat'], 'pickup': p['p_pickup'], 'contribution': p['p_contribution'], 'fee': p['p_fee'],
-      'status': 'posted', 'accepted_by': null, 'trip_ref': null,
+      'id': id,
+      'rider_id': me,
+      'leg': p['p_leg'],
+      'origin_area': p['p_origin'],
+      'destination_area': p['p_destination'],
+      'trip_date': p['p_date'],
+      'departure': '${p['p_departure']}:00',
+      'repeat': p['p_repeat'],
+      'pickup': p['p_pickup'],
+      'contribution': p['p_contribution'],
+      'fee': p['p_fee'],
+      'status': 'posted',
+      'accepted_by': null,
+      'trip_ref': null,
     });
     return id;
   };

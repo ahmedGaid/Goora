@@ -19,8 +19,11 @@ void main() {
   companyContract('fake', () async {
     SharedPreferences.setMockInitialValues({});
     final people = <String, ({String name, String? workEmail})>{};
-    final repo = FakeCompanyRepository(await SharedPreferences.getInstance(),
-        person: (id) async => people[id], now: () => _now);
+    final repo = FakeCompanyRepository(
+      await SharedPreferences.getInstance(),
+      person: (id) async => people[id],
+      now: () => _now,
+    );
     return (
       repo: repo,
       person: (String first, {String? workEmail}) async {
@@ -41,10 +44,10 @@ void main() {
       person: (String first, {String? workEmail}) {
         n++;
         return signUpPerson(
-            db,
-            Profile(
-                phone: PhoneNumber.tryParse('0100123456$n')!, firstName: first, lastName: 'K', gender: Gender.female),
-            workEmail: workEmail);
+          db,
+          Profile(phone: PhoneNumber.tryParse('0100123456$n')!, firstName: first, lastName: 'K', gender: Gender.female),
+          workEmail: workEmail,
+        );
       },
       actAs: (String id) => db.userId = id,
     );

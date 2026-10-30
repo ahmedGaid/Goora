@@ -11,9 +11,7 @@ import 'support/in_memory_gateway.dart';
 import 'support/tables.dart';
 
 final class _Fake implements OnboardingHarness {
-  _Fake(SharedPreferences prefs)
-      : auth = FakeAuthRepository(prefs),
-        profiles = LocalProfileRepository(prefs);
+  _Fake(SharedPreferences prefs) : auth = FakeAuthRepository(prefs), profiles = LocalProfileRepository(prefs);
 
   @override
   final AuthRepository auth;
@@ -23,8 +21,8 @@ final class _Fake implements OnboardingHarness {
 
 final class _Supabase implements OnboardingHarness {
   _Supabase(InMemoryGateway db)
-      : auth = SupabaseAuthRepository(db, otp: const FakeOtpProvider(), backendUrl: 'http://127.0.0.1:54321'),
-        profiles = SupabaseProfileRepository(db);
+    : auth = SupabaseAuthRepository(db, otp: const FakeOtpProvider(), backendUrl: 'http://127.0.0.1:54321'),
+      profiles = SupabaseProfileRepository(db);
 
   @override
   final AuthRepository auth;

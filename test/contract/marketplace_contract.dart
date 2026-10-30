@@ -32,7 +32,12 @@ void marketplaceContract(String label, Future<MarketSetup> Function(Role role) m
   }
 
   const ask = TripDraft(
-      leg: Leg.going, from: Area.sheikhZayed, to: Area.smartVillage, departure: Clock.hm(7, 30), repeat: Repeat.once);
+    leg: Leg.going,
+    from: Area.sheikhZayed,
+    to: Area.smartVillage,
+    departure: Clock.hm(7, 30),
+    repeat: Repeat.once,
+  );
 
   group('marketplace contract [$label]', () {
     test('M1 a verified driver publishes; offer() reads it back', () async {
@@ -64,13 +69,17 @@ void marketplaceContract(String label, Future<MarketSetup> Function(Role role) m
       final s = await make(Role.rider);
       final posted = (await s.repo.post(ask, now: now) as Posted).request;
       final back = await s.repo.request(posted.id, now: now);
-      expect((back?.id, back?.leg, back?.from, back?.departure), (posted.id, Leg.going, Area.sheikhZayed, ask.departure));
+      expect(
+        (back?.id, back?.leg, back?.from, back?.departure),
+        (posted.id, Leg.going, Area.sheikhZayed, ask.departure),
+      );
       expect(back?.price.contribution, posted.price.contribution);
     });
 
     test('M5 the driver cancels their own trip', () async {
       final s = await make(Role.driver);
-      final trip = (await s.repo.publish(offer(s.corridor, Leg.going, const Clock.hm(7, 30)), now: now) as Published).trip;
+      final trip =
+          (await s.repo.publish(offer(s.corridor, Leg.going, const Clock.hm(7, 30)), now: now) as Published).trip;
       await s.repo.cancelOffer(trip.id, now: now);
       expect((await s.repo.offer(trip.id, now: now))?.status, OfferStatus.cancelled);
     });

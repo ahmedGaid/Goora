@@ -23,8 +23,13 @@ Future<FakeDailyCommuteRepository> _fake({required bool member}) async {
   SharedPreferences.setMockInitialValues(memberPrefs(role: Role.rider, member: member));
   final prefs = await SharedPreferences.getInstance();
   final catalog = GroupCatalog(prefs);
-  return FakeDailyCommuteRepository(prefs,
-      commute: FakeCommuteRepository(prefs, catalog: catalog), person: () => _person, now: () => _now, catalog: catalog);
+  return FakeDailyCommuteRepository(
+    prefs,
+    commute: FakeCommuteRepository(prefs, catalog: catalog),
+    person: () => _person,
+    now: () => _now,
+    catalog: catalog,
+  );
 }
 
 void main() {
@@ -47,13 +52,13 @@ void main() {
     return (
       repo: SupabaseDailyCommuteRepository(db),
       postNotice: (NoticeKind kind) async => db.table('notices').add({
-            'id': 'n${++n}',
-            'user_id': me,
-            'kind': kind.name,
-            'params': <String, Object?>{},
-            'created_at': '2026-11-01T06:00:00Z',
-            'read_at': null,
-          }),
+        'id': 'n${++n}',
+        'user_id': me,
+        'kind': kind.name,
+        'params': <String, Object?>{},
+        'created_at': '2026-11-01T06:00:00Z',
+        'read_at': null,
+      }),
     );
   });
 }

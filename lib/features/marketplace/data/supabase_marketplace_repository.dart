@@ -72,25 +72,25 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
   static Stop _stop(Object? j) => Stop.fromJson((j! as Map).cast<String, Object?>());
 
   static OfferedTrip _offer(Row r) => OfferedTrip(
-        id: r['id']! as String,
-        driverId: r['driver_id']! as String,
-        leg: Leg.values.byName(r['leg']! as String),
-        from: Area.values.byName(r['origin_area']! as String),
-        to: Area.values.byName(r['destination_area']! as String),
-        date: CalendarDate.parse(r['trip_date']! as String),
-        departure: _clock(r['departure']),
-        durationMinutes: (r['duration_minutes'] as int?) ?? 40,
-        seats: r['seats']! as int,
-        riderSeats: r['rider_seats']! as int,
-        tripCost: r['trip_cost']! as int,
-        contribution: r['contribution']! as int,
-        repeat: Repeat.values.byName(r['repeat']! as String),
-        pickup: _stop(r['pickup']),
-        status: OfferStatus.values.byName(r['status']! as String),
-        groupId: r['group_id'] as String?,
-        origin: OfferOrigin.values.byName((r['origin'] as String?) ?? OfferOrigin.published.name),
-        cancelledWithRiders: (r['cancelled_with_riders'] as bool?) ?? false,
-      );
+    id: r['id']! as String,
+    driverId: r['driver_id']! as String,
+    leg: Leg.values.byName(r['leg']! as String),
+    from: Area.values.byName(r['origin_area']! as String),
+    to: Area.values.byName(r['destination_area']! as String),
+    date: CalendarDate.parse(r['trip_date']! as String),
+    departure: _clock(r['departure']),
+    durationMinutes: (r['duration_minutes'] as int?) ?? 40,
+    seats: r['seats']! as int,
+    riderSeats: r['rider_seats']! as int,
+    tripCost: r['trip_cost']! as int,
+    contribution: r['contribution']! as int,
+    repeat: Repeat.values.byName(r['repeat']! as String),
+    pickup: _stop(r['pickup']),
+    status: OfferStatus.values.byName(r['status']! as String),
+    groupId: r['group_id'] as String?,
+    origin: OfferOrigin.values.byName((r['origin'] as String?) ?? OfferOrigin.published.name),
+    cancelledWithRiders: (r['cancelled_with_riders'] as bool?) ?? false,
+  );
 
   TripRequest _request(Row r) {
     final contribution = r['contribution']! as int;
@@ -107,7 +107,11 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
       repeat: Repeat.values.byName(r['repeat']! as String),
       pickup: _stop(r['pickup']),
       price: SeatPrice(
-          contribution: contribution, share: contribution, fee: fee, mode: fee > 0 ? PricingMode.perTrip : PricingMode.trial),
+        contribution: contribution,
+        share: contribution,
+        fee: fee,
+        mode: fee > 0 ? PricingMode.perTrip : PricingMode.trial,
+      ),
       status: RequestStatus.values.byName(r['status']! as String),
       acceptedBy: r['accepted_by'] as String?,
       tripId: r['trip_ref'] as String?,
@@ -127,7 +131,11 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
       leg: Leg.values.byName(r['leg']! as String),
       rideId: r['ride_id']! as String,
       price: SeatPrice(
-          contribution: contribution, share: contribution, fee: fee, mode: fee > 0 ? PricingMode.perTrip : PricingMode.trial),
+        contribution: contribution,
+        share: contribution,
+        fee: fee,
+        mode: fee > 0 ? PricingMode.perTrip : PricingMode.trial,
+      ),
       paidBy: PaidBy.values.byName(r['paid_by']! as String),
       paid: (r['paid'] as int?) ?? 0,
       bookedAt: WallTime.of(DateTime.parse(r['booked_at']! as String).toLocal()),
@@ -168,32 +176,44 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
   @override
   Future<List<SeatOffer>> seatOffers(Leg leg, {required WallTime now}) async {
     final gate = await _gate(now);
-    final rows = await _db.select('offered_trips',
-        where: [Filter.eq('leg', leg.name), Filter.eq('status', OfferStatus.open.name)], orderBy: 'trip_date');
+    final rows = await _db.select(
+      'offered_trips',
+      where: [Filter.eq('leg', leg.name), Filter.eq('status', OfferStatus.open.name)],
+      orderBy: 'trip_date',
+    );
     final out = <SeatOffer>[];
     for (final r in rows) {
       final o = _offer(r);
       if (o.driverId == _db.userId || !now.isBefore(WallTime(o.date, o.departure))) continue;
-      final taken = (await _db.select('bookings', where: [
-        Filter.eq('offered_trip_id', o.id),
-        Filter.inList('status', [BookingStatus.booked.name, BookingStatus.done.name]),
-      ]))
-          .length;
+      final taken = (await _db.select(
+        'bookings',
+        where: [
+          Filter.eq('offered_trip_id', o.id),
+          Filter.inList('status', [BookingStatus.booked.name, BookingStatus.done.name]),
+        ],
+      )).length;
       if (taken >= o.seats) continue;
-      out.add(SeatOffer(
-        source: BookingSource.offer(o.id),
-        driver: SeatDriver(id: o.driverId, firstName: '', initials: '', rating: 0),
-        pickup: o.pickup,
-        date: o.date,
-        leg: o.leg,
-        departure: o.departure,
-        freeSeats: o.seats - taken,
-        price: SeatPrice.of(o.contribution,
-            tripCost: o.tripCost, riderSeats: o.riderSeats, mode: gate.mode, method: gate.method),
-        from: o.from,
-        to: o.to,
-        arrival: o.departure.shift(o.durationMinutes),
-      ));
+      out.add(
+        SeatOffer(
+          source: BookingSource.offer(o.id),
+          driver: SeatDriver(id: o.driverId, firstName: '', initials: '', rating: 0),
+          pickup: o.pickup,
+          date: o.date,
+          leg: o.leg,
+          departure: o.departure,
+          freeSeats: o.seats - taken,
+          price: SeatPrice.of(
+            o.contribution,
+            tripCost: o.tripCost,
+            riderSeats: o.riderSeats,
+            mode: gate.mode,
+            method: gate.method,
+          ),
+          from: o.from,
+          to: o.to,
+          arrival: o.departure.shift(o.durationMinutes),
+        ),
+      );
     }
     out.sort((a, b) => a.departure.compareTo(b.departure));
     return out;
@@ -217,12 +237,14 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
     }
     final paidBy = gate.mode.isFeeFree ? PaidBy.plan : PaidBy.wallet;
     try {
-      final id = await _db.rpc('market_book', {
-        'p_offer': offer.source.id,
-        'p_contribution': offer.price.contribution,
-        'p_fee': offer.price.fee,
-        'p_paid_by': paidBy.name,
-      }) as String;
+      final id =
+          await _db.rpc('market_book', {
+                'p_offer': offer.source.id,
+                'p_contribution': offer.price.contribution,
+                'p_fee': offer.price.fee,
+                'p_paid_by': paidBy.name,
+              })
+              as String;
       final rows = await _db.select('bookings', where: [Filter.eq('id', id)]);
       return Booked(_booking(rows.single));
     } on BackendRefused catch (e) {
@@ -241,10 +263,13 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
 
   @override
   Future<List<Booking>> myBookings({required WallTime now}) async => [
-        for (final r in await _db.select('bookings',
-            where: [Filter.eq('rider_id', _me), Filter.eq('status', BookingStatus.booked.name)], orderBy: 'trip_date'))
-          _booking(r),
-      ];
+    for (final r in await _db.select(
+      'bookings',
+      where: [Filter.eq('rider_id', _me), Filter.eq('status', BookingStatus.booked.name)],
+      orderBy: 'trip_date',
+    ))
+      _booking(r),
+  ];
 
   @override
   Future<SeatOffer?> seatOf(Booking booking) async {
@@ -286,21 +311,28 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
         break;
     }
     // The corridor's standard 3 seats' suggested contribution, fixed from now on (005 R6).
-    final price = SeatPrice.of(PricingService.range(_corridor.tripCost, _corridor.riderSeats).suggested,
-        tripCost: _corridor.tripCost, riderSeats: _corridor.riderSeats, mode: gate.mode, method: gate.method);
+    final price = SeatPrice.of(
+      PricingService.range(_corridor.tripCost, _corridor.riderSeats).suggested,
+      tripCost: _corridor.tripCost,
+      riderSeats: _corridor.riderSeats,
+      mode: gate.mode,
+      method: gate.method,
+    );
     final date = MarketDay.nextWorkday(draft.departure, now);
     try {
-      final id = await _db.rpc('market_post', {
-        'p_leg': draft.leg.name,
-        'p_origin': draft.from.name,
-        'p_destination': draft.to.name,
-        'p_date': date.toIso(),
-        'p_departure': _time(draft.departure),
-        'p_repeat': draft.repeat.name,
-        'p_pickup': MarketSeed.pickupIn(draft.from, 'rq-stop-${now.toJson()}', draft.departure).toJson(),
-        'p_contribution': price.contribution,
-        'p_fee': price.fee,
-      }) as String;
+      final id =
+          await _db.rpc('market_post', {
+                'p_leg': draft.leg.name,
+                'p_origin': draft.from.name,
+                'p_destination': draft.to.name,
+                'p_date': date.toIso(),
+                'p_departure': _time(draft.departure),
+                'p_repeat': draft.repeat.name,
+                'p_pickup': MarketSeed.pickupIn(draft.from, 'rq-stop-${now.toJson()}', draft.departure).toJson(),
+                'p_contribution': price.contribution,
+                'p_fee': price.fee,
+              })
+              as String;
       return Posted((await request(id, now: now))!);
     } on BackendRefused catch (e) {
       if (e.reason == 'dailyNotAllowed') return const DailyNotAllowed();
@@ -313,17 +345,20 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
 
   @override
   Future<List<TripRequest>> myRequests({required WallTime now}) async {
-    final rows = await _db.select('trip_requests',
-        where: [Filter.eq('rider_id', _me), Filter.eq('status', RequestStatus.posted.name)]);
-    final live = [
-      for (final r in rows.map(_request))
-        if (!MarketDay.isExpired(r.date, r.departure, now)) r,
-    ]..sort((a, b) {
-        final byDate = a.date.compareTo(b.date);
-        if (byDate != 0) return byDate;
-        final byTime = a.departure.compareTo(b.departure);
-        return byTime != 0 ? byTime : a.id.compareTo(b.id);
-      });
+    final rows = await _db.select(
+      'trip_requests',
+      where: [Filter.eq('rider_id', _me), Filter.eq('status', RequestStatus.posted.name)],
+    );
+    final live =
+        [
+          for (final r in rows.map(_request))
+            if (!MarketDay.isExpired(r.date, r.departure, now)) r,
+        ]..sort((a, b) {
+          final byDate = a.date.compareTo(b.date);
+          if (byDate != 0) return byDate;
+          final byTime = a.departure.compareTo(b.departure);
+          return byTime != 0 ? byTime : a.id.compareTo(b.id);
+        });
     return live;
   }
 
@@ -341,11 +376,14 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
 
   @override
   Future<int> driversOnRoute(TripDraft draft) async {
-    final rows = await _db.select('offered_trips', where: [
-      Filter.eq('origin_area', draft.from.name),
-      Filter.eq('destination_area', draft.to.name),
-      Filter.eq('status', OfferStatus.open.name),
-    ]);
+    final rows = await _db.select(
+      'offered_trips',
+      where: [
+        Filter.eq('origin_area', draft.from.name),
+        Filter.eq('destination_area', draft.to.name),
+        Filter.eq('status', OfferStatus.open.name),
+      ],
+    );
     return {for (final r in rows) r['driver_id']}.length;
   }
 
@@ -383,18 +421,20 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
     if (fit.kind != TripFitKind.create) return OverLimit(fit);
 
     try {
-      final id = await _db.rpc('market_publish', {
-        'p_leg': draft.leg.name,
-        'p_origin': draft.from.name,
-        'p_destination': draft.to.name,
-        'p_date': date.toIso(),
-        'p_departure': _time(draft.departure),
-        'p_seats': draft.seats,
-        'p_trip_cost': _corridor.tripCost,
-        'p_contribution': draft.contribution,
-        'p_repeat': draft.repeat.name,
-        'p_pickup': MarketSeed.pickupIn(draft.from, 'of-stop-${now.toJson()}', draft.departure).toJson(),
-      }) as String;
+      final id =
+          await _db.rpc('market_publish', {
+                'p_leg': draft.leg.name,
+                'p_origin': draft.from.name,
+                'p_destination': draft.to.name,
+                'p_date': date.toIso(),
+                'p_departure': _time(draft.departure),
+                'p_seats': draft.seats,
+                'p_trip_cost': _corridor.tripCost,
+                'p_contribution': draft.contribution,
+                'p_repeat': draft.repeat.name,
+                'p_pickup': MarketSeed.pickupIn(draft.from, 'of-stop-${now.toJson()}', draft.departure).toJson(),
+              })
+              as String;
       return Published((await offer(id, now: now))!);
     } on BackendRefused catch (e) {
       return switch (e.reason) {
@@ -415,14 +455,21 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
   @override
   Future<OfferLive> live(String tripId, {required WallTime now}) async {
     final trip = await offer(tripId, now: now) ?? (throw StateError('no offer $tripId'));
-    final rows = await _db.select('bookings', where: [
-      Filter.eq('offered_trip_id', tripId),
-      Filter.inList('status', [BookingStatus.booked.name, BookingStatus.done.name]),
-    ], orderBy: 'booked_at');
-    return OfferLive(trip: trip, riders: [
-      for (final b in rows.map(_booking))
-        LiveRider(rider: b.rider, riderId: b.riderId, paidBy: b.paidBy, price: b.price),
-    ]);
+    final rows = await _db.select(
+      'bookings',
+      where: [
+        Filter.eq('offered_trip_id', tripId),
+        Filter.inList('status', [BookingStatus.booked.name, BookingStatus.done.name]),
+      ],
+      orderBy: 'booked_at',
+    );
+    return OfferLive(
+      trip: trip,
+      riders: [
+        for (final b in rows.map(_booking))
+          LiveRider(rider: b.rider, riderId: b.riderId, paidBy: b.paidBy, price: b.price),
+      ],
+    );
   }
 
   @override
@@ -437,35 +484,37 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
   @override
   Future<DriverDay> driverDay(CalendarDate date) async {
     final group = await _daily.myGroup();
-    final rows = await _db.select('offered_trips',
-        where: [Filter.eq('driver_id', _me), Filter.eq('trip_date', date.toIso())]);
+    final rows = await _db.select(
+      'offered_trips',
+      where: [Filter.eq('driver_id', _me), Filter.eq('trip_date', date.toIso())],
+    );
     final trips = <DayTrip>[];
     for (final o in rows.map(_offer)) {
       if (o.status == OfferStatus.grouped) continue;
       if (o.status == OfferStatus.cancelled && !o.cancelledWithRiders) continue;
       final taken = o.status == OfferStatus.cancelled
           ? o.seats
-          : (await _db.select('bookings', where: [
-              Filter.eq('offered_trip_id', o.id),
-              Filter.inList('status', [BookingStatus.booked.name, BookingStatus.done.name]),
-            ]))
-              .length;
-      trips.add(DayTrip(
-        id: o.id,
-        leg: o.leg,
-        from: o.from,
-        to: o.to,
-        departure: o.departure.minutes,
-        durationMinutes: o.durationMinutes,
-        seats: o.seats,
-        taken: taken,
-      ));
+          : (await _db.select(
+              'bookings',
+              where: [
+                Filter.eq('offered_trip_id', o.id),
+                Filter.inList('status', [BookingStatus.booked.name, BookingStatus.done.name]),
+              ],
+            )).length;
+      trips.add(
+        DayTrip(
+          id: o.id,
+          leg: o.leg,
+          from: o.from,
+          to: o.to,
+          departure: o.departure.minutes,
+          durationMinutes: o.durationMinutes,
+          seats: o.seats,
+          taken: taken,
+        ),
+      );
     }
-    return DriverDay(
-      date: date,
-      trips: trips,
-      leadsGroup: group?.member(_me)?.role == MemberRole.driver,
-    );
+    return DriverDay(date: date, trips: trips, leadsGroup: group?.member(_me)?.role == MemberRole.driver);
   }
 
   @override
@@ -477,8 +526,11 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
     final r = await request(requestId, now: now);
     if (r == null || r.status != RequestStatus.posted) return const AcceptRefused(TripFit.doesntFit());
     try {
-      await _db.rpc('market_accept',
-          {'p_request': requestId, 'p_trip_cost': _corridor.tripCost, 'p_seats': _corridor.riderSeats});
+      await _db.rpc('market_accept', {
+        'p_request': requestId,
+        'p_trip_cost': _corridor.tripCost,
+        'p_seats': _corridor.riderSeats,
+      });
     } on BackendRefused catch (e) {
       return AcceptRefused(e.reason == 'overLimit' ? const TripFit.limitReached() : const TripFit.doesntFit());
     }

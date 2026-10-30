@@ -20,8 +20,13 @@ final class SupabaseGateway implements BackendGateway {
   String? get userId => _client.auth.currentUser?.id;
 
   @override
-  Future<List<Row>> select(String table,
-      {List<Filter> where = const [], String? orderBy, bool descending = false, int? limit}) {
+  Future<List<Row>> select(
+    String table, {
+    List<Filter> where = const [],
+    String? orderBy,
+    bool descending = false,
+    int? limit,
+  }) {
     return guard(() async {
       PostgrestTransformBuilder<List<Map<String, dynamic>>> q = _filtered(_client.from(table).select(), where);
       if (orderBy != null) q = q.order(orderBy, ascending: !descending);
@@ -67,8 +72,9 @@ final class SupabaseGateway implements BackendGateway {
     return q;
   }
 
-  static List<Row> _rows(Object? data) =>
-      [for (final r in (data as List? ?? const [])) (r as Map).cast<String, Object?>()];
+  static List<Row> _rows(Object? data) => [
+    for (final r in (data as List? ?? const [])) (r as Map).cast<String, Object?>(),
+  ];
 }
 
 final class _SupabaseAuth implements BackendAuth {

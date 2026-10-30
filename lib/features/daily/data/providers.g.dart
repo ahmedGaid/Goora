@@ -55,7 +55,7 @@ final class DailyCommuteRepositoryProvider
 }
 
 String _$dailyCommuteRepositoryHash() =>
-    r'13f547b82b796e76a36199363d6cbc0daedab286';
+    r'2f4d795d578a5b0b28b49afd5f30554e808d1d27';
 
 @ProviderFor(trustRepository)
 final trustRepositoryProvider = TrustRepositoryProvider._();
@@ -97,7 +97,7 @@ final class TrustRepositoryProvider
   }
 }
 
-String _$trustRepositoryHash() => r'50748e00457ffbef4ee6058a2845802adf4d7b82';
+String _$trustRepositoryHash() => r'84b132e5961dd30b77b1954be69463a33f29b022';
 
 @ProviderFor(phoneDialer)
 final phoneDialerProvider = PhoneDialerProvider._();

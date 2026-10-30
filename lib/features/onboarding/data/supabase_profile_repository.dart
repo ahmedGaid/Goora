@@ -26,7 +26,9 @@ final class SupabaseProfileRepository implements ProfileRepository {
     final values = toRow(profile);
     final existing = await _db.select(table, where: [Filter.eq('id', me)]);
     if (existing.isEmpty) {
-      await _db.insert(table, [{'id': me, ...values}]);
+      await _db.insert(table, [
+        {'id': me, ...values},
+      ]);
     } else {
       // Column grants allow these fields only; the id never changes.
       await _db.update(table, values, where: [Filter.eq('id', me)]);
@@ -41,20 +43,20 @@ final class SupabaseProfileRepository implements ProfileRepository {
   }
 
   static Row toRow(Profile p) => {
-        'phone': p.phone.e164,
-        'first_name': p.firstName,
-        'last_name': p.lastName,
-        'gender': p.gender.name,
-        'role': p.role?.name,
-        'frequency': p.frequency?.name,
-      };
+    'phone': p.phone.e164,
+    'first_name': p.firstName,
+    'last_name': p.lastName,
+    'gender': p.gender.name,
+    'role': p.role?.name,
+    'frequency': p.frequency?.name,
+  };
 
   static Profile? fromRow(Row r) => Profile.fromJson({
-        'phone': r['phone'],
-        'firstName': r['first_name'],
-        'lastName': r['last_name'],
-        'gender': r['gender'],
-        'role': r['role'],
-        'frequency': r['frequency'],
-      });
+    'phone': r['phone'],
+    'firstName': r['first_name'],
+    'lastName': r['last_name'],
+    'gender': r['gender'],
+    'role': r['role'],
+    'frequency': r['frequency'],
+  });
 }

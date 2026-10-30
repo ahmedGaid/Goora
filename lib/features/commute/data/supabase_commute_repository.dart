@@ -48,7 +48,8 @@ final class SupabaseCommuteRepository implements CommuteRepository {
           : DriverOffer(
               seats: seats,
               trips: DrivenTrips.values.byName(r['driven_trips']! as String),
-              contribution: r['contribution']! as int),
+              contribution: r['contribution']! as int,
+            ),
     );
   }
 
@@ -67,11 +68,14 @@ final class SupabaseCommuteRepository implements CommuteRepository {
         'work': _ewkt(work),
         'departure': _hhmm(profile.departure),
         'return_time': _hhmm(profile.ret),
-        'days': [for (final d in Day.values) if (profile.days.contains(d)) d.name],
+        'days': [
+          for (final d in Day.values)
+            if (profile.days.contains(d)) d.name,
+        ],
         'seats': profile.driver?.seats,
         'driven_trips': profile.driver?.trips.name,
         'contribution': profile.driver?.contribution,
-      }
+      },
     ], onConflict: 'user_id');
   }
 
@@ -94,7 +98,9 @@ final class SupabaseCommuteRepository implements CommuteRepository {
       await _db.rpc('join_group', {
         'p_group': groupId,
         'p_role': driver == null ? 'rider' : 'driver',
-        'p_legs': [for (final l in driver?.trips.legs ?? const {Leg.going, Leg.ret}) l.name],
+        'p_legs': [
+          for (final l in driver?.trips.legs ?? const {Leg.going, Leg.ret}) l.name,
+        ],
         'p_seats': driver?.seats,
       });
     } on BackendRefused catch (e) {

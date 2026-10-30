@@ -31,16 +31,16 @@ final class SupabaseTrustRepository implements TrustRepository {
     final docs = !driver
         ? VerificationStatus.notNeeded
         : r['driver_docs'] == 'pending'
-            ? VerificationStatus.notVerified
-            : VerificationStatus.verified;
+        ? VerificationStatus.notVerified
+        : VerificationStatus.verified;
     final workEmail = r['work_email_verified'] == true ? r['work_email'] as String? : null;
     VerificationStatus ok(bool v) => v ? VerificationStatus.verified : VerificationStatus.notVerified;
     return TrustProfile(
       firstName: p.firstName,
-      initials: [p.firstName, p.lastName]
-          .where((s) => s.isNotEmpty)
-          .map((s) => String.fromCharCode(s.runes.first).toUpperCase())
-          .join(),
+      initials: [
+        p.firstName,
+        p.lastName,
+      ].where((s) => s.isNotEmpty).map((s) => String.fromCharCode(s.runes.first).toUpperCase()).join(),
       rating: (r['rating'] as num? ?? 5).toDouble(),
       items: [
         const VerificationItem(VerificationKind.phone, VerificationStatus.verified),
@@ -81,16 +81,25 @@ final class SupabaseTrustRepository implements TrustRepository {
 
   @override
   Future<List<TrustedContact>> contacts() async => [
-        for (final r in await _db.select('trusted_contacts', where: [Filter.eq('user_id', _me)], orderBy: 'created_at'))
-          TrustedContact(id: r['id']! as String, name: r['name']! as String, phone: PhoneNumber.tryParse(r['phone']! as String)!),
-      ];
+    for (final r in await _db.select('trusted_contacts', where: [Filter.eq('user_id', _me)], orderBy: 'created_at'))
+      TrustedContact(
+        id: r['id']! as String,
+        name: r['name']! as String,
+        phone: PhoneNumber.tryParse(r['phone']! as String)!,
+      ),
+  ];
 
   @override
   Future<void> addContact(String name, PhoneNumber phone) async {
     if ((await contacts()).length >= TrustedContact.max) throw const TrustRefused(TrustRefusal.contactsFull);
     try {
       await _db.insert('trusted_contacts', [
-        {'user_id': _me, 'name': name.trim(), 'phone': phone.e164, 'created_at': DateTime.now().toUtc().toIso8601String()},
+        {
+          'user_id': _me,
+          'name': name.trim(),
+          'phone': phone.e164,
+          'created_at': DateTime.now().toUtc().toIso8601String(),
+        },
       ]);
     } on BackendConflict catch (e) {
       // 003's trusted_contacts_limit trigger: another device added the third.
@@ -109,8 +118,7 @@ final class SupabaseTrustRepository implements TrustRepository {
     final ids = [for (final c in await contacts()) c.id];
     final row = (await _db.insert('sos_alerts', [
       {'user_id': _me, 'ride_id': rideId, 'contact_ids': ids},
-    ]))
-        .single;
+    ])).single;
     return SosAlert(id: row['id']! as String, rideId: rideId, at: _now(), contactIds: ids);
   }
 

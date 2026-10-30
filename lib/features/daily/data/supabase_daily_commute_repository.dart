@@ -50,8 +50,8 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
     final id = mine.single['group_id']! as String;
     final g = (await _db.select('groups', where: [Filter.eq('id', id)])).singleOrNull;
     if (g == null) return null;
-    final all = (await _db.rpc('groups_for', {'p_origin': g['origin_area'], 'p_destination': g['destination_area']}))!
-        as List;
+    final all =
+        (await _db.rpc('groups_for', {'p_origin': g['origin_area'], 'p_destination': g['destination_area']}))! as List;
     final json = all.cast<Map<Object?, Object?>>().where((j) => j['id'] == id).firstOrNull;
     return json == null ? null : CommuteGroup.fromJson(json.cast<String, Object?>());
   }
@@ -62,11 +62,14 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
     if (g == null) return const [];
     final away = await _groupAbsences(g.id, from, to);
     final rides = {
-      for (final r in await _db.select('rides', where: [
-        Filter.eq('group_id', g.id),
-        Filter.gte('ride_date', from.toIso()),
-        Filter.lte('ride_date', to.toIso()),
-      ]))
+      for (final r in await _db.select(
+        'rides',
+        where: [
+          Filter.eq('group_id', g.id),
+          Filter.gte('ride_date', from.toIso()),
+          Filter.lte('ride_date', to.toIso()),
+        ],
+      ))
         r['id']! as String: r,
     };
     LegAssignment? apply(LegAssignment? a, CalendarDate date) {
@@ -89,28 +92,34 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
           date: d.date,
           going: apply(d.going, d.date),
           ret: apply(d.ret, d.date),
-          absences: [for (final a in away) if (a.date == d.date) a],
+          absences: [
+            for (final a in away)
+              if (a.date == d.date) a,
+          ],
         ),
     ];
   }
 
   Future<List<Absence>> _groupAbsences(String groupId, CalendarDate from, CalendarDate to) async => [
-        for (final r in await _db.select('absences', where: [
-          Filter.eq('group_id', groupId),
-          Filter.gte('ride_date', from.toIso()),
-          Filter.lte('ride_date', to.toIso()),
-        ]))
-          _absence(r),
-      ];
+    for (final r in await _db.select(
+      'absences',
+      where: [
+        Filter.eq('group_id', groupId),
+        Filter.gte('ride_date', from.toIso()),
+        Filter.lte('ride_date', to.toIso()),
+      ],
+    ))
+      _absence(r),
+  ];
 
   static Absence _absence(Row r) => Absence(
-        personId: r['user_id']! as String,
-        date: CalendarDate.parse(r['ride_date']! as String),
-        leg: _leg(r['leg']),
-        madeAt: _at(r['made_at'])!,
-        kind: AbsenceKind.values.byName(r['kind']! as String),
-        driving: (r['driving'] as bool?) ?? false,
-      );
+    personId: r['user_id']! as String,
+    date: CalendarDate.parse(r['ride_date']! as String),
+    leg: _leg(r['leg']),
+    madeAt: _at(r['made_at'])!,
+    kind: AbsenceKind.values.byName(r['kind']! as String),
+    driving: (r['driving'] as bool?) ?? false,
+  );
 
   @override
   Future<Ride?> ride(CalendarDate date, Leg leg) async {
@@ -128,7 +137,8 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
             for (final p in await _db.select('ride_passengers', where: [Filter.eq('ride_id', id)]))
               Passenger(memberId: p['user_id']! as String, stopId: p['stop_id']! as String),
           ];
-    final passengers = seated ??
+    final passengers =
+        seated ??
         [
           for (final m in g.members)
             if (m.id != driverId &&
@@ -139,9 +149,7 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
               Passenger(memberId: m.id, stopId: leg == Leg.going ? g.goingStops.first.id : g.workStop.id),
         ];
     final delay = (row?['delay_minutes'] as int?) ?? 0;
-    final arrived = row == null
-        ? const <String>{}
-        : {for (final c in await checkIns(id)) c.stopId};
+    final arrived = row == null ? const <String>{} : {for (final c in await checkIns(id)) c.stopId};
     return Ride(
       groupId: g.id,
       date: date,
@@ -170,20 +178,20 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
 
   @override
   Future<List<StopCheckIn>> checkIns(String rideId) async => [
-        for (final r in await _db.select('pickup_check_ins', where: [Filter.eq('ride_id', rideId)]))
-          StopCheckIn(rideId: rideId, stopId: r['stop_id']! as String, arrivedAt: _at(r['arrived_at'])!),
-      ];
+    for (final r in await _db.select('pickup_check_ins', where: [Filter.eq('ride_id', rideId)]))
+      StopCheckIn(rideId: rideId, stopId: r['stop_id']! as String, arrivedAt: _at(r['arrived_at'])!),
+  ];
 
   @override
   Future<List<PassengerOutcome>> outcomes(String rideId) async => [
-        for (final r in await _db.select('passenger_outcomes', where: [Filter.eq('ride_id', rideId)]))
-          PassengerOutcome(
-            rideId: rideId,
-            personId: r['user_id']! as String,
-            outcome: Outcome.values.byName(r['outcome']! as String),
-            markedAt: _at(r['marked_at'])!,
-          ),
-      ];
+    for (final r in await _db.select('passenger_outcomes', where: [Filter.eq('ride_id', rideId)]))
+      PassengerOutcome(
+        rideId: rideId,
+        personId: r['user_id']! as String,
+        outcome: Outcome.values.byName(r['outcome']! as String),
+        markedAt: _at(r['marked_at'])!,
+      ),
+  ];
 
   // Actions: one commute-day call each ---------------------------------------------------
 
@@ -199,18 +207,21 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
   }
 
   List<Charge> _charges(Map<Object?, Object?> out) => [
-        for (final c in ((out['charges'] as List?) ?? const []).cast<Map<Object?, Object?>>())
-          Charge(
-            id: '${c['rideId']}:${c['reason']}',
-            personId: meId,
-            rideId: c['rideId']! as String,
-            reason: ChargeReason.values.byName(c['reason']! as String),
-            amount: c['amount']! as int,
-            owedTo: (c['owedTo'] as String?) ?? '',
-          ),
-      ];
+    for (final c in ((out['charges'] as List?) ?? const []).cast<Map<Object?, Object?>>())
+      Charge(
+        id: '${c['rideId']}:${c['reason']}',
+        personId: meId,
+        rideId: c['rideId']! as String,
+        reason: ChargeReason.values.byName(c['reason']! as String),
+        amount: c['amount']! as int,
+        owedTo: (c['owedTo'] as String?) ?? '',
+      ),
+  ];
 
-  static List<String> _legs(Set<Leg> legs) => [for (final l in Leg.values) if (legs.contains(l)) l.name];
+  static List<String> _legs(Set<Leg> legs) => [
+    for (final l in Leg.values)
+      if (legs.contains(l)) l.name,
+  ];
 
   @override
   Future<List<Charge>> cancel(CalendarDate date, Set<Leg> legs, WallTime madeAt) async =>
@@ -286,8 +297,10 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
   }
 
   @override
-  Future<List<ReliabilityEvent>> events(CalendarDate from, CalendarDate to) async =>
-      [for (final e in await _events()) if (!e.date.isBefore(from) && !e.date.isAfter(to)) e];
+  Future<List<ReliabilityEvent>> events(CalendarDate from, CalendarDate to) async => [
+    for (final e in await _events())
+      if (!e.date.isBefore(from) && !e.date.isAfter(to)) e,
+  ];
 
   Future<List<ReliabilityEvent>> _events() async {
     final me = _db.userId;
@@ -310,16 +323,18 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
     if (me == null) return const [];
     final known = NoticeKind.values.asNameMap();
     return [
-      for (final r in await _db.select('notices',
-          where: [Filter.eq('user_id', me)], orderBy: 'created_at', descending: true))
+      for (final r in await _db.select(
+        'notices',
+        where: [Filter.eq('user_id', me)],
+        orderBy: 'created_at',
+        descending: true,
+      ))
         if (known[r['kind']] case final kind?)
           Notice(
             id: r['id']! as String,
             kind: kind,
             createdAt: _at(r['created_at'])!,
-            params: {
-              for (final e in ((r['params'] as Map?) ?? const {}).entries) '${e.key}': '${e.value}',
-            },
+            params: {for (final e in ((r['params'] as Map?) ?? const {}).entries) '${e.key}': '${e.value}'},
             read: r['read_at'] != null,
           ),
     ];
@@ -334,8 +349,11 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
 
   @override
   Future<void> markRead(String noticeId) async {
-    await _db.update('notices', {'read_at': DateTime.now().toUtc().toIso8601String()},
-        where: [Filter.eq('id', noticeId)]);
+    await _db.update(
+      'notices',
+      {'read_at': DateTime.now().toUtc().toIso8601String()},
+      where: [Filter.eq('id', noticeId)],
+    );
     _noticeUpdates.add(await _notices());
   }
 

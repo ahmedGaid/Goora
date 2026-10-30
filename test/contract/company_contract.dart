@@ -23,7 +23,12 @@ void companyContract(String label, Future<CompanySetup> Function() make) {
     final hr = await s.person('Mona', workEmail: 'mona@acme-k.eg');
     s.actAs(hr);
     final r = await s.repo.register(
-        personId: hr, name: 'Acme K', domains: ['acme-k.eg'], hrWorkEmail: 'mona@acme-k.eg', now: now);
+      personId: hr,
+      name: 'Acme K',
+      domains: ['acme-k.eg'],
+      hrWorkEmail: 'mona@acme-k.eg',
+      now: now,
+    );
     return (s, hr, (r as Registered).company);
   }
 

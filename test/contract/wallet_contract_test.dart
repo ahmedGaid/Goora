@@ -47,17 +47,29 @@ final class _NoTrips implements DailyCommuteRepository {
 void main() {
   walletContract('fake', () async {
     SharedPreferences.setMockInitialValues({});
-    final repo = FakeWalletRepository(await SharedPreferences.getInstance(),
-        daily: _NoTrips(), role: () => MemberRole.rider, now: () => _now, provider: FakePaymentProvider());
+    final repo = FakeWalletRepository(
+      await SharedPreferences.getInstance(),
+      daily: _NoTrips(),
+      role: () => MemberRole.rider,
+      now: () => _now,
+      provider: FakePaymentProvider(),
+    );
     return (wallet: repo, ledger: repo, me: 'me');
   });
 
   walletContract('supabase', () async {
     final db = InMemoryGateway(keys: tableKeys);
     final me = await signUpPerson(
-        db, Profile(phone: PhoneNumber.tryParse('01001234567')!, firstName: 'Omar', lastName: 'K', gender: Gender.male));
+      db,
+      Profile(phone: PhoneNumber.tryParse('01001234567')!, firstName: 'Omar', lastName: 'K', gender: Gender.male),
+    );
     installWalletServer(db, today: _now.date.toIso(), wall: _now.toJson());
-    final repo = SupabaseWalletRepository(db, role: () => MemberRole.rider, now: () => _now, provider: FakePaymentProvider());
+    final repo = SupabaseWalletRepository(
+      db,
+      role: () => MemberRole.rider,
+      now: () => _now,
+      provider: FakePaymentProvider(),
+    );
     return (wallet: repo, ledger: repo, me: me);
   });
 }

@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/backend/backend.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../../core/storage/preferences.dart';
 import '../domain/commute_repository.dart';
 import '../domain/corridor.dart';
@@ -7,6 +9,7 @@ import '../domain/pricing_service.dart';
 import 'corridors.dart';
 import 'fake_commute_repository.dart';
 import 'group_catalog.dart';
+import 'supabase_commute_repository.dart';
 
 part 'providers.g.dart';
 
@@ -14,17 +17,21 @@ part 'providers.g.dart';
 /// marketplace created (005 research R10). The commute and daily
 /// repositories watch it, so invalidating it rebuilds both.
 @Riverpod(keepAlive: true)
-GroupCatalog groupCatalog(Ref ref) => GroupCatalog(
-      ref.watch(sharedPreferencesProvider),
-      seed: Corridors.groupsOf(ref.watch(activeCorridorProvider)),
-    );
+GroupCatalog groupCatalog(Ref ref) =>
+    GroupCatalog(ref.watch(sharedPreferencesProvider), seed: Corridors.groupsOf(ref.watch(activeCorridorProvider)));
 
 @Riverpod(keepAlive: true)
-CommuteRepository commuteRepository(Ref ref) => FakeCommuteRepository(
-      ref.watch(sharedPreferencesProvider),
-      catalog: ref.watch(groupCatalogProvider),
-      corridor: ref.watch(activeCorridorProvider),
-    );
+CommuteRepository commuteRepository(Ref ref) => switch (ref.watch(backendModeProvider)) {
+  BackendMode.fake => FakeCommuteRepository(
+    ref.watch(sharedPreferencesProvider),
+    catalog: ref.watch(groupCatalogProvider),
+    corridor: ref.watch(activeCorridorProvider),
+  ),
+  BackendMode.live => SupabaseCommuteRepository(
+    ref.watch(backendGatewayProvider),
+    corridor: ref.watch(activeCorridorProvider),
+  ),
+};
 
 /// Real rates stay off until the founder sets them (brief §8 open item); the
 /// demo trip cost is the active corridor's (006 T024).

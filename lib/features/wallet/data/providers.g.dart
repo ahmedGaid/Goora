@@ -95,7 +95,7 @@ final class WalletRepositoryProvider
   }
 }
 
-String _$walletRepositoryHash() => r'2c030c0a6585e18ea7bdc16963de0ac255bd1cea';
+String _$walletRepositoryHash() => r'ee87467fb544fe0fe883a0103a7301815795f827';
 
 /// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
 /// passenger's share on this ride and where it stands; null hides the

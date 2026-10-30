@@ -17,14 +17,19 @@ void main() {
   commuteContract('fake', (CommuteGroup group) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
-    return FakeCommuteRepository(prefs,
-        catalog: GroupCatalog(prefs, seed: [group]), corridor: Corridors.cairoIsmailia);
+    return FakeCommuteRepository(
+      prefs,
+      catalog: GroupCatalog(prefs, seed: [group]),
+      corridor: Corridors.cairoIsmailia,
+    );
   });
 
   commuteContract('supabase', (CommuteGroup group) async {
     final db = InMemoryGateway(keys: tableKeys);
-    await signUpPerson(db, Profile(
-        phone: PhoneNumber.tryParse('01001234567')!, firstName: 'Omar', lastName: 'K', gender: Gender.male));
+    await signUpPerson(
+      db,
+      Profile(phone: PhoneNumber.tryParse('01001234567')!, firstName: 'Omar', lastName: 'K', gender: Gender.male),
+    );
     seedGroup(db, group);
     installCommuteServer(db);
     return SupabaseCommuteRepository(db, corridor: Corridors.cairoIsmailia);

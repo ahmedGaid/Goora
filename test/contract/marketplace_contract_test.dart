@@ -43,17 +43,26 @@ final class _NoGroup implements DailyCommuteRepository {
 void main() {
   marketplaceContract('fake', (role) async {
     SharedPreferences.setMockInitialValues(
-        memberPrefs(role: role, member: false, method: PaymentMethod.cash, withPlan: false));
+      memberPrefs(role: role, member: false, method: PaymentMethod.cash, withPlan: false),
+    );
     final prefs = await SharedPreferences.getInstance();
     final person = _person(role);
     final catalog = GroupCatalog(prefs);
     final commute = FakeCommuteRepository(prefs, catalog: catalog);
-    final daily = FakeDailyCommuteRepository(prefs, commute: commute, person: () => person, now: () => _now, catalog: catalog);
-    final wallet = FakeWalletRepository(prefs,
-        daily: daily,
-        role: () => role == Role.driver ? MemberRole.driver : MemberRole.rider,
-        now: () => _now,
-        provider: FakePaymentProvider());
+    final daily = FakeDailyCommuteRepository(
+      prefs,
+      commute: commute,
+      person: () => person,
+      now: () => _now,
+      catalog: catalog,
+    );
+    final wallet = FakeWalletRepository(
+      prefs,
+      daily: daily,
+      role: () => role == Role.driver ? MemberRole.driver : MemberRole.rider,
+      now: () => _now,
+      provider: FakePaymentProvider(),
+    );
     final repo = FakeMarketplaceRepository(
       prefs,
       catalog: catalog,
@@ -76,10 +85,12 @@ void main() {
     installTrustServer(db);
     installWalletServer(db, today: _now.date.toIso(), wall: _now.toJson());
     installMarketServer(db);
-    final wallet = SupabaseWalletRepository(db,
-        role: () => role == Role.driver ? MemberRole.driver : MemberRole.rider,
-        now: () => _now,
-        provider: FakePaymentProvider());
+    final wallet = SupabaseWalletRepository(
+      db,
+      role: () => role == Role.driver ? MemberRole.driver : MemberRole.rider,
+      now: () => _now,
+      provider: FakePaymentProvider(),
+    );
     await wallet.setMethod(db.userId!, PaymentMethod.cash);
     final repo = SupabaseMarketplaceRepository(
       db,

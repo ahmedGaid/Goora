@@ -15,7 +15,13 @@ void onboardingContract(String label, Future<OnboardingHarness> Function() make)
   final phone = PhoneNumber.tryParse('01001234567')!;
   const code = '123456';
   Profile profile(String first, {Role? role}) => Profile(
-      phone: phone, firstName: first, lastName: 'Khaled', gender: Gender.male, role: role, frequency: Frequency.everyDay);
+    phone: phone,
+    firstName: first,
+    lastName: 'Khaled',
+    gender: Gender.male,
+    role: role,
+    frequency: Frequency.everyDay,
+  );
 
   group('onboarding contract [$label]', () {
     test('A1 a wrong code is refused and opens no session', () async {

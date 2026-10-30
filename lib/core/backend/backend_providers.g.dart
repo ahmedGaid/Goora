@@ -15,8 +15,7 @@ final backendModeProvider = BackendModeProvider._();
 
 /// Fake unless `Backend.init` went live (011 research D2). Tests override it.
 
-final class BackendModeProvider
-    extends $FunctionalProvider<BackendMode, BackendMode, BackendMode>
+final class BackendModeProvider extends $FunctionalProvider<BackendMode, BackendMode, BackendMode>
     with $Provider<BackendMode> {
   /// Fake unless `Backend.init` went live (011 research D2). Tests override it.
   BackendModeProvider._()
@@ -35,8 +34,7 @@ final class BackendModeProvider
 
   @$internal
   @override
-  $ProviderElement<BackendMode> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<BackendMode> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   BackendMode create(Ref ref) {
@@ -45,10 +43,7 @@ final class BackendModeProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(BackendMode value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<BackendMode>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<BackendMode>(value));
   }
 }
 
@@ -61,8 +56,7 @@ final backendGatewayProvider = BackendGatewayProvider._();
 
 /// Only read in live mode; tests override it with an in-memory gateway.
 
-final class BackendGatewayProvider
-    extends $FunctionalProvider<BackendGateway, BackendGateway, BackendGateway>
+final class BackendGatewayProvider extends $FunctionalProvider<BackendGateway, BackendGateway, BackendGateway>
     with $Provider<BackendGateway> {
   /// Only read in live mode; tests override it with an in-memory gateway.
   BackendGatewayProvider._()
@@ -81,8 +75,7 @@ final class BackendGatewayProvider
 
   @$internal
   @override
-  $ProviderElement<BackendGateway> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<BackendGateway> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   BackendGateway create(Ref ref) {
@@ -91,10 +84,7 @@ final class BackendGatewayProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(BackendGateway value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<BackendGateway>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<BackendGateway>(value));
   }
 }
 
