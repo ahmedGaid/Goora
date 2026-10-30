@@ -63,6 +63,12 @@ begin
   update profiles set driver_docs = 'pending' where id = auth.uid() and driver_docs <> 'verified';
 end $$;
 
+-- Commute profile: which of the corridor's named places was picked (the app
+-- shows places by id; the points stay the matching input and never leave).
+alter table public.commute_profiles
+  add column home_place text,
+  add column work_place text;
+
 -- Groups: the display document ----------------------------------------------------
 -- research D22: the 002 columns stay the matching inputs (PostGIS); `card`
 -- holds the rest of the group as the app's CommuteGroup JSON (stops, vehicle,
