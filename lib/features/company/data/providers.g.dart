@@ -76,4 +76,4 @@ final class CompanyRepositoryProvider
   }
 }
 
-String _$companyRepositoryHash() => r'e7bfc823d550cae63c56918625acdb51d4a355e5';
+String _$companyRepositoryHash() => r'f272492cf6df96f8ab9a7722802edac8da6cbd62';

@@ -105,7 +105,7 @@ final class CommuteRepositoryProvider
   }
 }
 
-String _$commuteRepositoryHash() => r'14fbb50fc86e8dd1c6002296ab28d94d2bdc3df4';
+String _$commuteRepositoryHash() => r'9c9e027c174580ed6891d42ba60148ae37d53ff0';
 
 /// Real rates stay off until the founder sets them (brief §8 open item); the
 /// demo trip cost is the active corridor's (006 T024).

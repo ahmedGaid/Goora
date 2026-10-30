@@ -56,6 +56,29 @@ job can run, add two Vault secrets: `project_url` and `service_role_key`.
 
 Deploying needs the founder's Supabase project keys (in `.env`, never committed).
 
+### Running against local Supabase (feature 011)
+
+The app runs on its on-device fakes unless the build asks for the backend **and** it answers.
+`BACKEND_LIVE=true` plus `SUPABASE_URL` / `SUPABASE_ANON_KEY` switch every repository (sign-in,
+profile, commute, daily, trust, wallet, marketplace, company) to its `Supabase*Repository`; if the
+health check fails at start-up the app runs on the fakes for that run. Local only: sign-in is a
+bridge (`p<phone digits>@phone.goora.test` with the fake code) that refuses any non-local URL, and
+the payment provider is still the fake (real OTP and payments are 012).
+
+```bash
+supabase start                      # Docker; prints the local API URL and anon key
+supabase db reset                   # applies supabase/migrations/*
+supabase test db                    # pgTAP: supabase/tests/*.test.sql (RLS, privacy, money rules)
+flutter run --dart-define=BACKEND_LIVE=true \
+  --dart-define=SUPABASE_URL=http://127.0.0.1:54321 --dart-define=SUPABASE_ANON_KEY=<local anon key>
+```
+
+If another project's stack already holds the default ports, run a scratch copy of `supabase/`
+with every port +1000 and its own `project_id` (API `55321`, DB `55322`) instead of editing
+`supabase/config.toml` (research D19). The contract tests (`test/contract/`) run each seam's
+fake and Supabase implementation against the same cases with an in-memory gateway, no Docker
+needed: `flutter test test/contract`.
+
 ## Daily commute demo (debug builds)
 
 After joining a group the app opens on **Today**. Settings → **Demo** moves a demo clock to the

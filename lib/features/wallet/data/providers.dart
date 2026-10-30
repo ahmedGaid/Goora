@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/backend/backend.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../../core/storage/preferences.dart';
 import '../../../core/time/now_provider.dart';
 import '../../commute/domain/group.dart';
@@ -14,6 +16,7 @@ import '../domain/share.dart';
 import '../domain/wallet_repository.dart';
 import 'fake_payment_provider.dart';
 import 'fake_wallet_repository.dart';
+import 'supabase_wallet_repository.dart';
 
 part 'providers.g.dart';
 
@@ -21,26 +24,36 @@ part 'providers.g.dart';
 PaymentProvider paymentProvider(Ref ref) => FakePaymentProvider();
 
 @Riverpod(keepAlive: true)
-WalletRepository walletRepository(Ref ref) => FakeWalletRepository(
-      ref.watch(sharedPreferencesProvider),
-      daily: ref.watch(dailyCommuteRepositoryProvider),
-      role: () => ref.read(sessionControllerProvider).profile!.role == Role.driver
-          ? MemberRole.driver
-          : MemberRole.rider,
+WalletRepository walletRepository(Ref ref) {
+  MemberRole role() =>
+      ref.read(sessionControllerProvider).profile!.role == Role.driver ? MemberRole.driver : MemberRole.rider;
+  if (ref.watch(backendModeProvider) == BackendMode.live) {
+    return SupabaseWalletRepository(
+      ref.watch(backendGatewayProvider),
+      role: role,
       now: ref.watch(nowProvider),
       provider: ref.watch(paymentProviderProvider),
-      // Read when called, not while building: the marketplace watches this
-      // provider back for its ledger (005 research R9).
-      oneOffs: () => ref.read(marketplaceRepositoryProvider).doneOneOffs(),
-      // Read when called too (010 T019): the company network never reads the
-      // wallet back while building. Someone who never enrolled gets null, so
-      // a company plan from before 010 keeps covering from its start.
-      companyCoverage: (personId) async {
-        final company = ref.read(companyRepositoryProvider);
-        if (!await company.hasEnrolled(personId)) return null;
-        return company.coverageFor(personId, ref.read(nowProvider)());
-      },
     );
+  }
+  return FakeWalletRepository(
+    ref.watch(sharedPreferencesProvider),
+    daily: ref.watch(dailyCommuteRepositoryProvider),
+    role: () => ref.read(sessionControllerProvider).profile!.role == Role.driver ? MemberRole.driver : MemberRole.rider,
+    now: ref.watch(nowProvider),
+    provider: ref.watch(paymentProviderProvider),
+    // Read when called, not while building: the marketplace watches this
+    // provider back for its ledger (005 research R9).
+    oneOffs: () => ref.read(marketplaceRepositoryProvider).doneOneOffs(),
+    // Read when called too (010 T019): the company network never reads the
+    // wallet back while building. Someone who never enrolled gets null, so
+    // a company plan from before 010 keeps covering from its start.
+    companyCoverage: (personId) async {
+      final company = ref.read(companyRepositoryProvider);
+      if (!await company.hasEnrolled(personId)) return null;
+      return company.coverageFor(personId, ref.read(nowProvider)());
+    },
+  );
+}
 
 /// For a driver's check-in after drop-off (004 FR-012, 007 US2): this
 /// passenger's share on this ride and where it stands; null hides the

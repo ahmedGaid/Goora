@@ -77,4 +77,4 @@ final class MarketplaceRepositoryProvider
 }
 
 String _$marketplaceRepositoryHash() =>
-    r'2e6f289acae425a07e04ce05dacfaa46e95786ab';
+    r'44ee78d34b592e0f809db6a6cbc98df1b91a3243';

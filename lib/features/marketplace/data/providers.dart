@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/backend/backend.dart';
+import '../../../core/backend/backend_providers.dart';
 import '../../../core/storage/preferences.dart';
 import '../../../core/time/now_provider.dart';
 import '../../commute/data/providers.dart';
@@ -9,6 +11,7 @@ import '../../wallet/data/providers.dart';
 import '../../wallet/domain/wallet_repository.dart';
 import '../domain/marketplace_repository.dart';
 import 'fake_marketplace_repository.dart';
+import 'supabase_marketplace_repository.dart';
 
 part 'providers.g.dart';
 
@@ -22,6 +25,15 @@ part 'providers.g.dart';
 @Riverpod(keepAlive: true)
 MarketplaceRepository marketplaceRepository(Ref ref) {
   final daily = ref.watch(dailyCommuteRepositoryProvider);
+  if (ref.watch(backendModeProvider) == BackendMode.live) {
+    return SupabaseMarketplaceRepository(
+      ref.watch(backendGatewayProvider),
+      trust: ref.watch(trustRepositoryProvider),
+      wallet: () => ref.read(walletRepositoryProvider),
+      daily: daily,
+      corridor: ref.watch(activeCorridorProvider),
+    );
+  }
   return FakeMarketplaceRepository(
     ref.watch(sharedPreferencesProvider),
     catalog: ref.watch(groupCatalogProvider),
