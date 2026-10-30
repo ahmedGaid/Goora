@@ -11,7 +11,7 @@ typedef CommuteHarness = Future<CommuteRepository> Function(CommuteGroup group);
 
 /// 011 contracts/seam-contracts.md — Commute (C1–C5).
 void commuteContract(String label, CommuteHarness make) {
-  final corridor = Corridors.cairoIsmailia;
+  const corridor = Corridors.cairoIsmailia;
   final seeded = Corridors.groupsOf(corridor).first;
 
   group('commute contract [$label]', () {
