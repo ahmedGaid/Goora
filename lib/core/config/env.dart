@@ -14,4 +14,11 @@ abstract final class Env {
   static String get shareBaseUrl => _shareBaseUrl.isEmpty ? 'https://goora.example' : _shareBaseUrl;
 
   static bool get hasSupabase => supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
+
+  /// `--dart-define=BACKEND_LIVE=true` asks for the real backend (011 research D1).
+  static const backendLiveRequested = bool.fromEnvironment('BACKEND_LIVE');
+
+  /// The real backend only when asked for AND both Supabase settings are set;
+  /// otherwise every repository is the on-device fake, as before 011.
+  static bool get backendLive => backendLiveRequested && hasSupabase;
 }
