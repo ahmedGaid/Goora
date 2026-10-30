@@ -780,3 +780,69 @@ Autonomous run, no questions to the founder. Q1–Q11 stay open; code reads `Com
   - **Statement golden: one owner.** I generated the two statement goldens, then found branch `010-statement-golden` (`7bc327e`) already adds them, so mine were not committed. That branch reached `main` first (`f16b9dc`); after merging `main` here the two PNGs failed (0.22% and 0.30% diff: the item-5 copy change alters two statement strings) and were regenerated on Windows (`babfdda`).
   - **The email-moved fix, end to end.** `test/unit/company_leave_paths_test.dart` has a sixth leave path, "work email moved to another company domain" (the suite's company repository now takes the work email from a variable it can move). Same two checks as every path: the next trip carries the fee, earlier trips stay free, no trial, one notice; and a paused personal plan comes back with its days. Red with `_leaveIfMoved` switched off (2 failures), green with it (15 pass).
   - **Two more edge cases pinned, green first time:** a company with nobody enrolled for a month is still billed the minimum (Orange approved, nobody joins: `2026-10`, peak 0, 20 seats); the HR contact who also rides is on the roster once like anyone (name, work email, since only) and keeps the HR home. Both in `test/unit/company_edge_cases_test.dart` (11 tests now).
+
+## Walk 6 fixes — 2026-10-30, Lane F, branch `fix/010-walk6` (autonomous, no questions asked)
+
+Evidence: `walk6/REPORT.md` (findings F-W1…F-W6, N-14). One commit per finding, test first and seen failing.
+Not seen on the emulator after the fixes (this lane did not drive a device); covered by widget, unit and golden tests.
+
+### Choices (picked, with the rejected option)
+1. **F-W1 — "Through my company" in the Wallet's change-plan sheet is a join, not a plan change.** Choosing it and tapping the
+   button (now labelled "Verify work email", with its own note) opens the same sheet as the Plan screen and Settings → Company
+   account: work email → offer → consent → `CompanyEnrollment.enroll`. Declining or closing changes nothing and leaves the sheet open.
+   **Rule for a paid Monthly/Yearly:** the company plan starts and the personal plan **pauses** with its days (010 `pausedPlan`,
+   comes back when the person leaves), exactly as the Plan screen does; the consent sheet already says so ("اشتراكك الشخصي (فاضل N يوم)
+   هيتوقف…"). Rejected: silently replacing the paid plan (what the bug did), and blocking the company while a personal plan runs
+   (the 010 spec wants the pause). `showCompanyVerifySheet` now returns whether the person joined; `WalletController.changePlan`
+   asserts it is never given the company plan, so no second door can reopen. New key `changePlanCompanyNote` (the old note, "takes
+   effect on your next billing date", is wrong for a join).
+2. **Once driver lands on Today.** Same fix as N-11: driver + once → Today (the shell); its no-group state already has the
+   "Offer a trip" button. Offer a trip with nothing to pop goes Back to Today (was: the frequency step). Rejected: a tab bar on
+   Offer a trip (no other pushed task screen has one) and `go(Today)` + `push(Offer a trip)` (a relaunch would start on a lone
+   Offer a trip). `Destination.offerTrip` stays in the enum (still has a route and a test of its progress index). Post a trip's own
+   Back still falls to the frequency step with nothing to pop; it is reached only by a push, so not changed.
+3. **F-W3.** The whole row is one `InkWell`, at least `AppSizes.minTouch` (44) high, with merged semantics; the label toggles like
+   the switch and the turn-off confirm is the same. Rejected: `SwitchListTile` (it would change the row's look and the golden for no gain).
+4. **F-W4.** Reset demo data also clears the demo clock (`DemoClock.write(prefs, null)` + invalidate `nowProvider`).
+5. **F-W5.** `planFuelNote` says مشوار; `planMonthlySub` / `planYearlySub` say ج (the app's price lines all do). The lexicon sweep
+   test now bans جنيه and drops `planFuelNote` from the رحلة debt list. **Still on that list:** `actTripDeduction`, `actTripIncome`,
+   `driverBreakdownCost` (wallet activity and driver breakdown lines; not in this brief).
+6. **F-W6.** `shortDateYear` is the day, the month's name and the year in both languages ("1 Sep 2026", "1 سبتمبر 2026"); new key
+   `dayMonthYear` (same month names as `dayAndMonth`). "On Valeo's plan since" uses it too (it had no year). Rejected: a second
+   helper (the company screens would keep two date styles) and Intl `DateFormat` (Arabic gives Eastern digits). This replaces Lane W's
+   decision 5 ("`shortDateYear` stays `d/m/yyyy`").
+7. **N-14.** `CompanyTerms.bankDetails` is now `null` (the founder has not supplied the account); the invoice shows
+   `companyInvoiceBankPlaceholder` ("بيانات الحساب البنكي هتوصلك قريب" / "Goora's bank details will reach you soon"). **Still a
+   placeholder:** it promises details are coming and shows no account. When the founder supplies them, set `bankDetails`.
+   Rejected: translating the old English sentence (it still reads as a to-do note on a document HR may pay from).
+
+### Still open (not fixed here)
+- **F-W2** "الشركة بتستلم كشف … أول كل شهر" (`companyHrShareOnLine`) promises a delivery the fake does not make; waits for the lawyer (Q8 b).
+- **Goora bank details** (founder). Flags `companyInvoicesLive` and `hrStatementExport` stay OFF.
+
+### R11 — keys added or changed in this lane (founder review, ar first)
+| Key | ar | en |
+|---|---|---|
+| changePlanCompanyNote (new) | هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة. | We check your work email first, then you agree to what your company sees. Your own plan pauses and comes back if you leave the company. |
+| dayMonthYear (new) | {day} {شهر} {year} | {day} {Mon} {year} |
+| companyInvoiceBankPlaceholder (new) | بيانات الحساب البنكي هتوصلك قريب | Goora's bank details will reach you soon |
+| planMonthlySub (changed) | 149 ج/الشهر (was 149 جنيه/الشهر) | unchanged |
+| planYearlySub (changed) | 1,490 ج/السنة (was 1,490 جنيه/السنة) | unchanged |
+| planFuelNote (changed) | مصاريف البنزين والرسوم اللي بتدفعها في كل مشوار بتروح كلها للسواق. | unchanged |
+
+### Goldens regenerated (Windows)
+`company_consent_rtl`, `screen_plan_rtl`, `sheet_change_plan_rtl` (plan-sheet copy behind/inside them) ·
+`company_home_{ltr,rtl}`, `company_invoice_{ltr,rtl}`, `company_statement_{ltr,rtl}` (dates; invoice also the bank line).
+No other golden moved (full golden run green after).
+
+### Files touched
+`lib/features/wallet/presentation/{plan/company_verify_sheet, wallet/change_plan_sheet, wallet/wallet_controller, labels}.dart` ·
+`lib/features/company/{domain/company_terms, presentation/{hr_consent_toggle, invoice_screen, company_offer_view}}.dart` ·
+`lib/features/onboarding/domain/onboarding_flow.dart` · `lib/features/marketplace/presentation/offer_trip/offer_trip_screen.dart` ·
+`lib/features/settings/presentation/demo_section.dart` · `lib/core/l10n/app_{ar,en}.arb` (+ generated; 3 keys appended at the end) ·
+tests: new `change_plan_company_test`; changed `app_flow`, `marketplace_navigation`, `company_statement`, `company_enroll`,
+`company_invoices`, `settings_reset_company`, `onboarding_flow`, `onboarding_route`, `short_date`, `copy_lexicon_sweep`.
+No `data/` file, `pubspec`, `supabase/**`, map, android/ios or `Docs/NEXT_GOAL.md` touched.
+
+### Gates (this worktree, after `git merge main` @ `6409371`)
+`flutter analyze` 0 issues · `flutter test --concurrency=1` **1792 passed, 0 failed** · `node --test "supabase/functions/_shared/*.test.ts"` **276 pass, 0 fail**.

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/app/router.dart';
 import 'package:goora/app/routes.dart';
 import 'package:goora/core/storage/preferences.dart';
+import 'package:goora/core/theme/app_sizes.dart';
 import 'package:goora/core/time/calendar_date.dart';
 import 'package:goora/core/time/now_provider.dart';
 import 'package:goora/features/commute/domain/commute_profile.dart';
@@ -209,6 +210,36 @@ void main() {
         await tester.pumpAndSettle();
         expect(_switchOn(tester), isTrue);
         expect(find.text(l.companyHrShareOnLine), findsOneWidget);
+        expect(await _consent(c), isTrue);
+      });
+
+      // Walk 6 F-W3: only the small switch toggled; the label did nothing.
+      testWidgets('F-W3: tapping the title turns it on, and tapping it again asks before turning it off',
+          (tester) async {
+        final c = await _asEmployee(tester, code);
+        await tester.tap(find.text(l.companyHrShareTitle));
+        await tester.pumpAndSettle();
+        expect(_switchOn(tester), isTrue);
+        expect(await _consent(c), isTrue);
+
+        await tester.tap(find.text(l.companyHrShareTitle));
+        await tester.pumpAndSettle();
+        expect(find.text(l.companyHrShareStopTitle), findsOneWidget, reason: 'same confirm as the switch');
+        await tester.tap(find.text(l.keepIt));
+        await tester.pumpAndSettle();
+        expect(await _consent(c), isTrue);
+      });
+
+      testWidgets('F-W3: the whole row is one 44 px target; a tap on its padding toggles too', (tester) async {
+        final c = await _asEmployee(tester, code);
+        final row = find.byKey(const Key('hr-share-row'));
+        final rowRect = tester.getRect(row);
+        expect(rowRect.height, greaterThanOrEqualTo(AppSizes.minTouch));
+        final textRect = tester.getRect(find.text(l.companyHrShareTitle));
+        expect(textRect.top, greaterThan(rowRect.top + 1), reason: 'the top edge of the row is not the label');
+        await tester.tapAt(Offset(textRect.center.dx, rowRect.top + 1));
+        await tester.pumpAndSettle();
+        expect(_switchOn(tester), isTrue);
         expect(await _consent(c), isTrue);
       });
 

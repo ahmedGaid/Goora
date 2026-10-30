@@ -36,9 +36,13 @@ void main() {
       expect(RegExp(r'[٠-٩]').hasMatch(l.shortDate(CalendarDate(2026, 10, 29))), isFalse);
     });
 
-    test('[$code] shortDateYear stays numeric d/m/yyyy for the company screens', () {
+    // Walk 6 F-W6: "1/9/2026" read as 9 January to many readers, in English too.
+    test('[$code] shortDateYear is day + month name + year, no slash, for the company screens', () {
       final l = lookupAppLocalizations(locale);
-      expect(l.shortDateYear(CalendarDate(2026, 9, 1)), '1/9/2026');
+      final expected = code == 'ar' ? '1 سبتمبر 2026' : '1 Sep 2026';
+      expect(l.shortDateYear(CalendarDate(2026, 9, 1)), expected);
+      expect(l.shortDateYear(CalendarDate(2027, 1, 3)), isNot(contains('/')));
+      expect(RegExp(r'[٠-٩]').hasMatch(l.shortDateYear(CalendarDate(2026, 10, 29))), isFalse);
     });
   }
 }

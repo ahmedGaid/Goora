@@ -28,9 +28,9 @@
   "planTitle": "اشترك ومن غير رسوم",
   "planSubline": "من غير رسوم خدمة على أي مشوار أو كرسي.",
   "planMonthlyTitle": "شهري",
-  "planMonthlySub": "149 جنيه/الشهر",
+  "planMonthlySub": "149 ج/الشهر",
   "planYearlyTitle": "سنوي",
-  "planYearlySub": "1,490 جنيه/السنة",
+  "planYearlySub": "1,490 ج/السنة",
   "planYearlyChip": "شهرين مجانًا",
   "planCompanyTitle": "عن طريق شركتي",
   "planCompanySub": "مجاني — أكّد إيميل الشغل",
@@ -38,7 +38,7 @@
   "planIncludedMatch": "ترشيح يومي لجروب ركوبتك",
   "planIncludedBackup": "سواق بدّل لو سواقك اتأخر",
   "planIncludedTrust": "تتبّع الالتزام وأدوات أمان SOS",
-  "planFuelNote": "مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.",
+  "planFuelNote": "مصاريف البنزين والرسوم اللي بتدفعها في كل مشوار بتروح كلها للسواق.",
   "planCtaVerify": "أكّد إيميل الشغل",
   "planFooter": "تقدر تلغي في أي وقت. جورة مجانية للسواقين.",
   "verifyEmailTitle": "أكّد إيميل شغلك",
@@ -2164,5 +2164,16 @@
     "placeholders": {
       "amount": {"type": "int"}
     }
-  }
+  },
+  "changePlanCompanyNote": "هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة.",
+  "dayMonthYear": "{day} {month, select, 1{يناير} 2{فبراير} 3{مارس} 4{أبريل} 5{مايو} 6{يونيو} 7{يوليو} 8{أغسطس} 9{سبتمبر} 10{أكتوبر} 11{نوفمبر} 12{ديسمبر} other{{month}}} {year}",
+  "@dayMonthYear": {
+    "description": "A date with its year, for company screens where a span can cross a year (a 12-month contract): the day, the month's name, the year. month is 1-12 as text.",
+    "placeholders": {
+      "day": {"type": "int"},
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+  "companyInvoiceBankPlaceholder": "بيانات الحساب البنكي هتوصلك قريب"
 }

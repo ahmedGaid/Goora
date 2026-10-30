@@ -121,7 +121,7 @@ class _Body extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               Text(l10n.companyInvoiceBankTitle, style: AppTypography.section.copyWith(color: AppColors.textPrimary)),
               const SizedBox(height: AppSpacing.xs),
-              Text(CompanyTerms.bankDetails, style: secondary),
+              Text(CompanyTerms.bankDetails ?? l10n.companyInvoiceBankPlaceholder, key: const Key('invoice-bank'), style: secondary),
             ],
           ),
         ),

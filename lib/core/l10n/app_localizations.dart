@@ -269,7 +269,7 @@ abstract class AppLocalizations {
   /// No description provided for @planMonthlySub.
   ///
   /// In ar, this message translates to:
-  /// **'149 جنيه/الشهر'**
+  /// **'149 ج/الشهر'**
   String get planMonthlySub;
 
   /// No description provided for @planYearlyTitle.
@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// No description provided for @planYearlySub.
   ///
   /// In ar, this message translates to:
-  /// **'1,490 جنيه/السنة'**
+  /// **'1,490 ج/السنة'**
   String get planYearlySub;
 
   /// No description provided for @planYearlyChip.
@@ -329,7 +329,7 @@ abstract class AppLocalizations {
   /// No description provided for @planFuelNote.
   ///
   /// In ar, this message translates to:
-  /// **'مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.'**
+  /// **'مصاريف البنزين والرسوم اللي بتدفعها في كل مشوار بتروح كلها للسواق.'**
   String get planFuelNote;
 
   /// No description provided for @planCtaVerify.
@@ -4772,6 +4772,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'ادفع {amount} ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.'**
   String fawryHow(int amount);
+
+  /// No description provided for @changePlanCompanyNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة.'**
+  String get changePlanCompanyNote;
+
+  /// A date with its year, for company screens where a span can cross a year (a 12-month contract): the day, the month's name, the year. month is 1-12 as text.
+  ///
+  /// In ar, this message translates to:
+  /// **'{day} {month, select, 1{يناير} 2{فبراير} 3{مارس} 4{أبريل} 5{مايو} 6{يونيو} 7{يوليو} 8{أغسطس} 9{سبتمبر} 10{أكتوبر} 11{نوفمبر} 12{ديسمبر} other{{month}}} {year}'**
+  String dayMonthYear(int day, String month, int year);
+
+  /// No description provided for @companyInvoiceBankPlaceholder.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات الحساب البنكي هتوصلك قريب'**
+  String get companyInvoiceBankPlaceholder;
 }
 
 class _AppLocalizationsDelegate

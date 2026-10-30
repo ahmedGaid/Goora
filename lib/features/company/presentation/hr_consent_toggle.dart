@@ -57,28 +57,37 @@ class HrConsentToggle extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // The whole row is the target (walk 6 F-W3): the label toggles like the
+        // switch, and the row is at least 44 px high.
         MergeSemantics(
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.companyHrShareTitle,
-                  style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
-                ),
+          child: InkWell(
+            key: const Key('hr-share-row'),
+            onTap: () => _set(context, ref, !on),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: AppSizes.minTouch),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.companyHrShareTitle,
+                      style: AppTypography.bodyStrong.copyWith(color: AppColors.textPrimary),
+                    ),
+                  ),
+                  Switch(
+                    key: const Key('hr-share-toggle'),
+                    value: on,
+                    onChanged: (v) => _set(context, ref, v),
+                    activeTrackColor: AppColors.greenText,
+                    activeThumbColor: AppColors.white,
+                    inactiveThumbColor: AppColors.textSecondary,
+                    inactiveTrackColor: AppColors.surface,
+                    trackOutlineColor: WidgetStateProperty.resolveWith(
+                      (states) => states.contains(WidgetState.selected) ? Colors.transparent : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
-              Switch(
-                key: const Key('hr-share-toggle'),
-                value: on,
-                onChanged: (v) => _set(context, ref, v),
-                activeTrackColor: AppColors.greenText,
-                activeThumbColor: AppColors.white,
-                inactiveThumbColor: AppColors.textSecondary,
-                inactiveTrackColor: AppColors.surface,
-                trackOutlineColor: WidgetStateProperty.resolveWith(
-                  (states) => states.contains(WidgetState.selected) ? Colors.transparent : AppColors.textSecondary,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
         Text(

@@ -103,7 +103,7 @@ class _CompanyOfferViewState extends ConsumerState<CompanyOfferView> {
             const Icon(GooraIcons.verified, size: AppSizes.iconSmall, color: AppColors.greenText),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
-              child: Text(l10n.companyEnrolledLine(companyName, l10n.shortDate(since.date)), style: title),
+              child: Text(l10n.companyEnrolledLine(companyName, l10n.shortDateYear(since.date)), style: title),
             ),
           ],
         ),

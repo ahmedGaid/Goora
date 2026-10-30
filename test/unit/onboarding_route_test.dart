@@ -33,6 +33,10 @@ void main() {
     expect(routeForSession(session(Role.rider, Frequency.once)), Routes.today);
   });
 
+  test('a once driver with nothing offered lands on Today, which offers Offer a trip (walk 6)', () {
+    expect(routeForSession(session(Role.driver, Frequency.once)), Routes.today);
+  });
+
   test('an every-day rider is not sent to Today by a one-off alone', () {
     expect(routeForSession(session(Role.rider, Frequency.everyDay), hasOneOff: true), Routes.commuteSetup);
   });

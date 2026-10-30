@@ -22,6 +22,7 @@ import 'package:goora/features/onboarding/domain/choices.dart';
 import 'package:goora/features/wallet/data/fake_wallet_repository.dart';
 import 'package:goora/features/wallet/data/providers.dart';
 import 'package:goora/features/wallet/domain/plan.dart';
+import 'package:goora/features/wallet/presentation/labels.dart';
 
 import '../helpers/daily_fakes.dart';
 import '../helpers/pump_app.dart';
@@ -234,6 +235,8 @@ void main() {
       c.read(routerProvider).go(Routes.company);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('company-enrolled')), findsOneWidget);
+      // Walk 6 F-W6: "since 29/10" had no year; it is a company date like the others.
+      expect(find.text(l.companyEnrolledLine('Valeo', l.shortDateYear(_now.date))), findsOneWidget);
     });
   }
 }
