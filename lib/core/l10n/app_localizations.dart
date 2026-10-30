@@ -269,7 +269,7 @@ abstract class AppLocalizations {
   /// No description provided for @planMonthlySub.
   ///
   /// In ar, this message translates to:
-  /// **'149 جنيه/الشهر'**
+  /// **'149 ج/الشهر'**
   String get planMonthlySub;
 
   /// No description provided for @planYearlyTitle.
@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// No description provided for @planYearlySub.
   ///
   /// In ar, this message translates to:
-  /// **'1,490 جنيه/السنة'**
+  /// **'1,490 ج/السنة'**
   String get planYearlySub;
 
   /// No description provided for @planYearlyChip.
@@ -329,7 +329,7 @@ abstract class AppLocalizations {
   /// No description provided for @planFuelNote.
   ///
   /// In ar, this message translates to:
-  /// **'مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.'**
+  /// **'مصاريف البنزين والرسوم اللي بتدفعها في كل مشوار بتروح كلها للسواق.'**
   String get planFuelNote;
 
   /// No description provided for @planCtaVerify.

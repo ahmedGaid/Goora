@@ -24,6 +24,10 @@ void main() {
     expect(keysWith('ج.م'), isEmpty);
   });
 
+  test('walk 6 F-W5: money is ج, never the spelled-out جنيه (the plan sheet mixed the two)', () {
+    expect(keysWith('جنيه'), isEmpty);
+  });
+
   test('lexicon: السواق, never سائق; كرسي, never مقعد', () {
     expect(keysWith('سائق'), isEmpty);
     expect(keysWith('مقعد'), isEmpty);
@@ -31,13 +35,12 @@ void main() {
 
   test('lexicon: مشوار, never رحلة, except the two leg names and the debt listed here', () {
     // tripGoing / tripReturn name a leg (رحلة الذهاب / الرجوع), which the lexicon allows.
-    // The other four are older wallet lines that still say رحلة for a whole trip; they
+    // The other three are older wallet lines that still say رحلة for a whole trip; they
     // are known debt (walk N-1 class, research R11 addendum) — fix them, then shrink
-    // this list. A new key may not join it.
+    // this list. A new key may not join it. (planFuelNote was fixed in walk 6, F-W5.)
     const allowed = {
       'tripGoing',
       'tripReturn',
-      'planFuelNote',
       'actTripDeduction',
       'actTripIncome',
       'driverBreakdownCost',

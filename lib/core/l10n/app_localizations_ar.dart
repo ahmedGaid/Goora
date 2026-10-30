@@ -93,13 +93,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planMonthlyTitle => 'شهري';
 
   @override
-  String get planMonthlySub => '149 جنيه/الشهر';
+  String get planMonthlySub => '149 ج/الشهر';
 
   @override
   String get planYearlyTitle => 'سنوي';
 
   @override
-  String get planYearlySub => '1,490 جنيه/السنة';
+  String get planYearlySub => '1,490 ج/السنة';
 
   @override
   String get planYearlyChip => 'شهرين مجانًا';
@@ -124,7 +124,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get planFuelNote =>
-      'مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.';
+      'مصاريف البنزين والرسوم اللي بتدفعها في كل مشوار بتروح كلها للسواق.';
 
   @override
   String get planCtaVerify => 'أكّد إيميل الشغل';
