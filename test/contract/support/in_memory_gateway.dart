@@ -69,7 +69,14 @@ final class InMemoryGateway implements BackendGateway {
     for (final r in rows) {
       if (t.any((e) => _sameKey(table, e, r))) throw BackendConflict('23505', '$table key');
     }
-    final copies = [for (final r in rows) Map<String, Object?>.of(r)];
+    // Like a `default gen_random_uuid()` id column.
+    final copies = [
+      for (final r in rows)
+        if (keys[table]?.length == 1 && keys[table]!.single == 'id' && r['id'] == null)
+          {...r, 'id': newId(table)}
+        else
+          Map<String, Object?>.of(r),
+    ];
     t.addAll(copies);
     return [for (final r in copies) Map.of(r)];
   }

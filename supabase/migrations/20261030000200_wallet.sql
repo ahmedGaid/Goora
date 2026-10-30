@@ -8,10 +8,10 @@
 -- the legacy 004 driver kinds (tripIncome, feeReceived, cashReceived) are
 -- deliberately absent.
 
--- Cairo wall time as the app's WallTime text ('YYYY-MM-DD HH24:MI'), research R2.
+-- Cairo wall time as the app's WallTime JSON ('YYYY-MM-DDTHH:MM:SS'), research R2.
 create function public.cairo_wall() returns text
   language sql stable set search_path = public as $$
-    select to_char(now() at time zone 'Africa/Cairo', 'YYYY-MM-DD HH24:MI')
+    select to_char(now() at time zone 'Africa/Cairo', 'YYYY-MM-DD"T"HH24:MI:SS')
   $$;
 
 create function public.cairo_today() returns date
