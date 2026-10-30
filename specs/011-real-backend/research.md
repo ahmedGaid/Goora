@@ -93,7 +93,9 @@ vectors, which FR-016 forbids without a moved rule).
 
 ### D9 — Law 87/2018: no driver-income path
 The ledger (`wallet_entries.kind`) allows `topUp`, `withdrawal`, `subscription`, `seatBooked`,
-`seatRefund`, `settlement`, `bundle`, `bundleTrip`, `tripFee`, `charge` — never `tripIncome`,
+`seatRefund`, `settlement`, `bundle`, `bundleTrip`, `trip`, `cashTrip`, `tripDeduction`,
+`lateCancelCharge`, `freeCancelZero` (the rider's own Goora money only; corrected at P6 from the
+planned `tripFee`/`charge` to match `ActivityKind`) — never `tripIncome`,
 `feeReceived`, `cashReceived` or any payout/earning kind. No column anywhere is named or used for
 driver income. The driver's share stays a status: `share_marks` (driver's answer) and
 `share_claims` (rider's "I paid"), no amount credited to anyone. `wallet_withdraw` refuses more
@@ -207,6 +209,53 @@ lane's either; the line does nothing when `backendLive` is off.
 Rejected: initialising lazily inside a provider — Riverpod providers can't await, so the first
 screen would race the client.
 
+### D22 — Groups carry a display document (`groups.card`)
+The 002 columns stay the PostGIS matching inputs; `groups.card` / `group_members.card` (jsonb)
+hold the rest of the app's `CommuteGroup` / `Member` JSON (stops, vehicle, seats, days).
+`groups_for()` merges them with names and ratings from `profiles` at read time, with the privacy
+cuts of constitution IV. Rejected: one column per display field — a dozen columns that only mirror
+a Dart class and drift from it.
+
+### D23 — Contract cases changed while writing them
+- K5 was "setHrConsent(true) → true": the fake refuses consent without an enrollment, and
+  enrolling needs a company Goora approved (a staff action, service role only). K5 is now "never
+  enrolled → no consent". K6 was "roster by a non-HR → NotHrContact": the fake has no caller to
+  check, so K6 is now "HR adds a domain; a held domain is refused". Both originals are covered by
+  `supabase/tests/30_company.test.sql`.
+- Daily D3/D4 (cut-off charges) belong to the `commute-day` Edge Function; their rules run as the
+  TS twins under `node --test`. The Dart contract keeps the read side (no absences, no charges).
+- Rejected: changing the fakes so the original cases pass — the goal forbids changing their
+  behaviour.
+
+### D24 — Server function signatures as built (supersede contracts/server-functions.md)
+`wallet_subscribe(p_type)` (price from `plan_prices`, never from the client); added
+`wallet_start_company_plan()` / `wallet_end_company_plan()`; `market_book(p_offer,
+p_contribution, p_fee, p_paid_by)`; `market_accept(p_request, p_trip_cost, p_seats)`;
+`company_register(p_name, p_domains, p_hr_work_email)`. The migrations are the source of truth.
+Rejected: a client-sent plan price — a client could underpay.
+
+### D25 — Profile `clear()` deletes the person's own row
+Settings → Reset on the live backend deletes the `profiles` row (the cascade removes what hangs
+off it). Rejected: blanking columns — leaves a half-person that RLS still treats as a member.
+
+### Known gaps (live mode, for 012 or later)
+- **Wallet**: cash trial, `feeDue`/`feeOverdue` and trip rows derived from 003 records are not
+  computed; shares come from the driver's marks only (no first name; method shown as cash).
+- **Company**: suspensions are not subtracted from coverage on the device; dashboard money, CO2,
+  parking and route gaps read as withheld; Goora staff `demo*` actions do nothing (service role);
+  `clearAll` leaves server rows.
+- **Marketplace**: seat offers carry no driver name (profiles are owner-only); group legs are not
+  in `driverDay`; `requestsForMe` is empty; `reclaim` is refused; `doneOneOffs` is empty; demos do
+  nothing.
+- **Daily**: a ride the server has not stored yet reads from the plan (no share token, the first
+  stop for every rider); the "no cover" choice is not sent.
+- **Seed**: no `supabase/seed.sql` yet (T015), so a fresh local stack has no groups.
+
+### Finding F1 — fake trust contact ids repeat inside one clock tick
+`FakeTrustRepository` uses the microsecond clock as a contact id, so two adds inside one Windows
+clock tick get the same id. The trust contract paces T5 by 5 ms; the fake is unchanged (existing
+fakes keep their behaviour). Worth fixing in a later lane.
+
 ## Analyze pass (2026-10-30, after tasks.md)
 
 | ID | Severity | Finding | Fix |
@@ -223,4 +272,13 @@ FR-020 → T035.
 
 ## Results log
 
-(Filled in as phases complete: SQL test run, live contract run, gate numbers.)
+- **SQL tests: DB not run.** The 3 pre-011 migrations applied cleanly on Postgres 17 earlier in
+  the session; then the Docker engine hung (`docker info` timed out, exit 124). It was not
+  restarted, because another project's stack runs on it. `supabase/tests/*.test.sql` (5 files)
+  are written but not executed. Next run: copy `supabase/` to the shifted-port scratch dir,
+  `supabase db reset`, `supabase test db`.
+- **Live contract run (D20): not run**, same reason.
+- **Contracts** (in-memory gateway, each half fake and half Supabase, all green): onboarding 14,
+  trust 18, commute 10, wallet 16, company 14, marketplace 10, daily 10.
+- **Gates (2026-10-30)**: `flutter analyze` 0 issues; `node --test` 276/276; `flutter test
+  --concurrency=1`: see the goora-status block.
