@@ -50,8 +50,8 @@ void main() {
     test('rider + once → Today, the shell (walk N-11: Empty seats alone had no tab bar)', () {
       expect(OnboardingFlow.destinationFor(Role.rider, Frequency.once), Destination.today);
     });
-    test('driver + once → Offer a trip', () {
-      expect(OnboardingFlow.destinationFor(Role.driver, Frequency.once), Destination.offerTrip);
+    test('driver + once → Today, the shell (walk 6: Offer a trip alone had no tab bar)', () {
+      expect(OnboardingFlow.destinationFor(Role.driver, Frequency.once), Destination.today);
     });
   });
 

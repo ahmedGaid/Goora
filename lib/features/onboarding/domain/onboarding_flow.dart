@@ -20,9 +20,9 @@ abstract final class OnboardingFlow {
   static Destination destinationFor(Role role, Frequency frequency) => switch ((role, frequency)) {
         (_, Frequency.everyDay) => Destination.commuteSetup,
         // Today is the shell (tab bar, Wallet, Trust); its "no group yet" state
-        // offers Empty seats, so Back from there never reaches onboarding (walk N-11).
-        (Role.rider, Frequency.once) => Destination.today,
-        (Role.driver, Frequency.once) => Destination.offerTrip,
+        // offers Empty seats to a rider (walk N-11) and Offer a trip to a driver
+        // (walk 6), so Back from there never reaches onboarding.
+        (_, Frequency.once) => Destination.today,
       };
 
   /// Index in the role → frequency → commute setup progress dots.
