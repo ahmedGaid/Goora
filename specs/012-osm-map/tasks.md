@@ -44,10 +44,10 @@ Format: `- [ ] T### [P?] [Story] description — path`
 
 - [x] T022 [P] Design gallery entry — `lib/features/design_gallery/presentation/design_gallery_screen.dart`
 - [x] T023 [P] Goldens ar + en at 1.3× (offline) for `GooraPickupMap` card + sheet — `test/golden/map/goora_pickup_map_golden_test.dart`
-- [ ] T024 Regenerate only the screen goldens these surfaces changed; list them in the status block
+- [x] T024 Regenerate only the screen goldens these surfaces changed; list them in the status block
 - [x] T025 README "Map tiles" section — `README.md`
-- [ ] T026 Gates: analyze 0 · `flutter test --concurrency=1` · node tests
-- [ ] T027 goora-status block · push · "Lane M done" to managere
+- [x] T026 Gates: analyze 0 · `flutter test --concurrency=1` · node tests — 0 · 1809 · 276 (2026-10-30)
+- [x] T027 goora-status block · push · "Lane M done" to managere
 
 ## Dependencies
 
