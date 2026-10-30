@@ -107,6 +107,30 @@ A company pays **Goora's service fee** for its employees' commute rides: an empl
 
 Walked 2026-10-29, see `specs/010-company-network/walk5/REPORT.md`. Emulator walk-through steps are not written here yet.
 
+## Map tiles (feature 012)
+
+The match result and Today screens show the group's pickup points on a small map (tap for a
+bigger one). It is display only: matching runs on the server, and the map only ever gets public
+pickup points, never a home. The map sits behind one switch (`lib/core/map/pickup_map_renderer.dart`),
+so the tile provider can change without touching the screens.
+
+- **No tile URL (the default, every test and demo build):** the app draws a sketch of the points in
+  order with a "sketch, not to scale" note, and makes no map network calls.
+- **With a tile provider:** pass its address at build time. Public OpenStreetMap tiles must not be
+  used in production; the provider is a founder decision. Never commit a real key.
+
+```bash
+flutter run \
+  --dart-define=MAP_TILE_URL_TEMPLATE="https://tiles.example.com/{z}/{x}/{y}.png?key={key}" \
+  --dart-define=MAP_TILE_API_KEY=YOUR_KEY \
+  --dart-define=MAP_TILE_ATTRIBUTION="© Example Tiles"
+```
+
+`{key}` in the template is filled from `MAP_TILE_API_KEY`. The "© OpenStreetMap contributors"
+credit (plus `MAP_TILE_ATTRIBUTION`, if set) shows on every map with tiles. The same two keys can
+go in `.env` and be passed with `--dart-define-from-file=.env`. Release Android builds need the
+`INTERNET` permission in the manifest for tiles. Spec: `specs/012-osm-map/`.
+
 ## Code generation
 
 Riverpod providers and l10n are generated and committed. After changing a `@riverpod` provider or

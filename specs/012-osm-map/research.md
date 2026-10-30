@@ -48,6 +48,17 @@ taken and the one rejected.
 
 - Release builds need `android.permission.INTERNET` in `android/app/src/main/AndroidManifest.xml` for tiles (debug builds have it). Lane L owns the manifest → flagged to the conductor; nothing changes until a tile URL is configured anyway.
 
+## R10 — Process notes (honest record)
+
+- T010–T011 and T004–T005 were written first and confirmed failing (no code). The P3 surface tests
+  (`surfaces_map_test.dart`) were written right after the three screen edits, not before; they look
+  for keys that exist only because of those edits, so they cannot pass without them.
+- Bug found by T011: a tiles map in the small card swallowed the card's tap. Fix: the preview is
+  wrapped in `IgnorePointer` (the card owns the tap; contract rule 5).
+- `AppSizes` (+4 lines) and `GooraIcons` (+2) got pure additions; the conductor confirmed this is fine.
+- Generated `app_localizations*.dart` will conflict with other lanes at merge: regenerate with
+  `flutter gen-l10n`, never hand-merge.
+
 ## Decisions (log)
 
 | # | Decision | Rejected alternative |
@@ -68,3 +79,4 @@ taken and the one rejected.
 | D14 | Constitution "google_maps_flutter" line left as is, flagged | editing the constitution (founder approval) |
 | D15 | README "Map tiles" section; `.env.example` unchanged (already has the keys) | adding `MAP_TILE_ATTRIBUTION` to `.env.example` (not in this lane's files) |
 | D16 | Zoom cap 16 when fitting; fit padding = `AppSpacing.xl` | fitting a single point (infinite zoom) |
+| D17 | Rider Today card hides its legend (`showLegend: false`): the trip timeline right above prints the same "Pickup · 7:25 / Arrival · 8:05" lines; the spoken label and the big sheet keep them | printing the lines twice (noise; 6 existing tests assert each line appears once) |

@@ -85,6 +85,18 @@ void main() {
     });
   }
 
+  testWidgets('showLegend: false drops the lines but keeps the note, spoken label and sheet legend', (tester) async {
+    final l = l10nFor(en);
+    await pumpMapHost(tester, GooraPickupMap(pins: seedPins(), showLegend: false));
+    await tester.pumpAndSettle();
+    expect(find.text(seedPins().first.title), findsNothing);
+    expect(find.text(l.mapSketchNote), findsOneWidget);
+    await tester.tap(find.byKey(const Key('pickup-map-card')));
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: find.byKey(const Key('pickup-map-sheet')), matching: find.text(seedPins().first.title)),
+        findsOneWidget);
+  });
+
   testWidgets('pins are not tappable — no free-point picking (FR-001)', (tester) async {
     await pumpMapHost(tester, GooraPickupMap(pins: seedPins()));
     await tester.pumpAndSettle();

@@ -19,13 +19,18 @@ import 'goora_icons.dart';
 /// that opens [showPickupMapSheet]. Display only: no live position, no
 /// free-point picking.
 class GooraPickupMap extends ConsumerWidget {
-  const GooraPickupMap({super.key, required this.pins, this.title});
+  const GooraPickupMap({super.key, required this.pins, this.title, this.showLegend = true});
 
   /// In driving order, arrival last. Built only from `Stop`s (see [PickupPin]).
   final List<PickupPin> pins;
 
   /// Defaults to "مكان التجمع" / "Meeting point".
   final String? title;
+
+  /// false when the same lines are already printed right next to the card
+  /// (rider Today's trip timeline); the spoken label and the bigger map
+  /// still carry them.
+  final bool showLegend;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -69,7 +74,10 @@ class GooraPickupMap extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _Legend(pins: pins, sketch: !renderer.usesNetwork),
+                if (showLegend)
+                  _Legend(pins: pins, sketch: !renderer.usesNetwork)
+                else if (!renderer.usesNetwork)
+                  const _SketchNote(),
               ],
             ),
           ),
@@ -156,7 +164,6 @@ class _Legend extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -181,9 +188,19 @@ class _Legend extends StatelessWidget {
           ),
         if (sketch) ...[
           const SizedBox(height: AppSpacing.sm),
-          Text(l10n.mapSketchNote, style: AppTypography.caption.copyWith(color: AppColors.textSecondary)),
+          const _SketchNote(),
         ],
       ],
     );
   }
+}
+
+class _SketchNote extends StatelessWidget {
+  const _SketchNote();
+
+  @override
+  Widget build(BuildContext context) => Text(
+        AppLocalizations.of(context).mapSketchNote,
+        style: AppTypography.caption.copyWith(color: AppColors.textSecondary),
+      );
 }
