@@ -55,11 +55,10 @@ class _OfferTripScreenState extends ConsumerState<OfferTripScreen> {
       _edited ?? ref.read(offerStartProvider).value ?? OfferForm.start(ref.read(activeCorridorProvider));
   bool _busy = false;
 
-  // A live offer lives on Today; before publishing, Back is onboarding's last
-  // step when there is nothing to pop (T104 F8).
-  void _back() => context.canPop()
-      ? context.pop()
-      : context.go(_id != null ? Routes.today : Routes.frequency);
+  // Opened from Today (a once driver's landing, walk 6) Back pops. With nothing
+  // to pop (a relaunch, a deep link) it goes to Today, the shell: never into
+  // onboarding, whether or not the offer was published.
+  void _back() => context.canPop() ? context.pop() : context.go(Routes.today);
 
   void _set(OfferForm f) => setState(() => _edited = f);
 

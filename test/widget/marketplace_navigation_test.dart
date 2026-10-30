@@ -77,6 +77,15 @@ Future<void> _openEmptySeats(WidgetTester tester) async {
   expect(find.byType(EmptySeatsScreen), findsOneWidget);
 }
 
+/// A once driver with nothing offered lands on Today (walk 6); Offer a trip is
+/// the button on it.
+Future<void> _openOfferTrip(WidgetTester tester) async {
+  expect(find.byType(TodayScreen), findsOneWidget);
+  await tester.tap(find.byKey(const Key('no-group-action')));
+  await tester.pumpAndSettle();
+  expect(find.byType(OfferTripScreen), findsOneWidget);
+}
+
 Future<void> _back(WidgetTester tester, String tooltip) async {
   await tester.tap(find.byTooltip(tooltip));
   await tester.pumpAndSettle();
@@ -250,6 +259,7 @@ void main() {
 
     testWidgets('[$code] once driver publishes; Back → Today, not Frequency', (tester) async {
       await _pump(tester, _newDriver(code, frequency: Frequency.once), height: 3000);
+      await _openOfferTrip(tester);
       await tester.ensureVisible(find.byKey(const Key('publish')));
       await tester.tap(find.byKey(const Key('publish')));
       await tester.pumpAndSettle();
@@ -285,15 +295,20 @@ void main() {
     });
 
     // 005 US2: the driver's entry points (FR-001, FR-002).
-    testWidgets('[$code] driver Just one trip → Offer a trip; Back → Frequency', (tester) async {
+    // Walk 6: it used to land on Offer a trip (no tab bar) and Back went to onboarding.
+    testWidgets('[$code] driver Just one trip → Today (the shell) → Offer a trip; Back → Today, never Frequency',
+        (tester) async {
       await _pump(tester, _newDriver(code));
       expect(find.byType(FrequencyScreen), findsOneWidget);
       await tester.tap(find.byKey(const Key('freq-once')));
       await tester.tap(find.byKey(const Key('freq-continue')));
       await tester.pumpAndSettle();
-      expect(find.byType(OfferTripScreen), findsOneWidget);
+      expect(find.byType(TodayScreen), findsOneWidget);
+      expect(find.byType(GooraBottomNav), findsOneWidget);
+      await _openOfferTrip(tester);
       await _back(tester, l.back);
-      expect(find.byType(FrequencyScreen), findsOneWidget);
+      expect(find.byType(TodayScreen), findsOneWidget);
+      expect(find.byType(FrequencyScreen), findsNothing);
     });
 
     testWidgets('[$code] driver Today "Offer a trip" → Offer a trip; Back → Today', (tester) async {
@@ -310,7 +325,7 @@ void main() {
         tester,
         {..._newDriver(code, frequency: Frequency.once), FakeTrustRepository.docsPendingKey: true},
       );
-      expect(find.byType(OfferTripScreen), findsOneWidget);
+      await _openOfferTrip(tester);
       await tester.tap(find.byKey(const Key('verify-license')));
       await tester.pumpAndSettle();
       expect(find.byType(TrustScreen), findsOneWidget);
@@ -352,7 +367,7 @@ void main() {
 
     testWidgets('[$code] Offer a trip "find riders who already posted" → Find riders; Back → Offer a trip', (tester) async {
       await _pump(tester, _newDriver(code, frequency: Frequency.once), height: 3000);
-      expect(find.byType(OfferTripScreen), findsOneWidget);
+      await _openOfferTrip(tester);
       await tester.ensureVisible(find.byKey(const Key('find-riders-link')));
       await tester.tap(find.byKey(const Key('find-riders-link')));
       await tester.pumpAndSettle();

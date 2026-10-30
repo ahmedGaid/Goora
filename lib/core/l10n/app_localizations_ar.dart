@@ -93,13 +93,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get planMonthlyTitle => 'شهري';
 
   @override
-  String get planMonthlySub => '149 جنيه/الشهر';
+  String get planMonthlySub => '149 ج/الشهر';
 
   @override
   String get planYearlyTitle => 'سنوي';
 
   @override
-  String get planYearlySub => '1,490 جنيه/السنة';
+  String get planYearlySub => '1,490 ج/السنة';
 
   @override
   String get planYearlyChip => 'شهرين مجانًا';
@@ -124,7 +124,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get planFuelNote =>
-      'مصاريف البنزين والرسوم اللي تدفعها كل رحلة تروح كلها للسواق.';
+      'مصاريف البنزين والرسوم اللي بتدفعها في كل مشوار بتروح كلها للسواق.';
 
   @override
   String get planCtaVerify => 'أكّد إيميل الشغل';
@@ -2957,5 +2957,53 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String fawryHow(int amount) {
     return 'ادفع $amount ج في أي فرع فوري بالكود ده، وبعدين دوس تحت.';
+  }
+
+  @override
+  String get changePlanCompanyNote =>
+      'هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة.';
+
+  @override
+  String dayMonthYear(int day, String month, int year) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'يناير',
+      '2': 'فبراير',
+      '3': 'مارس',
+      '4': 'أبريل',
+      '5': 'مايو',
+      '6': 'يونيو',
+      '7': 'يوليو',
+      '8': 'أغسطس',
+      '9': 'سبتمبر',
+      '10': 'أكتوبر',
+      '11': 'نوفمبر',
+      '12': 'ديسمبر',
+      'other': '$month',
+    });
+    return '$day $_temp0 $year';
+  }
+
+  @override
+  String get companyInvoiceBankPlaceholder =>
+      'بيانات الحساب البنكي هتوصلك قريب';
+
+  @override
+  String get mapCardTitle => 'مكان التجمع';
+
+  @override
+  String get mapSketchNote => 'رسم تقريبي، مش بالمقاس';
+
+  @override
+  String get mapOpen => 'افتح الخريطة';
+
+  @override
+  String get mapClose => 'اقفل الخريطة';
+
+  @override
+  String get mapAttribution => '© مساهمو OpenStreetMap';
+
+  @override
+  String mapPointsAria(String points) {
+    return 'خريطة مكان التجمع: $points';
   }
 }

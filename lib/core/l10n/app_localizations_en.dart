@@ -2913,4 +2913,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String fawryHow(int amount) {
     return 'Pay $amount EGP at any Fawry outlet with this code, then tap below.';
   }
+
+  @override
+  String get changePlanCompanyNote =>
+      'We check your work email first, then you agree to what your company sees. Your own plan pauses and comes back if you leave the company.';
+
+  @override
+  String dayMonthYear(int day, String month, int year) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'Jan',
+      '2': 'Feb',
+      '3': 'Mar',
+      '4': 'Apr',
+      '5': 'May',
+      '6': 'Jun',
+      '7': 'Jul',
+      '8': 'Aug',
+      '9': 'Sep',
+      '10': 'Oct',
+      '11': 'Nov',
+      '12': 'Dec',
+      'other': '$month',
+    });
+    return '$day $_temp0 $year';
+  }
+
+  @override
+  String get companyInvoiceBankPlaceholder =>
+      'Goora\'s bank details will reach you soon';
+
+  @override
+  String get mapCardTitle => 'Meeting point';
+
+  @override
+  String get mapSketchNote => 'Sketch, not to scale';
+
+  @override
+  String get mapOpen => 'Open the map';
+
+  @override
+  String get mapClose => 'Close the map';
+
+  @override
+  String get mapAttribution => '© OpenStreetMap contributors';
+
+  @override
+  String mapPointsAria(String points) {
+    return 'Meeting point map: $points';
+  }
 }

@@ -66,7 +66,13 @@ void main() {
       expect(find.byKey(const Key('company-invoice-screen')), findsOneWidget);
       expect(find.descendant(of: find.byKey(const Key('invoice-reference')), matching: find.text('GR-1-202609')),
           findsOneWidget);
-      expect(find.text(CompanyTerms.bankDetails), findsOneWidget);
+      // N-14: until the founder supplies the account, the line is in the screen's own
+      // language, not an English placeholder inside the Arabic invoice.
+      expect(CompanyTerms.bankDetails, isNull, reason: 'real details not supplied yet (research R4)');
+      final bank = find.byKey(const Key('invoice-bank'));
+      final bankText = tester.widget<Text>(bank).data!;
+      expect(bankText, l.companyInvoiceBankPlaceholder);
+      if (code == 'ar') expect(RegExp('[A-Za-z]').hasMatch(bankText), isFalse, reason: 'no Latin text in ar');
       expect(find.byKey(const Key('invoice-due')), findsOneWidget);
       expect(find.text(l.companyInvoiceMath(20, CompanyTerms.pricePerSeat, '1,980')), findsOneWidget);
     });

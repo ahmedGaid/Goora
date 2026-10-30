@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/language_toggle.dart';
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/map/pickup_pin.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_sizes.dart';
@@ -15,6 +16,7 @@ import '../../../core/widgets/goora_dashed_button.dart';
 import '../../../core/widgets/goora_ghost_button.dart';
 import '../../../core/widgets/goora_icons.dart';
 import '../../../core/widgets/goora_logo.dart';
+import '../../../core/widgets/goora_pickup_map.dart';
 import '../../../core/widgets/goora_pill.dart';
 import '../../../core/widgets/goora_primary_button.dart';
 import '../../../core/widgets/goora_progress_bar.dart';
@@ -25,6 +27,9 @@ import '../../../core/widgets/goora_stat_tile.dart';
 import '../../../core/widgets/goora_status_chip.dart';
 import '../../../core/widgets/goora_stepper.dart';
 import '../../../core/widgets/goora_timeline_row.dart';
+import '../../commute/data/corridor_seed.dart';
+import '../../commute/presentation/labels.dart';
+import '../../daily/presentation/labels.dart';
 
 /// Debug-only: every token and shared component, in the current language.
 class DesignGalleryScreen extends StatefulWidget {
@@ -328,6 +333,19 @@ class _DesignGalleryScreenState extends State<DesignGalleryScreen> {
             toLabel: l10n.areaSmartVillage,
             semanticLabel: l10n.mapAria,
             driverProgress: 0.4,
+          ),
+          const SizedBox(height: AppSpacing.gap),
+          // 012: pickup-point map (sketch when no tile URL is configured).
+          GooraPickupMap(
+            pins: [
+              for (final (i, s) in const [CorridorSeed.mainGate, CorridorSeed.centralSt].indexed)
+                PickupPin.pickup(s, number: i + 1, title: l10n.tlPickup(l10n.time(s.time)), place: l10n.stopName(s.name)),
+              PickupPin.arrival(
+                CorridorSeed.groups.first.workStop,
+                title: l10n.tlArrival(l10n.time(CorridorSeed.groups.first.arrivalTime)),
+                place: l10n.stopName(CorridorSeed.groups.first.workStop.name),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.gap),
           Row(

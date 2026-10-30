@@ -325,6 +325,9 @@ class DemoSection extends ConsumerWidget {
     ]) {
       await prefs.remove(key);
     }
+    // Back to real time too (walk 6 F-W4): a company registered after a reset
+    // must not get a contract that starts on the date the demo clock had jumped to.
+    await DemoClock.write(prefs, null);
     await FakeWalletRepository.clearAll(prefs);
     // Every market.* key: offers, requests, bookings, and the groups and members the catalog keeps.
     await FakeMarketplaceRepository.clearAll(prefs);
@@ -333,6 +336,7 @@ class DemoSection extends ConsumerWidget {
     await FakeCompanyRepository.clearAllKeys(prefs);
     await ref.read(profileRepositoryProvider).clear();
     await ref.read(sessionControllerProvider.notifier).signOut();
+    ref.invalidate(nowProvider);
     ref.invalidate(groupCatalogProvider);
     ref.invalidate(marketplaceRepositoryProvider);
     ref.invalidate(companyRepositoryProvider);

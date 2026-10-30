@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:goora/core/storage/preferences.dart';
+import 'package:goora/core/time/now_provider.dart';
 import 'package:goora/features/commute/data/providers.dart';
 import 'package:goora/features/company/data/fake_company_repository.dart';
 import 'package:goora/features/company/data/providers.dart';
@@ -38,6 +41,33 @@ void main() {
 
     expect(find.byType(WelcomeScreen), findsOneWidget);
     expect(prefs.getKeys().where((k) => k.startsWith(FakeCompanyRepository.keyPrefix)), isEmpty);
+  });
+
+  // Walk 6 F-W4: Reset wiped sign-in and the company but kept the demo clock, so a
+  // company registered after it got a contract starting on the old jumped date.
+  testWidgets('F-W4: Reset demo data also puts the demo clock back to real time', (tester) async {
+    final jumped = at(rideTuesday.addDays(49), 10, 4);
+    final c = await pumpGooraApp(
+      tester,
+      prefs: {
+        ...memberPrefs(role: Role.rider, locale: 'en'),
+        DemoClock.storageKey: jsonEncode({'at': jumped.toJson(), 'setAt': 0}),
+      },
+      overrides: dailyOverrides(TestClock(at(rideTuesday, 7, 0))),
+    );
+    final prefs = c.read(sharedPreferencesProvider);
+    expect(DemoClock.read(prefs)?.at, jumped, reason: 'the clock starts jumped');
+
+    tester.view.physicalSize = const Size(390, 2400);
+    await tester.tap(find.byKey(const Key('open-settings')));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('demo-reset')));
+    await tester.tap(find.byKey(const Key('demo-reset')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(WelcomeScreen), findsOneWidget);
+    expect(prefs.containsKey(DemoClock.storageKey), isFalse, reason: 'real time again');
+    expect(DemoClock.read(prefs), isNull);
   });
 
   testWidgets('Demo corridor switch flips the active corridor; cycles through the corridors', (tester) async {

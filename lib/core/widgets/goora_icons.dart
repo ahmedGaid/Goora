@@ -36,4 +36,6 @@ abstract final class GooraIcons {
   static const IconData camera = LucideIcons.camera;
   static const IconData company = LucideIcons.building2;
   static const IconData hidden = LucideIcons.eyeOff;
+  static const IconData arrival = LucideIcons.flag;
+  static const IconData expand = LucideIcons.maximize2;
 }

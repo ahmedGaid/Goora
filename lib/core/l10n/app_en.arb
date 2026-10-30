@@ -808,5 +808,27 @@
     "placeholders": {
       "amount": {"type": "int"}
     }
+  },
+  "changePlanCompanyNote": "We check your work email first, then you agree to what your company sees. Your own plan pauses and comes back if you leave the company.",
+  "dayMonthYear": "{day} {month, select, 1{Jan} 2{Feb} 3{Mar} 4{Apr} 5{May} 6{Jun} 7{Jul} 8{Aug} 9{Sep} 10{Oct} 11{Nov} 12{Dec} other{{month}}} {year}",
+  "@dayMonthYear": {
+    "description": "A date with its year, for company screens where a span can cross a year (a 12-month contract): the day, the month's name, the year. month is 1-12 as text.",
+    "placeholders": {
+      "day": {"type": "int"},
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+  "companyInvoiceBankPlaceholder": "Goora's bank details will reach you soon",
+  "mapCardTitle": "Meeting point",
+  "mapSketchNote": "Sketch, not to scale",
+  "mapOpen": "Open the map",
+  "mapClose": "Close the map",
+  "mapAttribution": "© OpenStreetMap contributors",
+  "mapPointsAria": "Meeting point map: {points}",
+  "@mapPointsAria": {
+    "placeholders": {
+      "points": {"type": "String"}
+    }
   }
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/map/pickup_pin.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -13,10 +14,12 @@ import '../../../../core/widgets/goora_card.dart';
 import '../../../../core/widgets/goora_dashed_button.dart';
 import '../../../../core/widgets/goora_ghost_button.dart';
 import '../../../../core/widgets/goora_icons.dart';
+import '../../../../core/widgets/goora_pickup_map.dart';
 import '../../../../core/widgets/goora_route_map.dart';
 import '../../../../core/widgets/goora_stat_tile.dart';
 import '../../../../core/widgets/goora_status_chip.dart';
 import '../../../../core/widgets/goora_timeline_row.dart';
+import '../../../commute/domain/clock.dart';
 import '../../../commute/domain/commute_profile.dart';
 import '../../../commute/domain/group.dart';
 import '../../../commute/presentation/labels.dart';
@@ -69,6 +72,14 @@ class RiderToday extends StatelessWidget {
           ],
           if (next != null) ...[
             TripTimeline(view: view, leg: next),
+            const SizedBox(height: AppSpacing.gap),
+            // The timeline above already prints these lines (012 D17).
+            MeetingPointCard(
+              pickups: [next.stop],
+              arrival: next.leg == Leg.going ? view.group!.workStop : null,
+              arrivalAt: next.end.time,
+              showLegend: false,
+            ),
             const SizedBox(height: AppSpacing.gap),
           ],
           _Tiles(view: view, day: day),
@@ -329,6 +340,40 @@ class DriverCard extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// 012: where to meet — the trip's public stops on a map (pickups numbered
+/// in driving order, then [arrival] at [arrivalAt]); tap → the bigger map.
+/// Only group stops ever reach it, never a home (Constitution IV).
+class MeetingPointCard extends StatelessWidget {
+  const MeetingPointCard({super.key, required this.pickups, this.arrival, this.arrivalAt, this.showLegend = true});
+
+  final List<Stop> pickups;
+  final Stop? arrival;
+
+  /// The arrival time ([Group.workStop]'s own time is the return time).
+  final Clock? arrivalAt;
+  final bool showLegend;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final end = arrival;
+    return GooraPickupMap(
+      key: const Key('meeting-point-card'),
+      showLegend: showLegend,
+      pins: [
+        for (final (i, s) in pickups.indexed)
+          PickupPin.pickup(s, number: i + 1, title: l10n.tlPickup(l10n.time(s.time)), place: l10n.stopName(s.name)),
+        if (end != null)
+          PickupPin.arrival(
+            end,
+            title: l10n.tlArrival(l10n.time(arrivalAt ?? end.time)),
+            place: l10n.stopName(end.name),
+          ),
+      ],
     );
   }
 }
