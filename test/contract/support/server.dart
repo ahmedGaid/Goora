@@ -150,3 +150,53 @@ void installWalletServer(InMemoryGateway db, {required String today, required St
   db.rpcs['payment_method_of'] = (p, db) =>
       db.table('payment_settings').where((r) => r['person_id'] == p['p_rider']).firstOrNull?['method'];
 }
+
+/// 20261030000300: the company functions the contract calls.
+void installCompanyServer(InMemoryGateway db, {required String wall}) {
+  void logLine(String company, String actor, String kind, [String? detail]) => db.table('company_log').add({
+        'id': db.newId('log'), 'company_id': company, 'at': wall, 'actor': actor, 'kind': kind, 'detail': detail,
+        'created_at': db.table('company_log').length,
+      });
+  bool held(String d) => db.table('company_domains').any((r) => r['domain'] == d.toLowerCase());
+  void mustBeHr(String company) {
+    if (!db.table('companies').any((c) => c['id'] == company && c['hr_contact_id'] == db.userId)) {
+      throw const BackendRefused('notHrContact');
+    }
+  }
+
+  db.rpcs['company_register'] = (p, db) {
+    final me = db.me();
+    final domains = [for (final d in p['p_domains']! as List) (d as String).toLowerCase()];
+    final email = (p['p_hr_work_email']! as String).toLowerCase();
+    if (domains.isEmpty || !domains.contains(email.split('@').last)) throw const BackendRefused('emailNotOnDomain');
+    for (final d in domains) {
+      if (held(d)) throw BackendRefused('domainTaken', d);
+    }
+    final id = db.newId('co');
+    db.table('companies').add({
+      'id': id, 'name': (p['p_name']! as String).trim(), 'status': 'pending', 'hr_contact_id': me,
+      'contract_start': null, 'contract_end': null, 'minimum_seats': 20, 'price_per_seat': 99,
+      'approved_at': null, 'ended_at': null,
+    });
+    for (final d in domains.toSet()) {
+      db.table('company_domains').add({'domain': d, 'company_id': id});
+    }
+    logLine(id, 'hr', 'registered');
+    return id;
+  };
+  db.rpcs['company_for_domain'] = (p, db) {
+    final d = db.table('company_domains').where((r) => r['domain'] == (p['p_domain']! as String).toLowerCase());
+    if (d.isEmpty) return null;
+    final c = db.table('companies').firstWhere((c) => c['id'] == d.first['company_id']);
+    return {'id': c['id'], 'name': c['name'], 'status': c['status']};
+  };
+  db.rpcs['company_add_domain'] = (p, db) {
+    final company = p['p_company']! as String;
+    final d = (p['p_domain']! as String).toLowerCase();
+    mustBeHr(company);
+    if (held(d)) throw BackendRefused('domainTaken', d);
+    db.table('company_domains').add({'domain': d, 'company_id': company});
+    logLine(company, 'hr', 'domainAdded', d);
+    return null;
+  };
+}
