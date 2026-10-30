@@ -2917,4 +2917,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get changePlanCompanyNote =>
       'We check your work email first, then you agree to what your company sees. Your own plan pauses and comes back if you leave the company.';
+
+  @override
+  String dayMonthYear(int day, String month, int year) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'Jan',
+      '2': 'Feb',
+      '3': 'Mar',
+      '4': 'Apr',
+      '5': 'May',
+      '6': 'Jun',
+      '7': 'Jul',
+      '8': 'Aug',
+      '9': 'Sep',
+      '10': 'Oct',
+      '11': 'Nov',
+      '12': 'Dec',
+      'other': '$month',
+    });
+    return '$day $_temp0 $year';
+  }
+
+  @override
+  String get companyInvoiceBankPlaceholder =>
+      'Goora\'s bank details will reach you soon';
 }

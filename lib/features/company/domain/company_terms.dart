@@ -18,7 +18,8 @@ abstract final class CompanyTerms {
   /// ends a contract when Goora staff do (demo action) or when it runs out.
   static const noticeDays = 30;
 
-  /// Goora's bank details on every invoice (research R4). Placeholder until
-  /// the founder supplies the real ones.
-  static const bankDetails = 'Goora — bank details to be supplied (placeholder)';
+  /// Goora's bank details on every invoice (research R4). Null until the
+  /// founder supplies the real ones; the invoice screen then shows a line in
+  /// its own language (`companyInvoiceBankPlaceholder`, walk 6 N-14).
+  static const String? bankDetails = null;
 }

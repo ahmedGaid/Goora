@@ -4778,6 +4778,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة.'**
   String get changePlanCompanyNote;
+
+  /// A date with its year, for company screens where a span can cross a year (a 12-month contract): the day, the month's name, the year. month is 1-12 as text.
+  ///
+  /// In ar, this message translates to:
+  /// **'{day} {month, select, 1{يناير} 2{فبراير} 3{مارس} 4{أبريل} 5{مايو} 6{يونيو} 7{يوليو} 8{أغسطس} 9{سبتمبر} 10{أكتوبر} 11{نوفمبر} 12{ديسمبر} other{{month}}} {year}'**
+  String dayMonthYear(int day, String month, int year);
+
+  /// No description provided for @companyInvoiceBankPlaceholder.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات الحساب البنكي هتوصلك قريب'**
+  String get companyInvoiceBankPlaceholder;
 }
 
 class _AppLocalizationsDelegate

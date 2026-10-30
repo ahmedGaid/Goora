@@ -23,8 +23,10 @@ extension WalletLabels on AppLocalizations {
   /// locales: "3/1" read as 1 March to many readers (walk nit N-7).
   String shortDate(CalendarDate d) => dayAndMonth(d.day, '${d.month}');
 
-  /// `d/m/yyyy` — for spans that can cross a year (a 12-month contract).
-  String shortDateYear(CalendarDate d) => '${d.day}/${d.month}/${d.year}';
+  /// The day, the month's name and the year ("1 Sep 2026", "1 سبتمبر 2026"):
+  /// for the company screens, where a span can cross a year (a 12-month
+  /// contract). Never `d/m/yyyy`: "1/9/2026" read as 9 January (walk 6 F-W6).
+  String shortDateYear(CalendarDate d) => dayMonthYear(d.day, '${d.month}', d.year);
 
   /// FR-004, 007 FR-014: the one price line for a trip. It always names the
   /// share as going to the driver directly; Goora's fee, when there is one,

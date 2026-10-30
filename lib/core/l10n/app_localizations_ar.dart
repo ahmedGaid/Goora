@@ -2962,4 +2962,28 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get changePlanCompanyNote =>
       'هنتأكد من إيميل شغلك الأول، وبعدين توافق على اللي الشركة بتشوفه. اشتراكك الشخصي بيتوقف ويرجعلك لو سبت الشركة.';
+
+  @override
+  String dayMonthYear(int day, String month, int year) {
+    String _temp0 = intl.Intl.selectLogic(month, {
+      '1': 'يناير',
+      '2': 'فبراير',
+      '3': 'مارس',
+      '4': 'أبريل',
+      '5': 'مايو',
+      '6': 'يونيو',
+      '7': 'يوليو',
+      '8': 'أغسطس',
+      '9': 'سبتمبر',
+      '10': 'أكتوبر',
+      '11': 'نوفمبر',
+      '12': 'ديسمبر',
+      'other': '$month',
+    });
+    return '$day $_temp0 $year';
+  }
+
+  @override
+  String get companyInvoiceBankPlaceholder =>
+      'بيانات الحساب البنكي هتوصلك قريب';
 }
