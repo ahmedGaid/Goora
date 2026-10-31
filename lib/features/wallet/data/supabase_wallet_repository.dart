@@ -2,7 +2,6 @@ import '../../../core/backend/backend_failure.dart';
 import '../../../core/backend/backend_gateway.dart';
 import '../../../core/time/calendar_date.dart';
 import '../../../core/time/wall_time.dart';
-import '../../commute/domain/clock.dart';
 import '../../commute/domain/commute_profile.dart' show Leg;
 import '../../commute/domain/group.dart';
 import '../domain/activity_entry.dart';
@@ -24,9 +23,10 @@ import '../domain/wallet_repository.dart';
 /// The payment partner stays the device's [PaymentProvider] until 012: a
 /// failed fake payment writes nothing, a successful one calls the function.
 ///
-/// Known gaps against the fake (research "Wallet gaps"): the cash trial,
-/// `feeDue`/`feeOverdue` and the trip rows derived from 003 records are not
-/// computed here yet; shares are read from the driver's marks only.
+/// A rider's fee state (the fee-free trial, what is owed, when it fell due, the
+/// trip rows derived from the 003 records) is decided by `wallet_state()` in the
+/// database (013 research D2); the shares come from `wallet_share_rows()` with
+/// the other person's first name only (D7). This class maps both.
 final class SupabaseWalletRepository implements WalletRepository, SeatLedger {
   SupabaseWalletRepository(this._db, {required this._role, required this._now, required this._provider});
 
@@ -161,40 +161,63 @@ final class SupabaseWalletRepository implements WalletRepository, SeatLedger {
     }
   }
 
-  Future<List<Share>> _shares(Filter who) async {
-    final marks = await _db.select('share_marks', where: [who], orderBy: 'ride_date', descending: true);
-    final claims = {for (final c in await _db.select('share_claims')) '${c['ride_id']}|${c['rider_id']}': c};
+  /// The caller's shares as rider or driver: first name of the other party,
+  /// the rider's real method, the mark and claim times. The status is worked
+  /// out here with the twinned [SharePolicy], like the fake.
+  Future<List<Share>> _shareRows(String role) async {
+    final raw = (await _db.rpc('wallet_share_rows', {'p_role': role})) as List? ?? const [];
+    final now = SharePolicy.minuteOf(_now());
     return [
-      for (final r in marks)
-        Share(
-          rideId: r['ride_id']! as String,
-          riderId: r['rider_id']! as String,
-          driverId: r['driver_id']! as String,
-          otherFirstName: '',
-          amount: r['amount']! as int,
-          method: PaymentMethod.cash,
-          tripEnd: WallTime(CalendarDate.parse(r['ride_date']! as String), const Clock.hm(0, 0)),
-          status: switch (r['outcome']) {
-            'received' => ShareStatus.received,
-            _ when claims.containsKey('${r['ride_id']}|${r['rider_id']}') => ShareStatus.disputed,
-            _ => ShareStatus.notReceived,
-          },
-          reversedOnce: (r['reversed_once'] as bool?) ?? false,
-        ),
+      for (final r in raw.cast<Map<Object?, Object?>>().map((m) => m.cast<String, Object?>())) _share(r, now),
     ];
   }
 
-  @override
-  Future<List<Share>> openShares(String riderId) async {
-    final all = await _shares(Filter.eq('rider_id', riderId));
-    return [
-      for (final s in all)
+  static Share _share(Row r, int now) {
+    final end = WallTime.fromJson(r['trip_end']! as String);
+    final outcome = r['mark_outcome'] as String?;
+    final markedAt = r['marked_at'] as String?;
+    final claimedAt = r['claimed_at'] as String?;
+    return Share(
+      rideId: r['ride_id']! as String,
+      riderId: r['rider_id']! as String,
+      driverId: r['driver_id']! as String,
+      otherFirstName: (r['other_first_name'] as String?) ?? '',
+      amount: r['amount']! as int,
+      method: PaymentMethod.parse(r['method']! as String),
+      tripEnd: end,
+      status: SharePolicy.status(
+        mark: outcome == null ? null : CashOutcome.values.byName(outcome),
+        markedAt: markedAt == null ? null : SharePolicy.minuteOf(WallTime.fromJson(markedAt)),
+        claimAt: claimedAt == null ? null : SharePolicy.minuteOf(WallTime.fromJson(claimedAt)),
+        tripEnd: SharePolicy.minuteOf(end),
+        now: now,
+      ),
+      reversedOnce: (r['reversed_once'] as bool?) ?? false,
+    );
+  }
+
+  /// Open debts first (oldest first), then the pending ones newest first.
+  static List<Share> _unconfirmedFirstDebts(List<Share> shares) {
+    final debts = [
+      for (final s in shares)
         if (s.status.isOpenDebt) s,
-    ];
+    ]..sort((a, b) => a.tripEnd.compareTo(b.tripEnd));
+    final pending = [
+      for (final s in shares)
+        if (s.status == ShareStatus.pending) s,
+    ]..sort((a, b) => b.tripEnd.compareTo(a.tripEnd));
+    return [...debts, ...pending];
   }
 
   @override
-  Future<List<Share>> driverShares(String driverId) => _shares(Filter.eq('driver_id', driverId));
+  Future<List<Share>> openShares(String riderId) async =>
+      riderId == _db.userId ? _unconfirmedFirstDebts(await _shareRows('rider')) : const [];
+
+  @override
+  Future<List<Share>> driverShares(String driverId) async {
+    if (driverId != _db.userId) return const [];
+    return (await _shareRows('driver'))..sort((a, b) => b.tripEnd.compareTo(a.tripEnd));
+  }
 
   @override
   Future<Share?> driverShareOn(String rideId, String riderId) async {
@@ -225,6 +248,18 @@ final class SupabaseWalletRepository implements WalletRepository, SeatLedger {
     leg: r['leg'] == null ? null : Leg.values.byName(r['leg']! as String),
   );
 
+  /// A trip row `wallet_state()` derived (never stored): same ids and kinds as the fake's.
+  static ActivityEntry _derived(Map<String, Object?> j) => ActivityEntry(
+    id: j['id']! as String,
+    kind: ActivityKind.values.byName(j['kind']! as String),
+    amount: j['amount']! as int,
+    date: CalendarDate.parse(j['date']! as String),
+    fee: (j['fee'] as int?) ?? 0,
+    rideId: j['rideId'] as String?,
+    shareToDriver: (j['shareToDriver'] as int?) ?? 0,
+    leg: j['leg'] == null ? null : Leg.values.byName(j['leg']! as String),
+  );
+
   @override
   Future<Wallet> getWallet(String ownerId) async {
     final rows = await _db.select(
@@ -233,24 +268,50 @@ final class SupabaseWalletRepository implements WalletRepository, SeatLedger {
       orderBy: 'created_at',
       descending: true,
     );
-    final month = _now().date;
-    final role = _role();
+    final today = _now().date;
+    if (_role() == MemberRole.driver) {
+      final shares = await driverShares(ownerId);
+      return Wallet(
+        ownerId: ownerId,
+        role: MemberRole.driver,
+        balance: rows.fold(0, (sum, r) => sum + (r['delta']! as int)),
+        activity: [for (final r in rows) _entry(r)],
+        cashReceived: shares
+            .where(
+              (s) =>
+                  (s.status == ShareStatus.received || s.status == ShareStatus.autoReceived) &&
+                  s.tripEnd.date.monthKey == today.monthKey,
+            )
+            .fold(0, (sum, s) => sum + s.amount),
+        shares: shares,
+      );
+    }
+    final state = ((await _db.rpc('wallet_state'))! as Map).cast<String, Object?>();
+    final derived = [
+      for (final e in (state['entries']! as List).cast<Map<Object?, Object?>>()) _derived(e.cast<String, Object?>()),
+    ];
+    // Newest day first; on one day the stored rows (newest first) lead.
+    final activity = [for (final r in rows) _entry(r), ...derived].indexed.toList()
+      ..sort((a, b) {
+        final byDate = b.$2.date.compareTo(a.$2.date);
+        return byDate != 0 ? byDate : a.$1.compareTo(b.$1);
+      });
+    final trial = state['cashTrial'] as Map?;
+    final due = state['feeDue'] as String?;
     return Wallet(
       ownerId: ownerId,
-      role: role,
-      balance: rows.fold(0, (sum, r) => sum + (r['delta']! as int)),
-      activity: [for (final r in rows) _entry(r)],
-      method: role == MemberRole.rider ? await getMethod(ownerId) : null,
-      feesThisMonth: rows
-          .where((r) {
-            final d = CalendarDate.parse(r['entry_date']! as String);
-            return d.year == month.year && d.month == month.month;
-          })
-          .fold(0, (sum, r) => sum + ((r['fee'] as int?) ?? 0)),
-      shares: role == MemberRole.rider ? await openShares(ownerId) : await driverShares(ownerId),
-      bundleTripsLeft:
-          (await _db.select('bundles', where: [Filter.eq('person_id', ownerId)])).length * 20 -
-          rows.where((r) => r['kind'] == ActivityKind.bundleTrip.name).length,
+      role: MemberRole.rider,
+      balance: state['balance']! as int,
+      activity: [for (final (_, e) in activity) e],
+      method: await getMethod(ownerId),
+      cashTrial: trial == null
+          ? null
+          : CashTrialStatus(tripsDone: trial['tripsDone']! as int, strikes: trial['strikes']! as int),
+      feesThisMonth: state['feesThisMonth']! as int,
+      shares: _unconfirmedFirstDebts(await _shareRows('rider')),
+      bundleTripsLeft: state['bundleLeft']! as int,
+      feeDue: due == null ? null : CalendarDate.parse(due),
+      feeOverdue: state['feeOverdue']! as bool,
     );
   }
 

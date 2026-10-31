@@ -44,6 +44,7 @@ void main() {
     final group = await (await _fake(member: true)).myGroup();
     final me = await signUpPerson(db, _person, id: (await _fake(member: false)).meId);
     installCommuteServer(db);
+    installDailyServer(db);
     if (member) {
       seedGroup(db, group!);
       db.table('group_members').add({'group_id': group.id, 'user_id': me, 'role': 'rider'});

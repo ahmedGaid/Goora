@@ -14,6 +14,7 @@ import {
   noShowAvailableAt,
 } from "../_shared/attendance.ts";
 import type { Leg } from "../_shared/matching.ts";
+import { canChooseNoCover } from "../_shared/no_cover.ts";
 import {
   type Db,
   ensureRides,
@@ -297,6 +298,41 @@ async function sos(c: Ctx, rideId: unknown) {
   return { alerted: contacts.length };
 }
 
+/**
+ * 013 D10: makes sure the caller's group ride for [date] and [leg] is stored, so the
+ * app reads a real share token and each rider's own stop instead of a plan. Existing
+ * rides are never changed (ensureRides). `rideId` is null when no ride is planned.
+ */
+async function openRide(c: Ctx, date: string, leg: Leg) {
+  const groupId = await myGroupId(c.admin, c.uid);
+  await ensureRides(c.admin, groupId, date, date);
+  const id = rideIdFor(groupId, date, leg);
+  const ride = await must<Row | null>(c.admin.from("rides").select("id").eq("id", id).maybeSingle());
+  return { rideId: ride ? id : null };
+}
+
+/** 013 D10: the rider takes the day off, free, because nobody drives the leg. */
+async function noCover(c: Ctx, date: string, leg: Leg) {
+  const groupId = await myGroupId(c.admin, c.uid);
+  await ensureRides(c.admin, groupId, date, date);
+  const ride = await must<Row | null>(
+    c.admin.from("rides").select("driver_id").eq("id", rideIdFor(groupId, date, leg)).maybeSingle(),
+  );
+  if (!canChooseNoCover(ride as { driver_id: string | null } | null)) throw refuse("driverCovers");
+  await must(
+    c.admin.from("absences").upsert(
+      { user_id: c.uid, group_id: groupId, ride_date: date, leg, kind: "noCover" },
+      { onConflict: "user_id,ride_date,leg", ignoreDuplicates: true },
+    ),
+  );
+  return {};
+}
+
+function legOf(p: Params): Leg {
+  if (!isLeg(p.leg)) throw new HttpError(400, { error: "leg" });
+  return p.leg;
+}
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   const url = Deno.env.get("SUPABASE_URL")!;
@@ -341,6 +377,10 @@ Deno.serve(async (req) => {
         return json(await startOrEnd(c, rideIdOf(p), p.action === "end"));
       case "sos":
         return json(await sos(c, p.rideId));
+      case "ride":
+        return json(await openRide(c, dateOf(p), legOf(p)));
+      case "noCover":
+        return json(await noCover(c, dateOf(p), legOf(p)));
       default:
         return json({ error: "action" }, 400);
     }

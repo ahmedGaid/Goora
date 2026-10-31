@@ -21,8 +21,17 @@ select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 select is((select count(*)::int from public.profiles), 1, 'R3: A sees only their own profile');
 select is((select rider_id_status from public.profiles), 'notVerified', 'R3: a new sign-up reads notVerified (009)');
 select lives_ok($$update public.profiles set first_name = 'Amro'$$, 'R3: A edits own name');
-select is((select count(*)::int from (update public.profiles set first_name = 'X'
-           where id = '00000000-0000-0000-0000-00000000000b' returning 1) u), 0, 'R3: A cannot edit B');
+-- A data-modifying statement cannot sit in a FROM subquery; count its rows in a helper.
+create or replace function pg_temp.rows_changed(p_sql text) returns integer
+  language plpgsql as $$
+declare n integer;
+begin
+  execute p_sql;
+  get diagnostics n = row_count;
+  return n;
+end $$;
+select is(pg_temp.rows_changed($$update public.profiles set first_name = 'X'
+           where id = '00000000-0000-0000-0000-00000000000b'$$), 0, 'R3: A cannot edit B');
 select throws_ok($$update public.profiles set rider_id_status = 'verified'$$, '42501', null,
   'R3: A cannot set their own ID status');
 select throws_ok($$update public.profiles set rating = 5$$, '42501', null, 'R3: A cannot set their rating');

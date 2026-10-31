@@ -23,15 +23,19 @@ import '../domain/trust.dart';
 /// and backups on the Cairo clock. The rotation itself is the shared
 /// [RotationPlanner], so the device and the server agree on who drives.
 ///
-/// Known gaps against the fake (research "Daily gaps"): a ride the server
-/// has not stored yet reads from the plan (no share token until then), and
-/// the "no cover" choice is not sent anywhere yet.
+/// A ride the server has not stored yet is stored on first read (the `ride`
+/// action, 013 D10), so it carries a real share token and each rider's own
+/// stop; only when that call fails does the plan stand in. The "no cover"
+/// day off goes to the server as the `noCover` action.
 final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
   SupabaseDailyCommuteRepository(this._db);
 
   static const function = 'commute-day';
 
   final BackendGateway _db;
+
+  /// Rides already asked the server to store this session: one call each, not one per read.
+  final _opened = <String>{};
   final _noticeUpdates = StreamController<List<Notice>>.broadcast();
 
   @override
@@ -129,7 +133,16 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
     final assignment = day?.assignment(leg);
     if (day == null || assignment == null) return null;
     final id = Ride.idFor(g.id, date, leg);
-    final row = (await _db.select('rides', where: [Filter.eq('id', id)])).singleOrNull;
+    var row = (await _db.select('rides', where: [Filter.eq('id', id)])).singleOrNull;
+    if (row == null && assignment.actual != null && _opened.add(id)) {
+      try {
+        await _call({'action': 'ride', 'date': date.toIso(), 'leg': leg.name});
+        row = (await _db.select('rides', where: [Filter.eq('id', id)])).singleOrNull;
+      } on BackendFailure {
+        // Offline or refused: the plan stands in for this read and the next one asks again.
+        _opened.remove(id);
+      }
+    }
     final driverId = row == null ? assignment.actual : row['driver_id'] as String?;
     final seated = row == null
         ? null
@@ -358,5 +371,12 @@ final class SupabaseDailyCommuteRepository implements DailyCommuteRepository {
   }
 
   @override
-  Future<void> chooseNoCoverOption(CalendarDate date, Leg leg, NoCoverOption option) async {}
+  Future<void> chooseNoCoverOption(CalendarDate date, Leg leg, NoCoverOption option) async {
+    if (option != NoCoverOption.dayOff) return;
+    try {
+      await _call({'action': 'noCover', 'date': date.toIso(), 'leg': leg.name});
+    } on BackendRefused {
+      // A driver covers after all: there is no day off to record, and nothing was charged.
+    }
+  }
 }

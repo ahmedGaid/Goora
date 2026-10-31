@@ -67,17 +67,40 @@ the payment provider is still the fake (real OTP and payments are 012).
 
 ```bash
 supabase start                      # Docker; prints the local API URL and anon key
-supabase db reset                   # applies supabase/migrations/*
+supabase db reset                   # applies supabase/migrations/* then supabase/seed.sql
 supabase test db                    # pgTAP: supabase/tests/*.test.sql (RLS, privacy, money rules)
 flutter run --dart-define=BACKEND_LIVE=true \
   --dart-define=SUPABASE_URL=http://127.0.0.1:54321 --dart-define=SUPABASE_ANON_KEY=<local anon key>
 ```
+
+**Seed (feature 013).** `supabase db reset` also loads `supabase/seed.sql`: the app's 14 demo
+groups on the Sheikh Zayed → Smart Village and Cairo ↔ Ismailia corridors (with pickup points),
+and a company "Demo Motors" (`demomotors.test`) with six enrolled employees, five of whom said
+yes to sharing trips with HR. Everything in it is fictional and has no password, so the seeded
+people cannot sign in: sign up as yourself with the test code and join a seeded group. Applying
+the seed again changes nothing (`supabase/tests/80_seed.test.sql` checks it).
+
+**Live mode behaves like the fakes (013).** The wallet's fee state (the 5 fee-free trips, what is
+owed, when it fell due at 150 EGP or 30 at month end, overdue after 3 days) is decided in the
+database by `wallet_state()`, and the server refuses Book / Post / accept / Join while a balance is
+overdue. Seat offers carry the driver's first name, the driver's day lists group legs, `reclaim`
+and the finished one-offs work, an unstored daily ride is stored on first read (real share token),
+and the company dashboard shows money, CO₂, parking and route gaps only when five or more people
+stand behind them. Goora-staff actions are the `staff_*` SQL functions, callable with the service
+role only; the app's demo buttons do nothing on the real backend.
 
 If another project's stack already holds the default ports, run a scratch copy of `supabase/`
 with every port +1000 and its own `project_id` (API `55321`, DB `55322`) instead of editing
 `supabase/config.toml` (research D19). The contract tests (`test/contract/`) run each seam's
 fake and Supabase implementation against the same cases with an in-memory gateway, no Docker
 needed: `flutter test test/contract`.
+
+**No Docker?** `supabase/scratch/run_scratch.sh` runs the migrations, the seed and the pgTAP files on
+a throwaway native PostgreSQL 16 (shim for the Supabase roles, `auth.users` and PostGIS; real pgTAP
+v1.3.3). It is a stopgap for a machine where Docker does not answer — report such a run as
+"scratch PG16 + shim", not as `supabase test db`. The pgTAP file `supabase/tests/60_vectors.test.sql`
+is generated from `test/fixtures/*.json`: run `node supabase/tests/gen_vector_tests.mjs` after a rule
+vector changes (`node --test` fails while it is stale).
 
 ## Daily commute demo (debug builds)
 

@@ -61,9 +61,6 @@ void trustContract(String label, TrustHarness make) {
     test('T5 removing one contact keeps the others', () async {
       final repo = await make(omar);
       await repo.addContact('Mama', num('01011111111'));
-      // The fake's contact id is the microsecond clock, which Windows can
-      // repeat inside one tick; people add contacts seconds apart.
-      await Future<void>.delayed(const Duration(milliseconds: 5));
       await repo.addContact('Baba', num('01022222222'));
       final first = (await repo.contacts()).first;
       await repo.removeContact(first.id);

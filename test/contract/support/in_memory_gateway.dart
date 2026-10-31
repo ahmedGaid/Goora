@@ -21,6 +21,16 @@ final class InMemoryGateway implements BackendGateway {
   final Map<String, Handler> rpcs = {};
   final Map<String, Handler> functions = {};
 
+  /// Stand-ins for `before insert or update` triggers (013): gets the row as
+  /// the table will hold it (merged with the old row on an update) and may
+  /// change it in place.
+  final Map<String, void Function(Row row)> triggers = {};
+
+  Row _triggered(String table, Row row) {
+    triggers[table]?.call(row);
+    return row;
+  }
+
   /// Every rpc/invoke call, in order: (name, params).
   final List<(String, Row)> calls = [];
 
@@ -85,7 +95,9 @@ final class InMemoryGateway implements BackendGateway {
         else
           Map<String, Object?>.of(r),
     ];
-    t.addAll(copies);
+    for (final r in copies) {
+      t.add(_triggered(table, r));
+    }
     return [for (final r in copies) Map.of(r)];
   }
 
@@ -96,9 +108,9 @@ final class InMemoryGateway implements BackendGateway {
     for (final r in rows) {
       final i = t.indexWhere((e) => cols == null ? _sameKey(table, e, r) : cols.every((c) => e[c] == r[c]));
       if (i < 0) {
-        t.add(Map.of(r));
+        t.add(_triggered(table, Map.of(r)));
       } else {
-        t[i] = {...t[i], ...r};
+        t[i] = _triggered(table, {...t[i], ...r});
       }
     }
     return [for (final r in rows) Map.of(r)];

@@ -3,6 +3,8 @@ import '../../../core/backend/backend_gateway.dart';
 import '../../../core/time/calendar_date.dart';
 import '../../../core/time/wall_time.dart';
 import '../../commute/domain/commute_profile.dart' show Leg;
+import '../../commute/domain/place.dart' show Area;
+import '../../wallet/domain/direct_pay.dart' show SharePolicy;
 import '../domain/company.dart';
 import '../domain/company_dashboard.dart';
 import '../domain/company_log.dart';
@@ -20,9 +22,14 @@ import '../domain/invoice.dart';
 /// `company_statement` function. The dashboard is aggregates with k = 5.
 ///
 /// Goora staff actions (approve, mark paid, name an HR contact, end a
-/// contract) run with the service role, never from the app: the `demo*`
-/// methods do nothing here. Invoices are read, never issued by the app
-/// (companyInvoicesLive stays off).
+/// contract) are the `staff_*` SQL functions, callable by the service role
+/// only (013 research D12); the app is not a staff tool, so the `demo*`
+/// methods do nothing here ("demo only on the fakes"). Invoices are read,
+/// never issued by the app (companyInvoicesLive stays off).
+///
+/// An employee's coverage is their enrollment window minus the company's
+/// suspensions, worked out with the same [CompanyRules.activeWindows] as the
+/// fake from the dates `company_suspensions` returns (013 D11).
 final class SupabaseCompanyRepository implements CompanyRepository {
   SupabaseCompanyRepository(this._db);
 
@@ -184,11 +191,32 @@ final class SupabaseCompanyRepository implements CompanyRepository {
     return (companyName: await _companyNameFor(last.workEmail), at: last.leftAt!, why: last.leftWhy!);
   }
 
-  /// The enrollment windows. Suspensions are not subtracted on the client
-  /// yet (research "Company gaps"): the server's invoices decide them.
+  /// The enrollment windows, each cut by the suspensions of its company.
   @override
-  Future<List<Window>> coverageFor(String personId, WallTime now) async =>
-      [for (final e in await _mine(personId)) e.window]..sort((a, b) => a.from.compareTo(b.from));
+  Future<List<Window>> coverageFor(String personId, WallTime now) async {
+    final mine = await _mine(personId);
+    final out = <Window>[];
+    for (final companyId in {for (final e in mine) e.companyId}) {
+      final info = ((await _db.rpc('company_suspensions', {'p_company': companyId})) as Map?)?.cast<String, Object?>();
+      final approvedAt = _time(info?['approvedAt']);
+      if (approvedAt == null) continue; // never approved: nothing was covered
+      final endedAt = _time(info?['endedAt']);
+      final active = CompanyRules.activeWindows(
+        approvedAt: SharePolicy.minuteOf(approvedAt),
+        endedAt: endedAt == null ? null : SharePolicy.minuteOf(endedAt),
+        overdue: [
+          for (final i in ((info?['invoices'] as List?) ?? const []).cast<Map<Object?, Object?>>())
+            (
+              suspendFrom:
+                  CompanyRules.suspendFromDay(SharePolicy.dayOf(CalendarDate.parse(i['dueOn']! as String))) * 24 * 60,
+              paidAt: i['paidAt'] == null ? null : SharePolicy.minuteOf(WallTime.fromJson(i['paidAt']! as String)),
+            ),
+        ],
+      );
+      out.addAll(CompanyRules.coverage([for (final e in mine) if (e.companyId == companyId) e.window], active));
+    }
+    return out..sort((a, b) => a.from.compareTo(b.from));
+  }
 
   @override
   Future<bool> hasEnrolled(String personId) async => (await _mine(personId)).isNotEmpty;
@@ -294,8 +322,8 @@ final class SupabaseCompanyRepository implements CompanyRepository {
     return start == null ? const [] : CompanyDashboard.months(start, now.date);
   }
 
-  /// The server's aggregates; money, CO₂, parking and route gaps are not
-  /// computed there yet, so they read as withheld (null / none).
+  /// The server's aggregates (k = 5 applied there, 013 D11): a figure built from
+  /// fewer than five people arrives as null and route gaps below five not at all.
   @override
   Future<DashboardMonth> dashboard(String companyId, String month, WallTime now) async {
     final Map<Object?, Object?> d;
@@ -312,10 +340,17 @@ final class SupabaseCompanyRepository implements CompanyRepository {
       carpoolRatePct: d['carpoolRatePct'] as int?,
       groups: d['groups'] as int?,
       tripsShared: d['tripsShared'] as int?,
-      moneySaved: null,
-      co2Kg: null,
-      parkingPerDay: null,
-      routeGaps: const [],
+      moneySaved: d['moneySaved'] as int?,
+      co2Kg: d['co2Kg'] as int?,
+      parkingPerDay: d['parkingPerDay'] as int?,
+      // Biggest first, ties in the order the areas are declared (the domain's own order).
+      routeGaps: [
+        for (final g in ((d['routeGaps'] as List?) ?? const []).cast<Map<Object?, Object?>>())
+          (Area.values.byName(g['area']! as String), g['count']! as int),
+      ]..sort((a, b) {
+        final byCount = b.$2.compareTo(a.$2);
+        return byCount != 0 ? byCount : a.$1.index.compareTo(b.$1.index);
+      }),
     );
   }
 
@@ -367,7 +402,11 @@ final class SupabaseCompanyRepository implements CompanyRepository {
   @override
   Future<void> demoEndContract(String companyId, WallTime now) async {}
 
-  /// Settings → Reset clears the device; the server's rows stay.
+  /// Settings → Reset removes the rows the signed-in person owns on the server
+  /// (their enrollment, HR consent and a company still waiting for approval) and no others.
   @override
-  Future<void> clearAll() async {}
+  Future<void> clearAll() async {
+    if (_db.userId == null) return;
+    await _db.rpc('company_reset_mine');
+  }
 }
