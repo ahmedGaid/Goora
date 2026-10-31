@@ -518,6 +518,35 @@ void installCompanyServer(InMemoryGateway db, {required String wall}) {
     logLine(company, 'hr', 'domainAdded', d);
     return null;
   };
+
+  // 013 (20261031000300): what an enrolled employee may know of the company's coverage, and reset.
+  db.rpcs['company_suspensions'] = (p, db) {
+    final me = db.me();
+    final company = p['p_company']! as String;
+    final c = db.table('companies').where((c) => c['id'] == company).firstOrNull;
+    final allowed =
+        c != null &&
+        (c['hr_contact_id'] == me ||
+            db.table('enrollments').any((e) => e['company_id'] == company && e['person_id'] == me));
+    if (!allowed) throw const BackendRefused('notHrContact');
+    final today = CalendarDate.parse(wall.substring(0, 10));
+    return {
+      'approvedAt': c['approved_at'],
+      'endedAt': c['ended_at'],
+      'invoices': [
+        for (final i in db.table('invoices'))
+          if (i['company_id'] == company && !CalendarDate.parse(i['due_on']! as String).addDays(8).isAfter(today))
+            {'dueOn': i['due_on'], 'paidAt': i['paid_at']},
+      ],
+    };
+  };
+  db.rpcs['company_reset_mine'] = (p, db) {
+    final me = db.me();
+    db.table('enrollments').removeWhere((e) => e['person_id'] == me);
+    db.table('hr_consents').removeWhere((c) => c['person_id'] == me);
+    db.table('companies').removeWhere((c) => c['hr_contact_id'] == me && c['status'] == 'pending');
+    return null;
+  };
 }
 
 /// 20261030000400: the marketplace functions the contract calls.

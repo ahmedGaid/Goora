@@ -56,12 +56,12 @@ extend, never weaken. One commit and push per phase. `[P]` = can run in parallel
 
 ## Phase 5 — company live (US6)
 
-- [ ] T033 [US6] [P] Extend `test/contract/company_contract.dart`: C-T1 six enrolled, two suspended → coverage counts four · C-T2 fewer than five behind money/CO₂/parking → withheld · C-T3 five or more → shown · C-T4 route gap below five left out · C-T5 `clearAll` removes only own rows · C-T6 staff `demo*` are no-ops on live. Fails first
-- [ ] T034 [US6] Migration `20261031000300_company_live.sql`: `corridor_legs`, `company_suspensions`, replaced `company_dashboard`, `company_reset_mine`, `staff_*` (service_role only)
-- [ ] T035 [US6] `supabase/tests/70_company_live.test.sql`: k = 5 on each total, route gaps, suspensions visibility (HR + enrolled only), `staff_*` refused for `authenticated`, allowed for `service_role` and logged, reset touches own rows only
-- [ ] T036 [US6] `test/contract/support/server.dart`: emulate `company_suspensions`, the new dashboard keys and `company_reset_mine`
-- [ ] T037 [US6] `SupabaseCompanyRepository`: `coverageFor` subtracts suspensions via `CompanyRules.activeWindows`; `dashboard` maps the new keys; `clearAll` calls `company_reset_mine`; `demo*` documented "demo only on fakes"; contract green; `company_flags.dart` unchanged
-- [ ] T038 [US6] Commit + push phase 5
+- [x] T033 [US6] [P] Extend `test/contract/company_contract.dart`: C-T1 six enrolled, two suspended → coverage counts four · C-T2 fewer than five behind money/CO₂/parking → withheld · C-T3 five or more → shown · C-T4 route gap below five left out · C-T5 `clearAll` removes only own rows · C-T6 staff `demo*` are no-ops on live. Fails first
+- [x] T034 [US6] Migration `20261031000300_company_live.sql`: `corridor_legs`, `company_suspensions`, replaced `company_dashboard`, `company_reset_mine`, `staff_*` (service_role only)
+- [x] T035 [US6] `supabase/tests/70_company_live.test.sql`: k = 5 on each total, route gaps, suspensions visibility (HR + enrolled only), `staff_*` refused for `authenticated`, allowed for `service_role` and logged, reset touches own rows only
+- [x] T036 [US6] `test/contract/support/server.dart`: emulate `company_suspensions`, the new dashboard keys and `company_reset_mine`
+- [x] T037 [US6] `SupabaseCompanyRepository`: `coverageFor` subtracts suspensions via `CompanyRules.activeWindows`; `dashboard` maps the new keys; `clearAll` calls `company_reset_mine`; `demo*` documented "demo only on fakes"; contract green; `company_flags.dart` unchanged
+- [x] T038 [US6] Commit + push phase 5
 
 ## Phase last — close
 
