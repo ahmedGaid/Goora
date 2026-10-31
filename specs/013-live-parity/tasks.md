@@ -13,9 +13,9 @@ extend, never weaken. One commit and push per phase. `[P]` = can run in parallel
 
 ## Phase 6 — small debts first (US7)
 
-- [ ] T005 [US7] New test file `test/unit/fake_trust_ids_test.dart` (no existing test edited): two contract adds back to back with no pause give different ids (fails today on a fast clock)
-- [ ] T006 [US7] `lib/features/daily/data/fake_trust_repository.dart`: contact ids from a counter, not the microsecond clock; existing fake tests pass unedited
-- [ ] T007 [US7] `test/contract/trust_contract.dart`: remove the 5 ms pacing; contract green on both halves
+- [x] T005 [US7] New test file `test/unit/fake_trust_ids_test.dart` (no existing test edited): two contract adds back to back with no pause give different ids (fails today on a fast clock)
+- [x] T006 [US7] `lib/features/daily/data/fake_trust_repository.dart`: contact ids from a counter, not the microsecond clock; existing fake tests pass unedited
+- [x] T007 [US7] `test/contract/trust_contract.dart`: remove the 5 ms pacing; contract green on both halves
 
 ## Phase 1 — database truth and seed (US2)
 

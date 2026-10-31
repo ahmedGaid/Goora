@@ -31,6 +31,16 @@ final class FakeTrustRepository implements TrustRepository {
 
   static const allKeys = [privacyKey, contactsKey, sosKey, docsPendingKey, docsVerifiedKey, riderIdKey];
 
+  static int _lastStamp = 0;
+
+  /// The microsecond clock, pushed past the last stamp handed out so two adds
+  /// inside one clock tick never share a contact id (011 finding F1). The id
+  /// keeps its `c<digits>` shape, so stored contacts still read.
+  static int _nextStamp() {
+    final now = DateTime.now().microsecondsSinceEpoch;
+    return _lastStamp = now > _lastStamp ? now : _lastStamp + 1;
+  }
+
   /// The seeded employer's mail domain ([DailySeed.company] = Valeo).
   static const workEmailDomain = 'valeo.com';
 
@@ -105,7 +115,7 @@ final class FakeTrustRepository implements TrustRepository {
   Future<void> addContact(String name, PhoneNumber phone) async {
     final list = await contacts();
     if (list.length >= TrustedContact.max) throw const TrustRefused(TrustRefusal.contactsFull);
-    final id = 'c${DateTime.now().microsecondsSinceEpoch}';
+    final id = 'c${_nextStamp()}';
     await _write(contactsKey, [...list, TrustedContact(id: id, name: name.trim(), phone: phone)], (c) => c.toJson());
   }
 
