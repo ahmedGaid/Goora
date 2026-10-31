@@ -9,6 +9,8 @@ import '../../commute/domain/group.dart';
 import '../../commute/domain/place.dart';
 import '../../commute/domain/pricing_service.dart';
 import '../../daily/domain/daily_commute_repository.dart';
+import '../../daily/domain/privacy.dart';
+import '../../daily/domain/ride.dart';
 import '../../daily/domain/trust.dart';
 import '../../daily/domain/trust_repository.dart';
 import '../../wallet/domain/done_one_off.dart';
@@ -23,6 +25,7 @@ import '../domain/driver_day_rules.dart';
 import '../domain/market_day.dart';
 import '../domain/marketplace_repository.dart';
 import '../domain/offered_trip.dart';
+import '../domain/seat_math.dart';
 import '../domain/seat_offer.dart';
 import '../domain/trip_request.dart';
 import 'market_seed.dart';
@@ -37,12 +40,11 @@ import 'market_seed.dart';
 /// the same rules as the fake (PricingService, SeatPrice, BookingGate), so
 /// the screens get the same answers; the server is the backstop.
 ///
-/// Known gaps against the fake (research "Marketplace gaps"): driver cards on
-/// seat offers carry no name (profiles are owner-only until a public driver
-/// card exists), group legs are not part of [driverDay], [requestsForMe] is
-/// empty until matching runs on the server, [reclaim] is refused, and
-/// [doneOneOffs] is empty (the wallet's derived trip rows are 012). The demo
-/// actions do nothing against a real server.
+/// Other people's names reach this seam only through narrow server functions —
+/// `market_offer_cards` (driver first name, rating, initials),
+/// `market_requests_for` (no rider id or name), `market_done_one_offs` (first
+/// names of finished trips) — because `profiles` stays owner-only (013 D6, D8).
+/// The demo actions do nothing against a real server.
 final class SupabaseMarketplaceRepository implements MarketplaceRepository {
   SupabaseMarketplaceRepository(
     this._db, {
@@ -173,30 +175,35 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
 
   // A — Empty seats ------------------------------------------------------------------
 
+  /// Offer rows with the driver's first name, rating and initials and the taken
+  /// count (`market_offer_cards`); [ids] asks for those offers, booked ones too.
+  Future<List<Row>> _cards([List<String>? ids]) async {
+    final raw = (await _db.rpc('market_offer_cards', {'p_ids': ?ids})) as List? ?? const [];
+    return [for (final m in raw.cast<Map<Object?, Object?>>()) m.cast<String, Object?>()];
+  }
+
+  static SeatDriver _driver(Row r) => SeatDriver(
+    id: r['driver_id']! as String,
+    firstName: (r['driver_first_name'] as String?) ?? '',
+    initials: (r['driver_initials'] as String?) ?? '',
+    rating: (r['driver_rating'] as num?)?.toDouble() ?? 0,
+    isWoman: (r['driver_is_woman'] as bool?) ?? false,
+  );
+
   @override
   Future<List<SeatOffer>> seatOffers(Leg leg, {required WallTime now}) async {
     final gate = await _gate(now);
-    final rows = await _db.select(
-      'offered_trips',
-      where: [Filter.eq('leg', leg.name), Filter.eq('status', OfferStatus.open.name)],
-      orderBy: 'trip_date',
-    );
     final out = <SeatOffer>[];
-    for (final r in rows) {
+    for (final r in await _cards()) {
+      if (r['leg'] != leg.name) continue;
       final o = _offer(r);
       if (o.driverId == _db.userId || !now.isBefore(WallTime(o.date, o.departure))) continue;
-      final taken = (await _db.select(
-        'bookings',
-        where: [
-          Filter.eq('offered_trip_id', o.id),
-          Filter.inList('status', [BookingStatus.booked.name, BookingStatus.done.name]),
-        ],
-      )).length;
+      final taken = r['taken']! as int;
       if (taken >= o.seats) continue;
       out.add(
         SeatOffer(
           source: BookingSource.offer(o.id),
-          driver: SeatDriver(id: o.driverId, firstName: '', initials: '', rating: 0),
+          driver: _driver(r),
           pickup: o.pickup,
           date: o.date,
           leg: o.leg,
@@ -276,12 +283,12 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
   @override
   Future<SeatOffer?> seatOf(Booking booking) async {
     if (booking.source.kind != BookingSourceKind.offer) return null;
-    final rows = await _db.select('offered_trips', where: [Filter.eq('id', booking.source.id)]);
+    final rows = await _cards([booking.source.id]);
     if (rows.isEmpty) return null;
     final o = _offer(rows.single);
     return SeatOffer(
       source: booking.source,
-      driver: SeatDriver(id: o.driverId, firstName: '', initials: '', rating: 0),
+      driver: _driver(rows.single),
       pickup: o.pickup,
       date: o.date,
       leg: o.leg,
@@ -492,6 +499,32 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
       where: [Filter.eq('driver_id', _me), Filter.eq('trip_date', date.toIso())],
     );
     final trips = <DayTrip>[];
+
+    // The group legs the person actually drives (the schedule's actual driver), as the fake
+    // does. No group-seat bookings exist on the server, so no seats are held.
+    if (group != null) {
+      final day = (await _daily.schedule(date, date)).where((d) => d.date == date).firstOrNull;
+      for (final leg in Leg.values) {
+        if (day?.assignment(leg)?.actual != _me) continue;
+        final ride = await _daily.ride(date, leg);
+        if (ride == null) continue;
+        final free = SeatMath.ownGroupLeg(ride, riderSeats: group.riderSeats);
+        final going = leg == Leg.going;
+        trips.add(
+          DayTrip(
+            id: Ride.idFor(group.id, date, leg),
+            leg: leg,
+            from: going ? group.origin : group.destination,
+            to: going ? group.destination : group.origin,
+            departure: group.timeFor(leg).minutes,
+            durationMinutes: group.tripMinutes,
+            seats: group.riderSeats,
+            taken: group.riderSeats - free,
+          ),
+        );
+      }
+    }
+
     for (final o in rows.map(_offer)) {
       if (o.status == OfferStatus.grouped) continue;
       if (o.status == OfferStatus.cancelled && !o.cancelledWithRiders) continue;
@@ -517,35 +550,140 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
         ),
       );
     }
+    trips.sort((a, b) {
+      final byTime = a.departure.compareTo(b.departure);
+      return byTime != 0 ? byTime : a.id.compareTo(b.id);
+    });
     return DriverDay(date: date, trips: trips, leadsGroup: group?.member(_me)?.role == MemberRole.driver);
   }
 
-  @override
-  Future<List<RequestCard>> requestsForMe({Area? leavingFrom, required PartOfDay part, required WallTime now}) async =>
-      const [];
-
-  @override
-  Future<AcceptResult> accept(String requestId, {required WallTime now}) async {
-    final r = await request(requestId, now: now);
-    if (r == null || r.status != RequestStatus.posted) return const AcceptRefused(TripFit.doesntFit());
-    try {
-      await _db.rpc('market_accept', {
-        'p_request': requestId,
-        'p_trip_cost': _corridor.tripCost,
-        'p_seats': _corridor.riderSeats,
-      });
-    } on BackendRefused catch (e) {
-      // `feeOverdue` has no result of its own on this seam: the request just can't be taken.
-      return AcceptRefused(e.reason == 'overLimit' ? const TripFit.limitReached() : const TripFit.doesntFit());
+  /// Posted requests of other riders (`market_requests_for`: no rider id, name or home),
+  /// then the driver's own privacy choice and the day's fit, with the fake's rules.
+  Future<List<RequestCard>> _requestCards(Leg wanted, Area? leavingFrom, WallTime now) async {
+    final raw = (await _db.rpc('market_requests_for', {'p_leg': wanted.name})) as List? ?? const [];
+    final profile = await _trust.profile();
+    final days = <CalendarDate, DriverDay>{};
+    final cards = <RequestCard>[];
+    for (final r in raw.cast<Map<Object?, Object?>>().map((m) => m.cast<String, Object?>())) {
+      final date = CalendarDate.parse(r['trip_date']! as String);
+      final departure = _clock(r['departure']);
+      if (MarketDay.isExpired(date, departure, now)) continue;
+      final isWoman = (r['rider_is_woman'] as bool?) ?? false;
+      if (!PrivacyRules.accepts(profile.privacy, profile.facts, PersonFacts(isWoman: isWoman))) continue;
+      final from = Area.values.byName(r['origin_area']! as String);
+      final to = Area.values.byName(r['destination_area']! as String);
+      final repeat = Repeat.values.byName(r['repeat']! as String);
+      final contribution = r['contribution']! as int;
+      final fee = (r['fee'] as int?) ?? 0;
+      // The fake's heuristic: 3 minutes from the rider's own area, 6 from anywhere else.
+      final detour = leavingFrom == null || leavingFrom == from ? 3 : 6;
+      final day = days[date] ??= await driverDay(date);
+      final fit = DriverDayRules.fit(
+        day.trips,
+        Candidate(
+          leg: wanted,
+          from: from,
+          to: to,
+          departure: departure.minutes,
+          durationMinutes: _corridor.tripMinutes(from, to),
+          daily: repeat == Repeat.daily,
+          leadsGroup: day.leadsGroup,
+        ),
+      );
+      cards.add(
+        RequestCard(
+          requestId: r['id']! as String,
+          leg: wanted,
+          from: from,
+          to: to,
+          rider: AnonymousRider(isWoman: isWoman),
+          pickup: _stop(r['pickup']),
+          date: date,
+          departure: departure,
+          repeat: repeat,
+          price: SeatPrice(
+            contribution: contribution,
+            share: contribution,
+            fee: fee,
+            mode: fee > 0 ? PricingMode.perTrip : PricingMode.trial,
+          ),
+          detourMinutes: detour,
+          fit: fit,
+          joinTime: fit.kind == TripFitKind.join
+              ? Clock(day.trips.firstWhere((t) => t.id == fit.tripId).departure)
+              : null,
+        ),
+      );
     }
-    return AcceptCreated((await driverDay(r.date)).tripsLeft);
+    cards.sort((a, b) {
+      final byDate = a.date.compareTo(b.date);
+      if (byDate != 0) return byDate;
+      final byTime = a.departure.compareTo(b.departure);
+      return byTime != 0 ? byTime : a.requestId.compareTo(b.requestId);
+    });
+    return cards;
   }
 
   @override
-  Future<ReclaimResult> reclaim(String bookingId, {required WallTime now}) async => const NotReclaimable();
+  Future<List<RequestCard>> requestsForMe({Area? leavingFrom, required PartOfDay part, required WallTime now}) =>
+      _requestCards(part == PartOfDay.morning ? Leg.going : Leg.ret, leavingFrom, now);
+
+  /// A driver cannot read another rider's request row, so the request is found among the
+  /// cards the server offers. Joining a trip the driver already has is not on the server
+  /// yet (013 research, re-filed): such a request is refused here rather than adding a trip.
+  @override
+  Future<AcceptResult> accept(String requestId, {required WallTime now}) async {
+    for (final leg in Leg.values) {
+      final card = (await _requestCards(leg, null, now)).where((c) => c.requestId == requestId).firstOrNull;
+      if (card == null) continue;
+      if (card.fit.kind != TripFitKind.create) return AcceptRefused(card.fit);
+      try {
+        final tripId = (await _db.rpc('market_accept', {
+          'p_request': requestId,
+          'p_trip_cost': _corridor.tripCost,
+          'p_seats': _corridor.riderSeats,
+        }))! as String;
+        final trip = (await _db.select('offered_trips', where: [Filter.eq('id', tripId)])).single;
+        return AcceptCreated((await driverDay(CalendarDate.parse(trip['trip_date']! as String))).tripsLeft);
+      } on BackendRefused catch (e) {
+        // `feeOverdue` has no result of its own on this seam: the request just can't be taken.
+        return AcceptRefused(e.reason == 'overLimit' ? const TripFit.limitReached() : const TripFit.doesntFit());
+      }
+    }
+    return const AcceptRefused(TripFit.doesntFit());
+  }
+
+  /// A subscriber takes the seat (005 US6): the server applies the fake's rules.
+  @override
+  Future<ReclaimResult> reclaim(String bookingId, {required WallTime now}) async {
+    try {
+      return Reclaimed((await _db.rpc('market_reclaim', {'p_booking': bookingId}))! as int);
+    } on BackendRefused catch (e) {
+      return e.reason == 'reclaimTooLate' ? const ReclaimTooLate() : const NotReclaimable();
+    }
+  }
 
   @override
-  Future<List<DoneOneOff>> doneOneOffs() async => const [];
+  Future<List<DoneOneOff>> doneOneOffs() async {
+    final raw = (await _db.rpc('market_done_one_offs')) as List? ?? const [];
+    return [
+      for (final r in raw.cast<Map<Object?, Object?>>().map((m) => m.cast<String, Object?>()))
+        DoneOneOff(
+          rideId: r['ride_id']! as String,
+          date: CalendarDate.parse(r['trip_date']! as String),
+          leg: Leg.values.byName(r['leg']! as String),
+          paidBy: PaidBy.values.byName(r['paid_by']! as String),
+          contribution: r['contribution']! as int,
+          tripCost: r['trip_cost']! as int,
+          riderSeats: r['rider_seats']! as int,
+          riderId: r['rider_id']! as String,
+          driverId: r['driver_id']! as String,
+          riderName: (r['rider_first_name'] as String?) ?? '',
+          driverName: (r['driver_first_name'] as String?) ?? '',
+          end: WallTime.fromJson(r['trip_end']! as String),
+        ),
+    ];
+  }
 
   // Demo (debug only): nothing to act on against a real server ---------------------------
 

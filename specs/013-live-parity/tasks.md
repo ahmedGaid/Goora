@@ -39,12 +39,12 @@ extend, never weaken. One commit and push per phase. `[P]` = can run in parallel
 
 ## Phase 3 — marketplace live (US4)
 
-- [ ] T022 [US4] [P] Extend `test/contract/marketplace_contract.dart`: M-T1 offer carries driver first name and nothing private · M-T2 `driverDay` lists group legs and offers in time order · M-T3 `requestsForMe` lists others' posted requests only · M-T4 `reclaim` refunds / refuses subscriber / refuses late · M-T5 `doneOneOffs` lists a finished seat. Fails first
-- [ ] T023 [US4] Migration `20261031000200_marketplace_live.sql`: `market_offer_cards`, `market_requests_for`, `market_done_one_offs`, `market_reclaim`
-- [ ] T024 [US4] `supabase/tests/60_marketplace_live.test.sql`: first-name-only columns, other drivers cannot read others' requests via the function beyond posted, reclaim rules, refund row, no phone/home columns in any returned row
-- [ ] T025 [US4] `test/contract/support/server.dart`: emulate the four functions
-- [ ] T026 [US4] `SupabaseMarketplaceRepository`: names from `market_offer_cards`, group legs in `driverDay`, `requestsForMe`, `reclaim`, `doneOneOffs`; remove the "Known gaps" comment; contract green
-- [ ] T027 [US4] Commit + push phase 3
+- [x] T022 [US4] [P] Extend `test/contract/marketplace_contract.dart`: M-T1 offer carries driver first name and nothing private · M-T2 `driverDay` lists group legs and offers in time order · M-T3 `requestsForMe` lists others' posted requests only · M-T4 `reclaim` refunds / refuses subscriber / refuses late · M-T5 `doneOneOffs` lists a finished seat. Fails first
+- [x] T023 [US4] Migration `20261031000200_marketplace_live.sql`: `market_offer_cards`, `market_requests_for`, `market_done_one_offs`, `market_reclaim`
+- [x] T024 [US4] `supabase/tests/60_marketplace_live.test.sql`: first-name-only columns, other drivers cannot read others' requests via the function beyond posted, reclaim rules, refund row, no phone/home columns in any returned row
+- [x] T025 [US4] `test/contract/support/server.dart`: emulate the four functions
+- [x] T026 [US4] `SupabaseMarketplaceRepository`: names from `market_offer_cards`, group legs in `driverDay`, `requestsForMe`, `reclaim`, `doneOneOffs`; remove the "Known gaps" comment; contract green
+- [x] T027 [US4] Commit + push phase 3
 
 ## Phase 4 — daily live (US5)
 

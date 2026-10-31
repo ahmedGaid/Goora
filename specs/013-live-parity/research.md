@@ -56,8 +56,11 @@ Rejected: server enforcement only — the screens need the amount before the tap
 
 ### D6 — Driver first name on seat offers: `market_offer_cards()`
 `security definer` function returning the open offers (same filter as the table read) joined with
-`first_name` and `rating` of the driver — no surname, phone, home or id beyond the driver's own id.
-`initials` = first letter of the first name. `profiles` stays owner-only.
+the driver's `first_name`, `rating`, `driver_is_woman` and `initials` (first + last initial, exactly
+what the existing `groups_for()` already gives a group's drivers) and the taken-seat count (other
+riders' bookings are private, so the count is made in the function) — no surname, phone, home or id
+beyond the driver's own id. With `p_ids` it returns those offers, including the caller's booked ones
+after the offer filled or was cancelled (a booked seat's card). `profiles` stays owner-only.
 Rejected: a public view of `profiles` (exposes columns by default), widening the profiles policy.
 
 ### D7 — Share rows: `wallet_share_rows(p_role)`
@@ -82,6 +85,16 @@ seat, not booked after the cut-off, refuse after the cut-off (`reclaimTooLate`),
 as a `seatRefund` row, reopen a `full` offer. The cut-off is `is_late(date, at)`, SQL twin of
 `AttendanceRules.isLate` (21:00 the evening before), vectors in D3. 011 listed this function but the
 migration never defined it; this lane adds it.
+
+### D9a — Found while closing the marketplace gaps
+- **`accept` could never work live**: it pre-read the request from `trip_requests`, which a driver
+  cannot read (RLS: own rows only), so it always answered "doesn't fit". It now finds the request
+  among the cards `market_requests_for` returns, then calls `market_accept`.
+- **Re-filed (not closed): accepting a request that *joins* a trip the driver already has** (the fake's
+  `AcceptJoined`) needs a server function that books the rider on the driver's existing offer; the
+  live repository refuses such a request instead of adding a third trip. Follow-up: `market_accept_join`.
+- The seat-reclaimed notice needed `notices_kind_check` to allow `seatReclaimed`; done in
+  `20261031000200` (a new constraint, the 003 one dropped inside the same migration).
 
 ### D10 — Daily: a `ride` and a `noCover` action on the existing `commute-day` function
 `ride {date, leg}` calls the existing `ensureRides` for the caller's group and date, then returns the

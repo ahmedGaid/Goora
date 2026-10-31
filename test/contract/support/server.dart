@@ -1,7 +1,10 @@
 import 'package:goora/core/backend/backend_failure.dart';
 import 'package:goora/core/backend/backend_gateway.dart';
 import 'package:goora/core/time/calendar_date.dart';
+import 'package:goora/core/time/wall_time.dart';
+import 'package:goora/features/commute/domain/clock.dart';
 import 'package:goora/features/commute/domain/group.dart';
+import 'package:goora/features/daily/domain/attendance_rules.dart';
 import 'package:goora/features/onboarding/data/supabase_profile_repository.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/domain/cash_trial_policy.dart';
@@ -449,7 +452,10 @@ void installCompanyServer(InMemoryGateway db, {required String wall}) {
 }
 
 /// 20261030000400: the marketplace functions the contract calls.
-void installMarketServer(InMemoryGateway db) {
+///
+/// [wall] is "now" as a Cairo wall time (default: the marketplace contract's 1 Nov 2026, 06:00).
+void installMarketServer(InMemoryGateway db, {String Function()? wall}) {
+  String nowWall() => wall?.call() ?? '2026-11-01T06:00:00';
   int tripsOn(String driver, Object? date) => db
       .table('offered_trips')
       .where(
@@ -531,5 +537,147 @@ void installMarketServer(InMemoryGateway db) {
     t['status'] = 'cancelled';
     t['cancelled_with_riders'] = held.isNotEmpty;
     return null;
+  };
+
+  // 013 (20261031000200): reads with first names only, and the reclaim.
+  Row? profile(Object? id) => db.table('profiles').where((r) => r['id'] == id).firstOrNull;
+  bool holds(Row b) => const {'booked', 'done'}.contains(b['status']);
+
+  db.rpcs['market_offer_cards'] = (p, db) {
+    final ids = (p['p_ids'] as List?)?.cast<String>();
+    final me = db.me();
+    return [
+      for (final t in db.table('offered_trips'))
+        if (ids == null
+            ? t['status'] == 'open'
+            : ids.contains(t['id']) &&
+                  (const {'open', 'full'}.contains(t['status']) ||
+                      t['driver_id'] == me ||
+                      db.table('bookings').any((b) => b['offered_trip_id'] == t['id'] && b['rider_id'] == me)))
+          () {
+            final d = profile(t['driver_id']);
+            final first = (d?['first_name'] as String?) ?? '';
+            final last = (d?['last_name'] as String?) ?? '';
+            return <String, Object?>{
+              ...t,
+              'taken': db.table('bookings').where((b) => b['offered_trip_id'] == t['id'] && holds(b)).length,
+              'driver_first_name': first,
+              'driver_initials': '${first.isEmpty ? '' : first[0].toUpperCase()}${last.isEmpty ? '' : last[0].toUpperCase()}',
+              'driver_rating': d?['rating'] ?? 5,
+              'driver_is_woman': d?['gender'] == 'female',
+            };
+          }(),
+    ];
+  };
+
+  db.rpcs['market_book'] = (p, db) {
+    final me = db.me();
+    final t = db.table('offered_trips').where((t) => t['id'] == p['p_offer']).firstOrNull;
+    if (t == null || !const {'open', 'full'}.contains(t['status']) || t['driver_id'] == me) {
+      throw const BackendRefused('seatTaken');
+    }
+    final held = db.table('bookings').where((b) => b['offered_trip_id'] == t['id'] && holds(b)).length;
+    if (held >= (t['seats']! as int)) throw const BackendRefused('seatTaken');
+    if (db.table('bookings').any(
+      (b) => b['rider_id'] == me && b['trip_date'] == t['trip_date'] && b['leg'] == t['leg'] && holds(b),
+    )) {
+      throw const BackendRefused('alreadyRiding');
+    }
+    final id = db.newId('booking');
+    final fee = p['p_fee']! as int;
+    final paidBy = p['p_paid_by']! as String;
+    db.table('bookings').add({
+      'id': id,
+      'rider_id': me,
+      'offered_trip_id': t['id'],
+      'trip_date': t['trip_date'],
+      'leg': t['leg'],
+      'ride_id': 'offer:${t['id']}',
+      'contribution': p['p_contribution'],
+      'fee': fee,
+      'paid_by': paidBy,
+      'paid': paidBy == 'cash' ? 0 : fee,
+      'booked_at': nowWall(),
+      'is_subscriber': false,
+      'status': 'booked',
+    });
+    if (held + 1 >= (t['seats']! as int)) t['status'] = 'full';
+    return id;
+  };
+
+  db.rpcs['market_reclaim'] = (p, db) {
+    final me = db.me();
+    final b = db.table('bookings').where((b) => b['id'] == p['p_booking']).firstOrNull;
+    final t = b == null ? null : db.table('offered_trips').where((t) => t['id'] == b['offered_trip_id']).firstOrNull;
+    if (b == null || b['status'] != 'booked' || t == null || (b['rider_id'] != me && t['driver_id'] != me)) {
+      throw const BackendRefused('notReclaimable');
+    }
+    final date = CalendarDate.parse(b['trip_date']! as String);
+    if (b['is_subscriber'] == true || AttendanceRules.isLate(date, WallTime.fromJson(b['booked_at']! as String))) {
+      throw const BackendRefused('notReclaimable');
+    }
+    if (AttendanceRules.isLate(date, WallTime.fromJson(nowWall()))) throw const BackendRefused('reclaimTooLate');
+    final refund = (b['paid'] as int?) ?? 0;
+    b['status'] = 'reclaimed';
+    if (t['status'] == 'full') t['status'] = 'open';
+    return refund;
+  };
+
+  db.rpcs['market_requests_for'] = (p, db) {
+    final me = db.me();
+    final mine = profile(me);
+    if (mine?['role'] != 'driver' && !const {'pending', 'verified'}.contains(mine?['driver_docs'])) return <Object?>[];
+    return [
+      for (final r in db.table('trip_requests'))
+        if (r['status'] == 'posted' && r['rider_id'] != me && r['leg'] == p['p_leg'])
+          {
+            for (final k in const [
+              'id',
+              'leg',
+              'origin_area',
+              'destination_area',
+              'trip_date',
+              'departure',
+              'repeat',
+              'pickup',
+              'contribution',
+              'fee',
+              'status',
+            ])
+              k: r[k],
+            'rider_is_woman': profile(r['rider_id'])?['gender'] == 'female',
+          },
+    ];
+  };
+
+  db.rpcs['market_done_one_offs'] = (p, db) {
+    final me = db.me();
+    final now = WallTime.fromJson(nowWall());
+    final out = <Row>[];
+    for (final b in db.table('bookings')) {
+      final t = db.table('offered_trips').where((t) => t['id'] == b['offered_trip_id']).firstOrNull;
+      if (t == null || !holds(b) || (b['rider_id'] != me && t['driver_id'] != me)) continue;
+      final time = (t['departure']! as String).split(':').map(int.parse).toList();
+      final end = WallTime(
+        CalendarDate.parse(b['trip_date']! as String),
+        Clock.hm(time[0], time[1]),
+      ).plusMinutes((t['duration_minutes'] as int?) ?? 40);
+      if (b['status'] != 'done' && end.compareTo(now) > 0) continue;
+      out.add({
+        'ride_id': b['ride_id'],
+        'trip_date': b['trip_date'],
+        'leg': b['leg'],
+        'paid_by': b['paid_by'],
+        'contribution': b['contribution'],
+        'trip_cost': t['trip_cost'],
+        'rider_seats': t['rider_seats'],
+        'rider_id': b['rider_id'],
+        'driver_id': t['driver_id'],
+        'rider_first_name': profile(b['rider_id'])?['first_name'] ?? '',
+        'driver_first_name': profile(t['driver_id'])?['first_name'] ?? '',
+        'trip_end': end.toJson(),
+      });
+    }
+    return out;
   };
 }
