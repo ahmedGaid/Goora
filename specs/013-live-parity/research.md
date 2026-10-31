@@ -105,7 +105,8 @@ planner (a fourth copy).
 
 ### D11 — Company coverage and dashboard
 `company_suspensions(p_company)` (definer; the company's HR contact or one of its enrolled
-employees) returns `{dueOn, paidAt}` of invoices past their suspension day; the device feeds them to
+employees — an employee cannot read the company row) returns `{approvedAt, endedAt, invoices:
+[{dueOn, paidAt}]}`, the invoices being those past their suspension day; the device feeds them to
 `CompanyRules.activeWindows` and intersects with the enrollment window — no SQL port of the window
 maths. `company_dashboard` is replaced (new migration) to add `moneySaved`, `co2Kg`, `parkingPerDay`
 and `routeGaps`, each `null`/empty below five people (010 R9, R7): money = Σ (leg trip cost − share)
@@ -140,19 +141,35 @@ service on 5432 is not touched) runs the migrations through a shim for what Supa
 pgTAP-compatible assertion shim. That run is reported as **"scratch PG16 + shim"**, never as the real
 `supabase test db`. When Docker answers, the real run replaces it.
 
-### D16 — Follow-ups, not done here
-Nothing so far. Filed here if found: screen changes (presentation is out of scope).
+### D16 — Follow-ups, re-filed with a reason (not done in this lane)
+1. **Accepting a request that joins a trip the driver already has** (the fake's `AcceptJoined`) —
+   needs a server function that books the rider on the driver's existing offer
+   (`market_accept_join`). Live refuses such a request (D9a). Reason: a new money-adjacent write
+   path, outside the listed gaps.
+2. **A live contract run against a real database.** 011 D20 describes `GOORA_CONTRACT_*` defines;
+   no such runner was ever written. The SQL is proven by pgTAP, the Dart mapping by the in-memory
+   contracts; the two meet only in a real app run (README steps). Reason: needs a running stack.
+3. **Fee-free history of a *personal* plan that was replaced** is not kept on the server (only
+   ended company windows are, in `plan_cover_windows`); the fake keeps both. Reason: no live flow
+   replaces a plan yet.
+4. **Group trip end time** in shares is the recorded `rides.ended_at`, else the planned arrival +
+   1 h as an estimate (the SQL has no corridor-minutes table). It affects only the 24-hour
+   auto-receive clock of a share whose driver never ended the trip.
+5. **The Edge Function glue** (`commute-day` actions `ride` and `noCover`) is not type-checked or
+   run here (no Deno on this machine); its rule is a tested pure function (`_shared/no_cover.ts`).
+6. **Presentation:** no screen change was needed; none is filed.
 
 ## Known gaps (011) → where each closes
 
 | 011 gap | Closed by |
 |---|---|
-| Wallet: cash trial, feeDue/feeOverdue, trip rows, shares first name + method | D2–D5, D7 |
-| Company: suspensions, dashboard money/CO2/parking/route gaps, staff `demo*`, `clearAll` | D11, D12 |
-| Marketplace: driver name, group legs, requestsForMe, reclaim, doneOneOffs | D6, D8, D9 |
-| Daily: unstored ride token + stops, "no cover" | D10 |
-| Seed (T015) | D13 |
-| F1 fake trust ids / 5 ms pacing | tasks T045–T046 |
+| Wallet: cash trial, feeDue/feeOverdue, trip rows, shares first name + method | **closed** — D2–D5, D7 (WT1–WT8, pgTAP 50/55/60) |
+| Company: suspensions, dashboard money/CO2/parking/route gaps, staff `demo*`, `clearAll` | **closed** — D11, D12 (CS1–CS7, pgTAP 70); staff `demo*` = documented "demo only on the fakes" + service-role `staff_*` |
+| Marketplace: driver name, group legs, requestsForMe, reclaim, doneOneOffs | **closed** — D6, D8, D9 (ML1–ML6, pgTAP 65); accept-join re-filed |
+| Daily: unstored ride token + stops, "no cover" | **closed** — D10 (D7/D8 contract, ST1–ST3, node no_cover) |
+| Seed (T015) | **closed** — D13 (`seed.sql`, pgTAP 80) |
+| F1 fake trust ids / 5 ms pacing | **closed** (P6, `fake_trust_ids_test.dart`, pacing removed) |
+| *New:* `accept` could never find its request under RLS | **closed** (D9a); join-an-existing-trip re-filed (D16 #1) |
 
 ## Analyze pass (2026-10-31, after tasks.md)
 
@@ -193,3 +210,35 @@ T039, T040, T042.
   pending**.
 - **D6 note**: the existing `groups_for()` already gives drivers `initials` = first + last initial;
   `market_offer_cards` follows that precedent (no new exposure).
+
+### 2026-10-31 — P2–P5 database and app results
+
+- **Bugs the tests caught in the lane's own SQL** (fixed before commit, no applied migration edited):
+  `wallet_state()` returned early when the rider had no "since" and skipped due/overdue — the fake
+  computes them from the ledger regardless (found by `55_overdue_guard`); `accept` read its request
+  through RLS (D9a); a company employee cannot read the company row, so `company_suspensions` also
+  returns `approvedAt` / `endedAt` (found while writing the Dart side).
+- **New pgTAP files**: `50_wallet_state` 24 · `55_overdue_guard` 7 · `60_vectors` 114 (generated from
+  the shared JSON; stale-guard in `node --test`) · `65_marketplace_live` 22 · `70_company_live` 21.
+- **Full pgTAP run on the scratch cluster (clean reset, all 9 + 4 migrations + seed)**:
+  `00` 3 · `10` 14 · `20` 16 · `30` 17 · `40` 9 · `50` 24 · `55` 7 · `60` 114 · `65` 22 · `70` 21 ·
+  `80` 9 = **256 / 256 ok, 0 not ok, 0 SQL errors** — "scratch PG16 + shim", **not** `supabase test db`.
+- **Contracts** (in-memory gateway, fake and Supabase over the same cases): wallet trips WT1–WT8
+  (16 runs), marketplace live ML1–ML2 (4 runs), daily D7–D8 added to the existing daily contract;
+  Supabase-only: marketplace ML3–ML6, daily ST1–ST3, company CS1–CS7. All of `test/contract`: 123 green.
+- **Existing tests**: none edited outside `test/contract/**`; in the contracts only additions (daily
+  D7/D8), the requested removal of the 5 ms pacing (trust), and test-server support code. No golden
+  changed.
+
+### 2026-10-31 — final gates (worktree Goora-live, branch 013-live-parity)
+
+| Gate | Result |
+|---|---|
+| `flutter analyze` | 0 issues |
+| `flutter test --concurrency=1` | **1984 passed** (baseline 1944; floor ≥ 1944) |
+| `node --test "supabase/functions/_shared/*.test.ts"` | **281 passed** (baseline 276; +2 vector guard, +3 no-cover) |
+| pgTAP, scratch PG16 + shim | **256 / 256** ok (not the real `supabase test db`) |
+| Real `supabase db reset` / `supabase test db` | **not run** — `docker info` timed out (exit 124) at the start, before P1, and at the close; never restarted by this lane |
+| Goldens changed | none |
+| Files outside `specs/013*`, `supabase/**`, `test/contract/**`: | the 5 `lib/features/*/data/*` repos + `fake_trust_repository.dart`, `test/unit/fake_trust_ids_test.dart` (new), README |
+| gitleaks `main..HEAD` | no leaks |

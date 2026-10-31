@@ -32,7 +32,7 @@ rider_first_name, driver_first_name, trip_end`; only rows where the caller is ri
 ## market_reclaim(p_booking uuid) → int
 Refund (0 for a cash seat). Refuses `notReclaimable`, `reclaimTooLate`.
 
-## company_suspensions(p_company uuid) → jsonb `[{dueOn, paidAt | null}]`
+## company_suspensions(p_company uuid) → jsonb `{approvedAt, endedAt, invoices: [{dueOn, paidAt | null}]}`
 HR contact or enrolled employee of the company; else `refused:notHrContact`.
 
 ## company_dashboard(p_company, p_month) → jsonb (replaced)
