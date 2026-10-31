@@ -69,9 +69,9 @@ extend, never weaken. One commit and push per phase. `[P]` = can run in parallel
 - [x] T040 research.md: Results log with real numbers; every "Known gap" row marked closed or re-filed with a reason
 - [x] T041 Gates in the worktree: `flutter analyze` 0 · `flutter test --concurrency=1` ≥ 1944 green · `node --test` ≥ 276 green · pgTAP result recorded · `git diff main -- test/` shows no edited existing test (new files and added cases only) · `company_flags.dart` unchanged · diff scan finds no secret
 - [x] T042 Dated block at the TOP of the `goora-status` skill (own block only)
-- [ ] T043 Commit + push the branch; do not merge or push main
-- [ ] T044 SendMessage "the managere": "Lane H done" with gate numbers, files touched, goldens changed (expected: none)
-- [ ] T045 Final report to the user with a How-to-test block and the `/goal` pointer block (Docs/NEXT_GOAL.md is the conductor's to write)
+- [x] T043 Commit + push the branch; do not merge or push main
+- [x] T044 SendMessage "the managere": "Lane H done" with gate numbers, files touched, goldens changed (expected: none)
+- [x] T045 Final report to the user with a How-to-test block and the `/goal` pointer block (Docs/NEXT_GOAL.md is the conductor's to write)
 
 ## Dependencies
 
