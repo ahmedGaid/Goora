@@ -248,6 +248,8 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
       final rows = await _db.select('bookings', where: [Filter.eq('id', id)]);
       return Booked(_booking(rows.single));
     } on BackendRefused catch (e) {
+      // The server's own overdue backstop (013 D5), when the device gate was out of date.
+      if (e.reason == 'feeOverdue') return BookFeeOverdue(int.tryParse(e.detail ?? '') ?? 0);
       return e.reason == 'alreadyRiding' ? const AlreadyRiding() : const SeatTaken();
     }
   }
@@ -336,6 +338,7 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
       return Posted((await request(id, now: now))!);
     } on BackendRefused catch (e) {
       if (e.reason == 'dailyNotAllowed') return const DailyNotAllowed();
+      if (e.reason == 'feeOverdue') return PostFeeOverdue(int.tryParse(e.detail ?? '') ?? 0);
       rethrow;
     }
   }
@@ -532,6 +535,7 @@ final class SupabaseMarketplaceRepository implements MarketplaceRepository {
         'p_seats': _corridor.riderSeats,
       });
     } on BackendRefused catch (e) {
+      // `feeOverdue` has no result of its own on this seam: the request just can't be taken.
       return AcceptRefused(e.reason == 'overLimit' ? const TripFit.limitReached() : const TripFit.doesntFit());
     }
     return AcceptCreated((await driverDay(r.date)).tripsLeft);

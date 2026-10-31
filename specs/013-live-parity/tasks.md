@@ -28,14 +28,14 @@ extend, never weaken. One commit and push per phase. `[P]` = can run in parallel
 
 ## Phase 2 — wallet live (US3)
 
-- [ ] T014 [US3] [P] `supabase/tests/gen_vector_tests.mjs` + `_shared/vector_sql.test.ts` guard (regenerate in memory, compare to committed `60_vectors.test.sql`); guard fails first
-- [ ] T015 [US3] [P] Extend `test/contract/wallet_contract.dart` with cases W-T1…W-T9: first 5 trips fee-free · 6th pays the fee · 150 owed is due the same day · 30 at month end is due on the 1st, 29 carries over · overdue after 3 days · bundle trip uses no fee · charge and free-cancel rows · share carries first name and the rider's real method · no driver-income kind; harness gets a daily source with trips (fake) and the same facts on the emulated server (supabase). Fails first
-- [ ] T016 [US3] Migration `20261031000100_wallet_state.sql`: `pay_equal_share`, `pay_cash_amount`, `direct_pay_share`, `direct_pay_fee`, `is_late`, `fee_due_date`, `wallet_state`, `wallet_assert_open`, `wallet_share_rows`; revoke from public/anon
-- [ ] T017 [US3] Generate `60_vectors.test.sql` from the JSON fixtures; `supabase/tests/50_wallet_state.test.sql` (trial, due, overdue, bundle, privacy of share rows, no income kind/column, `authenticated` only)
-- [ ] T018 [US3] `test/contract/support/server.dart`: emulate `wallet_state`, `wallet_share_rows`, `wallet_assert_open` using the domain rules
-- [ ] T019 [US3] `SupabaseWalletRepository`: `getWallet` from `wallet_state` (cashTrial, feeDue, feeOverdue, feesThisMonth, bundleTripsLeft, derived entries) and shares from `wallet_share_rows`; contract green on both halves
-- [ ] T020 [US3] Migration `20261031000150_overdue_guard.sql`: `market_book`/`market_post`/`market_accept` and `join_group` call `wallet_assert_open()` (008 FR-005 names Book, Post, accept, Join); pgTAP case; Dart maps the `feeOverdue` refusal to the existing results
-- [ ] T021 [US3] Commit + push phase 2
+- [x] T014 [US3] [P] `supabase/tests/gen_vector_tests.mjs` + `_shared/vector_sql.test.ts` guard (regenerate in memory, compare to committed `60_vectors.test.sql`); guard fails first
+- [x] T015 [US3] [P] Extend `test/contract/wallet_contract.dart` with cases W-T1…W-T9: first 5 trips fee-free · 6th pays the fee · 150 owed is due the same day · 30 at month end is due on the 1st, 29 carries over · overdue after 3 days · bundle trip uses no fee · charge and free-cancel rows · share carries first name and the rider's real method · no driver-income kind; harness gets a daily source with trips (fake) and the same facts on the emulated server (supabase). Fails first
+- [x] T016 [US3] Migration `20261031000100_wallet_state.sql`: `pay_equal_share`, `pay_cash_amount`, `direct_pay_share`, `direct_pay_fee`, `is_late`, `fee_due_date`, `wallet_state`, `wallet_assert_open`, `wallet_share_rows`; revoke from public/anon
+- [x] T017 [US3] Generate `60_vectors.test.sql` from the JSON fixtures; `supabase/tests/50_wallet_state.test.sql` (trial, due, overdue, bundle, privacy of share rows, no income kind/column, `authenticated` only)
+- [x] T018 [US3] `test/contract/support/server.dart`: emulate `wallet_state`, `wallet_share_rows`, `wallet_assert_open` using the domain rules
+- [x] T019 [US3] `SupabaseWalletRepository`: `getWallet` from `wallet_state` (cashTrial, feeDue, feeOverdue, feesThisMonth, bundleTripsLeft, derived entries) and shares from `wallet_share_rows`; contract green on both halves
+- [x] T020 [US3] Migration `20261031000150_overdue_guard.sql`: `market_book`/`market_post`/`market_accept` and `join_group` call `wallet_assert_open()` (008 FR-005 names Book, Post, accept, Join); pgTAP case; Dart maps the `feeOverdue` refusal to the existing results
+- [x] T021 [US3] Commit + push phase 2
 
 ## Phase 3 — marketplace live (US4)
 

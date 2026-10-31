@@ -1,8 +1,13 @@
 import 'package:goora/core/backend/backend_failure.dart';
 import 'package:goora/core/backend/backend_gateway.dart';
+import 'package:goora/core/time/calendar_date.dart';
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/onboarding/data/supabase_profile_repository.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
+import 'package:goora/features/wallet/domain/cash_trial_policy.dart';
+import 'package:goora/features/wallet/domain/direct_pay.dart';
+import 'package:goora/features/wallet/domain/fee_balance.dart';
+import 'package:goora/features/wallet/domain/payment_method.dart';
 
 import 'in_memory_gateway.dart';
 
@@ -99,12 +104,30 @@ void installCommuteServer(InMemoryGateway db) {
 
 /// 20261030000200: the wallet functions the contract calls, with the same
 /// ledger rows (`delta` = signed balance effect) and refusals.
-void installWalletServer(InMemoryGateway db, {required String today, required String wall}) {
+///
+/// [clock] moves "today" for the 013 cases (default: fixed at [today]).
+void installWalletServer(
+  InMemoryGateway db, {
+  required String today,
+  required String wall,
+  String Function()? clock,
+}) {
   const prices = {'monthly': (149, 1), 'yearly': (1490, 12), 'company': (0, 0)};
+  String now() => clock?.call() ?? today;
   List<Row> ledger() => db.table('wallet_entries');
   int balance(String me) => ledger().where((e) => e['person_id'] == me).fold(0, (s, e) => s + (e['delta']! as int));
   var seq = 0;
-  void post(String me, String kind, int amount, int delta, {String? id, int fee = 0, int share = 0, String? ride}) {
+  void post(
+    String me,
+    String kind,
+    int amount,
+    int delta, {
+    String? id,
+    int fee = 0,
+    int share = 0,
+    String? ride,
+    String? date,
+  }) {
     final key = id ?? '$kind:${db.newId()}';
     if (ledger().any((e) => e['person_id'] == me && e['id'] == key)) return;
     ledger().add({
@@ -117,7 +140,7 @@ void installWalletServer(InMemoryGateway db, {required String today, required St
       'share_to_driver': share,
       'ride_id': ride,
       'leg': null,
-      'entry_date': today,
+      'entry_date': date ?? now(),
       'created_at': ++seq,
     });
   }
@@ -167,19 +190,200 @@ void installWalletServer(InMemoryGateway db, {required String today, required St
       fee: fee,
       share: p['p_share']! as int,
       ride: p['p_ride'] as String?,
+      date: p['p_date'] as String?,
     );
     return null;
   };
   db.rpcs['wallet_seat_refund'] = (p, db) {
     final amount = p['p_amount']! as int;
     if (amount == 0) return null;
-    post(db.me(), 'seatRefund', amount, amount, id: 'refund:${p['p_booking']}', ride: p['p_ride'] as String?);
+    post(
+      db.me(),
+      'seatRefund',
+      amount,
+      amount,
+      id: 'refund:${p['p_booking']}',
+      ride: p['p_ride'] as String?,
+      date: p['p_date'] as String?,
+    );
     return null;
   };
   db.rpcs['instapay_handle_of'] = (p, db) =>
       db.table('payment_settings').where((r) => r['person_id'] == p['p_driver']).firstOrNull?['instapay_handle'];
   db.rpcs['payment_method_of'] = (p, db) =>
       db.table('payment_settings').where((r) => r['person_id'] == p['p_rider']).firstOrNull?['method'];
+
+  // 013 (20261031000100): the fee state. Same walk as `wallet_state()` in SQL, run on the
+  // domain rules the SQL twins. Covers group trips, the trial, fees, bundles, due and overdue.
+
+  // payment_settings_since(): "since" starts the day the method is first chosen.
+  db.triggers['payment_settings'] = (row) {
+    if (row['method'] != null && row['since_date'] == null) row['since_date'] = now();
+  };
+  db.rpcs['wallet_buy_bundle'] = (p, db) {
+    final me = db.me();
+    db.table('bundles').add({'id': db.newId('bundle'), 'person_id': me, 'bought_at': '${now()}T09:00:00'});
+    post(me, 'bundle', 75, 0);
+    return null;
+  };
+
+  Row? settings(String me) => db.table('payment_settings').where((r) => r['person_id'] == me).firstOrNull;
+
+  Map<String, Object?> state(String me) {
+    final todayDate = CalendarDate.parse(now());
+    final ps = settings(me);
+    final purchases = [
+      for (final b in db.table('bundles'))
+        if (b['person_id'] == me) CalendarDate.parse((b['bought_at']! as String).substring(0, 10)),
+    ];
+    final ledgerBalance = balance(me);
+    final sinceRaw = ps?['since_date'] as String?;
+    final since = sinceRaw == null ? null : CalendarDate.parse(sinceRaw);
+    final window = todayDate.addDays(-60);
+    // No "since": no derived trips, but the ledger's debt still falls due.
+    final from = since == null ? todayDate.addDays(1) : (since.isAfter(window) ? since : window);
+    final method = PaymentMethod.parse((ps?['method'] as String?) ?? 'cash');
+
+    final items = <({CalendarDate d, int legIndex, String leg, String rideId, int contribution, int cost, int seats})>[];
+    for (final e in db.table('reliability_events')) {
+      if (e['user_id'] != me || e['kind'] != 'kept') continue;
+      final ride = db.table('rides').firstWhere((r) => r['id'] == e['ride_id']);
+      final date = CalendarDate.parse(ride['ride_date']! as String);
+      if (ride['driver_id'] == me || date.isBefore(from) || date.isAfter(todayDate)) continue;
+      final group = db.table('groups').firstWhere((g) => g['id'] == ride['group_id']);
+      final card = (group['card'] as Map?) ?? const {};
+      final price = group['price']! as int;
+      items.add((
+        d: date,
+        legIndex: ride['leg'] == 'going' ? 0 : 1,
+        leg: ride['leg']! as String,
+        rideId: ride['id']! as String,
+        contribution: price,
+        cost: (card['tripCost'] as int?) ?? price * 3,
+        seats: (card['riderSeats'] as int?) ?? 3,
+      ));
+    }
+    items.sort((a, b) {
+      final byDate = a.d.compareTo(b.d);
+      return byDate != 0 ? byDate : a.legIndex.compareTo(b.legIndex);
+    });
+
+    final entries = <Map<String, Object?>>[];
+    var debits = 0;
+    var trialDone = 0;
+    var strikes = 0;
+    var bundleUsed = 0;
+    for (final it in items) {
+      final share = DirectPay.share(it.contribution, method: method, tripCost: it.cost, riderSeats: it.seats);
+      Map<String, Object?> entry(String id, String kind, int amount, int fee) => {
+        'id': '$id:${it.rideId}',
+        'kind': kind,
+        'amount': amount,
+        'fee': fee,
+        'date': it.d.toIso(),
+        'rideId': it.rideId,
+        'shareToDriver': share,
+        'leg': it.leg,
+      };
+      if (CashTrialPolicy.available(trialDone, strikes)) {
+        trialDone++;
+        strikes += db
+            .table('share_marks')
+            .where((m) => m['ride_id'] == it.rideId && m['rider_id'] == me && m['outcome'] == 'didNotPay')
+            .length;
+        entries.add(entry('cash', 'cashTrip', 0, 0));
+        continue;
+      }
+      final fee = DirectPay.fee(it.contribution, share: share, tripCost: it.cost, riderSeats: it.seats, feeFree: false);
+      final left = TripBundle.trips * purchases.where((p) => !p.isAfter(it.d)).length - bundleUsed;
+      if (TripBundle.useBundle(fee, left)) {
+        bundleUsed++;
+        entries.add(entry('bundle-trip', 'bundleTrip', 0, 0));
+      } else {
+        debits += fee;
+        entries.add(entry('trip', 'trip', fee, fee));
+      }
+    }
+
+    final byDay = <CalendarDate, int>{};
+    for (final e in ledger().where((e) => e['person_id'] == me)) {
+      final d = CalendarDate.parse(e['entry_date']! as String);
+      byDay[d] = (byDay[d] ?? 0) + (e['delta']! as int);
+    }
+    for (final e in entries.where((e) => e['kind'] == 'trip')) {
+      final d = CalendarDate.parse(e['date']! as String);
+      byDay[d] = (byDay[d] ?? 0) - (e['amount']! as int);
+    }
+    var running = 0;
+    final series = [
+      for (final d in byDay.keys.toList()..sort()) (date: d, balance: running += byDay[d]!),
+    ];
+    final due = FeeBalancePolicy.dueDate(series, todayDate);
+    return {
+      'balance': ledgerBalance - debits,
+      'debits': debits,
+      'cashTrial': since == null || ps?['no_trial'] == true || ps?['no_trial_from'] != null
+          ? null
+          : {'tripsDone': trialDone, 'strikes': strikes},
+      'bundleLeft': TripBundle.trips * purchases.length - bundleUsed,
+      'feeDue': due?.toIso(),
+      'feeOverdue': FeeBalancePolicy.isOverdue(due, todayDate),
+      'feesThisMonth': entries
+          .where((e) => e['kind'] == 'trip' && (e['date']! as String).startsWith(todayDate.monthKey))
+          .fold<int>(0, (s, e) => s + (e['fee']! as int)),
+      'entries': entries,
+    };
+  }
+
+  db.rpcs['wallet_state'] = (p, db) => state(db.me());
+  db.rpcs['wallet_assert_open'] = (p, db) {
+    final s = state(db.me());
+    if (s['feeOverdue'] == true) {
+      final balanceNow = s['balance']! as int;
+      throw BackendRefused('feeOverdue', '${balanceNow < 0 ? -balanceNow : 0}');
+    }
+    return null;
+  };
+
+  // Group-trip shares only (the contract's cases); one row per kept trip.
+  db.rpcs['wallet_share_rows'] = (p, db) {
+    final me = db.me();
+    if (p['p_role'] != 'rider') return <Object?>[];
+    final method = (settings(me)?['method'] as String?) ?? 'cash';
+    return [
+      for (final e in db.table('reliability_events'))
+        if (e['user_id'] == me && e['kind'] == 'kept')
+          () {
+            final ride = db.table('rides').firstWhere((r) => r['id'] == e['ride_id']);
+            final group = db.table('groups').firstWhere((g) => g['id'] == ride['group_id']);
+            final card = (group['card'] as Map?) ?? const {};
+            final price = group['price']! as int;
+            final mark = db
+                .table('share_marks')
+                .where((m) => m['ride_id'] == ride['id'] && m['rider_id'] == me)
+                .firstOrNull;
+            final driver = db.table('profiles').where((r) => r['id'] == ride['driver_id']).firstOrNull;
+            return <String, Object?>{
+              'ride_id': ride['id'],
+              'rider_id': me,
+              'driver_id': ride['driver_id'],
+              'other_first_name': driver?['first_name'] ?? '',
+              'method': method,
+              'amount': DirectPay.share(
+                price,
+                method: PaymentMethod.parse(method),
+                tripCost: (card['tripCost'] as int?) ?? price * 3,
+                riderSeats: (card['riderSeats'] as int?) ?? 3,
+              ),
+              'trip_end': ride['ended_at'],
+              'mark_outcome': mark?['outcome'],
+              'marked_at': null,
+              'claimed_at': null,
+              'reversed_once': (mark?['reversed_once'] as bool?) ?? false,
+            };
+          }(),
+    ];
+  };
 }
 
 /// 20261030000300: the company functions the contract calls.
