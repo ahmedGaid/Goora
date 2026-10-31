@@ -48,11 +48,11 @@ extend, never weaken. One commit and push per phase. `[P]` = can run in parallel
 
 ## Phase 4 — daily live (US5)
 
-- [ ] T028 [US5] [P] Extend `test/contract/daily_contract.dart`: D-T1 an unstored ride has a token that is stable on re-read · D-T2 three riders see three own stops · D-T3 `chooseNoCoverOption(dayOff)` is stored and read back, other options change nothing. Fails first
-- [ ] T029 [US5] `commute-day/index.ts`: actions `ride` and `noCover` (+ `_shared` helper with a node test for the refusal rule)
-- [ ] T030 [US5] `test/contract/support/server.dart`: emulate the two actions
-- [ ] T031 [US5] `SupabaseDailyCommuteRepository.ride()` calls the `ride` action when no row exists, then reads the stored row; `chooseNoCoverOption` calls `noCover`; remove the "Known gaps" comment; contract green
-- [ ] T032 [US5] Commit + push phase 4
+- [x] T028 [US5] [P] Extend `test/contract/daily_contract.dart`: D-T1 an unstored ride has a token that is stable on re-read · D-T2 three riders see three own stops · D-T3 `chooseNoCoverOption(dayOff)` is stored and read back, other options change nothing. Fails first
+- [x] T029 [US5] `commute-day/index.ts`: actions `ride` and `noCover` (+ `_shared` helper with a node test for the refusal rule)
+- [x] T030 [US5] `test/contract/support/server.dart`: emulate the two actions
+- [x] T031 [US5] `SupabaseDailyCommuteRepository.ride()` calls the `ride` action when no row exists, then reads the stored row; `chooseNoCoverOption` calls `noCover`; remove the "Known gaps" comment; contract green
+- [x] T032 [US5] Commit + push phase 4
 
 ## Phase 5 — company live (US6)
 

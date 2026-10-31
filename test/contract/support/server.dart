@@ -3,8 +3,10 @@ import 'package:goora/core/backend/backend_gateway.dart';
 import 'package:goora/core/time/calendar_date.dart';
 import 'package:goora/core/time/wall_time.dart';
 import 'package:goora/features/commute/domain/clock.dart';
+import 'package:goora/features/commute/domain/commute_profile.dart' show Leg;
 import 'package:goora/features/commute/domain/group.dart';
 import 'package:goora/features/daily/domain/attendance_rules.dart';
+import 'package:goora/features/daily/domain/ride.dart';
 import 'package:goora/features/onboarding/data/supabase_profile_repository.dart';
 import 'package:goora/features/onboarding/domain/profile.dart';
 import 'package:goora/features/wallet/domain/cash_trial_policy.dart';
@@ -102,6 +104,73 @@ void installCommuteServer(InMemoryGateway db) {
     }
     final onRoute = list.where(route).toList();
     return onRoute.indexWhere((r) => r['user_id'] == me) + 1;
+  };
+}
+
+/// 013 D10: the `ride` and `noCover` actions of the `commute-day` Edge Function, for the
+/// cases that need them. `ride` stores the group's ride with a share token and puts every
+/// non-driving member of the group document on it at a stop (the server uses each member's
+/// nearest stop; here they take the group's stops in turn). `noCover` is free and refused
+/// while a driver covers the leg. The other actions are not emulated.
+void installDailyServer(InMemoryGateway db) {
+  var tokens = 0;
+  String groupOf(String me) =>
+      db.table('group_members').firstWhere((m) => m['user_id'] == me)['group_id']! as String;
+
+  db.functions['commute-day'] = (body, db) {
+    final me = db.me();
+    final date = body['date'] as String?;
+    final leg = body['leg'] as String?;
+    switch (body['action']) {
+      case 'ride':
+        final gid = groupOf(me);
+        final id = Ride.idFor(gid, CalendarDate.parse(date!), Leg.values.byName(leg!));
+        if (!db.table('rides').any((r) => r['id'] == id)) {
+          final card = (db.table('groups').firstWhere((g) => g['id'] == gid)['card']! as Map).cast<String, Object?>();
+          final members = (card['members']! as List).cast<Map<Object?, Object?>>();
+          final stops = (card['stops'] as List? ?? const []).cast<Map<Object?, Object?>>();
+          final driver = members.firstWhere((m) => m['role'] == 'driver')['id'];
+          db.table('rides').add({
+            'id': id,
+            'group_id': gid,
+            'ride_date': date,
+            'leg': leg,
+            'driver_id': driver,
+            'share_token': 'tok-${++tokens}',
+            'delay_minutes': 0,
+            'confirmed': false,
+          });
+          var i = 0;
+          for (final m in members) {
+            if (m['id'] == driver) continue;
+            db.table('ride_passengers').add({
+              'ride_id': id,
+              'user_id': m['id'],
+              'stop_id': leg == 'going' && stops.isNotEmpty ? stops[i++ % stops.length]['id'] : 'work',
+            });
+          }
+        }
+        return {'rideId': id};
+      case 'noCover':
+        final gid = groupOf(me);
+        final id = Ride.idFor(gid, CalendarDate.parse(date!), Leg.values.byName(leg!));
+        final ride = db.table('rides').where((r) => r['id'] == id).firstOrNull;
+        if (ride == null || ride['driver_id'] != null) throw const BackendRefused('driverCovers');
+        db.table('absences').add({
+          'id': db.newId('absence'),
+          'user_id': me,
+          'group_id': gid,
+          'ride_date': date,
+          'leg': leg,
+          'made_at': '${date}T06:00:00Z',
+          'kind': 'noCover',
+          'driving': false,
+          'seat_taken': false,
+        });
+        return <String, Object?>{};
+      default:
+        throw const BackendError('action not emulated');
+    }
   };
 }
 
