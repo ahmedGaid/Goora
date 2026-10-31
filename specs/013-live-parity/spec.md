@@ -135,8 +135,10 @@ on both versions.
    their day, **Then** both appear in time order.
 3. **Given** a rider posted a request addressed to a driver, **When** that driver lists requests
    for them, **Then** it appears; for any other driver it does not.
-4. **Given** a driver cancelled an offer that still can be taken back, **When** they reclaim it,
-   **Then** it is open again; if it cannot be taken back, the refusal is the same as the fake's.
+4. **Given** a booked seat that a subscriber takes (005 US6), **When** it is reclaimed, **Then** the
+   booker is refunded what they paid and a full offer opens again; a subscriber's own seat and a
+   seat booked after the cut-off are final, and a reclaim after the cut-off is refused, with the
+   same results as the fake.
 5. **Given** a finished one-off trip, **When** the driver lists done one-offs, **Then** it appears.
 
 ---
@@ -273,8 +275,9 @@ steps to dodge it.
 - **FR-014**: A driver's day MUST include the group legs the driver drives, in time order with
   one-off trips.
 - **FR-015**: Requests addressed to a driver MUST be listed for that driver and no other.
-- **FR-016**: A cancelled offer that may be taken back MUST be reclaimable, with the same refusals
-  as the fake; the two-trips-a-day cap and the cost cap (Law 87/2018) MUST hold.
+- **FR-016**: A booked seat MUST be reclaimable by the booker or the offer's driver with the fake's
+  rules (refund, final for subscriber seats and post-cut-off bookings, refused after the cut-off);
+  the two-trips-a-day cap and the cost cap (Law 87/2018) MUST hold.
 - **FR-017**: A driver's finished one-off trips MUST be listed.
 
 **Daily**
