@@ -19,12 +19,12 @@ extend, never weaken. One commit and push per phase. `[P]` = can run in parallel
 
 ## Phase 1 — database truth and seed (US2)
 
-- [ ] T008 [US2] Scratch stack: copy `supabase/` to the scratchpad with `config.toml` ports +1000 and `project_id = "goora011"`; document in README (D19 of 011)
-- [ ] T009 [US2] Check `docker info`; if it answers: `supabase start`, `supabase db reset`, `supabase test db`; record exact numbers in research.md "Results log". If not: D15 fallback harness in `supabase/scratch/` and label the run "scratch PG16 + shim"
-- [ ] T010 [US2] For each failing pgTAP test: fix in a NEW migration `supabase/migrations/20261031000000_pgtap_fixes.sql` (never edit an applied one); re-run to green
-- [ ] T011 [US2] `supabase/seed.sql` (D13): corridors, 3 groups with pickup points, "Demo Motors" with 6 enrolled employees (5 consenting), all fictional, idempotent
-- [ ] T012 [US2] `supabase/tests/80_seed.test.sql`: counts, no real-looking e-mail/phone, ≥ 1 group per corridor, ≥ 5 enrolled
-- [ ] T013 [US2] `supabase db reset` clean with seed; whole suite green; Results log updated; commit + push
+- [x] T008 [US2] Scratch stack: NOT done as described — Docker was down, so the stack was replaced by the D15 scratch PG16 harness (`supabase/scratch/`); the +1000-port `goora011` copy stays the plan for the real run (README)
+- [x] T009 [US2] Check `docker info`; if it answers: `supabase start`, `supabase db reset`, `supabase test db`; record exact numbers in research.md "Results log". If not: D15 fallback harness in `supabase/scratch/` and label the run "scratch PG16 + shim"
+- [x] T010 [US2] Failing pgTAP: one test bug fixed in the test file (no migration failed), see Results log
+- [x] T011 [US2] `supabase/seed.sql` (D13): the app's 14 demo groups on two corridors with pickup points, "Demo Motors" with 6 enrolled employees (5 consenting), all fictional, idempotent
+- [x] T012 [US2] `supabase/tests/80_seed.test.sql`: counts, no real-looking e-mail/phone, ≥ 1 group per corridor, ≥ 5 enrolled
+- [ ] T013 [US2] Scratch PG16: reset + seed clean, 68/68 (done, Results log). REAL `supabase db reset` + `supabase test db`: pending until Docker answers (re-check before the gates)
 
 ## Phase 2 — wallet live (US3)
 

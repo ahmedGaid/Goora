@@ -159,4 +159,24 @@ T039, T040, T042.
 
 ## Results log
 
-(filled during the lane)
+### 2026-10-31 — P1 database truth (scratch PG16 + shim, NOT the real `supabase test db`)
+
+- **Docker**: `docker info` timed out at 60 s (exit 124) at the start and again before P1 (25 s).
+  The conductor was told once (accepted: "told the founder"). Not restarted by this lane.
+- **Harness** (D15, `supabase/scratch/`): native PostgreSQL 16.15 on a throwaway cluster, port 55499,
+  own data dir in the session scratchpad (the machine's 5432 service untouched); real **pgTAP v1.3.3**
+  built from the official release (source scanned: no `COPY PROGRAM` / file functions); a shim for
+  roles, `auth.users`/`auth.uid()`, the `extensions` schema, PostGIS types (`point`), `pg_cron`.
+- **Migrations**: all 9 apply with no error. **Seed**: applies clean, twice (idempotent).
+- **First run of the 011 pgTAP files**: 3 + 16 + 17 + 9 = 45 assertions passed at once; the profile
+  file (14) failed to *load* — a **test bug**, not a migration bug: `UPDATE … RETURNING` inside a
+  `FROM` subquery is invalid SQL. Fixed in the test (row-count helper). No migration needed a fix,
+  so `20261031000000_pgtap_fixes.sql` was not created.
+- **After the fix + `80_seed.test.sql` (new, 9)**: `00` 3 · `10` 14 · `20` 16 · `30` 17 · `40` 9 ·
+  `80` 9 = **68 / 68 ok, 0 not ok, 0 SQL errors**.
+- **What this does not prove**: R2 ("anon holds no grant on any table") depends on the platform's
+  default privileges, which the shim does not copy; PostGIS behaviour is stubbed. The real
+  `supabase db reset` + `supabase test db` must still be run once Docker answers — **DB real run:
+  pending**.
+- **D6 note**: the existing `groups_for()` already gives drivers `initials` = first + last initial;
+  `market_offer_cards` follows that precedent (no new exposure).
